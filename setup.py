@@ -61,4 +61,9 @@ setup(name='bafs',
                    "Programming Language :: Python :: 2.7",
                    #"Topic :: Software Development :: Libraries :: Python Modules",
                    ],
+      entry_points="""
+        [console_scripts]
+        bafs-init-db = bafs.scripts:init_db
+        bafs-sync = bafs.scripts:sync_rides
+        """,
      )

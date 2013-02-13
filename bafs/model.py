@@ -7,10 +7,11 @@ import geoalchemy as ga
 from sqlalchemy import orm
 
 class StravaEntity(db.Model):
-    __metaclass__ = abc.ABCMeta
+    __abstract__ = True
+    __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM needed for spatial indexes
     
-    id = sa.Column(sa.Integer, primary_key=True)
-    name = sa.Column(sa.String(1024))
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    name = sa.Column(sa.String(1024), nullable=False)
     
     def __init__(self, id=None, name=None, **kwargs):
         self.id = id
@@ -19,34 +20,49 @@ class StravaEntity(db.Model):
             setattr(self, k, v)
         
     def __repr__(self):
-        return '<{} id={} name={}>'.format(self.__class__.__name__, self.id, self.name)
+        return '<{0} id={1} name={1!r}>'.format(self.__class__.__name__, self.id, self.name)
 
 class Team(StravaEntity):    
     """
     """
+    __tablename__ = 'teams'
     athletes = orm.relationship("Athlete", backref="team")
     
 class Athlete(StravaEntity):    
     """
     """
+    __tablename__ = 'athletes'
+    team_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id', ondelete='set null'))
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic")
     
 class Ride(StravaEntity):    
     """
     """
-    elapsed_time = sa.Column(sa.Integer) # Seconds
+    __tablename__ = 'rides'
+    athlete_id = sa.Column(sa.Integer, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False)
+    elapsed_time = sa.Column(sa.Integer, nullable=False) # Seconds
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
-    moving_time = sa.Column(sa.Integer) # 
-    elevation_gain = sa.Column(sa.Integer) # 269.6 (feet)
+    moving_time = sa.Column(sa.Integer, nullable=False) # 
+    elevation_gain = sa.Column(sa.Integer, nullable=True) # 269.6 (feet)
     average_speed = sa.Column(sa.Float) # mph
     maximum_speed = sa.Column(sa.Float) # mph
-    start_date = sa.Column(sa.DateTime) # 2010-02-28T08:31:35Z
-    distance = sa.Column(sa.Float) # 82369.1 (meters)
-    location = sa.Column(sa.String(255))
+    start_date = sa.Column(sa.DateTime, nullable=False) # 2010-02-28T08:31:35Z
+    distance = sa.Column(sa.Float, nullable=False) # 82369.1 (meters)
+    location = sa.Column(sa.String(255), nullable=True)
+    
+    commute = sa.Column(sa.Boolean, nullable=True)
+    trainer = sa.Column(sa.Boolean, nullable=True)
+    
+    geo = orm.relationship("RideGeo", uselist=False, backref="ride")
+
+# Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
+class RideGeo(db.Model):
+    __tablename__ = 'ride_geo'
+    __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM for spatial indexes
+    
+    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
     start_geo = ga.GeometryColumn(ga.Point(2))
     end_geo = ga.GeometryColumn(ga.Point(2))
-    commute = sa.Column(sa.Boolean)
-    trainer = sa.Column(sa.Boolean)
-
+    
 ga.GeometryDDL(Ride.__table__)

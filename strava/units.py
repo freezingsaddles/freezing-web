@@ -26,11 +26,19 @@ def meters_to_feet(meters):
     """
     return meters * 3.28084
 
-def metersps_to_milesph(mps):
+def metersps_to_mph(mps):
     """
     Convert meters-per-second to miles-per-hour.
     
     :rtype: float
     """
     return mps * 2.23694
+
+def kph_to_mph(kph):
+    """
+    Convert kilometers-per-hour to miles-per-hour.
+    
+    :rtype: float
+    """
+    return kph / 1.60934
     
