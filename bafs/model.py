@@ -6,6 +6,23 @@ import sqlalchemy as sa
 import geoalchemy as ga
 from sqlalchemy import orm
 
+
+from sqlalchemy import Table
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql.expression import Executable, ClauseElement
+
+class CreateView(Executable, ClauseElement):
+    def __init__(self, name, select):
+        self.name = name
+        self.select = select
+
+@compiles(CreateView, 'mysql')
+def visit_create_view(element, compiler, **kw):
+    return "CREATE VIEW IF NOT EXISTS %s AS %s" % (
+         element.name,
+         compiler.process(element.select, literal_binds=True)
+         )
+    
 class StravaEntity(db.Model):
     __abstract__ = True
     __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM needed for spatial indexes
@@ -33,7 +50,7 @@ class Athlete(StravaEntity):
     """
     __tablename__ = 'athletes'
     team_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id', ondelete='set null'))
-    rides = orm.relationship("Ride", backref="athlete", lazy="dynamic")
+    rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
     
 class Ride(StravaEntity):    
     """
@@ -54,7 +71,7 @@ class Ride(StravaEntity):
     commute = sa.Column(sa.Boolean, nullable=True)
     trainer = sa.Column(sa.Boolean, nullable=True)
     
-    geo = orm.relationship("RideGeo", uselist=False, backref="ride")
+    geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
@@ -66,3 +83,20 @@ class RideGeo(db.Model):
     end_geo = ga.GeometryColumn(ga.Point(2))
     
 ga.GeometryDDL(Ride.__table__)
+
+
+# Create VIEWS that may be helpful.
+
+_v_daily_scores_create = sa.DDL("""
+    drop view if exists daily_scores;
+    create view daily_scores as
+    select A.team_id, R.athlete_id, sum(R.distance) as distance,
+    (sum(R.distance) + IF(sum(R.distance) >= 1.0, 10,0)) as points,
+    date(R.start_date) as ride_date
+    from rides R
+    join athletes A on A.id = R.athlete_id
+    group by R.athlete_id, A.team_id, date(R.start_date)
+    ;
+""")
+
+sa.event.listen(Ride.__table__, 'after_create', _v_daily_scores_create)

@@ -2,6 +2,7 @@ import optparse
 import logging
 
 from dateutil import parser as dateutil_parser
+from sqlalchemy import not_, and_, text
 
 from bafs import app, db
 from bafs import data, model
@@ -22,6 +23,7 @@ def init_db():
         app.logger.info("Dropping tables.")
         db.drop_all()
     db.create_all()
+        
     
 def sync_rides():
     """
@@ -78,4 +80,15 @@ def sync_rides():
             else:
                 logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
 
+        # Remove any rides that are in the database for this team that were not in the returned list.
+        ride_ids = [r.id for r in rides]
+        q = sess.query(model.Ride)
+        q = q.filter(and_(not_(model.Ride.id.in_(ride_ids)),
+                          model.Ride.athlete_id.in_(sess.query(model.Athlete.id).filter(model.Athlete.team_id==club_id)),
+                          model.Ride.start_date >= start))
+        deleted = q.delete(synchronize_session=False)
+        logger.info("Removed {0} no longer present rides.".format(deleted))
         sess.commit() 
+        
+    # TODO: Add support for the unattached riders.
+    

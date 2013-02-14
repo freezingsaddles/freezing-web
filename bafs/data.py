@@ -74,7 +74,7 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
         # This would be a nice list comprehension, but we break it out for purposes of logging 
         for ride in rides:
             for keyword in exclude_keywords:
-                if keyword in ride['name']:
+                if keyword.lower() in ride['name'].lower():
                     logger().info("Skipping ride {} ({}) due to presence of exlusion keyword: {}".format(ride['id'], ride['name'], keyword))
                     break
             else:
