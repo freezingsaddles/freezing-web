@@ -25,9 +25,10 @@ at this juncture:
 	shell$ cd bafs
 	shell$ python -m virtualenv --no-site-packages --distribute env
 	shell$ source env/bin/activate
-    shell$ python setup.py develop
+    (env) shell$ python setup.py develop
 
-We will assume for all subsequent shell examples that you are running in that activated virtualenv.    
+We will assume for all subsequent shell examples that you are running in that activated virtualenv.  (This is denoted by using 
+the "(env) shell$" prefix before shell commands.)    
    
 ### Database Setup
 
