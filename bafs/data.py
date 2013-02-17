@@ -67,15 +67,15 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
     all_rides = []
     offset = 0
     while True:
-        logger().debug("Fetching rides {} - {}".format(offset, offset + 50))
+        logger().debug("Fetching rides {0} - {1}".format(offset, offset + 50))
         rides = apifunc(clubId=club_id, offset=offset)
-        logger().debug("Fetched {} rides".format(len(rides)))
+        logger().debug("Fetched {0} rides".format(len(rides)))
         
         # This would be a nice list comprehension, but we break it out for purposes of logging 
         for ride in rides:
             for keyword in exclude_keywords:
                 if keyword.lower() in ride['name'].lower():
-                    logger().info("Skipping ride {} ({}) due to presence of exlusion keyword: {}".format(ride['id'], ride['name'], keyword))
+                    logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(ride['id'], ride['name'], keyword))
                     break
             else:
                 # If we need not break of out the loop then it means no keywords matched, so append it.

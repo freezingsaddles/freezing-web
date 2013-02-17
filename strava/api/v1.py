@@ -21,7 +21,7 @@ class V1ServerProxy(BaseServerProxy):
         
         :param club_id: The club_id of the club to fetch.
         """
-        response = self._get("http://{}/api/v1/clubs/{}".format(self.server, club_id))
+        response = self._get("http://{0}/api/v1/clubs/{1}".format(self.server, club_id))
         return response['club']
         
     def get_ride(self, ride_id):
@@ -49,7 +49,7 @@ class V1ServerProxy(BaseServerProxy):
         
         :param ride_id: The ride_id of ride to fetch.
         """
-        url = "http://{}/api/v1/rides/{}".format(self.server, ride_id)
+        url = "http://{0}/api/v1/rides/{1}".format(self.server, ride_id)
         return self._get(url)['ride']
         
     def list_rides(self, **kwargs):
@@ -68,6 +68,6 @@ class V1ServerProxy(BaseServerProxy):
             if datefield in kwargs and isinstance(kwargs[datefield], datetime):
                 kwargs[datefield] = kwargs[datefield].strftime('%Y-%m-%d')
                 
-        url = "http://{}/api/v1/rides".format(self.server)
+        url = "http://{0}/api/v1/rides".format(self.server)
         response = self._get(url, params=kwargs)
         return response['rides']
