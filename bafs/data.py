@@ -88,16 +88,16 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
         
     return all_rides
 
-def write_ride(team, ride_id):
+def write_ride(ride_id, team=None):
     """
     Takes the specified ride_id and merges together the V1 and V2 API data into model 
     objects and writes them to the database.
-    
-    :param team: The team club entity.
-    :type team: :class:`stravatools.bafs.model.Club`
-    
+
     :param ride_id: The ride that should be filled in and written to DB.
     :type ride_id: int
+    
+    :param team: The affiliated team club entity (or none for detached riders).
+    :type team: :class:`stravatools.bafs.model.Club`    
     
     :return: The written Ride object.
     """

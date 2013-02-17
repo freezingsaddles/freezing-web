@@ -99,4 +99,13 @@ _v_daily_scores_create = sa.DDL("""
     ;
 """)
 
+
+
 sa.event.listen(Ride.__table__, 'after_create', _v_daily_scores_create)
+
+
+def rebuild_views():
+    # This import is kinda kludgy (and would be circular outside of this function) but our model engine is tied up with
+    # the Flask framework (for now)
+    from bafs import db
+    db.session.execute(_v_daily_scores_create)

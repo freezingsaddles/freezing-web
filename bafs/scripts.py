@@ -23,7 +23,9 @@ def init_db():
         app.logger.info("Dropping tables.")
         db.drop_all()
     db.create_all()
-        
+    
+    model.rebuild_views()
+
     
 def sync_rides():
     """
@@ -75,7 +77,7 @@ def sync_rides():
         for (i, ri_entry) in enumerate(rides):
             logger.info("Processing ride: {0} ({1}/{2})".format(ri_entry.id, i, num_rides))
             if not sess.query(model.Ride).get(ri_entry.id):
-                ride = data.write_ride(team, ri_entry.id)
+                ride = data.write_ride(ri_entry.id, team=team)
                 logger.debug("Wrote new ride: %r" % (ride,))
             else:
                 logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
@@ -87,8 +89,31 @@ def sync_rides():
                           model.Ride.athlete_id.in_(sess.query(model.Athlete.id).filter(model.Athlete.team_id==club_id)),
                           model.Ride.start_date >= start))
         deleted = q.delete(synchronize_session=False)
-        logger.info("Removed {0} no longer present rides.".format(deleted))
+        logger.info("Removed {0} no longer present rides for team {1}.".format(deleted, club_id))
         sess.commit() 
         
     # TODO: Add support for the unattached riders.
-    
+    for athlete_id in app.config['BAFS_FREE_RIDERS']:
+        #
+        # XXX: Refactor this; there's some copy/paste going on here from above that doesn't bode well for bugs/maintenance.
+        
+        logger.info("Fetching rides for athlete: {id}".format(id=athlete_id))
+        rides = data.list_rides(athlete_id=athlete_id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+        num_rides = len(rides)
+        for (i, ri_entry) in enumerate(rides):
+            logger.info("Processing ride: {0} ({1}/{2})".format(ri_entry.id, i, num_rides))
+            if not sess.query(model.Ride).get(ri_entry.id):
+                ride = data.write_ride(ri_entry.id)
+                logger.debug("Wrote new ride: %r" % (ride,))
+            else:
+                logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
+
+        # Remove any rides that are in the database for this athlete that were not in the returned list.
+        ride_ids = [r.id for r in rides]
+        q = sess.query(model.Ride)
+        q = q.filter(and_(not_(model.Ride.id.in_(ride_ids)),
+                          model.Ride.athlete_id == athlete_id,
+                          model.Ride.start_date >= start))
+        deleted = q.delete(synchronize_session=False)
+        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
+        sess.commit() 
