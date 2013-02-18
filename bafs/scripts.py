@@ -44,9 +44,19 @@ def sync_rides():
     parser.add_option("--debug", action="store_true", dest="debug", default=False, 
                       help="Whether to log at debug level.")
     
+    parser.add_option("--quiet", action="store_true", dest="quiet", default=False, 
+                      help="Whether to suppress non-error log output.")
+    
     (options, args) = parser.parse_args()
     
-    logging.basicConfig(level=logging.DEBUG if options.debug else logging.INFO)
+    if options.quiet:
+        loglevel = logging.ERROR
+    elif options.debug:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+        
+    logging.basicConfig(level=loglevel)
     logger = logging.getLogger('sync')
     
     sess = db.session
