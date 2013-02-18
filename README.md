@@ -56,7 +56,6 @@ Probably the most likely thing you'll want to configure in your settings.cfg fil
 # The SQLALchemy connection URL for your MySQL database.
 SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs'
 ```
-
 	
 ### Synchronizing
 
@@ -70,3 +69,9 @@ case someone edited a ride, etc.)
 
 	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg bafs-sync --clear
 
+### Running the (Development) Server
+
+You can start up the Flask development server for testing using the `bafs-server` command.
+
+	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg bafs-server
+	
