@@ -5,6 +5,7 @@ from bafs import db
 import sqlalchemy as sa
 import geoalchemy as ga
 from sqlalchemy import orm
+from sqlalchemy.pool import Pool
 
 
 from sqlalchemy import Table
@@ -25,7 +26,7 @@ def visit_create_view(element, compiler, **kw):
     
 class StravaEntity(db.Model):
     __abstract__ = True
-    __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM needed for spatial indexes
+    __table_args__ = {'mysql_engine':'InnoDB'} # But we use MyISAM for the spatial table.
     
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
     name = sa.Column(sa.String(1024), nullable=False)
@@ -81,9 +82,16 @@ class RideGeo(db.Model):
     ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
     start_geo = ga.GeometryColumn(ga.Point(2))
     end_geo = ga.GeometryColumn(ga.Point(2))
-    
+
+
+# Setup Geometry columns    
 ga.GeometryDDL(Ride.__table__)
 
+# Setup a Pool event to get MySQL to use strict SQL mode ...
+def _set_sql_mode(dbapi_con, connection_record):
+    dbapi_con.cursor().execute("SET sql_mode = 'STRICT_TRANS_TABLES';")
+
+sa.event.listen(Pool, 'connect', _set_sql_mode)
 
 # Create VIEWS that may be helpful.
 

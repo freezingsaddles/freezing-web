@@ -129,7 +129,7 @@ def write_ride(ride_id, team=None):
                       name=v1data['athlete']['name'])
 
     db.session.merge(athlete) # @UndefinedVariable
-    db.session.commit() # @UndefinedVariable
+    db.session.flush() # @UndefinedVariable
     
     if start_geo is not None and end_geo is not None:
         ride_geo = RideGeo()
@@ -142,7 +142,7 @@ def write_ride(ride_id, team=None):
         ride = Ride(id=v2data['id'],
                     athlete=athlete,
                     name=v2data['name'],
-                    start_date=parser.parse(v2data['start_date_local']),
+                    start_date=parser.parse(v2data['start_date_local']).replace(tzinfo=None),
                     distance=units.meters_to_miles(v2data['distance']),
                     average_speed=units.metersps_to_mph(v1data['averageSpeed']),
                     maximum_speed=units.kph_to_mph(v1data['maximumSpeed'] / 1000.0), # Not sure why this is in meters per hour ... !?
