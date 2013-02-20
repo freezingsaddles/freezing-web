@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>{% block title %}Freezing Saddles{% endblock %}</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="/static/jquery-1.9.1.min.js"></script>
+	<style type="text/css" media="screen">@import "/static/basic.css";</style>
+	<style type="text/css" media="screen">@import "/static/tabs.css";</style>
+	<!--
+	<link rel="stylesheet" href="/static/style.css" type="text/css" media="screen" charset="utf-8"/>
+	-->
+	{% block head %}{% endblock %}
+</head>
+
+<body>
+	REQUEST: {{ request.path }}
+	<div id="header">
+	<ul id="primary">
+		<li><a href="/" class="{% if request.path == '/' %}current{% endif %}">Home</a></li>
+		<li><a href="/leaderboard" class="{% if request.path.startswith('/leaderboard') %}current{% endif %}">Leaderboards</a>
+			{% if '/' in '/' %}
+			<ul id="secondary">
+				<li><a href="/leaderboard/team">Team</a></li>
+				<li><a href="/leaderboard/individual">Individual</a></li>
+			</ul>
+			{% endif %}
+		</li>
+	</ul>
+	</div>
+	
+	<div id="main">
+		<div id="contents">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+	
+	</body>
+</html>

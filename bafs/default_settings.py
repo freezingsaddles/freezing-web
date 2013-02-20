@@ -1,6 +1,6 @@
 # Default settings
 
-SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs'
+SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 SQLALCHEMY_POOL_RECYCLE = 3600
 
 # The strava team (club) IDs
@@ -11,6 +11,9 @@ BAFS_FREE_RIDERS = [75834]
 
 # When does the competition start?
 BAFS_START_DATE = '2013-01-01'
+
+# When does the competition end?
+BAFS_END_DATE = '2013-03-20'
 
 # Keywords to exclude from ride titles
 BAFS_EXCLUDE_KEYWORDS = ['#NoBAFS']

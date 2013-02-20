@@ -3,23 +3,40 @@ Created on Feb 10, 2013
 
 @author: hans
 '''
+import copy
+from collections import defaultdict
+
 from flask import render_template, jsonify, redirect, url_for
 
 from sqlalchemy import text
+from dateutil import rrule, parser 
 
 from bafs import app, db
 from bafs.utils import gviz_api
+from bafs.model import Team
 
 @app.route("/")
 def index():
-    return redirect(url_for('leaderboard'))
+    return redirect(url_for('team_leaderboard'))
 
 @app.route("/leaderboard")
 def leaderboard():
-    return render_template('leaderboard.html')
+    return redirect(url_for('team_leaderboard'))
+
+@app.route("/leaderboard/team")
+def team_leaderboard():
+    return render_template('leaderboard/team.html')
+
+@app.route("/leaderboard/individual")
+def indiv_leaderboard():
+    return render_template('leaderboard/indiv.html')
+
+@app.route("/leaderboard/trends")
+def team_trends():
+    return render_template('leaderboard/team_trends.html')
 
 @app.route("/chartdata/team_leaderboard")
-def team_leaderboard():
+def team_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
@@ -50,7 +67,7 @@ def team_leaderboard():
     return jsonify({'cols': cols, 'rows': rows})
 
 @app.route("/chartdata/indiv_leaderboard")
-def indiv_leaderboard():
+def indiv_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
@@ -77,3 +94,52 @@ def indiv_leaderboard():
         rows.append({'c': cells})
         
     return jsonify({'cols': cols, 'rows': rows})
+
+@app.route("/chartdata/team_mileage_trends")
+def team_mileage_trend():
+    """
+    """
+    teams = db.session.query(Team).all()
+    
+    q = text("""
+             select date(R.start_date) as start_date, sum(R.distance) as mileage
+             from rides R
+             join athletes A on A.id = R.athlete_id
+             where A.team_id = :team_id
+             group by A.team_id, date(R.start_date)
+             order by date(R.start_date)
+             ;
+             """)
+    
+    cols = [{'id': 'name', 'label': 'Date', 'type': 'date'}]
+    
+    for team in teams:
+        cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'string'})
+
+    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), 0) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=parser.parse(app.config['BAFS_END_DATE']))])  
+        
+    # Query for each team, build this into a multidim array
+    daily_totals = defaultdict(dict)
+    
+    for team in teams:
+        daily_totals[team.id] = copy.copy(tpl_dict) # Ensure that we have keys for every day (even if there were no rides for that day)
+        for row in db.engine.execute(q, team_id=team.id).fetchall():
+            daily_totals[team.id][row['start_date'].strftime('%Y-%m-%d')] = row['mileage']
+    
+    helper_encoder = gviz_api.DataTableJSONEncoder()
+    
+    rows = []
+    for datekey in tpl_dict.keys():
+        for team in teams:
+            # We want the order to be the same, so we don't just enumerate over the dict
+            for row in daily_totals[team.id]:
+                pass
+            
+        cells = [{'v': helper_encoder.default(parser.parse(datekey).date()) }]
+        for team in teams:
+            cells.append({'v': daily_totals[team.id][datekey]})
+        rows.append({'c': cells})
+            
+    return jsonify({'cols': cols, 'rows': rows})
+
+    
