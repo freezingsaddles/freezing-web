@@ -16,7 +16,7 @@
       function drawTeamChart() {
 	      
 	      var jsonData = $.ajax({
-	          url: "/chartdata/team_mileage_trends",
+	          url: "/chartdata/team_elev_gain",
 	          dataType:"json",
 	          async: false // ... really?
 	          }).responseText;
@@ -25,21 +25,26 @@
 	      var data = new google.visualization.DataTable(jsonData);
 	
 	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.LineChart(document.getElementById('chart_team_mileage_trends'));
+	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
 	      
-	      var options = {'title':'Team Mileage Trends',
-                       'width':800,
-                       'height':600};
+	      var options = {'title':'Team Elevation Gain',
+                       'width':1000,
+                       'height':600,
+                       'legend': {'position': 'none'},
+                       'hAxis': {'minValue': 0},
+                       'chartArea' :{'left':300,'top':70,'width': 550,'height': 500}};
                        
 	      chart.draw(data, options);
+	      
 	      
 	  }
 	  </script>
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Team Trends</h1>
+  	<h1>Team Elevation Gain</h1>
+  	
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_mileage_trends"></div>
+    <div id="chart_team_leaderboard"></div>
     
 {% endblock %}

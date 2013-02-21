@@ -6,17 +6,13 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawTeamChart);
       google.setOnLoadCallback(drawIndivChart);
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      
-      function drawTeamChart() {
+
+	  function drawIndivChart() {
 	      
 	      var jsonData = $.ajax({
-	          url: "/chartdata/team_leaderboard",
+	          url: "/chartdata/indiv_elev_gain",
 	          dataType:"json",
 	          async: false // ... really?
 	          }).responseText;
@@ -25,27 +21,25 @@
 	      var data = new google.visualization.DataTable(jsonData);
 	
 	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
+	      var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
 	      
-	      var options = {'title':'Team Leaderboard',
-                       'width':1000,
-                       'height':600,
+	      var options = {'title':'Individual Leaderboard',
+                       'width':800,
+                       'height':1600,
                        'legend': {'position': 'none'},
-                       'hAxis': {'minValue': 0},
-                       'chartArea' :{'left':300,'top':70,'width': 550,'height': 500}};
+                       'chartArea' :{'left':200,'top':70,'width': 550,'height': 1500}};
                        
 	      chart.draw(data, options);
 	      
-	      
 	  }
+	  
+
 	  </script>
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Freezing Saddles Leaderboard</h1>
-  	<p>View the official leaderboard here: <a href="http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/">http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/</a></p>
-  	
+  	<h1>Individual Elevation Gain</h1>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_leaderboard"></div>
+    <div id="chart_indiv_leaderboard"></div>
     
 {% endblock %}
