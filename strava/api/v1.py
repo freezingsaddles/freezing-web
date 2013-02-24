@@ -51,6 +51,15 @@ class V1ServerProxy(BaseServerProxy):
         """
         url = "http://{0}/api/v1/rides/{1}".format(self.server, ride_id)
         return self._get(url)['ride']
+    
+    def get_ride_efforts(self, ride_id):
+        """
+        Return V1 object structure for ride efforts.
+        
+        :param ride_id: The id of associated ride to fetch.
+        """
+        url = "http://{0}/api/v1/rides/{1}/efforts".format(self.server, ride_id)
+        return self._get(url)['efforts']
         
     def list_rides(self, **kwargs):
         """

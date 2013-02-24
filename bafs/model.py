@@ -83,6 +83,22 @@ class RideGeo(db.Model):
     start_geo = ga.GeometryColumn(ga.Point(2))
     end_geo = ga.GeometryColumn(ga.Point(2))
 
+    def __repr__(self):
+        return '<{0} ride_id={1} start={2}>'.format(self.__class__.__name__,
+                                                          self.ride_id,
+                                                          self.start_geo)
+
+class RideEffort(db.Model):
+    __tablename__ = 'ride_efforts'
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
+    segment_name = sa.Column(sa.String(255), nullable=False)
+    segment_id = sa.Column(sa.Integer, nullable=False)
+    elapsed_time = sa.Column(sa.Integer, nullable=False)
+
+    def __repr__(self):
+        return '<{0} id={1} segment_name={1!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
+
 
 # Setup Geometry columns    
 ga.GeometryDDL(Ride.__table__)
@@ -116,4 +132,4 @@ def rebuild_views():
     # This import is kinda kludgy (and would be circular outside of this function) but our model engine is tied up with
     # the Flask framework (for now)
     from bafs import db
-    db.session.execute(_v_daily_scores_create)
+    db.session.execute(_v_daily_scores_create) # 

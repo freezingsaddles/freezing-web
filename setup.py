@@ -65,6 +65,7 @@ setup(name='bafs',
         [console_scripts]
         bafs-init-db = bafs.scripts:init_db
         bafs-sync = bafs.scripts:sync_rides
+        bafs-sync-efforts = bafs.scripts:sync_ride_efforts
         bafs-server = bafs.runserver:main
         """,
      )

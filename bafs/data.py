@@ -12,7 +12,7 @@ from strava.api.v1 import V1ServerProxy
 from strava.api.v2 import V2ServerProxy
 from strava import units
  
-from bafs.model import Athlete, Ride, RideGeo
+from bafs.model import Athlete, Ride, RideGeo, RideEffort
 from bafs import app, db
 
 
@@ -75,7 +75,9 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
         for ride in rides:
             for keyword in exclude_keywords:
                 if keyword.lower() in ride['name'].lower():
-                    logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(ride['id'], ride['name'], keyword))
+                    logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(ride['id'],
+                                                                                                            ride['name'],
+                                                                                                            keyword))
                     break
             else:
                 # If we need not break of out the loop then it means no keywords matched, so append it.
@@ -92,12 +94,12 @@ def write_ride(ride_id, team=None):
     """
     Takes the specified ride_id and merges together the V1 and V2 API data into model 
     objects and writes them to the database.
-
+    
     :param ride_id: The ride that should be filled in and written to DB.
     :type ride_id: int
     
-    :param team: The affiliated team club entity (or none for detached riders).
-    :type team: :class:`stravatools.bafs.model.Club`    
+    :param team: The team club entity.
+    :type team: :class:`stravatools.bafs.model.Club`
     
     :return: The written Ride object.
     """
@@ -129,7 +131,7 @@ def write_ride(ride_id, team=None):
                       name=v1data['athlete']['name'])
 
     db.session.merge(athlete) # @UndefinedVariable
-    db.session.flush() # @UndefinedVariable
+    db.session.commit() # @UndefinedVariable
     
     if start_geo is not None and end_geo is not None:
         ride_geo = RideGeo()
@@ -167,3 +169,36 @@ def write_ride(ride_id, team=None):
         raise
     
     return ride
+
+
+def write_ride_efforts(ride_id):
+    """
+    Writes out all effort associated with a ride to the database.
+    
+    :param ride_id: The ride that is associated with this effort.
+    :type ride_id: int
+    """
+    v1sess = V1ServerProxy()
+    v1efforts = v1sess.get_ride_efforts(ride_id)
+    
+    try:
+        for v1data in v1efforts:
+            effort = RideEffort(id=v1data['id'],
+                                ride_id=ride_id,
+                                elapsed_time=v1data['elapsed_time'],
+                                segment_name=v1data['segment']['name'],
+                                segment_id=v1data['segment']['id'])
+            
+            db.session.merge(effort) # @UndefinedVariable
+        
+        
+            logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride_id,
+                                                                                     effort=effort.segment_name))
+            
+            # TODO: Remove any effort no longer associated with a specified ride? 
+        
+        db.session.commit() # @UndefinedVariable
+    except:
+        logger().exception("Error adding effort for ride: {0}".format(ride_id))
+        raise
+    
