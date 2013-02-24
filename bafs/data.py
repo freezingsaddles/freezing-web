@@ -170,7 +170,7 @@ def write_ride(ride_id, team=None):
     return ride
 
 
-def write_ride_efforts(ride_id):
+def write_ride_efforts(ride):
     """
     Writes out all effort associated with a ride to the database.
     
@@ -178,26 +178,25 @@ def write_ride_efforts(ride_id):
     :type ride_id: int
     """
     v1sess = V1ServerProxy()
-    v1efforts = v1sess.get_ride_efforts(ride_id)
+    v1efforts = v1sess.get_ride_efforts(ride.id)
     
     try:
         for v1data in v1efforts:
             effort = RideEffort(id=v1data['id'],
-                                ride_id=ride_id,
+                                ride_id=ride.id,
                                 elapsed_time=v1data['elapsed_time'],
                                 segment_name=v1data['segment']['name'],
                                 segment_id=v1data['segment']['id'])
             
             db.session.merge(effort) # @UndefinedVariable
-        
-        
-            logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride_id,
-                                                                                     effort=effort.segment_name))
             
-            # TODO: Remove any effort no longer associated with a specified ride? 
         
+            logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
+                                                                                     effort=effort.segment_name))
+        
+        ride.efforts_fetched = True
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding effort for ride: {0}".format(ride_id))
+        logger().exception("Error adding effort for ride: {0}".format(ride.id))
         raise
     

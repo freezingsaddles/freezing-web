@@ -138,12 +138,10 @@ def _write_rides(start, team=None, athlete=None):
     sess.commit() 
         
     # Write out any efforts associated with these rides (not already in database)
-    q = sess.query(model.Ride)
-    q = q.outerjoin(model.RideEffort)
-    q = q.filter(model.RideEffort.id==None)
+    q = sess.query(model.Ride).filter_by(efforts_fetched=False)
     for ride in q.all():
         logger.info("Writing out efforts for {0!r}".format(ride))
-        data.write_ride_efforts(ride.id)
+        data.write_ride_efforts(ride)
     
 def sync_ride_efforts():
     """

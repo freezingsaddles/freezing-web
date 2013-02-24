@@ -38,7 +38,7 @@ class StravaEntity(db.Model):
             setattr(self, k, v)
         
     def __repr__(self):
-        return '<{0} id={1} name={1!r}>'.format(self.__class__.__name__, self.id, self.name)
+        return '<{0} id={1} name={2!r}>'.format(self.__class__.__name__, self.id, self.name)
 
 class Team(StravaEntity):    
     """
@@ -71,6 +71,8 @@ class Ride(StravaEntity):
     
     commute = sa.Column(sa.Boolean, nullable=True)
     trainer = sa.Column(sa.Boolean, nullable=True)
+    
+    efforts_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
 
