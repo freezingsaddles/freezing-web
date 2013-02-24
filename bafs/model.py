@@ -57,16 +57,16 @@ class Ride(StravaEntity):
     """
     """
     __tablename__ = 'rides'
-    athlete_id = sa.Column(sa.Integer, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False)
+    athlete_id = sa.Column(sa.Integer, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
     elapsed_time = sa.Column(sa.Integer, nullable=False) # Seconds
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
-    moving_time = sa.Column(sa.Integer, nullable=False) # 
+    moving_time = sa.Column(sa.Integer, nullable=False, index=True) # 
     elevation_gain = sa.Column(sa.Integer, nullable=True) # 269.6 (feet)
     average_speed = sa.Column(sa.Float) # mph
     maximum_speed = sa.Column(sa.Float) # mph
-    start_date = sa.Column(sa.DateTime, nullable=False) # 2010-02-28T08:31:35Z
-    distance = sa.Column(sa.Float, nullable=False) # 82369.1 (meters)
+    start_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
+    distance = sa.Column(sa.Float, nullable=False, index=True) # 82369.1 (meters)
     location = sa.Column(sa.String(255), nullable=True)
     
     commute = sa.Column(sa.Boolean, nullable=True)
@@ -93,7 +93,7 @@ class RideEffort(db.Model):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
     ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     segment_name = sa.Column(sa.String(255), nullable=False)
-    segment_id = sa.Column(sa.Integer, nullable=False)
+    segment_id = sa.Column(sa.Integer, nullable=False, index=True)
     elapsed_time = sa.Column(sa.Integer, nullable=False)
 
     def __repr__(self):
@@ -132,4 +132,5 @@ def rebuild_views():
     # This import is kinda kludgy (and would be circular outside of this function) but our model engine is tied up with
     # the Flask framework (for now)
     from bafs import db
-    db.session.execute(_v_daily_scores_create) # 
+    db.session.execute(_v_daily_scores_create) # @UndefinedVariable
+    

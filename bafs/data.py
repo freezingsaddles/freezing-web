@@ -159,7 +159,6 @@ def write_ride(ride_id, team=None):
         
         db.session.merge(ride) # @UndefinedVariable
         
-        
         logger().debug("Writing ride: {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
                                                                             ride=ride.name,
                                                                             date=ride.start_date.strftime('%m/%d/%y')))

@@ -69,11 +69,12 @@ def sync_rides():
         logger.info("Fetching all rides")
     
     if options.clear:
-        logger.info("Clearing all data!")
-        sess.query(model.RideGeo).delete()
-        sess.query(model.Ride).delete()
-        sess.query(model.Athlete).delete()
-        sess.query(model.Team).delete()
+        #logger.info("Clearing all data!")
+        #sess.query(model.RideGeo).delete()
+        #sess.query(model.Ride).delete()
+        #sess.query(model.Athlete).delete()
+        #sess.query(model.Team).delete()
+        logger.info("Clear is currently not enabled due to the amount of time to reconstruct from scratch.")
         
     for club_id in app.config['BAFS_TEAMS']:
         team = model.Team(id=club_id,

@@ -6,9 +6,9 @@ Created on Feb 10, 2013
 import json
 import copy
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import render_template, redirect, url_for, current_app, request
+from flask import render_template, redirect, url_for, current_app, request, Blueprint
 
 from sqlalchemy import text
 from dateutil import rrule, parser 
@@ -17,39 +17,9 @@ from bafs import app, db
 from bafs.utils import gviz_api
 from bafs.model import Team
 
-@app.route("/")
-def index():
-    return redirect(url_for('team_leaderboard'))
+blueprint = Blueprint('chartdata', __name__)
 
-@app.route("/leaderboard")
-def leaderboard():
-    return redirect(url_for('team_leaderboard'))
-
-@app.route("/leaderboard/team")
-def team_leaderboard():
-    return render_template('leaderboard/team.html')
-
-@app.route("/leaderboard/team_elev")
-def team_elev_leaderboard():
-    return render_template('leaderboard/team_elev.html')
-
-@app.route("/leaderboard/individual")
-def indiv_leaderboard():
-    return render_template('leaderboard/indiv.html')
-
-@app.route("/leaderboard/individual_elev")
-def indiv_elev_leaderboard():
-    return render_template('leaderboard/indiv_elev.html')
-
-@app.route("/trends")
-def trends():
-    return redirect(url_for('team_cumul_trend'))
-
-@app.route("/trends/team_cumul")
-def team_cumul_trend():
-    return render_template('trends/team_cumul.html')
-
-@app.route("/chartdata/team_leaderboard")
+@blueprint.route("/team_leaderboard")
 def team_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
@@ -80,7 +50,7 @@ def team_leaderboard_data():
     
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@app.route("/chartdata/indiv_leaderboard")
+@blueprint.route("/indiv_leaderboard")
 def indiv_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
@@ -109,7 +79,7 @@ def indiv_leaderboard_data():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@app.route("/chartdata/team_elev_gain")
+@blueprint.route("/team_elev_gain")
 def team_elev_gain():
     q = text ("""
         select T.id, T.name as team_name, sum(R.elevation_gain) as cumul_elev_gain
@@ -137,7 +107,7 @@ def team_elev_gain():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@app.route("/chartdata/indiv_elev_gain")
+@blueprint.route("/indiv_elev_gain")
 def indiv_elev_gain():
     
     q = text ("""
@@ -163,8 +133,90 @@ def indiv_elev_gain():
         rows.append({'c': cells})
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_moving_time")
+def indiv_moving_time():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name, sum(R.moving_time) as total_moving_time
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                group by R.athlete_id, athlete_name
+                order by total_moving_time desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['total_moving_time'], 'f': str(timedelta(seconds=int(res['total_moving_time'])))}]
+        rows.append({'c': cells})
         
-@app.route("/chartdata/team_cumul_points")
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_number_sleaze_days")
+def indiv_number_sleaze_days():
+    
+    q = text ("""
+                select D.athlete_id, A.name as athlete_name, count(*) as num_sleaze_days
+                from daily_scores D
+                join athletes A on A.id = D.athlete_id
+                where D.points > 10 and D.points < 12
+                group by D.athlete_id, athlete_name
+                order by num_sleaze_days desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['num_sleaze_days'], 'f': str(int(res['num_sleaze_days']))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_avg_speed")
+def indiv_avg_speed():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name, AVG(R.average_speed) as avg_speed
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                group by R.athlete_id, athlete_name
+                order by avg_speed desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+        
+@blueprint.route("/team_cumul_points")
 def team_cumul_points():
     """
     """
@@ -211,7 +263,7 @@ def team_cumul_points():
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@app.route("/chartdata/team_cumul_mileage")
+@blueprint.route("/team_cumul_mileage")
 def team_cumul_mileage():
     """
     """
@@ -259,31 +311,8 @@ def team_cumul_mileage():
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
 def gviz_api_jsonify(*args, **kwargs):
-    """Creates a :class:`~flask.Response` with the JSON representation of
-    the given arguments with an `application/json` mimetype.  The arguments
-    to this function are the same as to the :class:`dict` constructor.
-
-    Example usage::
-
-        @app.route('/_get_current_user')
-        def get_current_user():
-            return jsonify(username=g.user.username,
-                           email=g.user.email,
-                           id=g.user.id)
-
-    This will send a JSON response like this to the browser::
-
-        {
-            "username": "admin",
-            "email": "admin@localhost",
-            "id": 42
-        }
-
-    This requires Python 2.6 or an installed version of simplejson.  For
-    security reasons only objects are supported toplevel.  For more
-    information about this, have a look at :ref:`json-security`.
-
-    .. versionadded:: 0.2
+    """
+    Override default Flask jsonify to handle JSON for Google Chart API.
     """
     return current_app.response_class(json.dumps(dict(*args, **kwargs),
                                                  indent=None if request.is_xhr else 2, cls=gviz_api.DataTableJSONEncoder),

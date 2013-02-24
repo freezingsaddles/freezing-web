@@ -7,10 +7,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('bafs.default_settings')
-#app.config.from_pyfile(os.path.join(os.path.dirname(__file__), '..', 'settings.py'), silent=False) # set silent=True for prod?
 if 'BAFS_SETTINGS' in os.environ:
     app.config.from_envvar('BAFS_SETTINGS')
 
+# Register our blueprints
 db = SQLAlchemy(app)
 
-from bafs import views # This needs to be after the app is created.
+from bafs.views import general, chartdata # This needs to be after the app is created.
+app.register_blueprint(general.blueprint)
+app.register_blueprint(chartdata.blueprint, url_prefix='/chartdata')
