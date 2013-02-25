@@ -60,7 +60,7 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
         kw['athleteId'] = athlete_id
     if club_id:
         kw['clubId'] = club_id
-        
+    
     apifunc = functools.partial(v1api.list_rides, **kw)
     
     # By default only 50 rows are returned so we have to itereate over until we get to the end. 
@@ -68,7 +68,7 @@ def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=
     offset = 0
     while True:
         logger().debug("Fetching rides {0} - {1}".format(offset, offset + 50))
-        rides = apifunc(clubId=club_id, offset=offset)
+        rides = apifunc(offset=offset)
         logger().debug("Fetched {0} rides".format(len(rides)))
         
         # This would be a nice list comprehension, but we break it out for purposes of logging 

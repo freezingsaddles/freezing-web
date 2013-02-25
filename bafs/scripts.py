@@ -86,18 +86,17 @@ def sync_rides():
         _write_rides(start, team=team)
         
     for athlete_id in app.config['BAFS_FREE_RIDERS']:
-        athlete = sess.query(model.Athlete).get(athlete_id)
-        logger.info("Fetching rides for athlete: {0}".format(athlete))
-        _write_rides(start, athlete=athlete)
+        logger.info("Fetching rides for athlete: {0}".format(athlete_id))
+        _write_rides(start, athlete_id=athlete_id)
 
-def _write_rides(start, team=None, athlete=None):
+def _write_rides(start, team=None, athlete_id=None):
     
     logger = logging.getLogger('sync')
     
-    if team and athlete:
+    if team and athlete_id:
         raise ValueError("team and athlete params are mutually exclusive")
-    elif team is None and athlete is None:
-        raise ValueError("either team or athlete param is required")
+    elif team is None and athlete_id is None:
+        raise ValueError("either team or athlete_id param is required")
     
     sess = db.session
     
@@ -108,8 +107,11 @@ def _write_rides(start, team=None, athlete=None):
                           model.Ride.start_date >= start))
         db_rides = q.all()
     else:
-        api_ride_entries = data.list_rides(athlete_id=athlete.id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
-        db_rides = athlete.rides.filter(model.Ride.start_date >= start).all()
+        api_ride_entries = data.list_rides(athlete_id=athlete_id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+        q = sess.query(model.Ride)
+        q = q.filter(and_(model.Ride.athlete_id == athlete_id,
+                          model.Ride.start_date >= start))
+        db_rides = q.all()
     
     # Quickly filter out only the rides that are not in the database.
     returned_ride_ids = set([r.id for r in api_ride_entries])
@@ -133,7 +135,7 @@ def _write_rides(start, team=None, athlete=None):
     if team:
         logger.info("Removed {0} no longer present rides for team {1}.".format(deleted, team.id))
     else:
-        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete.id))
+        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
                     
     sess.commit() 
         
@@ -142,47 +144,3 @@ def _write_rides(start, team=None, athlete=None):
     for ride in q.all():
         logger.info("Writing out efforts for {0!r}".format(ride))
         data.write_ride_efforts(ride)
-    
-def sync_ride_efforts():
-    """
-    Syncs up the ride_efforts table.
-    (This must be run after rides have already been sychronized.)
-    """
-    parser = optparse.OptionParser()
-        
-    parser.add_option("--clear", action="store_true", dest="clear", default=False, 
-                      help="Whether to clear data before fetching.")
-    
-    parser.add_option("--debug", action="store_true", dest="debug", default=False, 
-                      help="Whether to log at debug level.")
-    
-    parser.add_option("--quiet", action="store_true", dest="quiet", default=False, 
-                      help="Whether to suppress non-error log output.")
-    
-    (options, args) = parser.parse_args()
-    
-    if options.quiet:
-        loglevel = logging.ERROR
-    elif options.debug:
-        loglevel = logging.DEBUG
-    else:
-        loglevel = logging.INFO
-        
-    logging.basicConfig(level=loglevel)
-    logger = logging.getLogger('sync-efforts')
-    
-    sess = db.session
-    
-    if options.clear:
-        logger.info("Clearing all data!")
-        sess.query(model.RideEffort).delete()
-        
-    
-    all_rides = sess.query(model.Ride).where().all()
-    
-    if not all_rides:
-        raise RuntimeError("No rides have been loaded yet")
-    
-    for ride in all_rides:
-        logger.info("Writing out efforts for {0!r}".format(ride))
-        data.write_ride_efforts(ride.id)
