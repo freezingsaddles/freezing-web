@@ -129,14 +129,21 @@ def _write_rides(start, team=None, athlete_id=None):
             logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
 
     # Remove any rides that are in the database for this team that were not in the returned list.
-    q = sess.query(model.Ride)
-    q = q.filter(model.Ride.id.in_(removed_ride_ids))
-    deleted = q.delete(synchronize_session=False)
-    if team:
-        logger.info("Removed {0} no longer present rides for team {1}.".format(deleted, team.id))
+    if removed_ride_ids:
+        q = sess.query(model.Ride)
+        q = q.filter(model.Ride.id.in_(removed_ride_ids))
+        deleted = q.delete(synchronize_session=False)
+        if team:
+            logger.info("Removed {0} no longer present rides for team {1}.".format(deleted, team.id))
+        else:
+            logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
     else:
-        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
-                    
+        if team:
+            logger.info("(No removed rides for team {0!r}.)".format(team))
+        else:
+            logger.info("(No removed rides for athlete {0}.)".format(athlete_id))
+    
+    
     sess.commit() 
         
     # Write out any efforts associated with these rides (not already in database)
