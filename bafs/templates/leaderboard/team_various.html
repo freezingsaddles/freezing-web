@@ -6,17 +6,13 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawTeamChart);
-      google.setOnLoadCallback(drawIndivChart);
+      //google.setOnLoadCallback(drawIndivChart);
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      
-      function drawTeamChart() {
+
+	  function drawChart(api_method, label) {
 	      
 	      var jsonData = $.ajax({
-	          url: "/chartdata/team_elev_gain",
+	          url: "/chartdata/"+api_method,
 	          dataType:"json",
 	          async: false // ... really?
 	          }).responseText;
@@ -27,23 +23,42 @@
 	      // Instantiate and draw our chart, passing in some options.
 	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
 	      
-	      var options = {'title':'Team Elevation Gain',
+	      var options = {'title': "Team " + label,
                        'width':1000,
                        'height':600,
                        'legend': {'position': 'none'},
-                       'hAxis': {'minValue': 0},
                        'chartArea' :{'left':300,'top':70,'width': 550,'height': 500}};
                        
 	      chart.draw(data, options);
 	      
-	      
 	  }
+	  
+
 	  </script>
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Team Elevation Gain</h1>
-  	
+
+  	<h1 id="title">Team Leaderboards</h1>
+  	<script type="text/javascript">
+  		$(function(){
+  			$("#choose_api").submit(function(event) { event.preventDefault(); });	
+  		});
+		function redraw() {
+			drawChart($("#api_method").val(), $('#api_method option:selected').text());
+			$("#title").val($('#api_method option:selected').text());
+		}  		
+  	</script>
+  	<form action="#" id="choose_api">
+  		<select name="api_method" id="api_method">
+  			<option value="team_elev_gain" selected="selected">Elevation Gain</option>
+  			<option value="team_moving_time">Time in the Saddle</option>
+  			<option value="team_number_sleaze_days">Number of Sleaze (11-12 point) Days</option>
+  			<option value="team_avg_speed">Average Speed</option>
+  			<option value="team_segment/1081507">Hains Point Laps</option>
+  		</select>
+  		<button onclick="redraw();">Draw Chart</button>	
+  	</form>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_leaderboard"></div>
     

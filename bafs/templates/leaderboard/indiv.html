@@ -6,38 +6,12 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawTeamChart);
       google.setOnLoadCallback(drawIndivChart);
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      
-      function drawTeamChart() {
-	      
-	      var jsonData = $.ajax({
-	          url: "/chartdata/team_leaderboard",
-	          dataType:"json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-	
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
-	      
-	      var options = {'title':'Team Leaderboard',
-                       'width':800,
-                       'height':600,
-                       'legend': {'position': 'none'},
-                       'chartArea' :{'left':200,'top':70,'width': 550,'height': 500}};
-                       
-	      chart.draw(data, options);
-	      
-	      
-	  }
-	  
+
 	  function drawIndivChart() {
 	      
 	      var jsonData = $.ajax({
@@ -52,7 +26,7 @@
 	      // Instantiate and draw our chart, passing in some options.
 	      var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
 	      
-	      var options = {'title':'Individual Leaderboard',
+	      var options = {'title':'Individual Points',
                        'width':800,
                        'height':1600,
                        'legend': {'position': 'none'},
@@ -67,8 +41,7 @@
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Freezing Saddles Leaderboard</h1>
-  	<p>View the official leaderboard here: <a href="http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/">http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/</a></p>
+  	<h1>Freezing Saddles (Individual) Leaderboard</h1>
   	
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_indiv_leaderboard"></div>

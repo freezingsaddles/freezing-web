@@ -23,7 +23,23 @@ class V1ServerProxy(BaseServerProxy):
         """
         response = self._get("http://{0}/api/v1/clubs/{1}".format(self.server, club_id))
         return response['club']
+    
+    def get_segment(self, segment_id):
+        """
+        Return V1 object structure for a segment.
         
+        {"segment":{"climbCategory":"4",
+                    "elevationGain":151.728,
+                    "elevationHigh":458.206,
+                    "elevationLow":304.395,
+                    "distance":2378.34,
+                    "name":"Panoramic to Pan Toll",
+                    "id":156,"averageGrade":6.50757}
+        } 
+        """
+        url = "http://{0}/api/v1/segments/{1}".format(self.server, segment_id)
+        return self._get(url)['segment']
+    
     def get_ride(self, ride_id):
         """
         Return V1 object structure for ride.

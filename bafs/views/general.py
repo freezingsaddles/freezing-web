@@ -21,7 +21,7 @@ blueprint = Blueprint('general', __name__)
 
 @blueprint.route("/")
 def index():
-    return redirect(url_for('.team_leaderboard'))
+    return render_template('index.html')
 
 @blueprint.route("/leaderboard")
 def leaderboard():
@@ -31,17 +31,17 @@ def leaderboard():
 def team_leaderboard():
     return render_template('leaderboard/team.html')
 
-@blueprint.route("/leaderboard/team_elev")
-def team_elev_leaderboard():
-    return render_template('leaderboard/team_elev.html')
+@blueprint.route("/leaderboard/team_various")
+def team_leaderboard_various():
+    return render_template('leaderboard/team_various.html')
 
 @blueprint.route("/leaderboard/individual")
 def indiv_leaderboard():
     return render_template('leaderboard/indiv.html')
 
-@blueprint.route("/leaderboard/individual_generic")
-def indiv_leaderboard_generic():
-    return render_template('leaderboard/indiv_generic.html')
+@blueprint.route("/leaderboard/individual_various")
+def indiv_leaderboard_various():
+    return render_template('leaderboard/indiv_various.html')
 
 @blueprint.route("/trends")
 def trends():

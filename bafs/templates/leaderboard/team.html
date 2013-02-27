@@ -27,7 +27,7 @@
 	      // Instantiate and draw our chart, passing in some options.
 	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
 	      
-	      var options = {'title':'Team Leaderboard',
+	      var options = {'title':'Team Points',
                        'width':1000,
                        'height':600,
                        'legend': {'position': 'none'},
@@ -42,8 +42,7 @@
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Freezing Saddles Leaderboard</h1>
-  	<p>View the official leaderboard here: <a href="http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/">http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/</a></p>
+  	<h1>Freezing Saddles (Team) Leaderboard</h1>
   	
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_leaderboard"></div>

@@ -15,7 +15,7 @@ from dateutil import rrule, parser
 
 from bafs import app, db
 from bafs.utils import gviz_api
-from bafs.model import Team
+from bafs.model import Team, RideEffort
 
 blueprint = Blueprint('chartdata', __name__)
 
@@ -161,6 +161,34 @@ def indiv_moving_time():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+@blueprint.route("/team_moving_time")
+def team_moving_time():
+    
+    q = text ("""
+                select T.id, T.name as team_name, sum(R.moving_time) as total_moving_time
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                join teams T on T.id = A.team_id
+                group by T.id, T.name
+                order by total_moving_time desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
+            {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
+                 {'v': res['total_moving_time'], 'f': str(timedelta(seconds=int(res['total_moving_time'])))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
 @blueprint.route("/indiv_number_sleaze_days")
 def indiv_number_sleaze_days():
     
@@ -189,6 +217,99 @@ def indiv_number_sleaze_days():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+@blueprint.route("/team_number_sleaze_days")
+def team_number_sleaze_days():
+    
+    q = text ("""
+                select T.id, T.name as team_name, count(*) as num_sleaze_days
+                from daily_scores D
+                join athletes A on A.id = D.athlete_id
+                join teams T on T.id = A.team_id
+                where D.points > 10 and D.points < 12
+                group by T.id, T.name
+                order by num_sleaze_days desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
+            {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
+                 {'v': res['num_sleaze_days'], 'f': str(int(res['num_sleaze_days']))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_segment/<int:segment_id>")
+def indiv_segment(segment_id):
+    
+    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    
+    q = text ("""
+                select A.id, A.name as athlete_name, count(E.id) as segment_rides
+                from athletes A
+                join rides R on R.athlete_id = A.id
+                join ride_efforts E on E.ride_id = R.id
+                where E.segment_id = :segment_id
+                group by A.id, A.name
+                order by segment_rides desc
+                ;
+            """)
+    
+    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['segment_rides'], 'f': str(int(res['segment_rides']))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/team_segment/<int:segment_id>")
+def team_segment(segment_id):
+    
+    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    
+    q = text ("""
+                select T.id, T.name as team_name, count(E.id) as segment_rides
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                join teams T on T.id = A.team_id
+                join ride_efforts E on E.ride_id = R.id
+                where E.segment_id = :segment_id
+                group by T.id, T.name
+                order by segment_rides desc
+                ;
+            """)
+    
+    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
+            {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
+                 {'v': res['segment_rides'], 'f': str(int(res['segment_rides']))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+
 @blueprint.route("/indiv_avg_speed")
 def indiv_avg_speed():
     
@@ -211,6 +332,34 @@ def indiv_avg_speed():
     for i,res in enumerate(indiv_q):
         place = i+1
         cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/team_avg_speed")
+def team_avg_speed():
+    
+    q = text ("""
+                select T.id, T.name as team_name, AVG(R.average_speed) as avg_speed
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                join teams T on T.id = A.team_id
+                group by T.id, T.name
+                order by avg_speed desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
+            {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
                  {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])}]
         rows.append({'c': cells})
         
