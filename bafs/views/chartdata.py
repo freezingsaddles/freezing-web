@@ -67,7 +67,7 @@ def indiv_leaderboard_data():
     indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
-            {'id': 'score', 'label': 'Elevation', 'type': 'number'},
+            {'id': 'score', 'label': 'Score', 'type': 'number'},
             # {"id":"","label":"","pattern":"","type":"number","p":{"role":"interval"}},
             ]
     
