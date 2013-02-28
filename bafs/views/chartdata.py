@@ -459,6 +459,55 @@ def team_cumul_mileage():
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+@blueprint.route("/indiv_elev_dist")
+def indiv_elev_dist():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name,
+                T.name as team_name,
+                SUM(R.elevation_gain) as total_elevation_gain,
+                SUM(R.distance) as total_distance,
+                AVG(R.average_speed) as avg_speed
+                from rides R
+                join athletes A on A.id = R.athlete_id
+                left join teams T on T.id = A.team_id
+                group by R.athlete_id, athlete_name, team_name
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+
+    cols = [{'id': 'ID', 'label': 'ID', 'type': 'string'},
+            {'id': 'score', 'label': 'Distance', 'type': 'number'},
+            {'id': 'score', 'label': 'Elevation', 'type': 'number'},
+            {'id': 'ID', 'label': 'Team', 'type': 'string'},
+            {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        name_parts = res['athlete_name'].split(' ')
+        if len(name_parts) > 1: 
+            short_name = ' '.join([name_parts[0], name_parts[-1]])
+        else:
+            short_name = res['athlete_name']
+        
+        if res['team_name'] is None:
+            team_name = '(No team)'
+        else:
+            team_name = res['team_name']
+            
+        cells = [{'v': res['athlete_name'], 'f': short_name },
+                 {'v': res['total_distance'], 'f': '{0:.2f}'.format(res['total_distance']) },
+                 {'v': res['total_elevation_gain'], 'f': '{0:.2f}'.format(res['total_elevation_gain']) },
+                 {'v': team_name, 'f': team_name },
+                 {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])},
+                 ]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
 def gviz_api_jsonify(*args, **kwargs):
     """
     Override default Flask jsonify to handle JSON for Google Chart API.

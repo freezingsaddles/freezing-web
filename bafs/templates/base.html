@@ -30,10 +30,11 @@
 			</ul>
 			{% endif %}
 		</li>
-		<li><a href="/trends" class="{% if request.path.startswith('/trends') %}current{% endif %}">Trends</a>
-			{% if request.path.startswith('/trends') %}
+		<li><a href="/explore" class="{% if request.path.startswith('/explore') %}current{% endif %}">Data Exploration</a>
+			{% if request.path.startswith('/explore') %}
 			<ul id="secondary">
-				<li><a href="/trends/team_cumul">Team Cumulative</a></li>
+				<li><a href="/explore/team_cumul">Team Cumulative</a></li>
+				<li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
 			</ul>
 			{% endif %}
 		</li>

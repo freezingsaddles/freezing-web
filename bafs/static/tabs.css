@@ -32,7 +32,7 @@
 }
 
 #header ul#primary a,#header ul#primary span,#header ul#primary a.current {
-	width: 8em;
+	width: 10em;
 	display: block;
 	float: left;
 	padding: 4px 0;

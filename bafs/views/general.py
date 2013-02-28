@@ -39,14 +39,19 @@ def team_leaderboard_various():
 def indiv_leaderboard():
     return render_template('leaderboard/indiv.html')
 
+
 @blueprint.route("/leaderboard/individual_various")
 def indiv_leaderboard_various():
     return render_template('leaderboard/indiv_various.html')
 
-@blueprint.route("/trends")
+@blueprint.route("/explore")
 def trends():
     return redirect(url_for('.team_cumul_trend'))
 
-@blueprint.route("/trends/team_cumul")
+@blueprint.route("/explore/team_cumul")
 def team_cumul_trend():
-    return render_template('trends/team_cumul.html')
+    return render_template('explore/team_cumul.html')
+
+@blueprint.route("/explore/indiv_elev_dist")
+def indiv_elev_dist():
+    return render_template('explore/indiv_elev_dist.html')

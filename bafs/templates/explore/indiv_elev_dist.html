@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block head %}
+    <script type="text/javascript">
+    
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      
+      function drawChart() {
+	      
+	      var jsonData = $.ajax({
+	          url: "/chartdata/indiv_elev_dist",
+	          dataType: "json",
+	          async: false // ... really?
+	          }).responseText;
+	          
+	      // Create our data table out of JSON data loaded from server.
+	      var data = new google.visualization.DataTable(jsonData);
+		
+	      // Instantiate and draw our chart, passing in some options.
+	      var chart = new google.visualization.BubbleChart(document.getElementById('chart_div'));
+		/*	      
+	      var options = {'title':'Team Cumulative Points',
+                       'width':1000,
+                       'height':800};
+          */
+          var options = {
+	          title: 'Correlation between distance, elevation, and average speed.',
+	          hAxis: {title: 'Distance'},
+	          vAxis: {title: 'Elevation'},
+	          height: 800,
+	          width: 1200,
+	          legend: {position: 'none'},
+	          bubble: {textStyle: {fontSize: 11}},
+	          chartArea :{left:200, top:50, width: 1000, height: 700},
+          };
+
+        
+        
+	      chart.draw(data, options);
+	      
+	  }
+	  
+	  </script>
+{% endblock %}
+	  
+{% block content %}
+  	<h1>Individual Distance, Elevation, Speed</h1>
+  	<p>Note, riders that are tracking rides manually in Strava will be misrepresented here as having 0 elevation.</p>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart_div"></div>
+    
+{% endblock %}
