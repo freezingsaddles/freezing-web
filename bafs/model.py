@@ -75,6 +75,7 @@ class Ride(StravaEntity):
     efforts_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
+    weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
@@ -82,8 +83,8 @@ class RideGeo(db.Model):
     __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM for spatial indexes
     
     ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
-    start_geo = ga.GeometryColumn(ga.Point(2))
-    end_geo = ga.GeometryColumn(ga.Point(2))
+    start_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
+    end_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
 
     def __repr__(self):
         return '<{0} ride_id={1} start={2}>'.format(self.__class__.__name__,
@@ -101,6 +102,20 @@ class RideEffort(db.Model):
     def __repr__(self):
         return '<{0} id={1} segment_name={1!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
 
+class RideWeather(db.Model):
+    __tablename__ = 'ride_weather'
+    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
+    
+    daily_tmax = sa.Column(sa.Integer, nullable=True)
+    daily_tmin = sa.Column(sa.Integer, nullable=True)
+    daily_prcp = sa.Column(sa.Float, nullable=True)
+    daily_snow = sa.Column(sa.Float, nullable=True) # In tenthos of mm?
+    
+    sunrise = sa.Column(sa.Time, nullable=True)
+    sunset = sa.Column(sa.Time, nullable=True)
+    
+    def __repr__(self):
+        return '<{0} ride_id={1}>'.format(self.__class__.__name__, self.id, self.segment_name)
 
 # Setup Geometry columns    
 ga.GeometryDDL(Ride.__table__)

@@ -133,7 +133,7 @@ def write_ride(ride_id, team=None):
     db.session.merge(athlete) # @UndefinedVariable
     db.session.commit() # @UndefinedVariable
     
-    if start_geo is not None and end_geo is not None:
+    if start_geo is not None or end_geo is not None:
         ride_geo = RideGeo()
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo

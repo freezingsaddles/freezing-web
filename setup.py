@@ -52,7 +52,8 @@ setup(name='bafs',
                         'python-dateutil',
                         'beautifulsoup4',
                         'Flask',
-                        'Flask-SQLAlchemy'],
+                        'Flask-SQLAlchemy',
+                        'pytz'],
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: Apache Software License",
@@ -65,7 +66,7 @@ setup(name='bafs',
         [console_scripts]
         bafs-init-db = bafs.scripts:init_db
         bafs-sync = bafs.scripts:sync_rides
-        bafs-sync-efforts = bafs.scripts:sync_ride_efforts
+        bafs-sync-weather = bafs.scripts:sync_ride_weather
         bafs-server = bafs.runserver:main
         """,
      )
