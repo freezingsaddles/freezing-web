@@ -195,16 +195,14 @@ def sync_ride_weather():
     
     sess = db.session
     
-    if options.start_date:
-        start = dateutil_parser.parse(options.start_date)
-        logger.info("Fetching weather for rides newer than {0}".format(start))
-    else:
-        start=None
-        logger.info("Fetching weather for all rides")
-    
     if options.clear:
         logger.info("Clearing all weather data!")
         sess.query(model.RideWeather).delete()
+    
+    if options.limit:
+        logger.info("Fetching weather for first {0} rides".format(options.limit))
+    else:
+        logger.info("Fetching weather for all rides")
     
     # Find rides that have geo, but no weather 
     sess.query(model.RideWeather)
@@ -282,13 +280,8 @@ def sync_ride_weather():
             ride.weather_fetched = True
             ride.timezone = hist.date.tzinfo.zone 
             
-            db.session.add(rw) # @UndefinedVariable
-            db.session.flush() # @UndefinedVariable
-            
-            #for o in hist.observations:
-            #    if o.raw['windchilli'] != "0" and not o.raw['windchilli'].startswith("-99"):
-            #        pprint(o.raw)
-            #        pprint(o.windchill)
+            sess.add(rw)
+            sess.flush()
         
             if lat and lon:
                 try:
@@ -302,4 +295,4 @@ def sync_ride_weather():
             logger.exception("Error getting weather data for ride: {0}".format(ride))
             # But continue on.
             
-    db.session.commit() # 
+    sess.commit() 
