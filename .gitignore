@@ -3,3 +3,5 @@
 *.egg-info
 env
 local_settings.py
+wunderground-cache
+ncdc-cache

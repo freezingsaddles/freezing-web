@@ -2,16 +2,18 @@ import optparse
 import logging
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+from pprint import pprint
+
 from dateutil import parser as dateutil_parser
 from sqlalchemy import not_, and_, text
+from pytz import timezone
 
 from bafs import app, db
 from bafs import data, model
-from wx.ncdc import api as ncdc_api
-from wx.ncdc import model as ncdc_model
-from wx.tzwhere import tzwhere
-from wx.sunrise import Sun
+from weather.wunder import api as wu_api
+from weather.wunder import model as wu_model
+from weather.sunrise import Sun
 
 def init_db():
     """
@@ -164,13 +166,14 @@ def sync_ride_weather():
     """
     parser = optparse.OptionParser()
     
-    parser.add_option("--start-date", dest="start_date",
-                      help="Date to begin fetching (default is to fetch all since configured start date)",
-                      default=app.config['BAFS_START_DATE'],
-                      metavar="YYYY-MM-DD")
-    
     parser.add_option("--clear", action="store_true", dest="clear", default=False, 
                       help="Whether to clear data before fetching.")
+    
+    parser.add_option("--cache-only", action="store_true", dest="cache_only", default=False, 
+                      help="Whether to only use existing cache.")
+    
+    parser.add_option("--limit", type="int", dest="limit", default=0, 
+                      help="Limit how many rides are processed (e.g. during development)")
     
     parser.add_option("--debug", action="store_true", dest="debug", default=False, 
                       help="Whether to log at debug level.")
@@ -200,14 +203,8 @@ def sync_ride_weather():
         logger.info("Fetching weather for all rides")
     
     if options.clear:
-        #logger.info("Clearing all data!")
+        logger.info("Clearing all weather data!")
         sess.query(model.RideWeather).delete()
-        #sess.query(model.RideGeo).delete()
-        #sess.query(model.Ride).delete()
-        #sess.query(model.Athlete).delete()
-        #sess.query(model.Team).delete()
-        #logger.info("Clear is currently not enabled due to the amount of time to reconstruct from scratch.")
-    
     
     # Find rides that have geo, but no weather 
     sess.query(model.RideWeather)
@@ -218,72 +215,91 @@ def sync_ride_weather():
         where W.ride_id is null;
         """)
     
-    api_key = app.config['NCDC_API_KEY']
-    c = ncdc_api.Client(token=api_key, cache_dir=app.config['NCDC_CACHE_DIR'])
+    c = wu_api.Client(api_key=app.config['WUNDERGROUND_API_KEY'],
+                      cache_dir=app.config['WUNDERGROUND_CACHE_DIR'],
+                      pause=7.0, # Max requests 10/minute for developer license
+                      cache_only=options.cache_only)
     
     rx = re.compile('^POINT\((.+)\)$')
     
     rows = db.engine.execute(q).fetchall() # @UndefinedVariable
+    num_rides = len(rows)
+
     for i,r in enumerate(rows):
+    
+        if options.limit and i > options.limit:
+            logging.info("Limit ({0}) reached".format(options.limit))
+            break
+        
         ride =  db.session.query(model.Ride).get(r['id']) # @UndefinedVariable
+        logger.info("Processing ride: {0} ({1}/{2})".format(ride.id, i, num_rides))
         
-        start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt) # @UndefinedVariable
-        
-        (lat,lon) = rx.match(start_geo_wkt).group(1).split(' ')
-        
-        search_results = c.locationsearch(lat=lat, lon=lon, radius=80)
-        desired_data = ncdc_model.DesiredObservations(['TMIN', 'TMAX', 'PRCP', 'SNOW'])
-        desired_date = ride.start_date
-        
-        for r in search_results.results:
-            still_needed = desired_data.observations_needed
-            if not still_needed:
-                break
-            else:
-                logger.debug("Still need: {0!r}".format(still_needed))
+        try:
+            
+            start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt) # @UndefinedVariable
+            
+            (lat,lon) = rx.match(start_geo_wkt).group(1).split(' ')
+            hist = c.history(ride.start_date, us_city=ride.location, lat=lat, lon=lon)
+                        
+            ride_start = ride.start_date.replace(tzinfo=hist.date.tzinfo)
+            ride_end = ride_start + timedelta(seconds=ride.elapsed_time)
+            
+            # NOTE: if elapsed_time is significantly more than moving_time then we need to assume
+            # that the rider wasn't actually riding for this entire time (and maybe just grab temps closest to start of
+            # ride as opposed to averaging observations during ride.
+            
+            ride_observations = hist.find_observations_within(ride_start, ride_end)
+            start_obs = hist.find_nearest_observation(ride_start)
+            end_obs = hist.find_nearest_observation(ride_end)
+            
+            def avg(l):
+                no_nulls = [e for e in l if e is not None]
+                if not no_nulls:
+                    return None
+                return sum(no_nulls) / len(no_nulls) * 1.0 # to force float
+            
+            rw = model.RideWeather()
+            rw.ride_id = ride.id
+            rw.ride_temp_start = start_obs.temp
+            rw.ride_temp_end = end_obs.temp
+            if len(ride_observations) <= 2:
+                # bookend the observations with the start/end observations
+                ride_observations = [start_obs] + ride_observations + [end_obs]
                 
-            if r.type == 'station':
-                if desired_date <= r.maxDate and desired_date >= r.minDate:
-                    logger.debug("Getting station data for {0!r}".format(r))
-                    coll = c.station_data(station=r.id, date=desired_date)
-                    desired_data.fill(coll)
-                else:
-                    logger.debug("Skipping station {0!r} because date doesn't match.".format(r))
-        else:
-            if desired_data.attributes_wanted == desired_data.observations_needed:
-                logger.error("Unable to find weather for ride: {0!r}".format(ride,))
-            else:
-                logger.info("Exhausted search without filling observations.  (missing = %r)" % (desired_data.observations_needed,))
+            rw.ride_temp_avg = avg([o.temp for o in ride_observations])  
+            
+            rw.ride_windchill_start = start_obs.windchill
+            rw.ride_windchill_end = end_obs.windchill
+            rw.ride_windchill_avg = avg([o.windchill for o in ride_observations])
+            
+            rw.ride_precip = sum([o.precip for o in ride_observations if o.precip is not None])
+            rw.ride_rain = any([o.rain for o in ride_observations])
+            rw.ride_snow = any([o.snow for o in ride_observations])
+            
+            rw.day_temp_min = hist.min_temp
+            rw.day_temp_max = hist.max_temp
+            
+            ride.weather_fetched = True
+            ride.timezone = hist.date.tzinfo.zone 
+            
+            db.session.add(rw) # @UndefinedVariable
+            db.session.flush() # @UndefinedVariable
+            
+            #for o in hist.observations:
+            #    if o.raw['windchilli'] != "0" and not o.raw['windchilli'].startswith("-99"):
+            #        pprint(o.raw)
+            #        pprint(o.windchill)
         
-        def _c_to_f(ncdc_temp):
-            if ncdc_temp is None:
-                return None
-            celcius = ncdc_temp / 10.0
-            return  int(9.0/5 * (celcius + 32))
-        
-        def _tenthmm_to_in(tenthmm):
-            if tenthmm is None: return None
-            mm = tenthmm/10.0
-            return mm * 0.0393701
-        
-        def _mm_to_in(mm):
-            if mm is None: return None
-            return mm * 0.0393701
-        
-        rw = model.RideWeather()
-        rw.ride_id = ride.id
-        prcp = desired_data.observations.get('PRCP')
-        snow = desired_data.observations.get('SNOW')
-        tmin = desired_data.observations.get('TMIN')
-        tmax = desired_data.observations.get('TMAX')
-        
-        convert = lambda observation, convert_f: convert_f(observation.value) if (observation and observation.value is not None) else None
-        
-        rw.daily_prcp = convert(prcp, _tenthmm_to_in)
-        rw.daily_snow = convert(snow, _mm_to_in)
-        rw.daily_tmin = convert(tmin, _c_to_f)
-        rw.daily_tmax = convert(tmax, _c_to_f)
-        
-        db.session.add(rw) #  @UndefinedVariable
-        
-        db.session.commit()
+            if lat and lon:
+                try:
+                    sun = Sun(lat=lat, lon=lon)
+                    rw.sunrise = sun.sunrise(ride_start)
+                    rw.sunset = sun.sunset(ride_start)
+                except:
+                    logger.exception("Error getting sunrise/sunset for ride {0}".format(ride))
+                    # But don't throw away everything.
+        except:
+            logger.exception("Error getting weather data for ride: {0}".format(ride))
+            # But continue on.
+            
+    db.session.commit() # 

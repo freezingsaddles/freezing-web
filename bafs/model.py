@@ -73,9 +73,12 @@ class Ride(StravaEntity):
     trainer = sa.Column(sa.Boolean, nullable=True)
     
     efforts_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    weather_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    timezone = sa.Column(sa.String(255), nullable=True)
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
+    
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
@@ -106,10 +109,20 @@ class RideWeather(db.Model):
     __tablename__ = 'ride_weather'
     ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
     
-    daily_tmax = sa.Column(sa.Integer, nullable=True)
-    daily_tmin = sa.Column(sa.Integer, nullable=True)
-    daily_prcp = sa.Column(sa.Float, nullable=True)
-    daily_snow = sa.Column(sa.Float, nullable=True) # In tenthos of mm?
+    ride_temp_start = sa.Column(sa.Float, nullable=True)
+    ride_temp_end = sa.Column(sa.Float, nullable=True)
+    ride_temp_avg = sa.Column(sa.Float, nullable=True)
+    
+    ride_windchill_start = sa.Column(sa.Float, nullable=True)
+    ride_windchill_end = sa.Column(sa.Float, nullable=True)
+    ride_windchill_avg = sa.Column(sa.Float, nullable=True)
+    
+    ride_precip = sa.Column(sa.Float, nullable=True) # In inches
+    ride_rain = sa.Column(sa.Boolean, default=False, nullable=False)
+    ride_snow = sa.Column(sa.Boolean, default=False, nullable=False)
+    
+    day_temp_min = sa.Column(sa.Float, nullable=True)
+    day_temp_max = sa.Column(sa.Float, nullable=True)
     
     sunrise = sa.Column(sa.Time, nullable=True)
     sunset = sa.Column(sa.Time, nullable=True)
