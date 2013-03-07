@@ -1,7 +1,7 @@
 #main {
 	border: 1px solid #666;
 	clear: both;
-	background: #FFF3B3;
+	background: #ddd;
 	padding-top: 2em;
 }
 
@@ -47,13 +47,13 @@
 #header ul#primary span,#header ul#primary a.current,#header ul#primary a.current:hover {
 	border: 1px solid #666;
 	border-bottom: none;
-	background: #FFF3B3;
+	background: #ddd;
 	padding-bottom: 6px;
 	margin-top: 0;
 }
 
 #header ul#primary a {
-	background: #FFFAE1;
+	background: #eee;
 	border: 1px solid #AAA;
 	border-bottom: none;
 }
@@ -61,7 +61,7 @@
 #header ul#primary a:hover {
 	margin-top: 0;
 	border-color: #666;
-	background: #FFF7CD;
+	background: #eee;
 	padding-bottom: 5px;
 }
 

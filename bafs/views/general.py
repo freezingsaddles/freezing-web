@@ -55,3 +55,7 @@ def team_cumul_trend():
 @blueprint.route("/explore/indiv_elev_dist")
 def indiv_elev_dist():
     return render_template('explore/indiv_elev_dist.html')
+
+@blueprint.route("/explore/miles_by_lowtemp")
+def miles_by_lowtemp():
+    return render_template('explore/miles_by_lowtemp.html')

@@ -210,7 +210,10 @@ def sync_ride_weather():
         select R.id from rides R
         join ride_geo G on G.ride_id = R.id
         left join ride_weather W on W.ride_id = R.id
-        where W.ride_id is null;
+        where W.ride_id is null
+        and date(R.start_date) < CURDATE()
+        and time(R.start_date) != '00:00:00' -- Exclude bad entries. 
+        ;
         """)
     
     c = wu_api.Client(api_key=app.config['WUNDERGROUND_API_KEY'],
@@ -229,7 +232,7 @@ def sync_ride_weather():
             logging.info("Limit ({0}) reached".format(options.limit))
             break
         
-        ride =  db.session.query(model.Ride).get(r['id']) # @UndefinedVariable
+        ride =  sess.query(model.Ride).get(r['id'])
         logger.info("Processing ride: {0} ({1}/{2})".format(ride.id, i, num_rides))
         
         try:
@@ -261,7 +264,7 @@ def sync_ride_weather():
             rw.ride_temp_start = start_obs.temp
             rw.ride_temp_end = end_obs.temp
             if len(ride_observations) <= 2:
-                # bookend the observations with the start/end observations
+                # if we dont' have many observations, bookend the list with the start/end observations
                 ride_observations = [start_obs] + ride_observations + [end_obs]
                 
             rw.ride_temp_avg = avg([o.temp for o in ride_observations])  
@@ -290,9 +293,9 @@ def sync_ride_weather():
                     rw.sunset = sun.sunset(ride_start)
                 except:
                     logger.exception("Error getting sunrise/sunset for ride {0}".format(ride))
-                    # But don't throw away everything.
+                    # But soldier on ...
         except:
             logger.exception("Error getting weather data for ride: {0}".format(ride))
-            # But continue on.
+            # But soldier on ...
             
     sess.commit() 

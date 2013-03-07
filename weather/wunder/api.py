@@ -106,15 +106,15 @@ class Client(object):
         url = urlparse.urlunsplit((self.base_url.scheme, self.base_url.netloc, path, self.base_url.query, self.base_url.fragment))
         
         self.log.debug("GET {0!r} with params {1!r}".format(url, params))
-        raw = requests.get(url, params=params)
-        raw.raise_for_status()
-        self._handle_protocol_error(raw.json())
         
-        if self.pause:
-            time.sleep(self.pause)
-        
-        return raw
-
+        try:
+            raw = requests.get(url, params=params)
+            raw.raise_for_status()
+            self._handle_protocol_error(raw.json())
+            return raw
+        finally:
+            if self.pause: time.sleep(self.pause)
+                
     def history(self, date, lat=None, lon=None, us_city=None):
         
         latlon_location_param = None

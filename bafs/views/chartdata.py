@@ -364,6 +364,94 @@ def team_avg_speed():
         rows.append({'c': cells})
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_freezing")
+def indiv_freezing():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name, sum(R.distance) as distance
+                from rides R
+                join ride_weather W on W.ride_id = R.id
+                join athletes A on A.id = R.athlete_id
+                where W.ride_temp_avg < 32
+                group by R.athlete_id, athlete_name
+                order by distance desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Miles Below Freezing', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['distance'], 'f': "{0:.2f}".format(res['distance'])}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_before_sunrise")
+def indiv_before_sunrise():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name,
+                sum(time_to_sec(D.before_sunrise)) as dark
+                from ride_daylight D
+                join rides R on R.id = D.ride_id
+                join athletes A on A.id = R.athlete_id
+                group by R.athlete_id, athlete_name
+                order by dark desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Before Sunrise', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['dark'], 'f': str(timedelta(seconds=int(res['dark'])))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/indiv_after_sunset")
+def indiv_after_sunset():
+    
+    q = text ("""
+                select R.athlete_id, A.name as athlete_name,
+                sum(time_to_sec(D.after_sunset)) as dark
+                from ride_daylight D
+                join rides R on R.id = D.ride_id
+                join athletes A on A.id = R.athlete_id
+                group by R.athlete_id, athlete_name
+                order by dark desc
+                ;
+            """)
+    
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'After Sunset', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
+                 {'v': res['dark'], 'f': str(timedelta(seconds=int(res['dark'])))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
         
 @blueprint.route("/team_cumul_points")
 def team_cumul_points():
@@ -506,6 +594,36 @@ def indiv_elev_dist():
                  ]
         rows.append({'c': cells})
         
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/miles_by_lowtemp")
+def miles_by_lowtemp():
+    """
+    """
+    q = text("""
+            select date(R.start_date) as start_date, sum(R.distance) as dist, avg(W.day_temp_min) as min_temp
+            from rides R
+            left join ride_weather W on W.ride_id = R.id
+            group by date(R.start_date)
+            order by date(R.start_date)
+            """)
+            
+    cols = [{'id': 'date', 'label': 'Date', 'type': 'date'},
+            {'id': 'distance', 'label': 'Distance', 'type': 'number'},
+            {'id': 'day_temp_min', 'label': 'Low Temp', 'type': 'number'},
+            ]
+    
+    rows = []
+    for res in db.session.execute(q): # @UndefinedVariable
+        if res['min_temp'] is None:
+            # This probably only happens for *today* since that isn't looked up yet.
+            continue
+        cells = [{'v': res['start_date'] },
+                 {'v': res['dist'], 'f': '{0:.2f}'.format(res['dist'])},
+                 {'v': res['min_temp'], 'f': '{0:.1f}'.format(res['min_temp'])},
+                 ]
+        rows.append({'c': cells})
+
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
 def gviz_api_jsonify(*args, **kwargs):

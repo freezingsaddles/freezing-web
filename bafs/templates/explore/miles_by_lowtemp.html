@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block head %}
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawPointsChart);
+      //google.setOnLoadCallback(drawMileageChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      
+      function drawPointsChart() {
+	      
+	      var jsonData = $.ajax({
+	          url: "/chartdata/miles_by_lowtemp",
+	          dataType: "json",
+	          async: false // ... really?
+	          }).responseText;
+	          
+	      // Create our data table out of JSON data loaded from server.
+	      var data = new google.visualization.DataTable(jsonData);
+		
+	      // Instantiate and draw our chart, passing in some options.
+	      var chart = new google.visualization.LineChart(document.getElementById('chart'));
+	      
+	      var options = {'title':'Miles by Avg Low Temperature',
+                       'width':1000,
+                       'height':800};
+                       
+	      chart.draw(data, options);
+	      
+	  }
+	  
+	  </script>
+{% endblock %}
+	  
+{% block content %}
+  	<h1>Miles by Low Temp</h1>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart"></div>
+    
+{% endblock %}

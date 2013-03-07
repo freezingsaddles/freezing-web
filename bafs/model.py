@@ -73,7 +73,7 @@ class Ride(StravaEntity):
     trainer = sa.Column(sa.Boolean, nullable=True)
     
     efforts_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
-    weather_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    
     timezone = sa.Column(sa.String(255), nullable=True)
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
@@ -153,14 +153,42 @@ _v_daily_scores_create = sa.DDL("""
     ;
 """)
 
-
-
 sa.event.listen(Ride.__table__, 'after_create', _v_daily_scores_create)
 
+_v_buid_ride_daylight = sa.DDL("""
+    create view _build_ride_daylight as
+    select R.id as ride_id, date(R.start_date) as ride_date,
+    sec_to_time(R.elapsed_time) as elapsed,
+    sec_to_time(R.moving_time) as moving,
+    TIME(R.start_date) as start_time,
+    TIME(date_add(R.start_date, interval R.elapsed_time second)) as end_time,
+    W.sunrise, W.sunset
+    from rides R
+    join ride_weather W on W.ride_id = R.id
+    ;
+    """)
+
+#sa.event.listen(RideWeather.__table__, 'after_create', _v_buid_ride_daylight)
+
+_v_ride_daylight = sa.DDL("""
+    create view ride_daylight as
+    select ride_id, ride_date, start_time, end_time, sunrise, sunset, moving,
+    IF(start_time < sunrise, LEAST(TIMEDIFF(sunrise, start_time), moving), sec_to_time(0)) as before_sunrise,
+    IF(end_time > sunset, LEAST(TIMEDIFF(end_time, sunset), moving), sec_to_time(0)) as after_sunset
+    from _build_ride_daylight
+    ;
+    """)
+
+#sa.event.listen(RideWeather.__table__, 'after_create', _v_ride_daylight)
 
 def rebuild_views():
     # This import is kinda kludgy (and would be circular outside of this function) but our model engine is tied up with
     # the Flask framework (for now)
     from bafs import db
-    db.session.execute(_v_daily_scores_create) # @UndefinedVariable
+    sess = db.session # @UndefinedVariable
+    sess.execute(_v_daily_scores_create)
+    sess.execute(sa.DDL("drop view if exists _build_ride_daylight;"))
+    sess.execute(_v_buid_ride_daylight)
+    sess.execute(sa.DDL("drop view if exists ride_daylight;"))
+    sess.execute(_v_ride_daylight)
     
