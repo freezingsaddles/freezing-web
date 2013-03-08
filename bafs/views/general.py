@@ -56,6 +56,6 @@ def team_cumul_trend():
 def indiv_elev_dist():
     return render_template('explore/indiv_elev_dist.html')
 
-@blueprint.route("/explore/miles_by_lowtemp")
-def miles_by_lowtemp():
-    return render_template('explore/miles_by_lowtemp.html')
+@blueprint.route("/explore/riders_by_lowtemp")
+def riders_by_lowtemp():
+    return render_template('explore/riders_by_lowtemp.html')

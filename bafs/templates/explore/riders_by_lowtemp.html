@@ -16,7 +16,7 @@
       function drawPointsChart() {
 	      
 	      var jsonData = $.ajax({
-	          url: "/chartdata/miles_by_lowtemp",
+	          url: "/chartdata/riders_by_lowtemp",
 	          dataType: "json",
 	          async: false // ... really?
 	          }).responseText;
@@ -25,16 +25,20 @@
 	      var data = new google.visualization.DataTable(jsonData);
 		
 	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.LineChart(document.getElementById('chart'));
+	      var chart = new google.visualization.ComboChart(document.getElementById('chart'));
 	      
-	      var options = {'title':'Miles by Avg Low Temperature',
-                       'width':1000,
-                       'height':800};
+	      var options = {title:'Riders by Avg Low Temp',
+                         width: 1000,
+                         height: 800,
+                         vAxis: {title: "Num Participating Riders / Avg Low Temps (F)"},
+          			     hAxis: {title: "Date"},
+          			     seriesType: "bars",
+          			     series: {1: {type: "line"}}
+          			     };
                        
 	      chart.draw(data, options);
 	      
 	  }
-	  
 	  </script>
 {% endblock %}
 	  

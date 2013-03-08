@@ -596,31 +596,32 @@ def indiv_elev_dist():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/miles_by_lowtemp")
-def miles_by_lowtemp():
+@blueprint.route("/riders_by_lowtemp")
+def riders_by_lowtemp():
     """
     """
     q = text("""
-            select date(R.start_date) as start_date, sum(R.distance) as dist, avg(W.day_temp_min) as min_temp
-            from rides R
-            left join ride_weather W on W.ride_id = R.id
-            group by date(R.start_date)
-            order by date(R.start_date)
+            select date(start_date) as start_date,
+            avg(W.day_temp_min) as low_temp,
+            count(distinct R.athlete_id) as riders 
+            from rides R join ride_weather W on W.ride_id = R.id
+            group by date(start_date)
+            order by date(start_date);
             """)
             
     cols = [{'id': 'date', 'label': 'Date', 'type': 'date'},
-            {'id': 'distance', 'label': 'Distance', 'type': 'number'},
+            {'id': 'riders', 'label': 'Riders', 'type': 'number'},
             {'id': 'day_temp_min', 'label': 'Low Temp', 'type': 'number'},
             ]
     
     rows = []
     for res in db.session.execute(q): # @UndefinedVariable
-        if res['min_temp'] is None:
+        if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
         cells = [{'v': res['start_date'] },
-                 {'v': res['dist'], 'f': '{0:.2f}'.format(res['dist'])},
-                 {'v': res['min_temp'], 'f': '{0:.1f}'.format(res['min_temp'])},
+                 {'v': res['riders'], 'f': '{0}'.format(res['riders'])},
+                 {'v': res['low_temp'], 'f': '{0:.1f}F'.format(res['low_temp'])},
                  ]
         rows.append({'c': cells})
 
