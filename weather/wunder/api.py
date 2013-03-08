@@ -14,16 +14,6 @@ from datetime import datetime
 
 from weather.wunder.model import HistoryDay
 
-"""
-Here's the documentation:
-
-Here is a specific station: http://www.ncdc.noaa.gov/cdo-services/services/datasets/GHCND/stations/GHCND:USC00327027/data?year=2010&month=1&token=FUYmBQlVXFZkbjrcUJudVPfjDWNLkJHu
-
-Location search:
-http://www.ncdc.noaa.gov/cdo-web/webservices/cdows_locationsearch
-http://www.ncdc.noaa.gov/cdo-services/services/datasets/GHCND/locationsearch.xml?latitude=39.45536859&longitude=-77.4142634&radius=25&token=FUYmBQlVXFZkbjrcUJudVPfjDWNLkJHu
-"""
-
 class Fault(Exception):
     """
     Container for exceptions raised by the remote server.
@@ -151,7 +141,7 @@ class Client(object):
                         try:
                             res = self.get(date.strftime('history_%Y%m%d'), 'q', lp)
                         except Fault:
-                            self.log.exception("Server fault trying to fetch weather for {0},{1}".format(lp, date))
+                            self.log.info("Server fault trying to fetch weather for {0},{1}".format(lp, date))
                             continue
                         else:
                             break
