@@ -6,7 +6,7 @@ Created on Feb 10, 2013
 import json
 import copy
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from flask import render_template, redirect, url_for, current_app, request, Blueprint
 
@@ -452,6 +452,40 @@ def indiv_after_sunset():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+@blueprint.route("/team_weekly_points")
+def team_weekly_points():
+    """
+    """
+    teams = db.session.query(Team).all() # @UndefinedVariable
+    week_q = text("""
+             select sum(DS.points) as total_score
+             from daily_scores DS 
+             join teams T on T.id = DS.team_id
+             where T.id = :team_id and week(DS.ride_date) = :week
+             ;
+             """)
+    
+    cols = [{'id': 'week', 'label': 'Week No.', 'type': 'string'}]
+    for t in teams:
+        cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
+    
+    # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
+    week_r = rrule.rrule(rrule.WEEKLY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())
+    rows = []
+    for i, dt in enumerate(week_r):
+        week_no = dt.date().isocalendar()[1]
+        # these are 1-based, whereas mysql uses 0-based
+        cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
+                 ]
+        for t in teams:
+            total_score = db.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar()
+            if total_score is None:
+                total_score = 0
+            cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
+        
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
         
 @blueprint.route("/team_cumul_points")
 def team_cumul_points():

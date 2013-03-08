@@ -52,6 +52,10 @@ def trends():
 def team_cumul_trend():
     return render_template('explore/team_cumul.html')
 
+@blueprint.route("/explore/team_weekly")
+def team_weekly_points():
+    return render_template('explore/team_weekly_points.html')
+
 @blueprint.route("/explore/indiv_elev_dist")
 def indiv_elev_dist():
     return render_template('explore/indiv_elev_dist.html')
