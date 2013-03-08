@@ -137,8 +137,8 @@ def write_ride(ride_id, team=None):
         ride_geo = RideGeo()
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo
-    else:
-        ride_geo = None
+        ride_geo.ride_id = v2data['id']
+        db.session.merge(ride_geo) # @UndefinedVariable
     
     try:    
         ride = Ride(id=v2data['id'],
@@ -153,7 +153,6 @@ def write_ride(ride_id, team=None):
                     location=v2data.get('location'),
                     commute=v1data['commute'],
                     trainer=v1data['trainer'],
-                    geo=ride_geo,
                     elevation_gain=units.meters_to_feet(v2data['elevation_gain']),
                     )
         
