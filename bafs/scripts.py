@@ -1,3 +1,4 @@
+import sys
 import optparse
 import logging
 import re
@@ -7,7 +8,7 @@ from pprint import pprint
 
 from dateutil import parser as dateutil_parser
 from sqlalchemy import not_, and_, text
-from pytz import timezone
+from pytz import timezone, utc
 
 from bafs import app, db
 from bafs import data, model
@@ -55,6 +56,9 @@ def sync_rides():
     parser.add_option("--quiet", action="store_true", dest="quiet", default=False, 
                       help="Whether to suppress non-error log output.")
     
+    parser.add_option("--force", action="store_true", dest="force", default=False, 
+                      help="Whether to force the sync (e.g. if after competition end).")
+    
     (options, args) = parser.parse_args()
     
     if options.quiet:
@@ -74,8 +78,13 @@ def sync_rides():
         logger.info("Fetching rides newer than {0}".format(start))
     else:
         start=None
-        logger.info("Fetching all rides")
+        logger.info("Fetching all rides (since competition start)")
     
+    end_date = dateutil_parser.parse(app.config['BAFS_END_DATE'])
+    if datetime.now(utc) > end_date and not options.force:
+        parser.error("Current time is after competition end date, not syncing rides. (Use --force to override.)")
+        sys.exit(1)
+        
     if options.clear:
         #logger.info("Clearing all data!")
         #sess.query(model.RideGeo).delete()
