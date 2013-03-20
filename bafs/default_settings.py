@@ -7,7 +7,7 @@ SQLALCHEMY_POOL_RECYCLE = 3600
 BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
 
 # Any additional riders that are not affiliated with teams
-BAFS_FREE_RIDERS = [75834]
+BAFS_FREE_RIDERS = []
 
 # When does the competition start?
 BAFS_START_DATE = '2013-01-01'

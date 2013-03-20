@@ -47,8 +47,8 @@ def sync_rides():
                       default=app.config['BAFS_START_DATE'],
                       metavar="YYYY-MM-DD")
     
-    parser.add_option("--clear", action="store_true", dest="clear", default=False, 
-                      help="Whether to clear data before fetching.")
+    parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False, 
+                      help="Whether to rewrite the ride data already in database.")
     
     parser.add_option("--debug", action="store_true", dest="debug", default=False, 
                       help="Whether to log at debug level.")
@@ -85,13 +85,8 @@ def sync_rides():
         parser.error("Current time is after competition end date, not syncing rides. (Use --force to override.)")
         sys.exit(1)
         
-    if options.clear:
-        #logger.info("Clearing all data!")
-        #sess.query(model.RideGeo).delete()
-        #sess.query(model.Ride).delete()
-        #sess.query(model.Athlete).delete()
-        #sess.query(model.Team).delete()
-        logger.info("Clear is currently not enabled due to the amount of time to reconstruct from scratch.")
+    if options.rewrite:
+        logger.info("Rewriting data in the database.")
         
     for club_id in app.config['BAFS_TEAMS']:
         team = model.Team(id=club_id,
@@ -100,11 +95,11 @@ def sync_rides():
         sess.commit()
         
         logger.info("Fetching rides for team: {name!r} ({id})".format(name=team.name, id=team.id))
-        _write_rides(start, team=team)
+        _write_rides(start, team=team, rewrite=options.rewrite)
         
     for athlete_id in app.config['BAFS_FREE_RIDERS']:
         logger.info("Fetching rides for athlete: {0}".format(athlete_id))
-        _write_rides(start, athlete_id=athlete_id)
+        _write_rides(start, athlete_id=athlete_id, rewrite=options.rewrite)
 
 def _write_rides(start, team=None, athlete_id=None, rewrite=False):
     
@@ -135,13 +130,19 @@ def _write_rides(start, team=None, athlete_id=None, rewrite=False):
     stored_ride_ids = set([r.id for r in db_rides])
     new_ride_ids = list(returned_ride_ids - stored_ride_ids)
     removed_ride_ids = list(stored_ride_ids - returned_ride_ids)
-    num_rides = len(new_ride_ids)
     
-    for (i, ri_entry) in enumerate([r_i for r_i in api_ride_entries if r_i.id in new_ride_ids]):
+    if rewrite:
+        num_rides = len(api_ride_entries)
+    else:
+        num_rides = len(new_ride_ids)
+    
+    # If we are "clearing" the system, then we'll just use all the returned rides as the "new" rides.
+    
+    for (i, ri_entry) in enumerate(api_ride_entries):
         logger.info("Processing ride: {0} ({1}/{2})".format(ri_entry.id, i, num_rides))
         if rewrite or not ri_entry.id in stored_ride_ids:
             ride = data.write_ride(ri_entry.id, team=team)
-            logger.debug("Wrote new ride: %r" % (ride,))
+            logger.debug("Wrote ride: %r" % (ride,))
         else:
             logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
 
