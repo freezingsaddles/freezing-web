@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Freezing Saddles Competition</h1>
-<p>
-	This is a collection of data analysis charts for the 2013 BikeArlington Freezing Saddles competition.
-</p>
-<p>
-	<strong>This is not the official leaderboard.</strong> You can view the official leaderboard here:
-	<a href="http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/">http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/</a>
-</p>
-<p>
-	But since you're here, you probably want to <a href="/leaderboard">check out the team leaderboard</a>.
-</p>
-
-<p>
+<div class="row">
+	<div class="col-md-12">
+		<div class="jumbotron">
+			<h1>Freezing Saddles Competition</h1>
+			<p>
+				This is a collection of data analysis charts for the 2014 BikeArlington Freezing Saddles competition.
+			</p>
+			<div class="pull-right">
+				<a class="btn btn-primary" href="http://www.cs.umd.edu/~ronwalf/2013/freezing-saddles/">Official Leaderboard</a>  
+				<a class="btn btn-primary" href="/leaderboard">Team Leaderboard</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<p>
 	Weather data sourced from <a href="http://wunderground.com">wunderground.com</a>.
 	<br/><a href="http://wunderground.com"><img src="/static/wunderground-sm.jpg" /></a>
 </p>
-		
+	</div>
+</div>
 {% endblock %}
