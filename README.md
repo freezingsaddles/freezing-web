@@ -48,9 +48,10 @@ You should create a database and create a user that can access the database.  So
 Configuration files are Python files (since we're using Flask framework).  There is a default one configured for the 2013 BAFS competition;
 if you want to do something else you'll need to specify an environment variable that points to your config file:
 
-	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg <bafs-script>
+	(env) shell$ cp bafs/default_settings.py ./local_settings.py
+	(env) shell$ BAFS_SETTINGS=`pwd`/local_settings.py <bafs-script>
 	
-Probably the most likely thing you'll want to configure in your settings.cfg file is the database connection information.
+Probably the most likely (only?) thing you'll want to configure in your local_settings.py file is the database connection information.
 ```python
 
 # The SQLALchemy connection URL for your MySQL database.
@@ -61,17 +62,17 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs'
 
 You need to pull data from Strava (and any other APIs) into the local database for reporting.
 
-	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg bafs-sync
+	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync
 	
 It is slow the first time because it does not parallelize the work.  By default it will only pull down rides that aren't
 already in the system.  Periodically (daily?) you probably also want to clear things out and pull down everything (e.g. in
 case someone edited a ride, etc.)
 
-	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg bafs-sync --clear
+	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync --clear
 
 ### Running the (Development) Server
 
 You can start up the Flask development server for testing using the `bafs-server` command.
 
-	(env) shell$ BAFS_SETTINGS=/path/to/settings.cfg bafs-server
+	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-server
 	
