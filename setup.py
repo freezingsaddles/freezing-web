@@ -1,6 +1,7 @@
 """
 Library for the Bike Arlington Freezing Saddles (BAFS) competition.
 """
+import sys
 import os.path
 import re
 import warnings
@@ -10,7 +11,7 @@ from setuptools import setup, find_packages
 __authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
 __copyright__ = "Copyright 2013 Hans Lellelid"
 
-version = '0.1'
+version = '0.2'
 
 news = os.path.join(os.path.dirname(__file__), 'docs', 'news.txt')
 news = open(news).read()
@@ -45,11 +46,13 @@ setup(name='bafs',
       test_suite="nose.collector",
       tests_require=['nose>=0.11', 'mock'],
       install_requires=['requests',
+                        'stravalib>=0.2',
                         'SQLAlchemy',
+                        'alembic',
                         'GeoAlchemy',
                         'MySQL-python',
                         'pytz',
-                        'python-dateutil',
+                        'python-dateutil{0}'.format('>=2.0,<3.0dev' if sys.version_info[0] == 3 else '>=1.5,<2.0dev'), # version 1.x is for python 2 and version 2.x is for python 3.
                         'beautifulsoup4',
                         'Flask',
                         'Flask-SQLAlchemy',

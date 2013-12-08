@@ -1,3 +1,4 @@
+import os
 import sys
 import optparse
 import logging
@@ -9,6 +10,9 @@ from pprint import pprint
 from dateutil import parser as dateutil_parser
 from sqlalchemy import not_, and_, text
 from pytz import timezone, utc
+
+from alembic.config import Config
+from alembic import command
 
 from bafs import app, db
 from bafs import data, model
@@ -34,6 +38,9 @@ def init_db():
     db.create_all()
     
     model.rebuild_views()
+    
+    alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))
+    command.stamp(alembic_cfg, "head")
 
     
 def sync_rides():
@@ -87,7 +94,7 @@ def sync_rides():
         
     if options.rewrite:
         logger.info("Rewriting data in the database.")
-        
+    
     for club_id in app.config['BAFS_TEAMS']:
         team = model.Team(id=club_id,
                           name=data.get_team_name(club_id))
