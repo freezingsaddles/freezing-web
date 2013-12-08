@@ -95,16 +95,16 @@ def sync_rides():
     if options.rewrite:
         logger.info("Rewriting data in the database.")
     
-    for club_id in app.config['BAFS_TEAMS']:
-        team = model.Team(id=club_id,
-                          name=data.get_team_name(club_id))
-        sess.merge(team)
-        sess.commit()
-        
-        logger.info("Fetching rides for team: {name!r} ({id})".format(name=team.name, id=team.id))
-        _write_rides(start, team=team, rewrite=options.rewrite)
-        
-    for athlete_id in app.config['BAFS_FREE_RIDERS']:
+    # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
+    # for those that don't.)
+    q = sess.query(model.Athlete)
+    q = q.filter(model.Athlete.access_token != None)
+    
+    # TODO: Filter on only the athletes that actually are part of the competition ...
+    # Perhaps we can have another boolean value in the db?  Or we can go back 
+    # to enumerating the club_ids and make sure they're in one of the clubs?
+    
+    for athlete_id in q.all():
         logger.info("Fetching rides for athlete: {0}".format(athlete_id))
         _write_rides(start, athlete_id=athlete_id, rewrite=options.rewrite)
 

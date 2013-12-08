@@ -48,14 +48,21 @@ You should create a database and create a user that can access the database.  So
 Configuration files are Python files (since we're using Flask framework).  There is a default one configured for the 2013 BAFS competition;
 if you want to do something else you'll need to specify an environment variable that points to your config file:
 
-	(env) shell$ cp bafs/default_settings.py ./local_settings.py
+	(env) shell$ cp local_settings.py-example local_settings.py
 	(env) shell$ BAFS_SETTINGS=`pwd`/local_settings.py <bafs-script>
 	
-Probably the most likely (only?) thing you'll want to configure in your local_settings.py file is the database connection information.
+Critical things to set include:
+* Database URI
+* Strava Client info (ID and secret)
+
 ```python
 
 # The SQLALchemy connection URL for your MySQL database.
 SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs'
+
+# These are issued when you create the Strava app.
+STRAVA_CLIENT_ID = 'xxxx1234'
+STRAVA_CLIENT_SECRET = '5678zzzz'
 ```
 	
 ### Synchronizing

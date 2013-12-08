@@ -1,7 +1,10 @@
-# Default settings
+# Your settings
 
 SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
-SQLALCHEMY_POOL_RECYCLE = 3600
+
+# Need a Strava Client ID and secret in order to authorize users
+#STRAVA_CLIENT_ID = ''
+#STRAVA_CLIENT_SECRETE = ''
 
 # The strava team (club) IDs
 BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
