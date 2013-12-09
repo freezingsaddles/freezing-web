@@ -13,15 +13,52 @@ from flask import render_template, redirect, url_for, current_app, request, Blue
 from sqlalchemy import text
 from dateutil import rrule, parser 
 
-from bafs import app, db
+from stravalib import Client
+
+from bafs import app, db, data
 from bafs.utils import gviz_api
 from bafs.model import Team
 
 blueprint = Blueprint('general', __name__)
 
+class AccessDenied(RuntimeError):
+    pass
+
 @blueprint.route("/")
 def index():
     return render_template('index.html')
+
+@blueprint.route("/join")
+def join():
+    c = Client()
+    url = c.authorization_url(client_id=app.config['STRAVA_CLIENT_ID'],
+                              redirect_uri=url_for('.authorization', _external=True),
+                              approval_prompt='auto',
+                              state='somevalue')
+    return render_template('join.html', authorize_url=url)
+
+@blueprint.route("/authorize")
+def authorization():
+    """
+    Method called by Strava (redirect) that includes parameters.
+    - state
+    - code
+    - error
+    """
+    error = request.args.get('error')
+    state = request.args.get('state')
+    if error:
+        return render_template('authorization_error.html', error=error)
+    else:
+        code = request.args.get('code')
+        client = Client()
+        access_token = client.exchange_code_for_token(client_id=app.config['STRAVA_CLIENT_ID'],
+                                                      client_secret=app.config['STRAVA_CLIENT_SECRET'],
+                                                      code=code)
+        # Use the now-authenticated client to get the current athlete
+        strava_athlete = client.get_athlete()
+        data.register_athlete(strava_athlete, access_token)
+        return render_template('authorization_success.html', athlete=strava_athlete)
 
 @blueprint.route("/leaderboard")
 def leaderboard():

@@ -108,30 +108,18 @@ def sync_rides():
         logger.info("Fetching rides for athlete: {0}".format(athlete_id))
         _write_rides(start, athlete_id=athlete_id, rewrite=options.rewrite)
 
-def _write_rides(start, team=None, athlete_id=None, rewrite=False):
+def _write_rides(start, athlete_id, rewrite=False):
     
     logger = logging.getLogger('sync')
     
-    if team and athlete_id:
-        raise ValueError("team and athlete params are mutually exclusive")
-    elif team is None and athlete_id is None:
-        raise ValueError("either team or athlete_id param is required")
-    
     sess = db.session
-    
-    if team:
-        api_ride_entries = data.list_rides(club_id=team.id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
-        q = sess.query(model.Ride)
-        q = q.filter(and_(model.Ride.athlete_id.in_(sess.query(model.Athlete.id).filter(model.Athlete.team_id==team.id)),
-                          model.Ride.start_date >= start))
-        db_rides = q.all()
-    else:
-        api_ride_entries = data.list_rides(athlete_id=athlete_id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
-        q = sess.query(model.Ride)
-        q = q.filter(and_(model.Ride.athlete_id == athlete_id,
-                          model.Ride.start_date >= start))
-        db_rides = q.all()
-    
+        
+    api_ride_entries = data.list_rides(athlete_id=athlete_id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+    q = sess.query(model.Ride)
+    q = q.filter(and_(model.Ride.athlete_id == athlete_id,
+                      model.Ride.start_date >= start))
+    db_rides = q.all()
+
     # Quickly filter out only the rides that are not in the database.
     returned_ride_ids = set([r.id for r in api_ride_entries])
     stored_ride_ids = set([r.id for r in db_rides])
@@ -145,29 +133,23 @@ def _write_rides(start, team=None, athlete_id=None, rewrite=False):
     
     # If we are "clearing" the system, then we'll just use all the returned rides as the "new" rides.
     
-    for (i, ri_entry) in enumerate(api_ride_entries):
-        logger.info("Processing ride: {0} ({1}/{2})".format(ri_entry.id, i, num_rides))
-        if rewrite or not ri_entry.id in stored_ride_ids:
-            ride = data.write_ride(ri_entry.id, team=team)
+    for (i, strava_activity) in enumerate(api_ride_entries):
+        logger.info("Processing ride: {0} ({1}/{2})".format(strava_activity.id, i, num_rides))
+        if rewrite or not strava_activity.id in stored_ride_ids:
+            ride = data.write_ride(strava_activity)
             logger.debug("Wrote ride: %r" % (ride,))
         else:
-            logger.debug("Skipping existing ride: {id} - {name!r}".format(name=ri_entry.name,id=ri_entry.id))
+            logger.debug("Skipping existing ride: {id} - {name!r}".format(name=strava_activity.name,
+                                                                          id=strava_activity.id))
 
-    # Remove any rides that are in the database for this team that were not in the returned list.
+    # Remove any rides that are in the database for this athlete that were not in the returned list.
     if removed_ride_ids:
         q = sess.query(model.Ride)
         q = q.filter(model.Ride.id.in_(removed_ride_ids))
         deleted = q.delete(synchronize_session=False)
-        if team:
-            logger.info("Removed {0} no longer present rides for team {1}.".format(deleted, team.id))
-        else:
-            logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
+        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
     else:
-        if team:
-            logger.info("(No removed rides for team {0!r}.)".format(team))
-        else:
-            logger.info("(No removed rides for athlete {0}.)".format(athlete_id))
-    
+        logger.info("(No removed rides for athlete {0}.)".format(athlete_id))
     
     sess.commit() 
         

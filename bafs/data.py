@@ -1,6 +1,7 @@
 """
 Functions for interacting with the datastore and the strava apis.
 """
+from __future__ import division
 import functools
 from collections import namedtuple
 
@@ -14,6 +15,7 @@ from geoalchemy import WKTSpatialElement
  
 from stravalib import Client
 from stravalib import model as strava_model
+from stravalib import unithelper
 
 from bafs.model import Athlete, Ride, RideGeo, RideEffort
 from bafs import app, db, model
@@ -31,6 +33,17 @@ class StravaClientForAthlete(Client):
 # Just a wrapper so we're not too tightly coupled to flask logging
 logger = lambda: app.logger
 
+def register_athlete(strava_athlete, access_token):
+    """
+    Ensure specified athlete is added to database.
+    """
+    athlete = Athlete()
+    athlete.id = strava_athlete.id
+    athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
+    athlete.access_token = access_token
+    db.session.merge(athlete) # @UndefinedVariable
+    db.session.commit() # @UndefinedVariable
+    
 def get_team_name(club_id):
     """
     Convenience function to return the club name, given the ID.
@@ -74,70 +87,75 @@ def list_rides(athlete_id, start_date=None, exclude_keywords=None):
     filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not is_activity_excluded(a))]
     return filtered_rides
 
-def write_ride(ride_id, team=None):
+def write_ride(activity, team=None):
     """
     Takes the specified ride_id and merges together the V1 and V2 API data into model 
     objects and writes them to the database.
     
-    :param ride_id: The ride that should be filled in and written to DB.
-    :type ride_id: int
+    :param activity: The Strava :class:`stravalib.model.Activity` object.
+    :type activity: :class:`stravalib.model.Activity`
     
-    :param team: The team club entity.
-    :type team: :class:`stravatools.bafs.model.Club`
-    
-    :return: The written Ride object.
+    :return: The written Ride model object.
+    :rtype: :class:`bafs.model.Ride`
     """
-    v1sess = V1ServerProxy()
-    v2sess = V2ServerProxy()
     
-    v1data = v1sess.get_ride(ride_id)
-    v2data = v2sess.get_ride(ride_id)
-    
-    #logger().info(repr(v2data))
-    
-    if v2data['start_latlng']:
-        (lat,lon) = v2data['start_latlng']
-        start_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=lat, lon=lon)) 
+    if activity.start_latlng:
+        start_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.start_latlng.lat,
+                                                                  lon=activity.start_latlng.lon)) 
     else:
         start_geo = None
-        
-    if v2data['end_latlng']:
-        (lat,lon) = v2data['end_latlng'] 
-        end_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=lat, lon=lon))
+
+    if activity.end_latlng:
+        end_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.end_latlng.lat,
+                                                                lon=activity.end_latlng.lon)) 
     else:
         end_geo = None
     
-    athlete_id = v1data['athlete']['id']
+    athlete_id = activity.athlete.id
     
-    # In the BAFS model, an athlete only belongs to a single team club (at most - there are a few unclubbed riders)
-    athlete = Athlete(id=athlete_id,
-                      team=team,
-                      name=v1data['athlete']['name'])
-
-    db.session.merge(athlete) # @UndefinedVariable
-    db.session.commit() # @UndefinedVariable
+    # Find the model object for that athlete (or create if doesn't exist)
+    athlete = db.session.query(Athlete).get(athlete_id)   # @UndefinedVariable
+    if not athlete:
+        # The athlete has to exist since otherwise we wouldn't be able to query their rides
+        raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
+        
+    #db.session.merge(athlete) # @UndefinedVariable
+    #db.session.commit() # @UndefinedVariable
     
     if start_geo is not None or end_geo is not None:
         ride_geo = RideGeo()
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo
-        ride_geo.ride_id = v2data['id']
+        ride_geo.ride_id = activity.id
         db.session.merge(ride_geo) # @UndefinedVariable
     
-    try:    
-        ride = Ride(id=v2data['id'],
+    try:
+        location_parts = []
+        if activity.location_city:
+            location_parts.append(activity.location_city)
+        if activity.location_state:
+            location_parts.append(activity.location_state)
+        location_str = ', '.join(location_parts)
+        
+        def td_to_seconds(td):
+            # we ignore microseconds for this
+            if not td:
+                return None
+            return td.seconds + td.days * 24 * 3600 
+            
+        ride = Ride(id=activity.id,
                     athlete=athlete,
-                    name=v2data['name'],
-                    start_date=parser.parse(v2data['start_date_local']).replace(tzinfo=None),
-                    distance=units.meters_to_miles(v2data['distance']),
-                    average_speed=units.metersps_to_mph(v1data['averageSpeed']),
-                    maximum_speed=units.kph_to_mph(v1data['maximumSpeed'] / 1000.0), # Not sure why this is in meters per hour ... !?
-                    elapsed_time=v2data['elapsed_time'],
-                    moving_time=v2data['moving_time'],
-                    location=v2data.get('location'),
-                    commute=v1data['commute'],
-                    trainer=v1data['trainer'],
-                    elevation_gain=units.meters_to_feet(v2data['elevation_gain']),
+                    name=activity.name,
+                    start_date=activity.start_date_local,
+                    distance=unithelper.miles(activity.distance),
+                    average_speed=unithelper.mph(activity.average_speed),
+                    maximum_speed=unithelper.mph(activity.max_speed),
+                    elapsed_time=td_to_seconds(activity.elapsed_time),
+                    moving_time=td_to_seconds(activity.moving_time),
+                    location=location_str,
+                    commute=activity.commute,
+                    trainer=activity.trainer,
+                    elevation_gain=unithelper.feet(activity.total_elevation_gain),
                     )
         
         db.session.merge(ride) # @UndefinedVariable
@@ -147,7 +165,7 @@ def write_ride(ride_id, team=None):
                                                                             date=ride.start_date.strftime('%m/%d/%y')))
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding ride: {0}".format(ride_id))
+        logger().exception("Error adding ride: {0}".format(activity))
         raise
     
     return ride
@@ -160,27 +178,23 @@ def write_ride_efforts(ride):
     :param ride: The :class:`stravalib.model.Activity` that is associated with this effort.
     :type ride: :class:`stravalib.model.Activity`
     """
-    raise NotImplementedError()
-#     v1sess = V1ServerProxy()
-#     v1efforts = v1sess.get_ride_efforts(ride.id)
-#     
-#     try:
-#         for v1data in v1efforts:
-#             effort = RideEffort(id=v1data['id'],
-#                                 ride_id=ride.id,
-#                                 elapsed_time=v1data['elapsed_time'],
-#                                 segment_name=v1data['segment']['name'],
-#                                 segment_id=v1data['segment']['id'])
-#             
-#             db.session.merge(effort) # @UndefinedVariable
-#             
-#         
-#             logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
-#                                                                                      effort=effort.segment_name))
-#         
-#         ride.efforts_fetched = True
-#         db.session.commit() # @UndefinedVariable
-#     except:
-#         logger().exception("Error adding effort for ride: {0}".format(ride.id))
-#         raise
+    try:
+        for se in ride.segment_efforts:
+            effort = RideEffort(id=se.id,
+                                ride_id=ride.id,
+                                elapsed_time=se.elapsed_time,
+                                segment_name=se.segment.name,
+                                segment_id=se.segment.id)
+             
+            db.session.merge(effort) # @UndefinedVariable
+             
+         
+            logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
+                                                                                     effort=effort.segment_name))
+         
+        ride.efforts_fetched = True
+        db.session.commit() # @UndefinedVariable
+    except:
+        logger().exception("Error adding effort for ride: {0}".format(ride))
+        raise
 #     
