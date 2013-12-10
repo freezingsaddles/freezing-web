@@ -478,7 +478,7 @@ def team_weekly_points():
         cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
                  ]
         for t in teams:
-            total_score = db.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar()
+            total_score = db.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar() # @UndefinedVariable
             if total_score is None:
                 total_score = 0
             cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})

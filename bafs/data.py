@@ -1,6 +1,7 @@
 """
 Functions for interacting with the datastore and the strava apis.
 """
+from __future__ import division
 import functools
 from collections import namedtuple
 
@@ -8,152 +9,153 @@ from dateutil import parser
 
 from geoalchemy import WKTSpatialElement
 
-from strava.api.v1 import V1ServerProxy
-from strava.api.v2 import V2ServerProxy
-from strava import units
+#from strava.api.v1 import V1ServerProxy
+#from strava.api.v2 import V2ServerProxy
+#from strava import units
  
+from stravalib import Client
+from stravalib import model as strava_model
+from stravalib import unithelper
+
 from bafs.model import Athlete, Ride, RideGeo, RideEffort
-from bafs import app, db
+from bafs import app, db, model
 
-
-RideIndexEntry = namedtuple('RideIndexEntry', ['id', 'name'])
+class StravaClientForAthlete(Client):
+    """
+    Creates a StravaClient for the specified athlete.
+    """
+    def __init__(self, athlete):
+        if not isinstance(athlete, model.Athlete):
+            athlete = db.session.get(model.Athlete, athlete) # @UndefinedVariable
+        super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
+    
 
 # Just a wrapper so we're not too tightly coupled to flask logging
 logger = lambda: app.logger
 
+def register_athlete(strava_athlete, access_token):
+    """
+    Ensure specified athlete is added to database.
+    """
+    athlete = Athlete()
+    athlete.id = strava_athlete.id
+    athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
+    athlete.access_token = access_token
+    db.session.merge(athlete) # @UndefinedVariable
+    db.session.commit() # @UndefinedVariable
+    
 def get_team_name(club_id):
     """
     Convenience function to return the club name, given the ID.
     """
-    v1api = V1ServerProxy()
-    return v1api.get_club(club_id)['name']
+    raise NotImplementedError()
+    #client = V1ServerProxy()
+    #return client.get_club(club_id)['name']
     
-def list_rides(athlete_id=None, club_id=None, start_date=None, exclude_keywords=None):
+def list_rides(athlete_id, start_date=None, exclude_keywords=None):
     """
-    List all of the rides for specified team club or individual athlete.
+    List all of the rides for individual athlete.
     
     :param athlete_id: The numeric ID of the strava athlete.
     :type athlete_id: int
-    :param club_id: The numeric identifier of the strava club.
-    :type club_id: int
+    
     :param start_date: The date to start listing rides. 
     :type start_date: :class:`datetime.date`
+    
     :param exclude_keywords: A list of keywords to use for excluding rides from the results (e.g. "#NoBAFS")
     :type exclude_keywords: list
-    :return: list of (id, name) tuple for rides in club in reverse chronological order.
+    
+    :return: list of :class:`stravalib.model.Activity` objects for rides in reverse chronological order.
     :rtype: list
     """
-    v1api = V1ServerProxy()
-    
-    if athlete_id and club_id:
-        raise ValueError("Cannot specify both athlete_id and club_id")
-    elif not athlete_id and not club_id:
-        raise ValueError("Either athlete_id or club_id is required")
+    client = StravaClientForAthlete(athlete_id)
     
     if exclude_keywords is None:
         exclude_keywords = []
     
-    kw = {}
-    if start_date:
-        kw['startDate'] = start_date
-    if athlete_id:
-        kw['athleteId'] = athlete_id
-    if club_id:
-        kw['clubId'] = club_id
-    
-    apifunc = functools.partial(v1api.list_rides, **kw)
-    
-    # By default only 50 rows are returned so we have to itereate over until we get to the end. 
-    all_rides = []
-    offset = 0
-    while True:
-        logger().debug("Fetching rides {0} - {1}".format(offset, offset + 50))
-        rides = apifunc(offset=offset)
-        logger().debug("Fetched {0} rides".format(len(rides)))
+    def is_activity_excluded(activity):
+        for keyword in exclude_keywords:
+            if keyword.lower() in activity.name.lower():
+                logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(activity.id,
+                                                                                                        activity.name,
+                                                                                                        keyword))
+                return True
+        else:
+            return False
         
-        # This would be a nice list comprehension, but we break it out for purposes of logging 
-        for ride in rides:
-            for keyword in exclude_keywords:
-                if keyword.lower() in ride['name'].lower():
-                    logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(ride['id'],
-                                                                                                            ride['name'],
-                                                                                                            keyword))
-                    break
-            else:
-                # If we need not break of out the loop then it means no keywords matched, so append it.
-                # (This also covers the case where no exclusion keywords were specified.)
-                all_rides.append(RideIndexEntry(id=ride['id'], name=ride['name']))
-            
-        if len(rides) < 50:
-            break
-        offset += 50
-        
-    return all_rides
+    activities = client.get_activities(after=start_date, limit=None)
+    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not is_activity_excluded(a))]
+    return filtered_rides
 
-def write_ride(ride_id, team=None):
+def write_ride(activity, team=None):
     """
     Takes the specified ride_id and merges together the V1 and V2 API data into model 
     objects and writes them to the database.
     
-    :param ride_id: The ride that should be filled in and written to DB.
-    :type ride_id: int
+    :param activity: The Strava :class:`stravalib.model.Activity` object.
+    :type activity: :class:`stravalib.model.Activity`
     
-    :param team: The team club entity.
-    :type team: :class:`stravatools.bafs.model.Club`
-    
-    :return: The written Ride object.
+    :return: The written Ride model object.
+    :rtype: :class:`bafs.model.Ride`
     """
-    v1sess = V1ServerProxy()
-    v2sess = V2ServerProxy()
     
-    v1data = v1sess.get_ride(ride_id)
-    v2data = v2sess.get_ride(ride_id)
-    
-    #logger().info(repr(v2data))
-    
-    if v2data['start_latlng']:
-        (lat,lon) = v2data['start_latlng']
-        start_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=lat, lon=lon)) 
+    if activity.start_latlng:
+        start_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.start_latlng.lat,
+                                                                  lon=activity.start_latlng.lon)) 
     else:
         start_geo = None
-        
-    if v2data['end_latlng']:
-        (lat,lon) = v2data['end_latlng'] 
-        end_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=lat, lon=lon))
+
+    if activity.end_latlng:
+        end_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.end_latlng.lat,
+                                                                lon=activity.end_latlng.lon)) 
     else:
         end_geo = None
     
-    athlete_id = v1data['athlete']['id']
+    athlete_id = activity.athlete.id
     
-    # In the BAFS model, an athlete only belongs to a single team club (at most - there are a few unclubbed riders)
-    athlete = Athlete(id=athlete_id,
-                      team=team,
-                      name=v1data['athlete']['name'])
-
-    db.session.merge(athlete) # @UndefinedVariable
-    db.session.commit() # @UndefinedVariable
+    # Find the model object for that athlete (or create if doesn't exist)
+    athlete = db.session.query(Athlete).get(athlete_id)   # @UndefinedVariable
+    if not athlete:
+        # The athlete has to exist since otherwise we wouldn't be able to query their rides
+        raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
+        
+    #db.session.merge(athlete) # @UndefinedVariable
+    #db.session.commit() # @UndefinedVariable
     
     if start_geo is not None or end_geo is not None:
         ride_geo = RideGeo()
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo
-        ride_geo.ride_id = v2data['id']
+        ride_geo.ride_id = activity.id
         db.session.merge(ride_geo) # @UndefinedVariable
     
-    try:    
-        ride = Ride(id=v2data['id'],
+    try:
+        location_parts = []
+        if activity.location_city:
+            location_parts.append(activity.location_city)
+        if activity.location_state:
+            location_parts.append(activity.location_state)
+        location_str = ', '.join(location_parts)
+        
+        def td_to_seconds(td):
+            # we ignore microseconds for this
+            if not td:
+                return None
+            return td.seconds + td.days * 24 * 3600 
+            
+        ride = Ride(id=activity.id,
                     athlete=athlete,
-                    name=v2data['name'],
-                    start_date=parser.parse(v2data['start_date_local']).replace(tzinfo=None),
-                    distance=units.meters_to_miles(v2data['distance']),
-                    average_speed=units.metersps_to_mph(v1data['averageSpeed']),
-                    maximum_speed=units.kph_to_mph(v1data['maximumSpeed'] / 1000.0), # Not sure why this is in meters per hour ... !?
-                    elapsed_time=v2data['elapsed_time'],
-                    moving_time=v2data['moving_time'],
-                    location=v2data.get('location'),
-                    commute=v1data['commute'],
-                    trainer=v1data['trainer'],
-                    elevation_gain=units.meters_to_feet(v2data['elevation_gain']),
+                    name=activity.name,
+                    start_date=activity.start_date_local,
+                    distance=unithelper.miles(activity.distance),
+                    average_speed=unithelper.mph(activity.average_speed),
+                    maximum_speed=unithelper.mph(activity.max_speed),
+                    elapsed_time=td_to_seconds(activity.elapsed_time),
+                    moving_time=td_to_seconds(activity.moving_time),
+                    location=location_str,
+                    commute=activity.commute,
+                    trainer=activity.trainer,
+                    elevation_gain=unithelper.feet(activity.total_elevation_gain),
                     )
         
         db.session.merge(ride) # @UndefinedVariable
@@ -163,7 +165,7 @@ def write_ride(ride_id, team=None):
                                                                             date=ride.start_date.strftime('%m/%d/%y')))
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding ride: {0}".format(ride_id))
+        logger().exception("Error adding ride: {0}".format(activity))
         raise
     
     return ride
@@ -173,29 +175,26 @@ def write_ride_efforts(ride):
     """
     Writes out all effort associated with a ride to the database.
     
-    :param ride_id: The ride that is associated with this effort.
-    :type ride_id: int
+    :param ride: The :class:`stravalib.model.Activity` that is associated with this effort.
+    :type ride: :class:`stravalib.model.Activity`
     """
-    v1sess = V1ServerProxy()
-    v1efforts = v1sess.get_ride_efforts(ride.id)
-    
     try:
-        for v1data in v1efforts:
-            effort = RideEffort(id=v1data['id'],
+        for se in ride.segment_efforts:
+            effort = RideEffort(id=se.id,
                                 ride_id=ride.id,
-                                elapsed_time=v1data['elapsed_time'],
-                                segment_name=v1data['segment']['name'],
-                                segment_id=v1data['segment']['id'])
-            
+                                elapsed_time=se.elapsed_time,
+                                segment_name=se.segment.name,
+                                segment_id=se.segment.id)
+             
             db.session.merge(effort) # @UndefinedVariable
-            
-        
+             
+         
             logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
                                                                                      effort=effort.segment_name))
-        
+         
         ride.efforts_fetched = True
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding effort for ride: {0}".format(ride.id))
+        logger().exception("Error adding effort for ride: {0}".format(ride))
         raise
-    
+#     
