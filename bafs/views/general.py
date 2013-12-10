@@ -33,8 +33,7 @@ def join():
     c = Client()
     url = c.authorization_url(client_id=app.config['STRAVA_CLIENT_ID'],
                               redirect_uri=url_for('.authorization', _external=True),
-                              approval_prompt='auto',
-                              state='somevalue')
+                              approval_prompt='auto')
     return render_template('authorize.html', authorize_url=url)
 
 @blueprint.route("/authorization")
