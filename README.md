@@ -12,6 +12,7 @@ on BikeArlington forums.
 * Python 2.6+.  (This will not currently work with Python 3.)
 * Setuptools/Distribute
 * Virtualenv
+* [Stravalib](http://github.com/hozn/stravalib) 0.2 development version (from git)
 
 ## Installation
 
@@ -19,15 +20,24 @@ Eventually this will be installable via setuptools/distribute/pip; however, curr
 download / clone the source and run the python setup.py install command.
 
 Here are some instructions for setting up a development environment, which is more appropriate
-at this juncture:
+at this juncture.  Note that this library requires stravalib.
 
+	# Clone both bafs and stravalib repositories
 	shell$ git clone https://github.com/hozn/bafs.git
+	shell$ git clone https://github.com/hozn/stravalib.git
+	
+	# Create and activate a virtual environment for bafs
 	shell$ cd bafs
 	shell$ python -m virtualenv --no-site-packages --distribute env
 	shell$ source env/bin/activate
-    (env) shell$ python setup.py develop
+	
+	# Install stravalib symlink into bafs virtual environment 
+	(env) shell$ cd ../stravalib && python setup.py develop
+	
+	# Now download the rest of the deps for bafs
+	(env) shell$ cd ../bafs && python setup.py develop
 
-We will assume for all subsequent shell examples that you are running in that activated virtualenv.  (This is denoted by using 
+We will assume for all subsequent shell examples that you are running in the bafs activated virtualenv.  (This is denoted by using 
 the "(env) shell$" prefix before shell commands.)    
    
 ### Database Setup
