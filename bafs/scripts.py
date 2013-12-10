@@ -114,6 +114,11 @@ def _write_rides(start, athlete, rewrite=False):
     logger = logging.getLogger('sync-rides')
     
     sess = db.session
+    
+    # Start by deleting them ...
+    if rewrite:
+        logger.info("Removing existing rides for {0!r}".format(athlete))
+        sess.query(model.Ride).filter(model.Ride.athlete_id == athlete.id).delete()
         
     api_ride_entries = data.list_rides(athlete=athlete, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
     q = sess.query(model.Ride)
@@ -133,11 +138,6 @@ def _write_rides(start, athlete, rewrite=False):
     #else:
     #    num_rides = len(new_ride_ids)
     
-    # If we are "clearing" the system, then we'll just use all the returned rides as the "new" rides.
-    # (But we aren't using sess.merge anymore so we actually want to remove them if rewrite is true)
-    if rewrite:
-        sess.query(model.Ride).filter(model.Ride.id.in_(stored_ride_ids)).delete(synchronize_session=False)
-        
     for (i, strava_activity) in enumerate(api_ride_entries):
         logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i+1, num_rides))
         if rewrite or not strava_activity.id in stored_ride_ids:

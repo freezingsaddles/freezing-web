@@ -196,7 +196,9 @@ def write_ride(activity):
         if activity.location_state:
             location_parts.append(activity.location_state)
         location_str = ', '.join(location_parts)
-            
+        
+        logger().debug("Got distance: {0!r}".format(activity.distance))
+        
         ride = Ride(id=activity.id,
                     athlete=athlete,
                     name=activity.name,
@@ -247,10 +249,10 @@ def write_ride_efforts(strava_activity, ride):
                                 segment_name=se.segment.name,
                                 segment_id=se.segment.id)
             
-            logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
-                                                                                     effort=effort.segment_name))
+            logger().debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
+                                                                             effort=effort.segment_name))
           
-            db.session.add(effort) # @UndefinedVariable
+            db.session.merge(effort) # @UndefinedVariable
              
         ride.efforts_fetched = True
         db.session.commit() # @UndefinedVariable
