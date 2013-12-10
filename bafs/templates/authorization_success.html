@@ -5,7 +5,14 @@
 	Welcome, {{ athlete.firstname }}.
 </p>
 <p>
-	Make sure you join your official 2014 Freezing Saddles team so that your rides
-	will count toward the competition!
+  	You have successfully authorized the Freezing Saddles application to read your Strava rides.
 </p>
+<ul>
+	<li>Make sure you have registered on the <a href="https://docs.google.com/forms/d/1M0TulhK4IWXKNPI1qcfRTlJBdeIDljAFtUvWunjNBag/viewform" target="_blank">Google Drive signup sheet</a>.
+	Note: for the purposes of the registration form, your Strava user ID is <strong>{{ athlete.id }}</strong>.
+	</li>
+	<li>Make sure you join your official 2014 Freezing Saddles Strava club team so that your rides
+	will count toward the competition. (Don't worry, if you are late in joining the team later your 
+	activies will be applied retroactively.)</li>
+</ul>
 {% endblock %}

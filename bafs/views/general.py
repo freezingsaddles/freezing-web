@@ -37,7 +37,7 @@ def join():
                               state='somevalue')
     return render_template('authorize.html', authorize_url=url)
 
-@blueprint.route("/authorize")
+@blueprint.route("/authorization")
 def authorization():
     """
     Method called by Strava (redirect) that includes parameters.
