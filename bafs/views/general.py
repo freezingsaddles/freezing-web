@@ -58,8 +58,21 @@ def authorization():
                                                       code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
-        data.register_athlete(strava_athlete, access_token)
-        return render_template('authorization_success.html', athlete=strava_athlete)
+        athlete_model = data.register_athlete(strava_athlete, access_token)
+        multiple_teams = None
+        no_teams = False
+        team = None
+        try:
+            team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
+        except data.MultipleTeamsError as multx:
+            multiple_teams = multx.teams
+        except data.NoTeamsError:
+            no_teams = True
+            
+        
+        return render_template('authorization_success.html', athlete=strava_athlete,
+                               team=team, multiple_teams=multiple_teams,
+                               no_teams=no_teams)
 
 @blueprint.route("/leaderboard")
 def leaderboard():

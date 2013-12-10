@@ -13,7 +13,7 @@ from pytz import timezone, utc
 
 from alembic.config import Config
 from alembic import command
-
+ 
 from bafs import app, db
 from bafs import data, model
 from weather.wunder import api as wu_api
@@ -76,7 +76,7 @@ def sync_rides():
         loglevel = logging.INFO
         
     logging.basicConfig(level=loglevel)
-    logger = logging.getLogger('sync')
+    logger = logging.getLogger('sync-rides')
     
     sess = db.session
     
@@ -100,23 +100,24 @@ def sync_rides():
     q = sess.query(model.Athlete)
     q = q.filter(model.Athlete.access_token != None)
     
-    # TODO: Filter on only the athletes that actually are part of the competition ...
-    # Perhaps we can have another boolean value in the db?  Or we can go back 
-    # to enumerating the club_ids and make sure they're in one of the clubs?
+    # Also only fetch athletes that have teams configured.  This may not be strictly necessary
+    # but this is a team competition, so not a lot of value in pulling in data for those
+    # without teams.
+    q = q.filter(model.Athlete.team_id != None)
     
-    for athlete_id in q.all():
-        logger.info("Fetching rides for athlete: {0}".format(athlete_id))
-        _write_rides(start, athlete_id=athlete_id, rewrite=options.rewrite)
+    for athlete in q.all():
+        logger.info("Fetching rides for athlete: {0}".format(athlete))
+        _write_rides(start, athlete=athlete, rewrite=options.rewrite)
 
-def _write_rides(start, athlete_id, rewrite=False):
+def _write_rides(start, athlete, rewrite=False):
     
-    logger = logging.getLogger('sync')
+    logger = logging.getLogger('sync-rides')
     
     sess = db.session
         
-    api_ride_entries = data.list_rides(athlete_id=athlete_id, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+    api_ride_entries = data.list_rides(athlete=athlete, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
     q = sess.query(model.Ride)
-    q = q.filter(and_(model.Ride.athlete_id == athlete_id,
+    q = q.filter(and_(model.Ride.athlete_id == athlete.id,
                       model.Ride.start_date >= start))
     db_rides = q.all()
 
@@ -126,38 +127,49 @@ def _write_rides(start, athlete_id, rewrite=False):
     new_ride_ids = list(returned_ride_ids - stored_ride_ids)
     removed_ride_ids = list(stored_ride_ids - returned_ride_ids)
     
-    if rewrite:
-        num_rides = len(api_ride_entries)
-    else:
-        num_rides = len(new_ride_ids)
+    num_rides = len(api_ride_entries)
+    #if rewrite:
+    #    num_rides = len(api_ride_entries)
+    #else:
+    #    num_rides = len(new_ride_ids)
     
     # If we are "clearing" the system, then we'll just use all the returned rides as the "new" rides.
-    
+    # (But we aren't using sess.merge anymore so we actually want to remove them if rewrite is true)
+    if rewrite:
+        sess.query(model.Ride).filter(model.Ride.id.in_(stored_ride_ids)).delete(synchronize_session=False)
+        
     for (i, strava_activity) in enumerate(api_ride_entries):
-        logger.info("Processing ride: {0} ({1}/{2})".format(strava_activity.id, i, num_rides))
+        logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i+1, num_rides))
         if rewrite or not strava_activity.id in stored_ride_ids:
             ride = data.write_ride(strava_activity)
-            logger.debug("Wrote ride: %r" % (ride,))
+            logger.info("[NEW RIDE]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                                                                       name=strava_activity.name,
+                                                                       i=i+1,
+                                                                       num=num_rides))
         else:
-            logger.debug("Skipping existing ride: {id} - {name!r}".format(name=strava_activity.name,
-                                                                          id=strava_activity.id))
-
+            logger.info("[SKIPPED EXISTING]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                                                                               name=strava_activity.name,
+                                                                               i=i+1,
+                                                                               num=num_rides))
     # Remove any rides that are in the database for this athlete that were not in the returned list.
     if removed_ride_ids:
         q = sess.query(model.Ride)
         q = q.filter(model.Ride.id.in_(removed_ride_ids))
         deleted = q.delete(synchronize_session=False)
-        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete_id))
+        logger.info("Removed {0} no longer present rides for athlete {1}.".format(deleted, athlete))
     else:
-        logger.info("(No removed rides for athlete {0}.)".format(athlete_id))
+        logger.info("(No removed rides for athlete {0}.)".format(athlete))
     
     sess.commit() 
-        
+     
+    # TODO: This could be its own function, really
     # Write out any efforts associated with these rides (not already in database)
     q = sess.query(model.Ride).filter_by(efforts_fetched=False)
     for ride in q.all():
         logger.info("Writing out efforts for {0!r}".format(ride))
-        data.write_ride_efforts(ride)
+        client = data.StravaClientForAthlete(ride.athlete)
+        strava_activity = client.get_activity(ride.id)
+        data.write_ride_efforts(strava_activity, ride)
         
 def sync_ride_weather():
     """
@@ -190,7 +202,7 @@ def sync_ride_weather():
         loglevel = logging.INFO
         
     logging.basicConfig(level=loglevel)
-    logger = logging.getLogger('sync')
+    logger = logging.getLogger('sync-weather')
     
     sess = db.session
     
@@ -298,3 +310,46 @@ def sync_ride_weather():
             # But soldier on ...
             
     sess.commit() 
+
+    
+def sync_athletes():
+    """
+    Updates the athlete records, and associates with teams.
+    
+    (Designed to be run periodically to ensure that things like names and team
+    membership are kept in sync w/ Strava.)
+    """
+    parser = optparse.OptionParser()
+    
+    parser.add_option("--debug", action="store_true", dest="debug", default=False, 
+                      help="Whether to log at debug level.")
+    
+    parser.add_option("--quiet", action="store_true", dest="quiet", default=False, 
+                      help="Whether to suppress non-error log output.")
+    
+    (options, args) = parser.parse_args()
+    
+    if options.quiet:
+        loglevel = logging.ERROR
+    elif options.debug:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+        
+    logging.basicConfig(level=loglevel)
+    logger = logging.getLogger('sync-athletes')
+    
+     
+    sess = db.session
+    
+    # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
+    # for those that don't.)
+    q = sess.query(model.Athlete)
+    q = q.filter(model.Athlete.access_token != None)
+    
+    for athlete in q.all():
+        logger.info("Updating athlete: {0}".format(athlete))
+        c = data.StravaClientForAthlete(athlete)
+        strava_athlete = c.get_athlete()
+        data.register_athlete(strava_athlete, athlete.access_token)
+        data.register_athlete_team(strava_athlete, athlete)

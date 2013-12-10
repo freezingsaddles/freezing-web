@@ -11,8 +11,26 @@
 	<li>Make sure you have registered on the <a href="https://docs.google.com/forms/d/1M0TulhK4IWXKNPI1qcfRTlJBdeIDljAFtUvWunjNBag/viewform" target="_blank">Google Drive signup sheet</a>.
 	Note: for the purposes of the registration form, your Strava user ID is <strong>{{ athlete.id }}</strong>.
 	</li>
-	<li>Make sure you join your official 2014 Freezing Saddles Strava club team so that your rides
-	will count toward the competition. (Don't worry, if you are late in joining the team later your 
-	activies will be applied retroactively.)</li>
-</ul>
+{% if no_teams %}
+	<li><strong>You need to join a competition team Strava club.</strong> Like Chris Horner, it looks like you are entering the season
+	without a team.  Or maybe the app just needs to be updated to know about the Strava teams.  Don't worry, 
+	your rides will count but they won't be on any leaderboards until you have joined one of the competition
+	teams. 
+	</li>
+{% elif multiple_teams %}
+	<li><strong>Houston we have a problem.</strong>  It looks like you joined multiple 
+Strava clubs that are  registered as competition teams.  Here are the problematic teams
+(please ensure you are only a member of one of them):
+		<ul>
+			{% for team in multiple_teams %} 
+			<li>{{ team.name }}</li>
+			{% endfor %}
+		</ul>  
+	</li>
+{% else %}
+	<li>
+		<strong>You are registered with a team!</strong>  You are a member of 
+		<strong>{{ team.name }}</strong> Strava club.
+	</li>
+{% endif %}
 {% endblock %}
