@@ -17,7 +17,9 @@ from stravalib import Client
 
 from bafs import app, db, data
 from bafs.utils import gviz_api
-from bafs.model import Team
+from bafs.model import Team, Athlete
+from people import people_list_users, people_show_person
+
 
 blueprint = Blueprint('general', __name__)
 
@@ -99,3 +101,11 @@ def indiv_elev_dist():
 @blueprint.route("/explore/riders_by_lowtemp")
 def riders_by_lowtemp():
     return render_template('explore/riders_by_lowtemp.html')
+
+@blueprint.route("/people")
+def list_users():
+	return people_list_users()
+	
+@blueprint.route("/people/<user_id>")
+def show_user(user_id):
+	return people_show_person(user_id)
