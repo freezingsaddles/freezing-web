@@ -124,7 +124,7 @@ def list_rides(athlete, start_date=None, exclude_keywords=None):
     if exclude_keywords is None:
         exclude_keywords = []
     
-    def is_activity_excluded(activity):
+    def is_keyword_excluded(activity):
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
                 logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(activity.id,
@@ -135,7 +135,7 @@ def list_rides(athlete, start_date=None, exclude_keywords=None):
             return False
         
     activities = client.get_activities(after=start_date, limit=None)
-    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not is_activity_excluded(a))]
+    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not a.trainer and not is_keyword_excluded(a))]
     return filtered_rides
 
 def timedelta_to_seconds(td):
