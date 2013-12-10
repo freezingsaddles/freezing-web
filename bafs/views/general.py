@@ -35,7 +35,7 @@ def join():
                               redirect_uri=url_for('.authorization', _external=True),
                               approval_prompt='auto',
                               state='somevalue')
-    return render_template('join.html', authorize_url=url)
+    return render_template('authorize.html', authorize_url=url)
 
 @blueprint.route("/authorize")
 def authorization():
