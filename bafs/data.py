@@ -103,12 +103,12 @@ def get_team_name(club_id):
     #client = V1ServerProxy()
     #return client.get_club(club_id)['name']
     
-def list_rides(athlete_id, start_date=None, exclude_keywords=None):
+def list_rides(athlete, start_date=None, exclude_keywords=None):
     """
     List all of the rides for individual athlete.
     
-    :param athlete_id: The numeric ID of the strava athlete.
-    :type athlete_id: int
+    :param athlete: The Athlete model object.
+    :type athlete: :class:`bafs.model.Athlete`
     
     :param start_date: The date to start listing rides. 
     :type start_date: :class:`datetime.date`
@@ -119,7 +119,7 @@ def list_rides(athlete_id, start_date=None, exclude_keywords=None):
     :return: list of :class:`stravalib.model.Activity` objects for rides in reverse chronological order.
     :rtype: list
     """
-    client = StravaClientForAthlete(athlete_id)
+    client = StravaClientForAthlete(athlete)
     
     if exclude_keywords is None:
         exclude_keywords = []
@@ -138,10 +138,19 @@ def list_rides(athlete_id, start_date=None, exclude_keywords=None):
     filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not is_activity_excluded(a))]
     return filtered_rides
 
-def write_ride(activity, team=None):
+def timedelta_to_seconds(td):
     """
-    Takes the specified ride_id and merges together the V1 and V2 API data into model 
-    objects and writes them to the database.
+    Converts a timedelta to total seconds.
+    (This is built-in in Python 2.7)
+    """
+    # we ignore microseconds for this
+    if not td:
+        return None
+    return td.seconds + td.days * 24 * 3600
+
+def write_ride(activity):
+    """
+    Takes the specified activity and writes it to the database.
     
     :param activity: The Strava :class:`stravalib.model.Activity` object.
     :type activity: :class:`stravalib.model.Activity`
@@ -187,33 +196,28 @@ def write_ride(activity, team=None):
         if activity.location_state:
             location_parts.append(activity.location_state)
         location_str = ', '.join(location_parts)
-        
-        def td_to_seconds(td):
-            # we ignore microseconds for this
-            if not td:
-                return None
-            return td.seconds + td.days * 24 * 3600 
             
         ride = Ride(id=activity.id,
                     athlete=athlete,
                     name=activity.name,
                     start_date=activity.start_date_local,
-                    distance=unithelper.miles(activity.distance),
-                    average_speed=unithelper.mph(activity.average_speed),
-                    maximum_speed=unithelper.mph(activity.max_speed),
-                    elapsed_time=td_to_seconds(activity.elapsed_time),
-                    moving_time=td_to_seconds(activity.moving_time),
+                    distance=float(unithelper.miles(activity.distance)),
+                    average_speed=float(unithelper.mph(activity.average_speed)),
+                    maximum_speed=float(unithelper.mph(activity.max_speed)),
+                    elapsed_time=timedelta_to_seconds(activity.elapsed_time),
+                    moving_time=timedelta_to_seconds(activity.moving_time),
                     location=location_str,
                     commute=activity.commute,
                     trainer=activity.trainer,
-                    elevation_gain=unithelper.feet(activity.total_elevation_gain),
+                    elevation_gain=float(unithelper.feet(activity.total_elevation_gain)),
                     )
         
-        db.session.merge(ride) # @UndefinedVariable
+        logger().debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
+                                                                                     ride=ride.name,
+                                                                                     date=ride.start_date.strftime('%m/%d/%y')))
         
-        logger().debug("Writing ride: {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
-                                                                            ride=ride.name,
-                                                                            date=ride.start_date.strftime('%m/%d/%y')))
+        # db.session.merge() is *not* happy here.  (Duplicates get added for some weird reason.)
+        db.session.add(ride) # @UndefinedVariable
         db.session.commit() # @UndefinedVariable
     except:
         logger().exception("Error adding ride: {0}".format(activity))
@@ -222,27 +226,32 @@ def write_ride(activity, team=None):
     return ride
 
 
-def write_ride_efforts(ride):
+def write_ride_efforts(strava_activity, ride):
     """
     Writes out all effort associated with a ride to the database.
     
-    :param ride: The :class:`stravalib.model.Activity` that is associated with this effort.
-    :type ride: :class:`stravalib.model.Activity`
+    :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
+    :type strava_activity: :class:`stravalib.model.Activity`
+    
+    :param ride: The db model object for ride.
+    :type ride: :class:`bafs.model.Ride`
     """
+    assert isinstance(strava_activity, strava_model.Activity)
+    assert isinstance(ride, Ride)
+    
     try:
-        for se in ride.segment_efforts:
+        for se in strava_activity.segment_efforts:
             effort = RideEffort(id=se.id,
-                                ride_id=ride.id,
-                                elapsed_time=se.elapsed_time,
+                                ride_id=strava_activity.id,
+                                elapsed_time=timedelta_to_seconds(se.elapsed_time),
                                 segment_name=se.segment.name,
                                 segment_id=se.segment.id)
-             
-            db.session.merge(effort) # @UndefinedVariable
-             
-         
+            
             logger().debug("Writing ride effort: {ride_id!r}: \"{effort!r}\"".format(ride_id=ride.id,
                                                                                      effort=effort.segment_name))
-         
+          
+            db.session.add(effort) # @UndefinedVariable
+             
         ride.efforts_fetched = True
         db.session.commit() # @UndefinedVariable
     except:
