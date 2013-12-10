@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row"><h1>All Participants</h1></div>
+<div class="row"><p>Weekly data is for {{weekstart.strftime('%m-%d-%Y')}} to {{weekend.strftime('%m-%d-%Y')}}</p></div>
+<div class="row">
+	<table id="user-list" class="table table-striped">
+		<thead><tr><th>User</th><th>Rides This Week</th><th>Mileage This Week</th><th>Total Rides</th><th>Total Mileage</th></tr></thead>
+		<tbody>
+			{% for u in users %}
+				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td>{{u.weekrides}}</td><td>{{u.weektotal | round(1)}}</td>
+					<td>{{u.totalrides}}</td><td>{{u.totaldist | round(1)}}</td></tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% block foot %}
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"></script>
+<link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+<script>
+	
+$(document).ready(function() {
+    $('#user-list').dataTable({
+		"bPaginate": false,
+		"bLengthChange": false,
+		"bFilter": true,
+		"bSort": true,
+		"bInfo": false,
+		"bAutoWidth": false } );
+} );</script>
+{% endblock %}
+{% endblock %}

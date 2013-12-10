@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+	<div class="page-header">
+		<h1>{{user.name}} <small>{{team.name}}</small></h1>
+	</div>
+</div>
+<div class="row">
+	<table class="table table-striped">
+		<thead><th>Ride</th><th>Distance</th><th>Average Speed</th></thead>
+	{% for r in user.rides %}
+	<tr><td><a href="http://www.strava.com/activities/{{r.id}}">{{r.name}}</a></td><td>{{r.distance | round(1)}}</td><td>{{r.average_speed | round(1)}}</td></tr>
+	{% endfor %}
+	</table>
+</div>
+{% endblock %}
