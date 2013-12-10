@@ -17,7 +17,7 @@ from stravalib import Client
 from stravalib import model as strava_model
 from stravalib import unithelper
 
-from bafs.model import Athlete, Ride, RideGeo, RideEffort
+from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
 from bafs import app, db, model
 
 class StravaClientForAthlete(Client):
@@ -35,7 +35,10 @@ logger = lambda: app.logger
 
 def register_athlete(strava_athlete, access_token):
     """
-    Ensure specified athlete is added to database.
+    Ensure specified athlete is added to database, returns athlete model.
+    
+    :return: The added athlete model object.
+    :rtype: :class:`bafs.model.Athlete`
     """
     athlete = Athlete()
     athlete.id = strava_athlete.id
@@ -43,6 +46,54 @@ def register_athlete(strava_athlete, access_token):
     athlete.access_token = access_token
     db.session.merge(athlete) # @UndefinedVariable
     db.session.commit() # @UndefinedVariable
+    return athlete
+
+class MultipleTeamsError(RuntimeError):
+    def __init__(self, teams):
+        self.teams = teams
+
+class NoTeamsError(RuntimeError):
+    pass
+
+def register_athlete_team(strava_athlete, athlete_model):
+    """
+    Updates db with configured team that matches the athlete's teams.
+    
+    Updates the passed-in Athlete model object with created/updated team.
+    
+    :param strava_athlete: The Strava model object for the athlete.
+    :type strava_athlete: :class:`stravalib.model.Athlete`
+    
+    :param athlete_model: The athlete model object.
+    :type athlete_model: :class:`bafs.model.Athlete`
+    
+    :return: The :class:`bafs.model.Team` object will be returned which matches 
+             configured teams.
+    :rtype: :class:`bafs.model.Team`
+    
+    :raise MultipleTeamsError: If this athlete is registered for multiple of
+                               the configured teams.  That won't work.
+    :raise NoTeamsError: If no teams match. 
+    """
+    assert isinstance(strava_athlete, strava_model.Athlete)
+    assert isinstance(athlete_model, Athlete)
+    
+    logger().info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
+    matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
+    if len(matches) > 1:
+        raise MultipleTeamsError(matches)
+    elif len(matches) == 0:
+        raise NoTeamsError()
+    else:
+        club = matches[0]
+        # create the team row
+        team = Team()
+        team.id = club.id
+        team.name = club.name
+        athlete_model.team = team
+        db.session.merge(team) # @UndefinedVariable
+        db.session.commit() # @UndefinedVariable
+        return team
     
 def get_team_name(club_id):
     """

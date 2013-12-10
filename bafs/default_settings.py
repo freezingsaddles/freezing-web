@@ -7,10 +7,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 #STRAVA_CLIENT_SECRETE = ''
 
 # The strava team (club) IDs
-BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
-
-# Any additional riders that are not affiliated with teams
-BAFS_FREE_RIDERS = []
+BAFS_TEAMS = [8123]
 
 # When does the competition start?
 BAFS_START_DATE = '2013-01-01'
