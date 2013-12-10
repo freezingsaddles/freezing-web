@@ -28,7 +28,7 @@ class AccessDenied(RuntimeError):
 def index():
     return render_template('index.html')
 
-@blueprint.route("/join")
+@blueprint.route("/authorize")
 def join():
     c = Client()
     url = c.authorization_url(client_id=app.config['STRAVA_CLIENT_ID'],
