@@ -13,14 +13,13 @@ def people_list_users():
 	for u in users_list:
 		weekly_dist = 0
 		weekly_rides = 0
-		weekly_total = 0
 		total_rides = 0
 		total_dist = 0
 		for r in u.rides:
 			total_rides += 1
 			total_dist += r.distance
 			if week_start <= r.start_date.date() <=week_end:
-				weekly_total += r.distance
+				weekly_dist += r.distance
 				weekly_rides += 1
 		users.append({"name":u.name,
 			"id": u.id,
