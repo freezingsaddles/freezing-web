@@ -13,6 +13,7 @@ def people_list_users():
 	for u in users_list:
 		weekly_dist = 0
 		weekly_rides = 0
+		weekly_total = 0
 		total_rides = 0
 		total_dist = 0
 		for r in u.rides:
