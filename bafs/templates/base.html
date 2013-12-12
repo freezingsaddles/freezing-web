@@ -4,6 +4,10 @@
     	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>{% block title %}Freezing Saddles{% endblock %}</title>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
@@ -52,11 +56,6 @@
 			<div class="col-md-12">{% block content %}{% endblock %}</div>
 		</div>
 	</div>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     {% block foot %} {% endblock %}
   </body>
 </html>
