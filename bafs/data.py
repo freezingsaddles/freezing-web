@@ -40,14 +40,16 @@ def register_athlete(strava_athlete, access_token):
     :return: The added athlete model object.
     :rtype: :class:`bafs.model.Athlete`
     """
-    athlete = Athlete()
+    athlete = db.session.query(Athlete).get(strava_athlete.id) # @UndefinedVariable
+    if athlete is None:
+        athlete = Athlete()
     athlete.id = strava_athlete.id
     if strava_athlete.lastname:
         athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname[0]).strip()
     else:
         athlete.name = strava_athlete.firstname
     athlete.access_token = access_token
-    db.session.merge(athlete) # @UndefinedVariable
+    db.session.add(athlete) # @UndefinedVariable
     db.session.commit() # @UndefinedVariable
     return athlete
 
@@ -89,12 +91,14 @@ def register_athlete_team(strava_athlete, athlete_model):
         raise NoTeamsError()
     else:
         club = matches[0]
-        # create the team row
-        team = Team()
+        # create the team row if it does not exist
+        team = db.session.query(Team).get(club.id) # @UndefinedVariable
+        if team is None:
+            team = Team()
         team.id = club.id
         team.name = club.name
         athlete_model.team = team
-        db.session.merge(team) # @UndefinedVariable
+        db.session.add(team) # @UndefinedVariable
         db.session.commit() # @UndefinedVariable
         return team
     
