@@ -42,7 +42,10 @@ def register_athlete(strava_athlete, access_token):
     """
     athlete = Athlete()
     athlete.id = strava_athlete.id
-    athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
+    if strava_athlete.lastname:
+        athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname[0]).strip()
+    else:
+        athlete.name = strava_athlete.firstname
     athlete.access_token = access_token
     db.session.merge(athlete) # @UndefinedVariable
     db.session.commit() # @UndefinedVariable
