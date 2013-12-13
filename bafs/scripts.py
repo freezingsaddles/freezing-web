@@ -93,7 +93,7 @@ def sync_rides():
         sys.exit(1)
         
     if options.rewrite:
-        logger.info("Rewriting data in the database.")
+        logger.info("Rewriting existing ride data.")
     
     # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
     # for those that don't.)
@@ -115,11 +115,6 @@ def _write_rides(start, athlete, rewrite=False):
     
     sess = db.session
     
-    # Start by deleting them ...
-    if rewrite:
-        logger.info("Removing existing rides for {0!r}".format(athlete))
-        sess.query(model.Ride).filter(model.Ride.athlete_id == athlete.id).delete()
-        
     api_ride_entries = data.list_rides(athlete=athlete, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
     q = sess.query(model.Ride)
     q = q.filter(and_(model.Ride.athlete_id == athlete.id,
@@ -138,10 +133,13 @@ def _write_rides(start, athlete, rewrite=False):
     #else:
     #    num_rides = len(new_ride_ids)
     
+    rides_to_segment = []
     for (i, strava_activity) in enumerate(api_ride_entries):
         logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i+1, num_rides))
         if rewrite or not strava_activity.id in stored_ride_ids:
-            ride = data.write_ride(strava_activity)
+            (ride, resync_segments) = data.write_ride(strava_activity)
+            if resync_segments:
+                rides_to_segment.append(ride)
             logger.info("[NEW RIDE]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                        name=strava_activity.name,
                                                                        i=i+1,
@@ -164,8 +162,7 @@ def _write_rides(start, athlete, rewrite=False):
      
     # TODO: This could be its own function, really
     # Write out any efforts associated with these rides (not already in database)
-    q = sess.query(model.Ride).filter_by(efforts_fetched=False)
-    for ride in q.all():
+    for ride in rides_to_segment:
         logger.info("Writing out efforts for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
         strava_activity = client.get_activity(ride.id)

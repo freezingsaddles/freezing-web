@@ -3,6 +3,7 @@ Functions for interacting with the datastore and the strava apis.
 """
 from __future__ import division
 import functools
+import math
 from collections import namedtuple
 
 from dateutil import parser
@@ -186,9 +187,6 @@ def write_ride(activity):
         # The athlete has to exist since otherwise we wouldn't be able to query their rides
         raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
         
-    #db.session.merge(athlete) # @UndefinedVariable
-    #db.session.commit() # @UndefinedVariable
-    
     if start_geo is not None or end_geo is not None:
         ride_geo = RideGeo()
         ride_geo.start_geo = start_geo
@@ -204,35 +202,46 @@ def write_ride(activity):
             location_parts.append(activity.location_state)
         location_str = ', '.join(location_parts)
         
-        logger().debug("Got distance: {0!r}".format(activity.distance))
-        
-        ride = Ride(id=activity.id,
-                    athlete=athlete,
-                    name=activity.name,
-                    start_date=activity.start_date_local,
-                    distance=float(unithelper.miles(activity.distance)),
-                    average_speed=float(unithelper.mph(activity.average_speed)),
-                    maximum_speed=float(unithelper.mph(activity.max_speed)),
-                    elapsed_time=timedelta_to_seconds(activity.elapsed_time),
-                    moving_time=timedelta_to_seconds(activity.moving_time),
-                    location=location_str,
-                    commute=activity.commute,
-                    trainer=activity.trainer,
-                    elevation_gain=float(unithelper.feet(activity.total_elevation_gain)),
-                    )
+        ride = db.session.query(Ride).get(activity.id) # @UndefinedVariable
+        if ride is None:
+            ride = Ride(activity.id)
+            
+        # Check to see if we need to pull down efforts for this ride
+        if ride.distance is None:
+            logger().info("Queing resync of segments for activity {0!r}: new ride".format(activity))
+            resync_segments = True
+        elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
+            logger().info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
+                                                                                                                ride.distance,
+                                                                                                                unithelper.miles(activity.distance)))
+            resync_segments = True
+        else:
+            resync_segments = False
+                
+        ride.athlete=athlete
+        ride.name=activity.name
+        ride.start_date = activity.start_date_local
+        ride.distance = float(unithelper.miles(activity.distance))
+        ride.average_speed = float(unithelper.mph(activity.average_speed))
+        ride.maximum_speed = float(unithelper.mph(activity.max_speed))
+        ride.elapsed_time = timedelta_to_seconds(activity.elapsed_time)
+        ride.moving_time = timedelta_to_seconds(activity.moving_time)
+        ride.location = location_str
+        ride.commute = activity.commute
+        ride.trainer = activity.trainer
+        ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
         
         logger().debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
                                                                                      ride=ride.name,
                                                                                      date=ride.start_date.strftime('%m/%d/%y')))
         
-        # db.session.merge() is *not* happy here.  (Duplicates get added for some weird reason.)
         db.session.add(ride) # @UndefinedVariable
         db.session.commit() # @UndefinedVariable
     except:
         logger().exception("Error adding ride: {0}".format(activity))
         raise
     
-    return ride
+    return ride, resync_segments
 
 
 def write_ride_efforts(strava_activity, ride):
@@ -249,6 +258,10 @@ def write_ride_efforts(strava_activity, ride):
     assert isinstance(ride, Ride)
     
     try:
+        # Start by removing any existing segments for the ride.
+        db.engine.execute(RideEffort.__table__.delete().where(RideEffort.ride_id==strava_activity.id)) # @UndefinedVariable
+        
+        # Then add them back in
         for se in strava_activity.segment_efforts:
             effort = RideEffort(id=se.id,
                                 ride_id=strava_activity.id,
