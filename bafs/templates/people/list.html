@@ -1,17 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row"><h1>All Participants</h1></div>
-<div class="row"><p>Weekly data is for {{weekstart.strftime('%m-%d-%Y')}} to {{weekend.strftime('%m-%d-%Y')}}</p></div>
+<div class="row"><div class="col-md-12"><h1>All Participants</h1></div></div>
 <div class="row">
+	<div class="col-md-6">
+		<p>Weekly data is for {{weekstart.strftime('%m-%d-%Y')}} to {{weekend.strftime('%m-%d-%Y')}}</p>
+	</div>
+	<div class="col-md-6">
+		<div class="btn-group">
+  <button type="button" onclick="hide_km();" class="btn btn-success">America!</button>
+  <button type="button" onclick="hide_miles();" class="btn btn-danger">Other</button>
+</div>
+
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
 	<table id="user-list" class="table table-striped">
-		<thead><tr><th>User</th><th>Rides This Week</th><th>Mileage This Week</th><th>Total Rides</th><th>Total Mileage</th></tr></thead>
+		<thead><tr><th>User</th><th>Rides This Week</th><th>Mileage This Week</th><th>Kilometerage This Week</th><th>Total Rides</th><th>Total Mileage</th><th>Total Kilometerage</th></tr></thead>
 		<tbody>
 			{% for u in users %}
-				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td>{{u.weekrides}}</td><td>{{u.weektotal | round(1)}}</td>
-					<td>{{u.totalrides}}</td><td>{{u.totaldist | round(1)}}</td></tr>
+				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td>{{u.weekrides}}</td><td>{{u.weektotal | round(1)}}</td><td>{{(u.weektotal/0.62137) | round(1) }}</td>
+					<td>{{u.totalrides}}</td><td>{{u.totaldist | round(1)}}</td><td>{{(u.totaldist /0.62137) | round(1)}}</td></tr>
 			{% endfor %}
 		</tbody>
 	</table>
+	</div>
 </div>
 {% block foot %}
 <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"></script>
@@ -26,7 +39,49 @@ $(document).ready(function() {
 		"bSort": true,
 		"bInfo": false,
 		"bAutoWidth": false,
-		"bDestroy": true } );
-} );</script>
+		"bDestroy": true,
+		"aoColumns": [
+			null,
+			null,
+			null,
+			{ "bVisible":    false },
+			null,
+			null,
+			{ "bVisible":    false }
+		] } );
+} );
+function fnShowHide( iCol )
+{
+	/* Get the DataTables object again - this is not a recreation, just a get of the object */
+	var oTable = $('#user-list').dataTable();
+	
+	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+	oTable.fnSetColumnVis( iCol, bVis ? false : true );
+}
+function hide_km()
+{
+	var oTable = $('#user-list').dataTable();
+	var bVis = oTable.fnSettings().aoColumns[2].bVisible;
+	if (!bVis)
+	{
+		oTable.fnSetColumnVis(2, true);
+		oTable.fnSetColumnVis(5, true);
+		oTable.fnSetColumnVis(3, false);
+		oTable.fnSetColumnVis(6, false);
+	}
+}
+function hide_miles()
+{
+	var oTable = $('#user-list').dataTable();
+	var bVis = oTable.fnSettings().aoColumns[3].bVisible;
+	if (!bVis)
+	{
+		oTable.fnSetColumnVis(3, true);
+		oTable.fnSetColumnVis(6, true);
+		oTable.fnSetColumnVis(2, false);
+		oTable.fnSetColumnVis(5, false);
+	}
+}
+</script>
 {% endblock %}
 {% endblock %}

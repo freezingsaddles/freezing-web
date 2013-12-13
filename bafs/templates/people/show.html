@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-{% block head %}
-<style>.top-buffer{margin-top:20px;}</style>
-{% endblock %}
 {% block content %}
 	<div class="row top-buffer">
 		<div class="col-md-8">
@@ -21,8 +18,20 @@
 						</div>
 						<div class="col-md-6">
 							<ul class="list-group">
-								<li class="list-group-item">Average Ride: <span class="pull-right">{% if data.totalrides > 0 %}{{(data.totaldist / data.totalrides) | round(1)}}{% else %}N/A{% endif%}</span></li>
-								<li class="list-group-item">Average Ride This Week: <span class="pull-right">{% if data.weekrides > 0 %}{{(data.weektotal / data.weekrides) | round(1)}}{% else %}N/A{% endif%}</span></li>							
+								<li class="list-group-item">Average Ride: <span class="pull-right">
+									{% if data.totalrides > 0 %}
+										{{(data.totaldist / data.totalrides) | round(1)}}
+									{% else %}
+										N/A
+									{% endif%}
+									</span></li>
+								<li class="list-group-item">Average Ride This Week: <span class="pull-right">
+									{% if data.weekrides > 0 %}
+										{{(data.weektotal / data.weekrides) | round(1)}}
+									{% else %}
+										N/A
+									{% endif%}
+									</span></li>							
 							</ul>
 						</div>
 					</div>
