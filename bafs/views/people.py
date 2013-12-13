@@ -32,4 +32,23 @@ def people_list_users():
 def people_show_person(user_id):
 	our_user = db.session.query(Athlete).filter_by(id=user_id).first()
 	our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()
-	return render_template('people/show.html', user=our_user, team=our_team)
+	tdy = date.today()
+	week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
+	week_end = week_start + timedelta(days=6)
+	weekly_dist = 0
+	weekly_rides = 0
+	total_rides = 0
+	total_dist = 0
+	for r in our_user.rides:
+		total_rides += 1
+		total_dist += r.distance
+		if week_start <= r.start_date.date() <=week_end:
+			weekly_dist += r.distance
+			weekly_rides += 1		
+	return render_template('people/show.html', data={
+		"user":our_user, 
+		"team":our_team,
+		"weekrides":weekly_rides,
+		"weektotal":weekly_dist,
+		"totaldist": total_dist,
+		"totalrides": total_rides})
