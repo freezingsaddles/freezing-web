@@ -21,7 +21,7 @@ def people_list_users():
 			if week_start <= r.start_date.date() <=week_end:
 				weekly_dist += r.distance
 				weekly_rides += 1
-		users.append({"name":u.name,
+		users.append({"name":u.display_name,
 			"id": u.id,
 			"weekrides":weekly_rides,
 			"weektotal":weekly_dist,

@@ -56,10 +56,10 @@ def indiv_leaderboard_data():
     Loads the leaderboard data broken down by team.
     """
     q = text("""
-             select A.id as athlete_id, A.name as athlete_name, sum(DS.points) as total_score
+             select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score
              from daily_scores DS 
              join athletes A on A.id = DS.athlete_id
-             group by A.id, A.name
+             group by A.id, A.display_name
              order by total_score desc
              ;
              """)
@@ -111,7 +111,7 @@ def team_elev_gain():
 def indiv_elev_gain():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
+                select R.athlete_id, A.display_name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
@@ -138,7 +138,7 @@ def indiv_elev_gain():
 def indiv_moving_time():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name, sum(R.moving_time) as total_moving_time
+                select R.athlete_id, A.display_name as athlete_name, sum(R.moving_time) as total_moving_time
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
@@ -193,7 +193,7 @@ def team_moving_time():
 def indiv_number_sleaze_days():
     
     q = text ("""
-                select D.athlete_id, A.name as athlete_name, count(*) as num_sleaze_days
+                select D.athlete_id, A.display_name as athlete_name, count(*) as num_sleaze_days
                 from daily_scores D
                 join athletes A on A.id = D.athlete_id
                 where D.points > 10 and D.points < 12
@@ -252,12 +252,12 @@ def indiv_segment(segment_id):
     #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
     
     q = text ("""
-                select A.id, A.name as athlete_name, count(E.id) as segment_rides
+                select A.id, A.display_name as athlete_name, count(E.id) as segment_rides
                 from athletes A
                 join rides R on R.athlete_id = A.id
                 join ride_efforts E on E.ride_id = R.id
                 where E.segment_id = :segment_id
-                group by A.id, A.name
+                group by A.id, A.display_name
                 order by segment_rides desc
                 ;
             """)
@@ -314,7 +314,7 @@ def team_segment(segment_id):
 def indiv_avg_speed():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name, AVG(R.average_speed) as avg_speed
+                select R.athlete_id, A.display_name as athlete_name, AVG(R.average_speed) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
@@ -369,7 +369,7 @@ def team_avg_speed():
 def indiv_freezing():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name, sum(R.distance) as distance
+                select R.athlete_id, A.display_name as athlete_name, sum(R.distance) as distance
                 from rides R
                 join ride_weather W on W.ride_id = R.id
                 join athletes A on A.id = R.athlete_id
@@ -398,7 +398,7 @@ def indiv_freezing():
 def indiv_before_sunrise():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name,
+                select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.before_sunrise)) as dark
                 from ride_daylight D
                 join rides R on R.id = D.ride_id
@@ -427,7 +427,7 @@ def indiv_before_sunrise():
 def indiv_after_sunset():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name,
+                select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.after_sunset)) as dark
                 from ride_daylight D
                 join rides R on R.id = D.ride_id
@@ -585,7 +585,7 @@ def team_cumul_mileage():
 def indiv_elev_dist():
     
     q = text ("""
-                select R.athlete_id, A.name as athlete_name,
+                select R.athlete_id, A.display_name as athlete_name,
                 T.name as team_name,
                 SUM(R.elevation_gain) as total_elevation_gain,
                 SUM(R.distance) as total_distance,
