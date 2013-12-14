@@ -45,14 +45,77 @@ def register_athlete(strava_athlete, access_token):
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
-    if strava_athlete.lastname:
-        athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname[0]).strip()
-    else:
-        athlete.name = strava_athlete.firstname
+    athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
+    # Temporary; we will update this in disambiguation phase.  (This isn't optimal; needs to be
+    # refactored....)
+    athlete.display_name = strava_athlete.firstname
+        
     athlete.access_token = access_token
     db.session.add(athlete) # @UndefinedVariable
+    # We really shouldn't be committing here, since we want to disambiguate names after registering 
     db.session.commit() # @UndefinedVariable
+    
     return athlete
+
+def disambiguate_athlete_display_names():
+    q = db.session.query(model.Athlete) # @UndefinedVariable
+    q = q.filter(model.Athlete.access_token != None)
+    athletes = q.all()
+    
+    # Ok, here is the plan; bin these things together based on firstname and last initial.
+    # Then iterate over each bin and if there are multiple entries, find the least number
+    # of letters to make them all different. (we should be able to use set intersection
+    # to check for differences within the bins?)
+    
+    def firstlast(name):
+        name_parts = a.name.split(' ')
+        fname = name_parts[0]
+        if len(name_parts) < 2:
+            lname = None
+        else:
+            lname = name_parts[-1]
+        return (fname, lname)
+        
+    athletes_bin = {}
+    for a in athletes:
+        (fname, lname) = firstlast(a.name)
+        if lname is None:
+            # We only care about people with first and last names for this exercise
+            #key = fname
+            continue
+        else:
+            key = '{0} {1}'.format(fname, lname[0])
+        athletes_bin.setdefault(key, []).append(a)
+    
+    for (name_key, athletes) in athletes_bin.items():
+        shortest_lname = min([firstlast(a.name)[1] for a in athletes], key=len)
+        required_length = None
+        for i in range(len(shortest_lname)):
+            # Calculate fname + lname-of-x-chars for each athlete.
+            # If unique, then use this number and update the model objects
+            candidate_short_lasts = [firstlast(a.name)[1][:i+1] for a in athletes]
+            if len(set(candidate_short_lasts)) == len(candidate_short_lasts):
+                required_length = i+1
+                break    
+            
+        if required_length is not None:
+            for a in athletes:
+                fname,lname = firstlast(a.name)
+                logger().debug("Converting '{fname} {lname}' -> '{fname} {minlname}".format(fname=fname,
+                                                                                            lname=lname,
+                                                                                            minlname=lname[:required_length]))
+                a.display_name = '{0} {1}'.format(fname, lname[:required_length])
+        else:
+            logger().debug("Unable to find a minimum lastname; using full lastname.")
+            # Just use full names
+            for a in athletes:
+                fname,lname = firstlast(a.name)
+                a.display_name = '{0} {1}'.format(fname, lname[:required_length])
+                
+    
+    # Update the database with new values
+    db.session.commit() # @UndefinedVariable
+            
 
 class MultipleTeamsError(RuntimeError):
     def __init__(self, teams):

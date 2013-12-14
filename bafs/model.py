@@ -50,6 +50,7 @@ class Athlete(StravaEntity):
     """
     """
     __tablename__ = 'athletes'
+    display_name = sa.Column(sa.String(255), nullable=True)
     team_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id', ondelete='set null'))
     access_token = sa.Column(sa.String(255), nullable=True)
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")

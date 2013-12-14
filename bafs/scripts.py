@@ -340,6 +340,7 @@ def sync_athletes():
     
     # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
     # for those that don't.)
+    
     q = sess.query(model.Athlete)
     q = q.filter(model.Athlete.access_token != None)
     
@@ -353,3 +354,5 @@ def sync_athletes():
         except:
             logger.warning("Error registering athlete {0}".format(athlete), exc_info=True)
             # But carry on
+            
+    data.disambiguate_athlete_display_names()
