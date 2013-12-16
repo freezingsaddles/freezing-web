@@ -5,11 +5,11 @@
   	<ol>
   		{% for team_row in team_rows %}
   		<li><a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}" target="_blank">{{ team_row['team_name'] }}</a>
-  		   <em><strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points, {{ team_row['total_distance']|round|int }} miles</em>
+  		   <em><strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points, {{ team_row['total_distance']|round|int|groupnum }} miles</em>
 	  		<ul>
 	  			{% for member_row in team_members[team_row['team_id']] %}
 	  			<li><a href="http://www.strava.com/athletes/{{ member_row['athlete_id'] }}" target="_blank">{{ member_row['athlete_name'] }}</a> 
-	  			<em>{{ member_row['total_score']|round|int }} points, {{ member_row['total_distance']|round|int }} miles, {{ member_row['days_ridden'] }} days</em></li>
+	  			<em>{{ member_row['total_score']|round|int|groupnum }} points, {{ member_row['total_distance']|round|int|groupnum }} miles, {{ member_row['days_ridden'] }} days</em></li>
 	  			{% endfor %}
 	  		</ul>
   		</li>
