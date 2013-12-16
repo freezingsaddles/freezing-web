@@ -4,7 +4,7 @@ from bafs.model import Team, Athlete
 from datetime import date, timedelta
 
 def people_list_users():
-	users_list = db.session.query(Athlete).order_by(Athlete.name)
+	users_list = db.session.query(Athlete).order_by(Athlete.name) # @UndefinedVariable
 	#tdy = date(2013, 2, 10) # For testing because DB is old
 	tdy = date.today()
 	week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
@@ -30,8 +30,8 @@ def people_list_users():
 	return render_template('people/list.html', users=users, weekstart=week_start, weekend=week_end)
 	
 def people_show_person(user_id):
-	our_user = db.session.query(Athlete).filter_by(id=user_id).first()
-	our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()
+	our_user = db.session.query(Athlete).filter_by(id=user_id).first() # @UndefinedVariable
+	our_team = db.session.query(Team).filter_by(id=our_user.team_id).first() # @UndefinedVariable
 	tdy = date.today()
 	week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
 	week_end = week_start + timedelta(days=6)

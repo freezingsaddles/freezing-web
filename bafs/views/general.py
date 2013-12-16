@@ -26,6 +26,15 @@ blueprint = Blueprint('general', __name__)
 class AccessDenied(RuntimeError):
     pass
 
+@app.template_filter('groupnum')
+def groupnum(number):
+    s = '%d' % number
+    groups = []
+    while s and s[-1].isdigit():
+        groups.append(s[-3:])
+        s = s[:-3]
+    return s + ','.join(reversed(groups))
+
 @blueprint.route("/")
 def index():
     return render_template('index.html')
@@ -82,6 +91,41 @@ def leaderboard():
 def team_leaderboard():
     return render_template('leaderboard/team.html')
 
+@blueprint.route("/leaderboard/team_text")
+def team_leaderboard_classic():
+    # Get teams sorted by points
+    q = text("""
+             select T.id as team_id, T.name as team_name, sum(DS.points) as total_score,
+             sum(DS.distance) as total_distance
+             from daily_scores DS 
+             join teams T on T.id = DS.team_id 
+             group by T.id, T.name
+             order by total_score desc
+             ;
+             """)
+    
+    team_rows = db.session.execute(q).fetchall() # @UndefinedVariable
+    
+    q = text("""
+             select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
+             sum(DS.points) as total_score, sum(DS.distance) as total_distance,
+             count(DS.points) as days_ridden
+             from daily_scores DS 
+             join athletes A on A.id = DS.athlete_id
+             group by A.id, A.display_name
+             order by total_score desc
+             ;
+             """)
+    
+    team_members = {}
+    for indiv_row in db.session.execute(q).fetchall(): # @UndefinedVariable 
+        team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
+    
+    for team_id in team_members:
+        team_members[team_id] = reversed(sorted(team_members[team_id], key=lambda m: m['total_score']))
+    
+    return render_template('leaderboard/team_text.html', team_rows=team_rows, team_members=team_members)
+
 @blueprint.route("/leaderboard/team_various")
 def team_leaderboard_various():
     return render_template('leaderboard/team_various.html')
@@ -90,6 +134,23 @@ def team_leaderboard_various():
 def indiv_leaderboard():
     return render_template('leaderboard/indiv.html')
 
+@blueprint.route("/leaderboard/individual_text")
+def individual_leaderboard_text():
+    
+    q = text("""
+             select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
+             sum(DS.distance) as total_distance, sum(DS.points) as total_score,
+             count(DS.points) as days_ridden
+             from daily_scores DS 
+             join athletes A on A.id = DS.athlete_id
+             group by A.id, A.display_name
+             order by total_score desc
+             ;
+             """)
+        
+    indiv_rows = db.session.execute(q).fetchall() # @UndefinedVariable 
+        
+    return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows)
 
 @blueprint.route("/leaderboard/individual_various")
 def indiv_leaderboard_various():
@@ -117,8 +178,8 @@ def riders_by_lowtemp():
 
 @blueprint.route("/people")
 def list_users():
-	return people_list_users()
-	
+    return people_list_users()
+
 @blueprint.route("/people/<user_id>")
 def show_user(user_id):
-	return people_show_person(user_id)
+    return people_show_person(user_id)
