@@ -4,8 +4,8 @@
   	<p>This leaderboard is also available as a <a href="/leaderboard/individual">Google-charts version</a>.</p>
   	<ol>
   		{% for indiv_row in indiv_rows %}
-  		<li><a href="http://www.strava.com/athletes/{{ indiv_row['athlete_id'] }}" target="_blank">{{ indiv_row['athlete_name'] }}</a>
-  		   <em><strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points, {{ indiv_row['total_distance']|round|int|groupnum }} miles, {{ indiv_row['days_ridden'] }} days</em>
+  		<li><a href="http://www.strava.com/athletes/{{ indiv_row['athlete_id'] }}" target="_blank">{{ indiv_row['athlete_name'] }}</a>:
+  		   <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles)
   		</li>
   		{% endfor %}
   	</ol>
