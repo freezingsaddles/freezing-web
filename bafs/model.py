@@ -28,7 +28,7 @@ class StravaEntity(db.Model):
     __abstract__ = True
     __table_args__ = {'mysql_engine':'InnoDB'} # But we use MyISAM for the spatial table.
     
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
+    id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
     name = sa.Column(sa.String(1024), nullable=False)
     
     def __init__(self, id=None, name=None, **kwargs):
@@ -51,7 +51,7 @@ class Athlete(StravaEntity):
     """
     __tablename__ = 'athletes'
     display_name = sa.Column(sa.String(255), nullable=True)
-    team_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id', ondelete='set null'))
+    team_id = sa.Column(sa.BigInteger, sa.ForeignKey('teams.id', ondelete='set null'))
     access_token = sa.Column(sa.String(255), nullable=True)
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
     
@@ -59,7 +59,7 @@ class Ride(StravaEntity):
     """
     """
     __tablename__ = 'rides'
-    athlete_id = sa.Column(sa.Integer, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
+    athlete_id = sa.Column(sa.BigInteger, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
     elapsed_time = sa.Column(sa.Integer, nullable=False) # Seconds
     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
     # time.strftime('%H:%M:%S', time.gmtime(12345))
@@ -87,7 +87,7 @@ class RideGeo(db.Model):
     __tablename__ = 'ride_geo'
     __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM for spatial indexes
     
-    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
     start_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
     end_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
 
@@ -98,10 +98,10 @@ class RideGeo(db.Model):
 
 class RideEffort(db.Model):
     __tablename__ = 'ride_efforts'
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
-    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
+    id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     segment_name = sa.Column(sa.String(255), nullable=False)
-    segment_id = sa.Column(sa.Integer, nullable=False, index=True)
+    segment_id = sa.Column(sa.BigInteger, nullable=False, index=True)
     elapsed_time = sa.Column(sa.Integer, nullable=False)
 
     def __repr__(self):
@@ -109,7 +109,7 @@ class RideEffort(db.Model):
 
 class RideWeather(db.Model):
     __tablename__ = 'ride_weather'
-    ride_id = sa.Column(sa.Integer, sa.ForeignKey('rides.id'), primary_key=True)
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
     
     ride_temp_start = sa.Column(sa.Float, nullable=True)
     ride_temp_end = sa.Column(sa.Float, nullable=True)
