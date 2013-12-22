@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block head %}
+<!--<script src="/static/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="/static/bootstrap-datetimepicker.min.css">-->
+<link rel="stylesheet" type="text/css" media="screen"
+     href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css">
+ <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.min.js">
+    </script>
+    <script type="text/javascript"
+     src="http://tarruda.github.com/bootstrap-datetimepicker/assets/js/bootstrap-datetimepicker.pt-BR.js">
+    </script>
+{% endblock %}
+{% block content %}
+<p class="lead">This utility allows you to copy a Strava ride.</p>
+<p>Usage: Record a ride on Strava. On the ride page, find "Actions" then "Export GPX". Save the gpx file, then upload it here. Enter the date and time
+at which you started the new ride, and submit. The page will return a new GPX file identical to the one you uploaded except the date and time have been changed to what you entered.</p>
+{% if errors %}
+{% if errors.file %}
+<div class="alert alert-danger alert-dismissable" >
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	{{errors.file}}</div>
+{% endif %}
+{% if errors.date %}
+<div class="alert alert-danger alert-dismissable" >
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	{{errors.date}}</div>
+{% endif %}
+{% if errors.time %}
+<div class="alert alert-danger alert-dismissable" >
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	{{errors.time}}</div>
+{% endif %}
+{% endif %}
+	<div class="row top-buffer">
+		<div class="col-md-12">
+			<form role="form" class="form-horizontal" enctype="multipart/form-data" method="POST" action="">
+				<div class="form-group{% if errors and errors.file %} has-errors{% endif %}">
+					<div class="col-xs-8">
+						<label for="fileInput" class="input-group">File Input</label>
+							<input class="form-control" type="file" id="fileInput" name="fileInput">
+					</div>
+				</div>
+				<div class="form-group{% if errors and errors.date %} has-errors{% endif %}">
+					 <div class="col-xs-8">
+						  <label for="rideDate" class="control-label">Ride Date</label>
+						   <div class="input-group date" id="dp3" data-date-format="mm-dd-yyyy">
+							    <input class="form-control" type="text" readonly="" id="rideDate" name="rideDate"> 
+							    <span class="input-group-addon add-on"><i class="glyphicon glyphicon-calendar"></i></span> 
+							</div> 
+					</div> 
+				</div>
+							    <script type="text/javascript">
+								$(function() {
+								$('#dp3').datetimepicker({
+								language: 'en',
+								pick12HourFormat: true
+								});
+								});
+							</script>
+				<div class="form-group{% if errors and errors.time %} has-errors{% endif %}">
+					<div class="col-xs-8">
+						<label for="rideTime" class="input group">Start Time</label>
+						<input class="form-control" type="text" id="rideTime" name="rideTime" />
+						<p>Example format: 8:23AM</p>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-default">Submit</button>
+			</form>
+		</div>
+	</div>
+{% endblock %}
