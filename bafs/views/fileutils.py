@@ -36,7 +36,7 @@ def utils_upload_file():
 		if f:
 			if newdate and newtime: 
 				response = make_response(update_file(f, newdate, newtime))
-				response.headers["Content-Disposition"] = "attachment; filename=outbound.txt"
+				response.headers["Content-Disposition"] = "attachment; filename=newride.gpx"
 				return response
 		else:
 			errors['file'] = "Invalid file"
