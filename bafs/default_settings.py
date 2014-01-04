@@ -10,6 +10,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 BAFS_TEAMS = [
               46292, # Team 0
               46334, # Team ??
+              46418, # Team 3
               46225, # Team 4
               
               46402, # Team 6
