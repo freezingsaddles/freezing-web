@@ -9,14 +9,13 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 # The strava team (club) IDs
 BAFS_TEAMS = [
               46292, # Team 0
-              
               46334, # Team ??
-              
               46225, # Team 4
+              
+              46402, # Team 6
               46246, # Team 7
               46209, # Team 8
               46202, # Team 9
-              
               ]
 
 # When does the competition start?

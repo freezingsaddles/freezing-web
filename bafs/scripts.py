@@ -103,6 +103,8 @@ def sync_rides():
     # Also only fetch athletes that have teams configured.  This may not be strictly necessary
     # but this is a team competition, so not a lot of value in pulling in data for those
     # without teams.
+    # (The way the athlete sync works, athletes will only be configured for a single team
+    # that is one of the configured competition teams.)
     q = q.filter(model.Athlete.team_id != None)
     
     for athlete in q.all():
