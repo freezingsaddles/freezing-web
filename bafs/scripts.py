@@ -165,9 +165,12 @@ def _write_rides(start, athlete, rewrite=False):
     for ride in rides_to_segment:
         logger.info("Writing out efforts for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
-        strava_activity = client.get_activity(ride.id)
-        data.write_ride_efforts(strava_activity, ride)
-        
+        try:
+	    strava_activity = client.get_activity(ride.id)
+            data.write_ride_efforts(strava_activity, ride)
+        except:
+            logger.exception("Error fetching/writing activity {0}".format(ride.id))
+
 def sync_ride_weather():
     """
     Synchronize rides from strava with the database.
