@@ -35,7 +35,10 @@ class StravaEntity(db.Model):
         self.id = id
         self.name = name
         for (k,v) in kwargs.items():
-            setattr(self, k, v)
+            try:
+                setattr(self, k, v)
+            except AttributeError:
+                raise AttributeError("Unable to set attribute {0} on {1}".format(k, self.__class__.__name__))
         
     def __repr__(self):
         return '<{0} id={1} name={2!r}>'.format(self.__class__.__name__, self.id, self.name)
