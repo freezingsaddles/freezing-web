@@ -280,7 +280,7 @@ def write_ride(activity):
                                                                                                                 unithelper.miles(activity.distance)))
             resync_segments = True
         elif not ride.efforts_fetched:
-            logger().info("Queing sync of segments for activity {0!r}: effort not fetched".fsormat(activity))
+            logger().info("Queing sync of segments for activity {0!r}: effort not fetched".format(activity))
             resync_segments = True
         else:
             resync_segments = False
