@@ -168,7 +168,7 @@ def _write_rides(start, athlete, rewrite=False):
         logger.info("Writing out efforts for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
         try:
-	    strava_activity = client.get_activity(ride.id)
+            strava_activity = client.get_activity(ride.id)
             data.write_ride_efforts(strava_activity, ride)
         except:
             logger.exception("Error fetching/writing activity {0}".format(ride.id))

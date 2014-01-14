@@ -266,17 +266,21 @@ def write_ride(activity):
         location_str = ', '.join(location_parts)
         
         ride = db.session.query(Ride).get(activity.id) # @UndefinedVariable
+        new_ride = (ride is None)
         if ride is None:
             ride = Ride(activity.id)
             
         # Check to see if we need to pull down efforts for this ride
-        if ride.distance is None:
-            logger().info("Queing resync of segments for activity {0!r}: new ride".format(activity))
+        if new_ride:
+            logger().info("Queing sync of segments for activity {0!r}: new ride".format(activity))
             resync_segments = True
         elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
             logger().info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
                                                                                                                 ride.distance,
                                                                                                                 unithelper.miles(activity.distance)))
+            resync_segments = True
+        elif not ride.efforts_fetched:
+            logger().info("Queing sync of segments for activity {0!r}: effort not fetched".fsormat(activity))
             resync_segments = True
         else:
             resync_segments = False
