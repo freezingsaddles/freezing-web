@@ -2,6 +2,8 @@ from bafs import app, db, data
 from flask import render_template
 from bafs.model import Team, Athlete
 from datetime import date, timedelta
+from sqlalchemy import text
+from datetime import datetime
 
 def people_list_users():
 	users_list = db.session.query(Athlete).order_by(Athlete.name) # @UndefinedVariable
@@ -52,3 +54,14 @@ def people_show_person(user_id):
 		"weektotal":weekly_dist,
 		"totaldist": total_dist,
 		"totalrides": total_rides})
+
+def ridedays():
+	q = text("""
+		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles
+		 FROM athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
+		;
+		"""
+		)
+	total_days = day_of_year = datetime.now().timetuple().tm_yday
+	ride_days = [(x['id'], x['display_name'], x['rides'], x['miles']) for x in db.session.execute(q).fetchall()]
+	return render_template('people/ridedays.html', ride_days =ride_days, num_days = total_days)

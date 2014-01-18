@@ -18,7 +18,7 @@ from stravalib import Client
 from bafs import app, db, data
 from bafs.utils import gviz_api
 from bafs.model import Team, Athlete
-from people import people_list_users, people_show_person
+from people import people_list_users, people_show_person, ridedays
 
 
 blueprint = Blueprint('general', __name__)
@@ -183,3 +183,8 @@ def list_users():
 @blueprint.route("/people/<user_id>")
 def show_user(user_id):
     return people_show_person(user_id)
+    
+@blueprint.route("/people/ridedays")
+def ride_days():
+	return ridedays()
+	
