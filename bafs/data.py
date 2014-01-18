@@ -288,7 +288,7 @@ def write_ride(activity):
         ride.athlete=athlete
         ride.name=activity.name
         ride.start_date = activity.start_date_local
-        ride.distance = float(unithelper.miles(activity.distance))
+        ride.distance = round(float(unithelper.miles(activity.distance)), 3) # We need to round so that "1.0" miles in strava is "1.0" miles when we convert back from meters.
         ride.average_speed = float(unithelper.mph(activity.average_speed))
         ride.maximum_speed = float(unithelper.mph(activity.max_speed))
         ride.elapsed_time = timedelta_to_seconds(activity.elapsed_time)
