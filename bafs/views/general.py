@@ -6,7 +6,7 @@ Created on Feb 10, 2013
 import json
 import copy
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import render_template, redirect, url_for, current_app, request, Blueprint
 
@@ -14,6 +14,7 @@ from sqlalchemy import text
 from dateutil import rrule, parser 
 
 from stravalib import Client
+from stravalib import unithelper as uh
 
 from bafs import app, db, data
 from bafs.utils import gviz_api
@@ -37,7 +38,66 @@ def groupnum(number):
 
 @blueprint.route("/")
 def index():
-    return render_template('index.html')
+    q = text ("""select count(*) as num_contestants from athletes WHERE team_id is not null""")
+    
+    indiv_count_res = db.session.execute(q).fetchone() # @UndefinedVariable
+    contestant_count = indiv_count_res['num_contestants']
+
+    q = text ("""
+                select count(*) as num_rides, sum(R.moving_time) as moving_time,
+                sum(R.distance) as distance
+                from rides R
+                ;
+            """)
+    
+    all_res = db.session.execute(q).fetchone() # @UndefinedVariable
+    total_miles = int(all_res['distance'])
+    total_hours = uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
+    total_rides = all_res['num_rides'] 
+     
+    q = text ("""
+                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                from rides R 
+                join ride_weather W on W.ride_id = R.id
+                where W.ride_temp_avg < 32
+                ;
+            """)
+    
+    sub32_res = db.session.execute(q).fetchone() # @UndefinedVariable
+    sub_freezing_hours = uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
+    
+    q = text ("""
+                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                from rides R 
+                join ride_weather W on W.ride_id = R.id
+                where W.ride_rain = 1
+                ;
+            """)
+    
+    rain_res = db.session.execute(q).fetchone() # @UndefinedVariable
+    rain_hours = uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
+    
+    q = text ("""
+                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                from rides R 
+                join ride_weather W on W.ride_id = R.id
+                where W.ride_snow = 1
+                ;
+            """)
+    
+    snow_res = db.session.execute(q).fetchone() # @UndefinedVariable
+    snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
+    
+    
+    return render_template('index.html',
+                           team_count=len(app.config['BAFS_TEAMS']),
+                           contestant_count=contestant_count,
+                           total_rides=total_rides,
+                           total_hours=total_hours,
+                           total_miles=total_miles,
+                           rain_hours=rain_hours,
+                           snow_hours=snow_hours,
+                           sub_freezing_hours=sub_freezing_hours)
 
 @blueprint.route("/authorize")
 def join():
@@ -186,5 +246,4 @@ def show_user(user_id):
     
 @blueprint.route("/people/ridedays")
 def ride_days():
-	return ridedays()
-	
+    return ridedays()

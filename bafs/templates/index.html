@@ -15,6 +15,15 @@
 	</div>
 </div>
 <div class="row">
+	<h1><span class="label label-default">{{team_count}} teams.  {{contestant_count}} contestants.</span></h1>
+	<h1><span class="label label-default">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span></h1	>
+	<h2><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
+	<span class="label label-success">{{rain_hours|groupnum}} hours in the rain.</span>
+	<span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span></h2>
+</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div class="row">
 	<div class="col-md-12">
 		<p>
 	Rides tracked using <a href="http://strava.com">strava.com</a>.
