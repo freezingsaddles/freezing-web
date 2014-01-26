@@ -296,6 +296,7 @@ def write_ride(activity):
         ride.location = location_str
         ride.commute = activity.commute
         ride.trainer = activity.trainer
+        ride.manual = activity.manual
         ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
         
         logger().debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
