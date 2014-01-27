@@ -7,7 +7,10 @@
 <table class="table table-condensed">
 	<tr><th>Rider</th><th>Days</th><th>Miles</th></tr>
 {% for a, b, c, d in ride_days %}
-{% if c < num_days %}<tr class="danger">{% else %}<tr class="success">{% endif %}
+	{% if c >= num_days %}<tr class="success">
+	{% elif c == (num_days - 1) %}<tr class="warning">
+	{% elif c < num_days %}<tr class="danger">
+	{% endif %}
 <td><a href="/people/{{a}}">{{b}}</a></td><td>{{c}}</td><td>{{d | round(1)}}</td></tr>
 {% endfor %}
 </table>
