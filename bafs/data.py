@@ -198,9 +198,9 @@ def list_rides(athlete, start_date=None, exclude_keywords=None):
     def is_keyword_excluded(activity):
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
-                logger().info("Skipping ride {0} ({1}) due to presence of exlusion keyword: {2}".format(activity.id,
-                                                                                                        activity.name,
-                                                                                                        keyword))
+                logger().info("Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(activity.id,
+                                                                                                            activity.name,
+                                                                                                            keyword))
                 return True
         else:
             return False
