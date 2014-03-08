@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Average Speed</div>
+	<div class="panel-body">
+		<p>Rider average speed</p>
+<table class="table table-condensed">
+	<tr><th>Rank</th><th>Rider</th><th>Average Speed</th></tr>
+{% for a, b, c in avg %}
+	<tr><td>{{loop.index}}</td><td><a href="/people/{{a}}">{{b}}</a></td><td>{{c | round(2)}}</td></tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

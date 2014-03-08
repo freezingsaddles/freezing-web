@@ -60,6 +60,15 @@
 							<li><a href="/people/ridedays">Ride Days</a></li>
 						</ul>
 					</li>
+					<li class="dropdown{% if request.path.startswith('/pointless') %} active{% endif %}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							Pointless <span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="/pointless/avgspeed">Tortoise</a></li>
+							<li><a href="/pointless/avgdist">Shortest Rides</a></li>
+						</ul>
+					</li>
 				</ul>
 				</ul>
 			</div>

@@ -20,6 +20,7 @@ from bafs import app, db, data
 from bafs.utils import gviz_api
 from bafs.model import Team, Athlete
 from people import people_list_users, people_show_person, ridedays
+from pointless import averagespeed, shortride
 
 
 blueprint = Blueprint('general', __name__)
@@ -247,3 +248,11 @@ def show_user(user_id):
 @blueprint.route("/people/ridedays")
 def ride_days():
     return ridedays()
+
+@blueprint.route("/pointless/avgspeed")
+def average_speed():
+    return averagespeed()    
+
+@blueprint.route("/pointless/avgdist")
+def average_distance():
+    return shortride()    
