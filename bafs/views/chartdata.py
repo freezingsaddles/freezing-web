@@ -264,7 +264,7 @@ def indiv_kidical():
     indiv_q = db.engine.execute(q).fetchall() # @UndefinedVariable
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
-            {'id': 'score', 'label': 'Kidal Rides', 'type': 'number'},
+            {'id': 'score', 'label': 'Kidical Rides', 'type': 'number'},
             ]
     
     rows = []
