@@ -246,6 +246,36 @@ def team_number_sleaze_days():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+@blueprint.route("/indiv_kidical")
+def indiv_kidical():
+    
+    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    
+    q = text ("""
+                select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides
+                from athletes A
+                join rides R on R.athlete_id = A.id
+                where R.name like '%#kidical%'
+                group by A.id, A.display_name
+                order by kidical_rides desc
+                ;
+            """)
+    
+    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Kidal Rides', 'type': 'number'},
+            ]
+    
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+                 {'v': res['kidical_rides'], 'f': str(int(res['kidical_rides']))}]
+        rows.append({'c': cells})
+        
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
 @blueprint.route("/indiv_segment/<int:segment_id>")
 def indiv_segment(segment_id):
     
