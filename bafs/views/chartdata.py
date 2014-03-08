@@ -261,7 +261,7 @@ def indiv_kidical():
                 ;
             """)
     
-    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    indiv_q = db.engine.execute(q).fetchall() # @UndefinedVariable
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Kidal Rides', 'type': 'number'},
