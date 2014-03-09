@@ -57,11 +57,11 @@ def people_show_person(user_id):
 
 def ridedays():
 	q = text("""
-		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles
+		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles, max(b.ride_date) as lastride
 		 FROM athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
 		;
 		"""
 		)
-	total_days = day_of_year = datetime.now().timetuple().tm_yday
-	ride_days = [(x['id'], x['display_name'], x['rides'], x['miles']) for x in db.session.execute(q).fetchall()]
+	total_days = datetime.now().timetuple().tm_yday
+	ride_days = [(x['id'], x['display_name'], x['rides'], x['miles'], x['lastride']>=date.today()) for x in db.session.execute(q).fetchall()]
 	return render_template('people/ridedays.html', ride_days =ride_days, num_days = total_days)

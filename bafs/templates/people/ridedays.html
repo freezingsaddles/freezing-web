@@ -4,11 +4,12 @@
 	<div class="panel-heading">Every Day Riders</div>
 	<div class="panel-body">
 		<p>If you're green, you've ridden every day. If not, either you haven't (see <a href="http://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.</p>
+		<p>Yellow means you're one ride shy of every day and you haven't yet ridden today. Go ride today.</p>
 <table class="table table-condensed">
 	<tr><th>Rider</th><th>Days</th><th>Miles</th></tr>
-{% for a, b, c, d in ride_days %}
+{% for a, b, c, d, e in ride_days %}
 	{% if c >= num_days %}<tr class="success">
-	{% elif c == (num_days - 1) %}<tr class="warning">
+	{% elif c == (num_days - 1) and not e %}<tr class="warning">
 	{% elif c < num_days %}<tr class="danger">
 	{% endif %}
 <td><a href="/people/{{a}}">{{b}}</a></td><td>{{c}}</td><td>{{d | round(1)}}</td></tr>
