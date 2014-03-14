@@ -153,7 +153,7 @@ def _write_rides(start, athlete, rewrite=False):
                                                                                    i=i+1,
                                                                                    num=num_rides))
         except:
-            log.exception("Unable to write ride (skipping): {}".format(strava_activity.id))
+            logger.exception("Unable to write ride (skipping): {}".format(strava_activity.id))
     # Remove any rides that are in the database for this athlete that were not in the returned list.
     if removed_ride_ids:
         q = sess.query(model.Ride)
