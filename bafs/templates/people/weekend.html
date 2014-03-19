@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Weekend Warrior</div>
+	<div class="panel-body">
+		<p>Miles on the weekend vs miles during the week</p>
+<table id="weekend" class="table table-condensed">
+	<thead><tr><th>Rank</th><th>Athlete</th><th>Weekend</th><th>Weekday</th><th>Total</th><th>Weekend percentage</th></tr></thead>
+{% for a, b, c, d, e in data %}
+	<tr><td>{{loop.index}}</td><td>{{b}}</td><td>{{d | round(2)}}</td><td>{{e | round(2)}}</td><td>{{c | round(2)}}</td><td>{% set pct = d/c * 100 %}{{pct|round(1)}}%</td></tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% block foot %}
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"></script>
+<link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+<script>
+jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "percent-pre": function ( a ) {
+        var x = (a == "-") ? 0 : a.replace( /%/, "" );
+        return parseFloat( x );
+    },
+ 
+    "percent-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+ 
+    "percent-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+} );
+$(document).ready(function() {
+    $('#weekend').dataTable({
+		"bPaginate": false,
+		"bLengthChange": false,
+		"bFilter": true,
+		"bSort": true,
+		"bInfo": false,
+		"bAutoWidth": false,
+		"bDestroy": true,
+		"aoColumns": [
+			null,
+			null,
+			null,
+			null,
+			null,
+			{ "sType": "percent" },
+		] } );
+} );
+</script>
+{% endblock %}
+{% endblock %}

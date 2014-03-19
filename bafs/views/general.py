@@ -20,7 +20,7 @@ from bafs import app, db, data
 from bafs.utils import gviz_api
 from bafs.model import Team, Athlete
 from people import people_list_users, people_show_person, ridedays
-from pointless import averagespeed, shortride
+from pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
 
 
 blueprint = Blueprint('general', __name__)
@@ -53,7 +53,7 @@ def index():
     
     all_res = db.session.execute(q).fetchone() # @UndefinedVariable
     total_miles = int(all_res['distance'])
-    total_hours = uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
+    total_hours = 1 #uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
     total_rides = all_res['num_rides'] 
      
     q = text ("""
@@ -65,7 +65,7 @@ def index():
             """)
     
     sub32_res = db.session.execute(q).fetchone() # @UndefinedVariable
-    sub_freezing_hours = uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
+    sub_freezing_hours = 1#uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
     
     q = text ("""
                 select count(*) as num_rides, sum(R.moving_time) as moving_time
@@ -76,7 +76,7 @@ def index():
             """)
     
     rain_res = db.session.execute(q).fetchone() # @UndefinedVariable
-    rain_hours = uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
+    rain_hours = 1#uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
     
     q = text ("""
                 select count(*) as num_rides, sum(R.moving_time) as moving_time
@@ -87,7 +87,7 @@ def index():
             """)
     
     snow_res = db.session.execute(q).fetchone() # @UndefinedVariable
-    snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
+    snow_hours = 1#uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
     
     
     return render_template('index.html',
@@ -255,4 +255,16 @@ def average_speed():
 
 @blueprint.route("/pointless/avgdist")
 def average_distance():
-    return shortride()    
+    return shortride()  
+
+@blueprint.route("/pointless/billygoat")
+def billy_goat():
+    return billygoat()   
+
+@blueprint.route("/pointless/tortoiseteam")
+def tortoise_team():
+    return tortoiseteam() 
+
+@blueprint.route("/pointless/weekend")
+def wknd():
+    return weekendwarrior() 
