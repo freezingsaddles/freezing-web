@@ -138,19 +138,26 @@ def _write_rides(start, athlete, rewrite=False):
     rides_to_segment = []
     for (i, strava_activity) in enumerate(api_ride_entries):
         logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i+1, num_rides))
-        if rewrite or not strava_activity.id in stored_ride_ids:
-            (ride, resync_segments) = data.write_ride(strava_activity)
-            if resync_segments:
-                rides_to_segment.append(ride)
-            logger.info("[NEW RIDE]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
-                                                                       name=strava_activity.name,
-                                                                       i=i+1,
-                                                                       num=num_rides))
+        try:
+            if rewrite or not strava_activity.id in stored_ride_ids:
+                (ride, resync_segments) = data.write_ride(strava_activity)
+                if resync_segments:
+                    rides_to_segment.append(ride)
+                logger.info("[NEW RIDE]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                                                                           name=strava_activity.name,
+                                                                           i=i+1,
+                                                                           num=num_rides))
+            else:
+                logger.info("[SKIPPED EXISTING]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                                                                                   name=strava_activity.name,
+                                                                                   i=i+1,
+                                                                                   num=num_rides))
+        except:
+            logger.exception("Unable to write ride (skipping): {0}".format(strava_activity.id))
+            sess.rollback()
         else:
-            logger.info("[SKIPPED EXISTING]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
-                                                                               name=strava_activity.name,
-                                                                               i=i+1,
-                                                                               num=num_rides))
+            sess.commit()
+            
     # Remove any rides that are in the database for this athlete that were not in the returned list.
     if removed_ride_ids:
         q = sess.query(model.Ride)
