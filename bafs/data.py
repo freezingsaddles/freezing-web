@@ -203,7 +203,7 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
         if end_date and activity_end_date > end_date:
             logger().info("Skipping ride {0} ({1!r}) because date ({2}) is after competition end date ({3})".format(activity.id, activity.name,
                                                                                                                   activity_end_date, end_date))
-            return False
+            return True
 
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
