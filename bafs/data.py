@@ -174,7 +174,7 @@ def get_team_name(club_id):
     #client = V1ServerProxy()
     #return client.get_club(club_id)['name']
     
-def list_rides(athlete, start_date=None, exclude_keywords=None):
+def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     """
     List all of the rides for individual athlete.
     
@@ -195,7 +195,16 @@ def list_rides(athlete, start_date=None, exclude_keywords=None):
     if exclude_keywords is None:
         exclude_keywords = []
     
-    def is_keyword_excluded(activity):
+    # Remove tz, since we are dealing with local times for activities
+    end_date = end_date.replace(tzinfo=None)
+ 
+    def is_excluded(activity):
+        activity_end_date = (activity.start_date_local + activity.elapsed_time)
+        if end_date and activity_end_date > end_date:
+            logger().info("Skipping ride {0} ({1!r}) because date ({}) is after competition end date ({})".format(activity.id, activity.name,
+                                                                                                                  activity_end_date, end_date))
+            return False
+
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
                 logger().info("Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(activity.id,
@@ -206,7 +215,7 @@ def list_rides(athlete, start_date=None, exclude_keywords=None):
             return False
         
     activities = client.get_activities(after=start_date, limit=None)
-    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not a.trainer and not is_keyword_excluded(a))]
+    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not a.trainer and not is_excluded(a))]
     return filtered_rides
 
 def timedelta_to_seconds(td):

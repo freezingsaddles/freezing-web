@@ -24,7 +24,7 @@ BAFS_TEAMS = [
 BAFS_START_DATE = '2014-01-01'
 
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
-BAFS_END_DATE = '2014-03-19 21:30:00-04:00'
+BAFS_END_DATE = '2014-03-20 00:01:00-04:00'
 
 # Keywords to exclude from ride titles
 BAFS_EXCLUDE_KEYWORDS = ['#NoBAFS']

@@ -109,15 +109,15 @@ def sync_rides():
     
     for athlete in q.all():
         logger.info("Fetching rides for athlete: {0}".format(athlete))
-        _write_rides(start, athlete=athlete, rewrite=options.rewrite)
+        _write_rides(start, end_date, athlete=athlete, rewrite=options.rewrite)
 
-def _write_rides(start, athlete, rewrite=False):
+def _write_rides(start, end, athlete, rewrite=False):
     
     logger = logging.getLogger('sync-rides')
     
     sess = db.session
     
-    api_ride_entries = data.list_rides(athlete=athlete, start_date=start, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+    api_ride_entries = data.list_rides(athlete=athlete, start_date=start, end_date=end, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
     q = sess.query(model.Ride)
     q = q.filter(and_(model.Ride.athlete_id == athlete.id,
                       model.Ride.start_date >= start))
