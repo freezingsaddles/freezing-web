@@ -88,8 +88,11 @@ def sync_rides():
         logger.info("Fetching all rides (since competition start)")
     
     end_date = dateutil_parser.parse(app.config['BAFS_END_DATE'])
-    if datetime.now(utc) > end_date and not options.force:
-        parser.error("Current time is after competition end date, not syncing rides. (Use --force to override.)")
+    grace_days = app.config['BAFS_UPLOAD_GRACE_PERIOD_DAYS']
+    grace_delta = timedelta(days=grace_days)
+
+    if (datetime.now(utc) > (end_date + grace_delta)) and not options.force:
+        parser.error("Current time is after competition end date + grace period, not syncing rides. (Use --force to override.)")
         sys.exit(1)
         
     if options.rewrite:

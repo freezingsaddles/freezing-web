@@ -26,5 +26,8 @@ BAFS_START_DATE = '2014-01-01'
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
 BAFS_END_DATE = '2014-03-20 00:01:00-04:00'
 
+# How many days after end of competition to upload rides?
+BAFS_UPLOAD_GRACE_PERIOD_DAYS = 5
+
 # Keywords to exclude from ride titles
 BAFS_EXCLUDE_KEYWORDS = ['#NoBAFS']
