@@ -8,32 +8,33 @@ import copy
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
-from flask import render_template, redirect, url_for, current_app, request, Blueprint
+from django.db import connection
+from django.http import HttpResponse
 
-from sqlalchemy import text
 from dateutil import rrule, parser 
 
-from bafs import app, db
-from bafs.utils import gviz_api
-from bafs.model import Team, RideEffort
+#from bafs import app, db
+from bafs.utils import gviz_api, dbutil
+#from bafs.model import Team, RideEffort
+from bafs.models import Team
+from bafs import settings
 
-blueprint = Blueprint('chartdata', __name__)
-
-@blueprint.route("/team_leaderboard")
 def team_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
-    q = text("""
-             select T.id as team_id, T.name as team_name, sum(DS.points) as total_score
-             from daily_scores DS 
-             join teams T on T.id = DS.team_id 
-             group by T.id, T.name
-             order by total_score desc
-             ;
-             """)
+    cursor = connection.cursor()
     
-    team_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    q = """
+         select T.id as team_id, T.name as team_name, sum(DS.points) as total_score
+         from daily_scores DS 
+         join teams T on T.id = DS.team_id 
+         group by T.id, T.name
+         order by total_score desc
+         """
+    
+    cursor.execute(q)
+    team_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'team_name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -50,21 +51,21 @@ def team_leaderboard_data():
     
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_leaderboard")
 def indiv_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
-    q = text("""
-             select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score
-             from daily_scores DS 
-             join athletes A on A.id = DS.athlete_id
-             group by A.id, A.display_name
-             order by total_score desc
-             ;
-             """)
+    cursor = connection.cursor()
+    q = """
+         select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score
+         from daily_scores DS 
+         join athletes A on A.id = DS.athlete_id
+         group by A.id, A.display_name
+         order by total_score desc
+         """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -79,19 +80,20 @@ def indiv_leaderboard_data():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_elev_gain")
+
 def team_elev_gain():
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
         select T.id, T.name as team_name, sum(R.elevation_gain) as cumul_elev_gain
         from rides R
         join athletes A on A.id = R.athlete_id
         join teams T on T.id = A.team_id
         group by T.id, team_name
         order by cumul_elev_gain desc
-        ;
-        """)
+        """
     
-    team_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    team_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -107,19 +109,19 @@ def team_elev_gain():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_elev_gain")
+
 def indiv_elev_gain():
+    cursor = connection.cursor()
+    q = """
+            select R.athlete_id, A.display_name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
+            from rides R
+            join athletes A on A.id = R.athlete_id
+            group by R.athlete_id, athlete_name
+            order by cumul_elev_gain desc
+        """
     
-    q = text ("""
-                select R.athlete_id, A.display_name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
-                from rides R
-                join athletes A on A.id = R.athlete_id
-                group by R.athlete_id, athlete_name
-                order by cumul_elev_gain desc
-                ;
-            """)
-    
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Elevation', 'type': 'number'},
@@ -134,19 +136,20 @@ def indiv_elev_gain():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_moving_time")
+
 def indiv_moving_time():
     
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name, sum(R.moving_time) as total_moving_time
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by total_moving_time desc
                 ;
-            """)
-    
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+            """
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -161,10 +164,10 @@ def indiv_moving_time():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_moving_time")
+
 def team_moving_time():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select T.id, T.name as team_name, sum(R.moving_time) as total_moving_time
                 from rides R
                 join athletes A on A.id = R.athlete_id
@@ -172,9 +175,10 @@ def team_moving_time():
                 group by T.id, T.name
                 order by total_moving_time desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -189,10 +193,10 @@ def team_moving_time():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_number_sleaze_days")
+
 def indiv_number_sleaze_days():
-    
-    q = text ("""
+    cursor = connection.cursor()    
+    q = """
                 select D.athlete_id, A.display_name as athlete_name, count(*) as num_sleaze_days
                 from daily_scores D
                 join athletes A on A.id = D.athlete_id
@@ -200,9 +204,10 @@ def indiv_number_sleaze_days():
                 group by D.athlete_id, athlete_name
                 order by num_sleaze_days desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -217,10 +222,10 @@ def indiv_number_sleaze_days():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_number_sleaze_days")
+
 def team_number_sleaze_days():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select T.id, T.name as team_name, count(*) as num_sleaze_days
                 from daily_scores D
                 join athletes A on A.id = D.athlete_id
@@ -229,9 +234,10 @@ def team_number_sleaze_days():
                 group by T.id, T.name
                 order by num_sleaze_days desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -246,12 +252,12 @@ def team_number_sleaze_days():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_kidical")
+
 def indiv_kidical():
-    
+    cursor = connection.cursor()
     #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
     
-    q = text ("""
+    q = """
                 select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides
                 from athletes A
                 join rides R on R.athlete_id = A.id
@@ -259,9 +265,10 @@ def indiv_kidical():
                 group by A.id, A.display_name
                 order by kidical_rides desc
                 ;
-            """)
+            """
     
-    indiv_q = db.engine.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Kidical Rides', 'type': 'number'},
@@ -276,12 +283,12 @@ def indiv_kidical():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_segment/<int:segment_id>")
+
 def indiv_segment(segment_id):
-    
+    cursor = connection.cursor()
     #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
     
-    q = text ("""
+    q = """
                 select A.id, A.display_name as athlete_name, count(E.id) as segment_rides
                 from athletes A
                 join rides R on R.athlete_id = A.id
@@ -290,9 +297,10 @@ def indiv_segment(segment_id):
                 group by A.id, A.display_name
                 order by segment_rides desc
                 ;
-            """)
+            """
     
-    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
@@ -307,24 +315,23 @@ def indiv_segment(segment_id):
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_segment/<int:segment_id>")
 def team_segment(segment_id):
+    cursor = connection.cursor()
     
-    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
-    
-    q = text ("""
+    q = """
                 select T.id, T.name as team_name, count(E.id) as segment_rides
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 join teams T on T.id = A.team_id
                 join ride_efforts E on E.ride_id = R.id
-                where E.segment_id = :segment_id
+                where E.segment_id = %s
                 group by T.id, T.name
                 order by segment_rides desc
                 ;
-            """)
+            """
     
-    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    cursor.execute(q, [segment_id])
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
@@ -340,19 +347,19 @@ def team_segment(segment_id):
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
 
-@blueprint.route("/indiv_avg_speed")
 def indiv_avg_speed():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name, AVG(R.average_speed) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by avg_speed desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -367,10 +374,10 @@ def indiv_avg_speed():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_avg_speed")
+
 def team_avg_speed():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select T.id, T.name as team_name, AVG(R.average_speed) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
@@ -378,9 +385,10 @@ def team_avg_speed():
                 group by T.id, T.name
                 order by avg_speed desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -395,10 +403,10 @@ def team_avg_speed():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_freezing")
+
 def indiv_freezing():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name, sum(R.distance) as distance
                 from rides R
                 join ride_weather W on W.ride_id = R.id
@@ -407,9 +415,10 @@ def indiv_freezing():
                 group by R.athlete_id, athlete_name
                 order by distance desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Miles Below Freezing', 'type': 'number'},
@@ -424,10 +433,10 @@ def indiv_freezing():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_before_sunrise")
+
 def indiv_before_sunrise():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.before_sunrise)) as dark
                 from ride_daylight D
@@ -436,9 +445,10 @@ def indiv_before_sunrise():
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Before Sunrise', 'type': 'number'},
@@ -453,10 +463,10 @@ def indiv_before_sunrise():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_after_sunset")
+
 def indiv_after_sunset():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.after_sunset)) as dark
                 from ride_daylight D
@@ -465,9 +475,10 @@ def indiv_after_sunset():
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
     
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'After Sunset', 'type': 'number'},
@@ -482,25 +493,26 @@ def indiv_after_sunset():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_weekly_points")
+
 def team_weekly_points():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
-    week_q = text("""
+    cursor = connection.cursor()
+    teams = Team.objects.all()
+    
+    week_q = """
              select sum(DS.points) as total_score
              from daily_scores DS 
              join teams T on T.id = DS.team_id
-             where T.id = :team_id and week(DS.ride_date) = :week
-             ;
-             """)
+             where T.id = %s and week(DS.ride_date) = %s
+             """
     
     cols = [{'id': 'week', 'label': 'Week No.', 'type': 'string'}]
     for t in teams:
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
     
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    week_r = rrule.rrule(rrule.WEEKLY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())
+    week_r = rrule.rrule(rrule.WEEKLY, dtstart=parser.parse(settings.BAFS_START_DATE), until=datetime.now())
     rows = []
     for i, dt in enumerate(week_r):
         week_no = dt.date().isocalendar()[1]
@@ -508,7 +520,8 @@ def team_weekly_points():
         cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
                  ]
         for t in teams:
-            total_score = db.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar() # @UndefinedVariable
+            cursor.execute(week_q, [t.id, week_no-1])
+            total_score = cursor.fetchone()[0]
             if total_score is None:
                 total_score = 0
             cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
@@ -517,34 +530,36 @@ def team_weekly_points():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
         
-@blueprint.route("/team_cumul_points")
+
 def team_cumul_points():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    cursor = connection.cursor()
+    teams = Team.objects.all()
     
-    q = text("""
+    q = """
             select team_id, ride_date, points,
                      (@total_points := @total_points + points) AS cumulative_points,
                      (@total_distance := @total_distance + points) AS cumulative_distance
              from daily_scores, (select @total_points := 0, @total_distance := 0) AS vars
-             where team_id = :team_id
+             where team_id = %s
              order by ride_date;             
-             """)
+             """
             
     cols = [{'id': 'date', 'label': 'Date', 'type': 'date'}]
     
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())])  
+    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(settings.BAFS_START_DATE), until=datetime.now())])  
         
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)
     
     for team in teams:
         daily_cumul[team.id] = copy.copy(tpl_dict) # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in db.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
+        cursor.execute(q, [team.id])
+        for row in dbutil.dictfetchall(cursor):
             daily_cumul[team.id][row['ride_date'].strftime('%Y-%m-%d')] = row['cumulative_points']
             
         # Fill in any None gaps with the previous non-None value
@@ -564,34 +579,35 @@ def team_cumul_points():
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/team_cumul_mileage")
 def team_cumul_mileage():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    cursor = connection.cursor()
+    teams = Team.objects.all()
     
-    q = text("""
+    q = """
             select team_id, ride_date, points,
                      (@total_points := @total_points + points) AS cumulative_points,
                      (@total_distance := @total_distance + points) AS cumulative_distance
              from daily_scores, (select @total_points := 0, @total_distance := 0) AS vars
-             where team_id = :team_id
+             where team_id = %s
              order by ride_date;             
-             """)
+             """
             
     cols = [{'id': 'date', 'label': 'Date', 'type': 'date'}]
     
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())])  
+    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(settings.BAFS_START_DATE), until=datetime.now())])  
         
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)
     
     for team in teams:
         daily_cumul[team.id] = copy.copy(tpl_dict) # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in db.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
+        cursor.execute(q, [team.id])
+        for row in dbutil.dictfetchall(cursor):
             daily_cumul[team.id][row['ride_date'].strftime('%Y-%m-%d')] = row['cumulative_distance']
             
         # Fill in any None gaps with the previous non-None value
@@ -611,10 +627,10 @@ def team_cumul_mileage():
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/indiv_elev_dist")
+
 def indiv_elev_dist():
-    
-    q = text ("""
+    cursor = connection.cursor()
+    q = """
                 select R.athlete_id, A.display_name as athlete_name,
                 T.name as team_name,
                 SUM(R.elevation_gain) as total_elevation_gain,
@@ -625,10 +641,11 @@ def indiv_elev_dist():
                 left join teams T on T.id = A.team_id
                 group by R.athlete_id, athlete_name, team_name
                 ;
-            """)
+            """
     
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
-
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
+    
     cols = [{'id': 'ID', 'label': 'ID', 'type': 'string'},
             {'id': 'score', 'label': 'Distance', 'type': 'number'},
             {'id': 'score', 'label': 'Elevation', 'type': 'number'},
@@ -660,26 +677,30 @@ def indiv_elev_dist():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
-@blueprint.route("/riders_by_lowtemp")
+
 def riders_by_lowtemp():
     """
     """
-    q = text("""
+    cursor = connection.cursor()
+    q = """
             select date(start_date) as start_date,
             avg(W.day_temp_min) as low_temp,
             count(distinct R.athlete_id) as riders 
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
             order by date(start_date);
-            """)
+            """
             
     cols = [{'id': 'date', 'label': 'Date', 'type': 'date'},
             {'id': 'riders', 'label': 'Riders', 'type': 'number'},
             {'id': 'day_temp_min', 'label': 'Low Temp', 'type': 'number'},
             ]
     
+    cursor.execute(q)
+    indiv_q = dbutil.dictfetchall(cursor)
+    
     rows = []
-    for res in db.session.execute(q): # @UndefinedVariable
+    for res in indiv_q: # @UndefinedVariable
         if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
@@ -695,6 +716,6 @@ def gviz_api_jsonify(*args, **kwargs):
     """
     Override default Flask jsonify to handle JSON for Google Chart API.
     """
-    return current_app.response_class(json.dumps(dict(*args, **kwargs),
-                                                 indent=None if request.is_xhr else 2, cls=gviz_api.DataTableJSONEncoder),
-                                      mimetype='application/json')
+    return HttpResponse(json.dumps(dict(*args, **kwargs),
+                                   indent=2, cls=gviz_api.DataTableJSONEncoder),
+                        mimetype='application/json')
