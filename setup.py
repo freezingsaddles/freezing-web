@@ -50,7 +50,7 @@ setup(name='bafs',
                         'SQLAlchemy==0.8.3',
                         'alembic==0.6.1',
                         'GeoAlchemy==0.7.2',
-                        'MySQL-python==1.2.4',
+                        'MySQL-python==1.2.5',
                         'python-dateutil{0}'.format('>=2.0,<3.0dev' if sys.version_info[0] == 3 else '>=1.5,<2.0dev'), # version 1.x is for python 2 and version 2.x is for python 3.
                         'beautifulsoup4==4.3.2',
                         'Flask==0.10.1',
