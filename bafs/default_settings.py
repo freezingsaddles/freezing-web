@@ -21,10 +21,10 @@ BAFS_TEAMS = [
               ]
 
 # When does the competition start?
-BAFS_START_DATE = '2014-01-01'
+BAFS_START_DATE = '2015-01-01'
 
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
-BAFS_END_DATE = '2014-03-20 00:01:00-04:00'
+BAFS_END_DATE = '2015-03-20 00:01:00-04:00'
 
 # How many days after end of competition to upload rides?
 BAFS_UPLOAD_GRACE_PERIOD_DAYS = 5

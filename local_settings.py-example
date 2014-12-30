@@ -10,10 +10,10 @@ STRAVA_CLIENT_SECRETE = 'xxxxxxxx'
 #BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
 
 # When does the competition start?
-#BAFS_START_DATE = '2014-01-01'
+#BAFS_START_DATE = '2015-01-01'
 
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
-#BAFS_END_DATE = '2014-03-20 21:31:00-04:00'
+#BAFS_END_DATE = '2015-03-20 21:31:00-04:00'
 
 # Keywords to exclude from ride titles
 # BAFS_EXCLUDE_KEYWORDS = ['#NoBAFS']
