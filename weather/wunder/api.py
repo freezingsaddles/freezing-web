@@ -121,7 +121,7 @@ class Client(object):
             else:
                 city_parts = [part.strip() for part in us_city.split(',')]
                 if len(city_parts[-1]) > 2: # US states are 2-chars
-                    self.log.info("Doesn't look like a US city (state component > 2 chars): {0}".format(us_city))
+                    self.log.info("Doesn't look like a US city (state component > 2 chars): {0!r}".format(us_city))
                 else:
                     us_city_location_param = city_parts[-1] + "/" + city_parts[0].replace(' ', '_')
         
