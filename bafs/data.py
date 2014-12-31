@@ -8,7 +8,7 @@ from collections import namedtuple
 
 from dateutil import parser
 
-from geoalchemy import WKTSpatialElement
+#from geoalchemy import WKTSpatialElement
 
 #from strava.api.v1 import V1ServerProxy
 #from strava.api.v2 import V2ServerProxy
@@ -18,8 +18,8 @@ from stravalib import Client
 from stravalib import model as strava_model
 from stravalib import unithelper
 
-from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
-from bafs import app, db, model
+#from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
+#from bafs import app, db, model
 
 class StravaClientForAthlete(Client):
     """

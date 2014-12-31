@@ -94,27 +94,33 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# APP-SPECIFIC
+# APP-SPECIFIC SETTINGS
+# ---------------------
+
+# Private settings that must be overridden in the local_settings.py file
+# (or similar)
+STRAVA_CLIENT_ID = None
+STRAVA_CLIENT_SECRET = None
 
 # The strava team (club) IDs
-BAFS_TEAMS = [
-              46292, # Team 0
-              46380, # Team 1
-              46386, # Team 2
-              46418, # Team 3
-              46225, # Team 4
-              46334, # Team 5
-              46402, # Team 6
-              46246, # Team 7
-              46209, # Team 8
-              46202, # Team 9
+BAFS_TEAMS = [ 8123 # BikeArlington (temporary)
+              # 46292, # Team 0
+              # 46380, # Team 1
+              # 46386, # Team 2
+              # 46418, # Team 3
+              # 46225, # Team 4
+              # 46334, # Team 5
+              # 46402, # Team 6
+              # 46246, # Team 7
+              # 46209, # Team 8
+              # 46202, # Team 9
               ]
 
 # When does the competition start?
-BAFS_START_DATE = '2014-01-01'
+BAFS_START_DATE = '2015-01-01'
 
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
-BAFS_END_DATE = '2014-03-20 00:01:00-04:00'
+BAFS_END_DATE = '2015-03-20 00:01:00-04:00'
 
 # How many days after end of competition to upload rides?
 BAFS_UPLOAD_GRACE_PERIOD_DAYS = 5

@@ -19,7 +19,7 @@ from bafs.utils import gviz_api, dbutil
 from bafs.models import Team
 from bafs import settings
 
-def team_leaderboard_data():
+def team_leaderboard_data(request):
     """
     Loads the leaderboard data broken down by team.
     """
@@ -717,5 +717,5 @@ def gviz_api_jsonify(*args, **kwargs):
     Override default Flask jsonify to handle JSON for Google Chart API.
     """
     return HttpResponse(json.dumps(dict(*args, **kwargs),
-                                   indent=2, cls=gviz_api.DataTableJSONEncoder),
-                        mimetype='application/json')
+                                   indent=None, cls=gviz_api.DataTableJSONEncoder),
+                        content_type='application/json')
