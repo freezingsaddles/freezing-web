@@ -45,8 +45,8 @@ def index():
     contestant_count = indiv_count_res['num_contestants']
 
     q = text ("""
-                select count(*) as num_rides, sum(R.moving_time) as moving_time,
-                sum(R.distance) as distance
+                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
+                  coalesce(sum(R.distance),0) as distance
                 from rides R
                 ;
             """)
@@ -54,10 +54,10 @@ def index():
     all_res = db.session.execute(q).fetchone() # @UndefinedVariable
     total_miles = int(all_res['distance'])
     total_hours = uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
-    total_rides = all_res['num_rides'] 
+    total_rides = all_res['num_rides']
      
     q = text ("""
-                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R 
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_temp_avg < 32
@@ -68,7 +68,7 @@ def index():
     sub_freezing_hours = uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
     
     q = text ("""
-                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R 
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_rain = 1
@@ -79,7 +79,7 @@ def index():
     rain_hours = uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
     
     q = text ("""
-                select count(*) as num_rides, sum(R.moving_time) as moving_time
+                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R 
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_snow = 1
