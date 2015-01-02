@@ -7,7 +7,8 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 #STRAVA_CLIENT_SECRETE = ''
 
 # The strava team (club) IDs
-BAFS_TEAMS = [ 8123 # BikeArlington (temporary)
+BAFS_TEAMS = [ 8123, # BikeArlington (temporary)
+               119613, # Slackers Team
               # 46292, # Team 0
               # 46380, # Team 1
               # 46386, # Team 2
