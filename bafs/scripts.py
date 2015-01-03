@@ -10,6 +10,7 @@ from pprint import pprint
 from dateutil import parser as dateutil_parser
 from sqlalchemy import not_, and_, text
 from pytz import timezone, utc
+from requests.exceptions import HTTPError
 
 from alembic.config import Config
 from alembic import command
@@ -180,6 +181,12 @@ def _write_rides(start, end, athlete, rewrite=False):
         try:
             strava_activity = client.get_activity(ride.id)
             data.write_ride_efforts(strava_activity, ride)
+        except HTTPError as e:
+            status_code = e.response.status_code
+            if status_code == 401:
+                logger.error("(FIXME) Authorization error for activity {0}, user {1}".format(ride, athlete))
+            else:
+                logger.exception("HTTP error fetching/writing activity {0}".format(ride.id))
         except:
             logger.exception("Error fetching/writing activity {0}".format(ride.id))
 
