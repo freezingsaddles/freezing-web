@@ -49,7 +49,11 @@ def register_athlete(strava_athlete, access_token):
     # Temporary; we will update this in disambiguation phase.  (This isn't optimal; needs to be
     # refactored....)
     athlete.display_name = strava_athlete.firstname
-        
+
+    athlete.global_privacy = bool(strava_athlete.global_privacy)
+    #athlete.email = strava_athlete.email
+    athlete.profile_photo = strava_athlete.profile
+
     athlete.access_token = access_token
     db.session.add(athlete) # @UndefinedVariable
     # We really shouldn't be committing here, since we want to disambiguate names after registering 

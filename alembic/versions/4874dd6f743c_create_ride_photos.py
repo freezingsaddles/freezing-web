@@ -1,4 +1,4 @@
-"""create activity_photos
+"""create ride_photos
 
 Revision ID: 4874dd6f743c
 Revises: 54675468b7bb
