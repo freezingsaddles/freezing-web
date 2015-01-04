@@ -15,13 +15,11 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    #op.add_column('athletes', sa.Column('email', sa.String(255), nullable=True))
     op.add_column('athletes', sa.Column('global_privacy', sa.Boolean, default=False, nullable=False))
     op.add_column('athletes', sa.Column('profile_photo', sa.String(255), nullable=True))
 
 
 def downgrade():
-    #op.drop_column('athletes', 'email')
     op.drop_column('athletes', 'global_privacy')
     op.drop_column('athletes', 'profile_photo')
 

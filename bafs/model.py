@@ -56,8 +56,6 @@ class Athlete(StravaEntity):
     display_name = sa.Column(sa.String(255), nullable=True)
     team_id = sa.Column(sa.BigInteger, sa.ForeignKey('teams.id', ondelete='set null'))
     access_token = sa.Column(sa.String(255), nullable=True)
-    #email = sa.Column(sa.String(255), nullable=True)
-    global_privacy = sa.Column(sa.Boolean, nullable=False, default=False)
     profile_photo = sa.Column(sa.String(255), nullable=True)
 
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
