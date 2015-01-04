@@ -122,9 +122,12 @@ def _write_rides(start, end, athlete, rewrite=False):
     sess = db.session
     
     api_ride_entries = data.list_rides(athlete=athlete, start_date=start, end_date=end, exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))
+
+    start_notz = start.replace(tzinfo=None) # Because MySQL doesn't like it and we are not storing tz info in the db.
+
     q = sess.query(model.Ride)
     q = q.filter(and_(model.Ride.athlete_id == athlete.id,
-                      model.Ride.start_date >= start))
+                      model.Ride.start_date >= start_notz))
     db_rides = q.all()
 
     # Quickly filter out only the rides that are not in the database.
@@ -147,12 +150,12 @@ def _write_rides(start, end, athlete, rewrite=False):
                 (ride, resync_segments) = data.write_ride(strava_activity)
                 if resync_segments:
                     rides_to_segment.append(ride)
-                logger.info("[NEW RIDE]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                logger.info("[NEW RIDE]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                            name=strava_activity.name,
                                                                            i=i+1,
                                                                            num=num_rides))
             else:
-                logger.info("[SKIPPED EXISTING]: {id}{name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                logger.info("[SKIPPED EXISTING]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                                    name=strava_activity.name,
                                                                                    i=i+1,
                                                                                    num=num_rides))
