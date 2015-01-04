@@ -16,7 +16,7 @@ import sqlalchemy as sa
 
 def upgrade():
     op.drop_column('athletes', 'global_privacy')
-    
+
 
 def downgrade():
     op.add_column('athletes', sa.Column('global_privacy', sa.Boolean, default=False, nullable=False))
