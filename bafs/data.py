@@ -163,6 +163,7 @@ def register_athlete_team(strava_athlete, athlete_model):
                 team = Team()
             team.id = club.id
             team.name = club.name
+            athlete_model.team = team
             db.session.add(team)
             return team
     finally:
