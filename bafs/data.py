@@ -148,24 +148,26 @@ def register_athlete_team(strava_athlete, athlete_model):
     assert isinstance(athlete_model, Athlete)
     
     logger().info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
-    matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
-    if len(matches) > 1:
-        raise MultipleTeamsError(matches)
-    elif len(matches) == 0:
-        raise NoTeamsError()
-    else:
-        club = matches[0]
-        # create the team row if it does not exist
-        team = db.session.query(Team).get(club.id) # @UndefinedVariable
-        if team is None:
-            team = Team()
-        team.id = club.id
-        team.name = club.name
-        athlete_model.team = team
-        db.session.add(team) # @UndefinedVariable
-        db.session.commit() # @UndefinedVariable
-        return team
-    
+    try:
+        matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
+        athlete_model.team = None
+        if len(matches) > 1:
+            raise MultipleTeamsError(matches)
+        elif len(matches) == 0:
+            raise NoTeamsError()
+        else:
+            club = matches[0]
+            # create the team row if it does not exist
+            team = db.session.query(Team).get(club.id) # @UndefinedVariable
+            if team is None:
+                team = Team()
+            team.id = club.id
+            team.name = club.name
+            db.session.add(team)
+            return team
+    finally:
+        db.session.commit()
+
 def get_team_name(club_id):
     """
     Convenience function to return the club name, given the ID.
