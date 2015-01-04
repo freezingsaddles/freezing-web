@@ -18,7 +18,7 @@ from stravalib import Client
 from stravalib import model as strava_model
 from stravalib import unithelper
 
-from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
+from bafs.model import Athlete, Ride, RideGeo, RideEffort, RidePhoto, Team
 from bafs import app, db, model
 
 class StravaClientForAthlete(Client):
@@ -26,8 +26,8 @@ class StravaClientForAthlete(Client):
     Creates a StravaClient for the specified athlete.
     """
     def __init__(self, athlete):
-        if not isinstance(athlete, model.Athlete):
-            athlete = db.session.get(model.Athlete, athlete) # @UndefinedVariable
+        if not isinstance(athlete, Athlete):
+            athlete = db.session.query(Athlete).get(athlete)
         super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
     
 
@@ -237,8 +237,8 @@ def write_ride(activity):
     :param activity: The Strava :class:`stravalib.model.Activity` object.
     :type activity: :class:`stravalib.model.Activity`
     
-    :return: The written Ride model object.
-    :rtype: :class:`bafs.model.Ride`
+    :return: A tuple including the written Ride model object, whether to resync segment efforts, and whether to resync photos.
+    :rtype: (:class:`bafs.model.Ride`, bool, bool)
     """
     
     if activity.start_latlng:
@@ -295,6 +295,15 @@ def write_ride(activity):
             resync_segments = True
         else:
             resync_segments = False
+
+        # Check to see if we need to pull down photos
+        if new_ride:
+            resync_photos = True
+        elif not ride.photos_fetched:
+            logger().info("Queing sync of photos for activity {0!r}: effort not fetched".format(activity))
+            resync_photos = True
+        else:
+            resync_photos = False
                 
         ride.athlete=athlete
         ride.name=activity.name
@@ -320,7 +329,7 @@ def write_ride(activity):
         logger().exception("Error adding ride: {0}".format(activity))
         raise
     
-    return ride, resync_segments
+    return (ride, resync_segments, resync_photos)
 
 
 def write_ride_efforts(strava_activity, ride):
@@ -359,3 +368,38 @@ def write_ride_efforts(strava_activity, ride):
         logger().exception("Error adding effort for ride: {0}".format(ride))
         raise
 #     
+
+def write_ride_photos(strava_activity, ride):
+    """
+    Writes out all effort associated with a ride to the database.
+
+    :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
+    :type strava_activity: :class:`stravalib.model.Activity`
+
+    :param ride: The db model object for ride.
+    :type ride: :class:`bafs.model.Ride`
+    """
+    assert isinstance(strava_activity, strava_model.Activity)
+    assert isinstance(ride, Ride)
+
+    try:
+        # Start by removing any existing segments for the ride.
+        db.engine.execute(RidePhoto.__table__.delete().where(RidePhoto.ride_id==strava_activity.id)) # @UndefinedVariable
+
+        # Then add them back in
+        for p in strava_activity.photos:
+            photo = RidePhoto(id=p.id,
+                              ride_id=strava_activity.id,
+                              ref=p.ref,
+                              caption=p.caption)
+
+            logger().debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
+                                                                          photo=photo))
+
+            db.session.merge(photo) # @UndefinedVariable
+
+        ride.photos_fetched = True
+        db.session.commit() # @UndefinedVariable
+    except:
+        logger().exception("Error adding photo for ride: {0}".format(ride))
+        raise

@@ -142,14 +142,17 @@ def _write_rides(start, end, athlete, rewrite=False):
     #else:
     #    num_rides = len(new_ride_ids)
     
-    rides_to_segment = []
+    segment_sync_queue = []
+    photo_sync_queue = []
     for (i, strava_activity) in enumerate(api_ride_entries):
         logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i+1, num_rides))
         try:
             if rewrite or not strava_activity.id in stored_ride_ids:
-                (ride, resync_segments) = data.write_ride(strava_activity)
+                (ride, resync_segments, resync_photos) = data.write_ride(strava_activity)
                 if resync_segments:
-                    rides_to_segment.append(ride)
+                    segment_sync_queue.append(ride)
+                if resync_photos:
+                    photo_sync_queue.append(ride)
                 logger.info("[NEW RIDE]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                            name=strava_activity.name,
                                                                            i=i+1,
@@ -178,7 +181,7 @@ def _write_rides(start, end, athlete, rewrite=False):
      
     # TODO: This could be its own function, really
     # Write out any efforts associated with these rides (not already in database)
-    for ride in rides_to_segment:
+    for ride in segment_sync_queue:
         logger.info("Writing out efforts for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
         try:
@@ -190,6 +193,20 @@ def _write_rides(start, end, athlete, rewrite=False):
                 logger.error("(FIXME) Authorization error for activity {0}, user {1}".format(ride, athlete))
             else:
                 logger.exception("HTTP error fetching/writing activity {0}".format(ride.id))
+        except:
+            logger.exception("Error fetching/writing activity {0}".format(ride.id))
+
+    # TODO: This could (also) be its own function, really
+    # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
+    # Write out any photos associated with these rides (not already in database)
+    for ride in segment_sync_queue:
+        logger.info("Writing out photos for {0!r}".format(ride))
+        client = data.StravaClientForAthlete(ride.athlete)
+        try:
+            strava_activity = client.get_activity(ride.id)
+            data.write_ride_photos(strava_activity, ride)
+        except HTTPError as e:
+            logger.exception("HTTP error fetching/writing activity {0}".format(ride.id))
         except:
             logger.exception("Error fetching/writing activity {0}".format(ride.id))
 

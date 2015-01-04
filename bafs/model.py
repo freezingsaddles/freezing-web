@@ -83,7 +83,8 @@ class Ride(StravaEntity):
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
-    
+
+    photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
@@ -109,6 +110,17 @@ class RideEffort(db.Model):
 
     def __repr__(self):
         return '<{0} id={1} segment_name={1!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
+
+class RidePhoto(db.Model):
+    __tablename__ = 'ride_photos'
+    id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
+    ref = sa.Column(sa.String(255), nullable=False)
+    caption = sa.Column(sa.Text, nullable=True)
+    #upload_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
+
+    def __repr__(self):
+        return '<{0} id={1} ref={1!r}>'.format(self.__class__.__name__, self.id, self.ref)
 
 class RideWeather(db.Model):
     __tablename__ = 'ride_weather'
