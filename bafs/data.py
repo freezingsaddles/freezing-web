@@ -151,8 +151,10 @@ def register_athlete_team(strava_athlete, athlete_model):
     logger().info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
     try:
         matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
+        logger().debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
         if len(matches) > 1:
+            logger().info("Multiple teams matcheed.")
             raise MultipleTeamsError(matches)
         elif len(matches) == 0:
             raise NoTeamsError()
@@ -393,7 +395,8 @@ def write_ride_photos(strava_activity, ride):
             photo = RidePhoto(id=p.id,
                               ride_id=strava_activity.id,
                               ref=p.ref,
-                              caption=p.caption)
+                              caption=p.caption,
+                              uid=p.uid)
 
             logger().debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
                                                                           photo=photo))

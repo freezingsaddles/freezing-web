@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Authorization Results</h1>
+<p>
+	Hi, {{ athlete.firstname }}.
+</p>
+
+{% if no_teams %}
+<p>
+	So you are a Strava athlete, we get that.  Unfortunately you are not registered with any of the configured Freezing
+	Saddles teams, so we can't authenticate you.
+</p>
+{% else %}
+<p>
+	<strong>You are logged-in and have access to otherwise-private activity and athlete data.</strong>
+</p>
+{% endif %}
+{% endblock %}

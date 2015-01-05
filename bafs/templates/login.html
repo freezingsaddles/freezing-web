@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h1>Login using Strava</h1>
+    <p class="lead">
+    	To acces additional information on the site, we ask that you authenticate using your Strava account.
+	</p>
+	<p><a class="btn btn-lg" href="{{ authorize_url }}" role="button"><img src="/static/ConnectWithStrava.png" border="0" width="262" height="43" /></a></p>
+</div>
+
+{% endblock %}

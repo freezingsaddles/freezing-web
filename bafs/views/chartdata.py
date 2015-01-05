@@ -500,7 +500,9 @@ def team_weekly_points():
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
     
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    week_r = rrule.rrule(rrule.WEEKLY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())
+    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = start_date.replace(tzinfo=None)
+    week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
     for i, dt in enumerate(week_r):
         week_no = dt.date().isocalendar()[1]
@@ -537,7 +539,9 @@ def team_cumul_points():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())])  
+    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = start_date.replace(tzinfo=None)
+    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
         
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)
@@ -584,7 +588,9 @@ def team_cumul_mileage():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=parser.parse(app.config['BAFS_START_DATE']), until=datetime.now())])  
+    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = start_date.replace(tzinfo=None)
+    tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
         
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)

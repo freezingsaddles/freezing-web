@@ -1,11 +1,18 @@
 from bafs import app, db, data
+
 from flask import render_template
+from flask import render_template, redirect, url_for, current_app, request, Blueprint
+
 from bafs.model import Team, Athlete
 from datetime import date, timedelta
 from sqlalchemy import text
 from datetime import datetime
 
 
+blueprint = Blueprint('people', __name__)
+
+
+@blueprint.route("/")
 def people_list_users():
     users_list = db.session.query(Athlete).order_by(Athlete.name)  # @UndefinedVariable
     # tdy = date(2013, 2, 10) # For testing because DB is old
@@ -33,6 +40,7 @@ def people_list_users():
     return render_template('people/list.html', users=users, weekstart=week_start, weekend=week_end)
 
 
+@blueprint.route("/<user_id>")
 def people_show_person(user_id):
     our_user = db.session.query(Athlete).filter_by(id=user_id).first()  # @UndefinedVariable
     our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()  # @UndefinedVariable
@@ -58,6 +66,7 @@ def people_show_person(user_id):
     "totalrides": total_rides})
 
 
+@blueprint.route("/ridedays")
 def ridedays():
     q = text("""
 		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles, max(b.ride_date) as lastride

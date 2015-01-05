@@ -5,10 +5,11 @@ Created on Feb 10, 2013
 '''
 import json
 import copy
+import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from flask import render_template, redirect, url_for, current_app, request, Blueprint
+from flask import render_template, redirect, url_for, current_app, request, Blueprint, session
 
 from sqlalchemy import text
 from dateutil import rrule, parser 
@@ -99,6 +100,60 @@ def index():
                            rain_hours=rain_hours,
                            snow_hours=snow_hours,
                            sub_freezing_hours=sub_freezing_hours)
+
+@blueprint.route("/login")
+def login():
+    c = Client()
+    url = c.authorization_url(client_id=app.config['STRAVA_CLIENT_ID'],
+                              redirect_uri=url_for('.logged_in', _external=True),
+                              approval_prompt='auto')
+    return render_template('login.html', authorize_url=url)
+
+@blueprint.route("/logout")
+def logout():
+    session.clear()
+
+
+@blueprint.route("/strava-oauth")
+def logged_in():
+    """
+    Method called by Strava (redirect) that includes parameters.
+    - state
+    - code
+    - error
+    """
+    error = request.args.get('error')
+    state = request.args.get('state')
+    if error:
+        return render_template('login_error.html', error=error)
+    else:
+        code = request.args.get('code')
+        client = Client()
+        access_token = client.exchange_code_for_token(client_id=app.config['STRAVA_CLIENT_ID'],
+                                                      client_secret=app.config['STRAVA_CLIENT_SECRET'],
+                                                      code=code)
+        # Use the now-authenticated client to get the current athlete
+        strava_athlete = client.get_athlete()
+        athlete_model = data.register_athlete(strava_athlete, access_token)
+        multiple_teams = None
+        no_teams = False
+        team = None
+        try:
+            team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
+        except data.MultipleTeamsError as multx:
+            multiple_teams = multx.teams
+        except data.NoTeamsError:
+            no_teams = True
+
+        # TODO: Actually process the login, set data in session
+        if not no_teams:
+            session['athlete_id'] = strava_athlete.id
+            session['athlete_avatar'] = strava_athlete.profile_medium
+            session['athlete_fname'] = strava_athlete.firstname
+
+        return render_template('login_results.html', athlete=strava_athlete,
+                               team=team, multiple_teams=multiple_teams,
+                               no_teams=no_teams)
 
 @blueprint.route("/authorize")
 def join():
@@ -236,18 +291,6 @@ def indiv_elev_dist():
 @blueprint.route("/explore/riders_by_lowtemp")
 def riders_by_lowtemp():
     return render_template('explore/riders_by_lowtemp.html')
-
-@blueprint.route("/people")
-def list_users():
-    return people_list_users()
-
-@blueprint.route("/people/<user_id>")
-def show_user(user_id):
-    return people_show_person(user_id)
-    
-@blueprint.route("/people/ridedays")
-def ride_days():
-    return ridedays()
 
 @blueprint.route("/pointless/avgspeed")
 def average_speed():

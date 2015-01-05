@@ -119,6 +119,7 @@ class RidePhoto(db.Model):
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     ref = sa.Column(sa.String(255), nullable=False)
     caption = sa.Column(sa.Text, nullable=True)
+    uid = sa.Column(sa.String(255), nullable=False)
     #upload_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
 
     def __repr__(self):
