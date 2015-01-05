@@ -23,10 +23,10 @@ def visit_create_view(element, compiler, **kw):
          element.name,
          compiler.process(element.select, literal_binds=True)
          )
-    
+
 class StravaEntity(db.Model):
     __abstract__ = True
-    __table_args__ = {'mysql_engine':'InnoDB'} # But we use MyISAM for the spatial table.
+    __table_args__ = {'mysql_engine':'InnoDB', 'mysql_charset': 'utf8'} # But we use MyISAM for the spatial table.
     
     id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
     name = sa.Column(sa.String(1024), nullable=False)
@@ -91,7 +91,7 @@ class Ride(StravaEntity):
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
     __tablename__ = 'ride_geo'
-    __table_args__ = {'mysql_engine':'MyISAM'} # MyISAM for spatial indexes
+    __table_args__ = {'mysql_engine':'MyISAM', 'mysql_charset': 'utf8'} # MyISAM for spatial indexes
     
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
     start_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
