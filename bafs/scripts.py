@@ -54,7 +54,11 @@ def sync_rides():
                       help="Date to begin fetching (default is to fetch all since configured start date)",
                       default=app.config['BAFS_START_DATE'],
                       metavar="YYYY-MM-DD")
-    
+
+    parser.add_option("--athlete-id", dest="athlete_id",
+                      help="Just sync rides for a specific athlete.",
+                      metavar="STRAVA_ID")
+
     parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False, 
                       help="Whether to rewrite the ride data already in database.")
     
@@ -103,7 +107,10 @@ def sync_rides():
     # for those that don't.)
     q = sess.query(model.Athlete)
     q = q.filter(model.Athlete.access_token != None)
-    
+
+    if options.athlete_id:
+        q = q.filter(model.Athlete.id == options.athlete_id)
+
     # Also only fetch athletes that have teams configured.  This may not be strictly necessary
     # but this is a team competition, so not a lot of value in pulling in data for those
     # without teams.
