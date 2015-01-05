@@ -258,7 +258,12 @@ def write_ride(activity):
         end_geo = None
     
     athlete_id = activity.athlete.id
-    
+
+    # Fail fast for invalid data (this can happen with manual-entry rides)
+    assert activity.elapsed_time is not None
+    assert activity.moving_time is not None
+    assert activity.distance is not None
+
     # Find the model object for that athlete (or create if doesn't exist)
     athlete = db.session.query(Athlete).get(athlete_id)   # @UndefinedVariable
     if not athlete:
