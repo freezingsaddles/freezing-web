@@ -18,7 +18,7 @@ from stravalib import Client
 from stravalib import unithelper as uh
 
 from bafs import app, db, data
-from bafs.utils import gviz_api
+from bafs.utils import gviz_api, auth
 from bafs.model import Team, Athlete
 from people import people_list_users, people_show_person, ridedays
 from pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
@@ -112,6 +112,7 @@ def login():
 @blueprint.route("/logout")
 def logout():
     session.clear()
+    return redirect(url_for('.index'))
 
 
 @blueprint.route("/strava-oauth")
@@ -147,9 +148,7 @@ def logged_in():
 
         # TODO: Actually process the login, set data in session
         if not no_teams:
-            session['athlete_id'] = strava_athlete.id
-            session['athlete_avatar'] = strava_athlete.profile_medium
-            session['athlete_fname'] = strava_athlete.firstname
+            auth.login_athlete(strava_athlete)
 
         return render_template('login_results.html', athlete=strava_athlete,
                                team=team, multiple_teams=multiple_teams,

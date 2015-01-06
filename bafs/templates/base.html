@@ -86,7 +86,7 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {% if session.athlete_id %}
+                    {% if g.logged_in %}
                     <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ session.athlete_fname }} <span
                             class="caret"></span></a>
                         <ul class="dropdown-menu">
