@@ -200,7 +200,7 @@ def _write_rides(start, end, athlete, rewrite=False):
     # TODO: This could (also) be its own function, really
     # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
     # Write out any photos associated with these rides (not already in database)
-    for ride in segment_sync_queue:
+    for ride in photo_sync_queue:
         logger.info("Writing out photos for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
         try:
