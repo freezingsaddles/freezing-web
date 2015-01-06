@@ -194,14 +194,8 @@ def _write_rides(start, end, athlete, rewrite=False):
         try:
             strava_activity = client.get_activity(ride.id)
             data.write_ride_efforts(strava_activity, ride)
-        except HTTPError as e:
-            status_code = e.response.status_code
-            if status_code == 401:
-                logger.error("(FIXME) Authorization error for activity {0}, user {1}".format(ride, athlete))
-            else:
-                logger.exception("HTTP error fetching/writing activity {0}".format(ride.id))
         except:
-            logger.exception("Error fetching/writing activity {0}".format(ride.id))
+            logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
 
     # TODO: This could (also) be its own function, really
     # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
@@ -212,10 +206,8 @@ def _write_rides(start, end, athlete, rewrite=False):
         try:
             strava_activity = client.get_activity(ride.id)
             data.write_ride_photos(strava_activity, ride)
-        except HTTPError as e:
-            logger.exception("HTTP error fetching/writing activity {0}".format(ride.id))
         except:
-            logger.exception("Error fetching/writing activity {0}".format(ride.id))
+            logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
 
 def sync_ride_weather():
     """
