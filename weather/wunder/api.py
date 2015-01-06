@@ -219,15 +219,15 @@ class Client(object):
                             self.log.info("Server fault trying to fetch weather for {0},{1}".format(lp, date))
                             continue
                         else:
-                            break
+                            data = res.json()
+                            if 'history' in data: # Do not break if we don't have a valid JSON response
+                                break
                 else:
                     # We tried all param options but each had an error
                     raise NoDataFound(
                         "Unable to retrieve weather for lat/lon={0}, us_city={1}, date={2}".format((lat, lon), us_city,
                                                                                                    date))
-
-                # res should be defined if we get this far.
-                data = res.json()
+                # data should be non-null if we get here.
                 self._write_cache(lp, date, data)
             else:
                 raise NoDataFound(
