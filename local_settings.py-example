@@ -8,6 +8,10 @@ STRAVA_CLIENT_SECRETE = 'xxxxxxxx'
 
 SESSION_SECRET= 'you-must-set-this-to-something-strong'
 
+# Need to configure an API key for instagram.  (note: only client_id is needed, not full oauth auth_token)
+# INSTAGRAM_CLIENT_ID = 'xxxxxxxx'
+# INSTAGRAM_CACHE_DIR = ???
+
 # The strava team (club) IDs
 #BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
 
