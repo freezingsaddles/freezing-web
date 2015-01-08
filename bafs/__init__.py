@@ -18,12 +18,13 @@ if not app.secret_key:
 # Register our blueprints
 db = SQLAlchemy(app)
 
-from bafs.views import general, chartdata, people # This needs to be after the app is created.
+from bafs.views import general, chartdata, people, pointless # This needs to be after the app is created.
 from bafs.utils import auth
 
 app.register_blueprint(general.blueprint)
 app.register_blueprint(chartdata.blueprint, url_prefix='/chartdata')
 app.register_blueprint(people.blueprint, url_prefix='/people')
+app.register_blueprint(pointless.blueprint, url_prefix='/pointless')
 
 @app.before_request
 def set_logged_in_global():

@@ -291,22 +291,3 @@ def indiv_elev_dist():
 def riders_by_lowtemp():
     return render_template('explore/riders_by_lowtemp.html')
 
-@blueprint.route("/pointless/avgspeed")
-def average_speed():
-    return averagespeed()    
-
-@blueprint.route("/pointless/avgdist")
-def average_distance():
-    return shortride()  
-
-@blueprint.route("/pointless/billygoat")
-def billy_goat():
-    return billygoat()   
-
-@blueprint.route("/pointless/tortoiseteam")
-def tortoise_team():
-    return tortoiseteam() 
-
-@blueprint.route("/pointless/weekend")
-def wknd():
-    return weekendwarrior() 

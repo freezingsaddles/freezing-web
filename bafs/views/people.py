@@ -1,12 +1,11 @@
-from bafs import app, db, data
-
-from flask import render_template
-from flask import render_template, redirect, url_for, current_app, request, Blueprint
-
-from bafs.model import Team, Athlete
 from datetime import date, timedelta
-from sqlalchemy import text
 from datetime import datetime
+
+from flask import render_template, Blueprint
+from sqlalchemy import text
+
+from bafs import db
+from bafs.model import Team, Athlete
 
 
 blueprint = Blueprint('people', __name__)
@@ -58,12 +57,12 @@ def people_show_person(user_id):
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
-    "user": our_user,
-    "team": our_team,
-    "weekrides": weekly_rides,
-    "weektotal": weekly_dist,
-    "totaldist": total_dist,
-    "totalrides": total_rides})
+        "user": our_user,
+        "team": our_team,
+        "weekrides": weekly_rides,
+        "weektotal": weekly_dist,
+        "totaldist": total_dist,
+        "totalrides": total_rides})
 
 
 @blueprint.route("/ridedays")
