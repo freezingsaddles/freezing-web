@@ -41,7 +41,7 @@
         <div class="row">{% endif %}
 
             <a href="/photos/{{ photo.uid }}.jpg" data-toggle="lightbox" data-gallery="multiimages"
-               data-title="{{ photo.caption }}" class="col-sm-4"
+               data-title="{{ photo.caption if photo.caption != None }}" class="col-sm-4"
                data-footer="Taken by {{ photo.ride.athlete.display_name }}.">
                 <img src="/photos/{{ photo.uid }}.jpg" class="img-responsive">
             </a>
