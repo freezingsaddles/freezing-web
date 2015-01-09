@@ -17,6 +17,18 @@
         </div>
     </div>
 </div>
+
+
+<div class="row">
+    <h1><span class="label label-default">{{team_count}} teams.  {{contestant_count}} contestants.</span></h1>
+
+    <h1><span class="label label-default">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span>
+    </h1>
+
+    <h2><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
+        <span class="label label-success">{{rain_hours|groupnum}} hours in the rain.</span>
+        <span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span></h2>
+</div>
 <div class="row">
     <div class="col-md-offset-2 col-md-8">
 
@@ -36,40 +48,30 @@
             {% endfor %}
         </div>
     </div>
-
-    <div class="row">
-        <h1><span class="label label-default">{{team_count}} teams.  {{contestant_count}} contestants.</span></h1>
-
-        <h1><span class="label label-default">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span>
-        </h1>
-
-        <h2><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
-            <span class="label label-success">{{rain_hours|groupnum}} hours in the rain.</span>
-            <span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span></h2>
+</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            Rides tracked using <a href="http://strava.com">strava.com</a>.
+            <br/><a href="http://strava.com"><img src="/static/strava-sm.png"/></a>
+        </p>
     </div>
-    <div>&nbsp;</div>
-    <div>&nbsp;</div>
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                Rides tracked using <a href="http://strava.com">strava.com</a>.
-                <br/><a href="http://strava.com"><img src="/static/strava-sm.png"/></a>
-            </p>
-        </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p>
+            Weather data sourced from <a href="http://wunderground.com">wunderground.com</a>.
+            <br/><a href="http://wunderground.com"><img src="/static/wunderground-sm.jpg"/></a>
+        </p>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p>
-                Weather data sourced from <a href="http://wunderground.com">wunderground.com</a>.
-                <br/><a href="http://wunderground.com"><img src="/static/wunderground-sm.jpg"/></a>
-            </p>
-        </div>
-    </div>
-    <p></p>
+</div>
+<p></p>
 
-    <p>
-        Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">original scoreboard by ronwalf</a>.
-        BikeArlington Freezing Saddles software is open-source and <a href="https://github.com/hozn/bafs">available on
-        Github</a>.
-    </p>
-    {% endblock %}
+<p>
+    Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">original scoreboard by ronwalf</a>.
+    BikeArlington Freezing Saddles software is open-source and <a href="https://github.com/hozn/bafs">available on
+    Github</a>.
+</p>
+{% endblock %}
