@@ -6,6 +6,11 @@
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/static/jquery-1.11.2.min.js"></script>
+    <script src="/static/bootstrap-3.3.1.min.js"></script>
+    <script src="/static/ekko-lightbox-min.js"></script>
+
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
@@ -24,6 +29,13 @@
             margin-bottom: 15px;
         }
     </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="/static/html5shiv-3.7.0.js"></script>
+    <script src="/static/respond-1.3.0.min.js"></script>
+    <![endif]-->
+		
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -115,18 +127,6 @@
     </div>
 </div>
 {% block foot %} {% endblock %}
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/static/jquery-1.11.2.min.js"></script>
-    <script src="/static/bootstrap-3.3.1.min.js"></script>
-    <script src="/static/ekko-lightbox-min.js"></script>
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="/static/html5shiv-3.7.0.js"></script>
-    <script src="/static/respond-1.3.0.min.js"></script>
-    <![endif]-->
 
 <script type="text/javascript">
 			$(document).ready(function ($) {
