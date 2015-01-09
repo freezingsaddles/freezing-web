@@ -704,3 +704,99 @@ def gviz_api_jsonify(*args, **kwargs):
     return current_app.response_class(json.dumps(dict(*args, **kwargs),
                                                  indent=None if request.is_xhr else 2, cls=gviz_api.DataTableJSONEncoder),
                                       mimetype='application/json')
+
+def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda res, query_label: str(int(res[query_label])) ):
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': display_label, 'type': 'number'},
+            ]
+
+    indiv_q = db.session.execute(q).fetchall()
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [
+            {'v': res['athlete_name'],
+            'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place)},
+            {'v': res[query_label],
+             'f': hover_lambda(res, query_label)}]
+        rows.append({'c': cells})
+
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+def fmt_date(dt):
+    #dt=datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+    return dt.strftime('%Y-%m-%d')
+
+def fmt_dur(elapsed_sec):
+    td = timedelta(seconds=elapsed_sec)
+    return str(td)
+
+def fmt_if_safe(fmt, val):
+    if val:
+        return fmt % val
+    return ''
+
+@blueprint.route("/indiv_coldest")
+def indiv_coldest():
+    q = text("""
+            select A.name as athlete_name,
+            min(ride_temp_start) as temp_start,
+            R.start_date as date,
+            R.location as loc,
+            R.moving_time as moving
+            from rides R
+            inner join ride_weather W on R.id=W.ride_id
+            inner join athletes A on A.id=R.athlete_id
+            group by A.name
+            order by temp_start, moving DESC;
+            """)
+    hl=lambda res, ql: "%.2f F for %s on %s in %s" % (
+            res['temp_start'],
+            fmt_dur(res['moving']),
+            fmt_date(res['date']),
+            res['loc'])
+    return exec_and_jsonify_query(q, 'Temperature', 'temp_start', hover_lambda=hl);
+
+@blueprint.route("/indiv_snowiest")
+def indiv_snowiest():
+    q = text("""
+            select A.name as athlete_name,
+            max(ride_precip) as snow,
+            R.moving_time as moving,
+            R.location as loc,
+            R.start_date as date
+            from rides R
+            inner join ride_weather W on R.id=W.ride_id
+            inner join athletes A on A.id=R.athlete_id
+            where W.ride_snow=1
+            group by A.name
+            order by snow DESC, moving DESC;
+            """)
+    hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
+            res['snow'],
+            fmt_dur(res['moving']),
+            fmt_date(res['date']),
+            res['loc'])
+    return exec_and_jsonify_query(q, 'Snowfall', 'snow', hover_lambda=hl);
+
+@blueprint.route("/indiv_rainiest")
+def indiv_rainiest():
+    q = text("""
+            select A.name as athlete_name,
+            max(ride_precip) as rain,
+            R.moving_time as moving,
+            R.location as loc,
+            R.start_date as date
+            from rides R
+            inner join ride_weather W on R.id=W.ride_id
+            inner join athletes A on A.id=R.athlete_id
+            where W.ride_rain=1
+            group by A.name
+            order by rain DESC, moving DESC;
+            """)
+    hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
+            res['rain'],
+            fmt_dur(res['moving']),
+            fmt_date(res['date']),
+            res['loc'])
+    return exec_and_jsonify_query(q, 'Rainfall', 'rain', hover_lambda=hl);
