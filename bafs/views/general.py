@@ -19,7 +19,7 @@ from stravalib import unithelper as uh
 
 from bafs import app, db, data
 from bafs.utils import gviz_api, auth
-from bafs.model import Team, Athlete
+from bafs.model import Team, Athlete, RidePhoto, Ride
 from people import people_list_users, people_show_person, ridedays
 from pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
 
@@ -89,7 +89,10 @@ def index():
     
     snow_res = db.session.execute(q).fetchone() # @UndefinedVariable
     snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
-    
+
+
+    # Grab some abitrary photos
+    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(20)
     
     return render_template('index.html',
                            team_count=len(app.config['BAFS_TEAMS']),
@@ -99,7 +102,8 @@ def index():
                            total_miles=total_miles,
                            rain_hours=rain_hours,
                            snow_hours=snow_hours,
-                           sub_freezing_hours=sub_freezing_hours)
+                           sub_freezing_hours=sub_freezing_hours,
+                           photos=photos)
 
 @blueprint.route("/login")
 def login():

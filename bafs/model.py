@@ -85,6 +85,7 @@ class Ride(StravaEntity):
     
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
+    photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
 
     photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
 

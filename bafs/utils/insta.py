@@ -23,7 +23,7 @@ def configured_instagram_client():
     return InstagramAPI(client_id=app.config['INSTAGRAM_CLIENT_ID'])
 
 
-def photo_cache_path(uid, resolution):
+def photo_cache_path(uid, resolution=STANDARD):
     assert resolution in (STANDARD, THUMBNAIL, LOW)
     cache_dir = app.config['INSTAGRAM_CACHE_DIR']
     if not cache_dir:
@@ -59,5 +59,6 @@ def _write_instagram_photo(uid, photo, dest_dir):
     """
     photo_fname = IMG_FNAME_TPL.format(uid=uid)
     (filename, headers) = urllib.urlretrieve(photo.url)
-    os.makedirs(dest_dir)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
     shutil.move(filename, os.path.join(dest_dir, photo_fname))

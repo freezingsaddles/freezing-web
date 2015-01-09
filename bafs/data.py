@@ -378,38 +378,38 @@ def write_ride_efforts(strava_activity, ride):
         raise
 #     
 
-def write_ride_photos(strava_activity, ride):
-    """
-    Writes out all effort associated with a ride to the database.
-
-    :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
-    :type strava_activity: :class:`stravalib.model.Activity`
-
-    :param ride: The db model object for ride.
-    :type ride: :class:`bafs.model.Ride`
-    """
-    assert isinstance(strava_activity, strava_model.Activity)
-    assert isinstance(ride, Ride)
-
-    try:
-        # Start by removing any existing segments for the ride.
-        db.engine.execute(RidePhoto.__table__.delete().where(RidePhoto.ride_id==strava_activity.id)) # @UndefinedVariable
-
-        # Then add them back in
-        for p in strava_activity.photos:
-            photo = RidePhoto(id=p.id,
-                              ride_id=strava_activity.id,
-                              ref=p.ref,
-                              caption=p.caption,
-                              uid=p.uid)
-
-            logger().debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
-                                                                          photo=photo))
-
-            db.session.merge(photo) # @UndefinedVariable
-
-        ride.photos_fetched = True
-        db.session.commit() # @UndefinedVariable
-    except:
-        logger().exception("Error adding photo for ride: {0}".format(ride))
-        raise
+# def write_ride_photos(strava_activity, ride):
+#     """
+#     Writes out all effort associated with a ride to the database.
+#
+#     :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
+#     :type strava_activity: :class:`stravalib.model.Activity`
+#
+#     :param ride: The db model object for ride.
+#     :type ride: :class:`bafs.model.Ride`
+#     """
+#     assert isinstance(strava_activity, strava_model.Activity)
+#     assert isinstance(ride, Ride)
+#
+#     try:
+#         # Start by removing any existing photos for the ride.
+#         db.engine.execute(RidePhoto.__table__.delete().where(RidePhoto.ride_id==strava_activity.id))
+#
+#         # Then add them back in
+#         for p in strava_activity.photos:
+#             photo = RidePhoto(id=p.id,
+#                               ride_id=strava_activity.id,
+#                               ref=p.ref,
+#                               caption=p.caption,
+#                               uid=p.uid)
+#
+#             logger().debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
+#                                                                           photo=photo))
+#
+#             db.session.merge(photo) # @UndefinedVariable
+#
+#         ride.photos_fetched = True
+#         db.session.commit() # @UndefinedVariable
+#     except:
+#         logger().exception("Error adding photo for ride: {0}".format(ride))
+#         raise

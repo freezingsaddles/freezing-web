@@ -14,6 +14,9 @@ from requests.exceptions import HTTPError
 
 from alembic.config import Config
 from alembic import command
+
+from bafs.utils.insta import configured_instagram_client, photo_cache_path
+from instagram import InstagramAPIError
  
 from bafs import app, db
 from bafs import data, model
@@ -200,14 +203,91 @@ def _write_rides(start, end, athlete, rewrite=False):
     # TODO: This could (also) be its own function, really
     # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
     # Write out any photos associated with these rides (not already in database)
-    for ride in photo_sync_queue:
+    # for ride in photo_sync_queue:
+    #     logger.info("Writing out photos for {0!r}".format(ride))
+    #     client = data.StravaClientForAthlete(ride.athlete)
+    #     try:
+    #         strava_activity = client.get_activity(ride.id)
+    #         data.write_ride_photos(strava_activity, ride)
+    #     except:
+    #         logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
+    #
+
+def sync_photos():
+    """
+    Grabs photos associated with strava activities.
+    """
+
+    logger = logging.getLogger('sync-photos')
+
+    parser = optparse.OptionParser()
+
+    parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False,
+                      help="Whether to rewrite the ride photo data already in database.")
+
+    parser.add_option("--debug", action="store_true", dest="debug", default=False,
+                      help="Whether to log at debug level.")
+
+    parser.add_option("--quiet", action="store_true", dest="quiet", default=False,
+                      help="Whether to suppress non-error log output.")
+
+    (options, args) = parser.parse_args()
+
+    if options.quiet:
+        loglevel = logging.ERROR
+    elif options.debug:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+
+    logging.basicConfig(level=loglevel)
+
+    if options.rewrite:
+        db.engine.execute(model.RidePhoto.__table__.delete())
+        db.session.query(model.Ride).update({"photos_fetched": False})
+
+    q = db.session.query(model.Ride)
+    q = q.filter(model.Ride.photos_fetched==False)
+
+    for ride in q:
         logger.info("Writing out photos for {0!r}".format(ride))
         client = data.StravaClientForAthlete(ride.athlete)
+        insta_client = configured_instagram_client()
         try:
-            strava_activity = client.get_activity(ride.id)
-            data.write_ride_photos(strava_activity, ride)
+            try:
+                # Start by removing any existing photos for the ride.
+                if not options.rewrite:
+                    # (This would be redundant if we already cleared the entire table.)
+                    db.engine.execute(model.RidePhoto.__table__.delete().where(model.RidePhoto.ride_id==ride.id))
+
+                # Add the photos for this activity.
+                for p in client.get_activity_photos(ride.id):
+                    try:
+                        # TODO: Make caching configurable?
+                        photo_cache_path(p.uid)
+
+                        photo = model.RidePhoto(id=p.id,
+                                                ride_id=ride.id,
+                                                ref=p.ref,
+                                                caption=p.caption,
+                                                uid=p.uid)
+
+                        logger.debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
+                                                                                    photo=photo))
+                        db.session.merge(photo)
+                    except InstagramAPIError as e:
+                        if e.status_code == 400:
+                            logger.debug("Skipping photo {0} for ride {1}; user is set to private".format(p, ride))
+                        else:
+                            logger.exception("Error fetching instagram photo {0}".format(p))
+
+                ride.photos_fetched = True
+                db.session.commit() # @UndefinedVariable
+            except:
+                logger.exception("Error adding photo for ride: {0}".format(ride))
+                continue
         except:
-            logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
+            logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, ride.athlete))
 
 def sync_ride_weather():
     """
