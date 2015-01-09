@@ -7,7 +7,7 @@ import json
 import copy
 import logging
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from flask import render_template, redirect, url_for, current_app, request, Blueprint, session
 
@@ -91,8 +91,8 @@ def index():
     snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
 
 
-    # Grab some abitrary photos
-    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(20)
+    # Grab some recent photos
+    photos = db.session.query(RidePhoto).join(Ride).filter(Ride.start_date >= date.today()).order_by(Ride.start_date.desc())
     
     return render_template('index.html',
                            team_count=len(app.config['BAFS_TEAMS']),
