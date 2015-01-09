@@ -159,14 +159,19 @@ def _write_rides(start, end, athlete, rewrite=False):
         try:
             if rewrite or not strava_activity.id in stored_ride_ids:
                 (ride, resync_segments, resync_photos) = data.write_ride(strava_activity)
-                if resync_segments:
-                    segment_sync_queue.append(ride)
-                if resync_photos:
-                    photo_sync_queue.append(ride)
                 logger.info("[NEW RIDE]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                            name=strava_activity.name,
                                                                            i=i+1,
                                                                            num=num_rides))
+                if not strava_activity.private:
+                    if resync_segments:
+                        segment_sync_queue.append(ride)
+                    if resync_photos:
+                        photo_sync_queue.append(ride)
+                else:
+                    logger.info("[PRIVATE RIDE]: {id} is private, no segments/photos can be fetched.".format(id=strava_activity.id))
+                    ride.photos_fetched = True
+                    ride.efforts_fetched = True
             else:
                 logger.info("[SKIPPED EXISTING]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                                    name=strava_activity.name,
@@ -198,7 +203,7 @@ def _write_rides(start, end, athlete, rewrite=False):
             strava_activity = client.get_activity(ride.id)
             data.write_ride_efforts(strava_activity, ride)
         except:
-            logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
+            logger.exception("Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
 
     # TODO: This could (also) be its own function, really
     # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
