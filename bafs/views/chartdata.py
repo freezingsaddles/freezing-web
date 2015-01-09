@@ -739,7 +739,7 @@ def fmt_if_safe(fmt, val):
 @blueprint.route("/indiv_coldest")
 def indiv_coldest():
     q = text("""
-            select A.name as athlete_name,
+            select A.display_name as athlete_name,
             min(ride_temp_start) as temp_start,
             R.start_date as date,
             R.location as loc,
@@ -747,7 +747,7 @@ def indiv_coldest():
             from rides R
             inner join ride_weather W on R.id=W.ride_id
             inner join athletes A on A.id=R.athlete_id
-            group by A.name
+            group by athlete_name
             order by temp_start, moving DESC;
             """)
     hl=lambda res, ql: "%.2f F for %s on %s in %s" % (
@@ -760,7 +760,7 @@ def indiv_coldest():
 @blueprint.route("/indiv_snowiest")
 def indiv_snowiest():
     q = text("""
-            select A.name as athlete_name,
+            select A.display_name as athlete_name,
             max(ride_precip) as snow,
             R.moving_time as moving,
             R.location as loc,
@@ -769,7 +769,7 @@ def indiv_snowiest():
             inner join ride_weather W on R.id=W.ride_id
             inner join athletes A on A.id=R.athlete_id
             where W.ride_snow=1
-            group by A.name
+            group by athlete_name
             order by snow DESC, moving DESC;
             """)
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
@@ -782,7 +782,7 @@ def indiv_snowiest():
 @blueprint.route("/indiv_rainiest")
 def indiv_rainiest():
     q = text("""
-            select A.name as athlete_name,
+            select A.display_name as athlete_name,
             max(ride_precip) as rain,
             R.moving_time as moving,
             R.location as loc,
@@ -791,7 +791,7 @@ def indiv_rainiest():
             inner join ride_weather W on R.id=W.ride_id
             inner join athletes A on A.id=R.athlete_id
             where W.ride_rain=1
-            group by A.name
+            group by athlete_name
             order by rain DESC, moving DESC;
             """)
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
