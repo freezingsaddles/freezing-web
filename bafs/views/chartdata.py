@@ -724,7 +724,6 @@ def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
 def fmt_date(dt):
-    #dt=datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
     return dt.strftime('%Y-%m-%d')
 
 def fmt_dur(elapsed_sec):
@@ -735,7 +734,6 @@ def fmt_if_safe(fmt, val):
     if val:
         return fmt % val
     return ''
-
 
 def parameterized_suffering_query(weath_field,
         weath_nick,
@@ -767,19 +765,11 @@ def parameterized_suffering_query(weath_field,
           order by {1} {3}, moving DESC;
           """.format(weath_field, weath_nick, func, desc, superlative_restriction);
 
-def coldest_query():
-    return parameterized_suffering_query('ride_temp_start', 'temp_start', func='min')
-
-def snowiest_query():
-    return parameterized_suffering_query('ride_precip', 'snow', func='max', desc='desc', superlative_restriction='W2.ride_snow=1')
-
-def rainiest_query():
-    return parameterized_suffering_query('ride_precip', 'rain', func='max', desc='desc', superlative_restriction='W2.ride_rain=1')
-
-
 @blueprint.route("/indiv_coldest")
 def indiv_coldest():
-    q = text(coldest_query())
+    q = text(parameterized_suffering_query('ride_temp_start',
+        'temp_start',
+        func='min'))
     hl=lambda res, ql: "%.2f F for %s on %s in %s" % (
             res['temp_start'],
             fmt_dur(res['moving']),
@@ -789,7 +779,11 @@ def indiv_coldest():
 
 @blueprint.route("/indiv_snowiest")
 def indiv_snowiest():
-    q = text(snowiest_query())
+    q = text(parameterized_suffering_query('ride_precip',
+        'snow',
+        func='max',
+        desc='desc',
+        superlative_restriction='W2.ride_snow=1'))
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
             res['snow'],
             fmt_dur(res['moving']),
@@ -799,7 +793,11 @@ def indiv_snowiest():
 
 @blueprint.route("/indiv_rainiest")
 def indiv_rainiest():
-    q = text(rainiest_query())
+    q = text(parameterized_suffering_query('ride_precip',
+        'rain',
+        func='max',
+        desc='desc',
+        superlative_restriction='W2.ride_rain=1'))
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
             res['rain'],
             fmt_dur(res['moving']),
