@@ -736,11 +736,16 @@ def fmt_if_safe(fmt, val):
         return fmt % val
     return ''
 
-def coldest_query():
+
+def parameterized_suffering_query(weath_field,
+        weath_nick,
+        func='min',
+        desc='',
+        superlative_restriction='true'):
     return """
          select A.display_name as athlete_name,
          A.id as ath_id,
-            W.ride_temp_start as temp_start,
+            W.{0} as {1},
             R.start_date as date,
             R.location as loc,
             R.moving_time as moving
@@ -749,69 +754,27 @@ def coldest_query():
             inner join athletes A on A.id=R.athlete_id
             inner join (
               select A2.id as ath2_id,
-                  min(ride_temp_start) as temp2
+                  {2}({0}) as {1}2
               from rides R2
               inner join ride_weather W2 on R2.id=W2.ride_id
               inner join athletes A2 on A2.id=R2.athlete_id
+              where {4}
               group by A2.id
              ) as SQ
-           ON SQ.temp2 = W.ride_temp_start
+           ON SQ.{1}2 = W.{0}
            AND SQ.ath2_id = A.id
           group by athlete_name
-          order by temp_start, moving DESC;
-          """;
+          order by {1} {3}, moving DESC;
+          """.format(weath_field, weath_nick, func, desc, superlative_restriction);
+
+def coldest_query():
+    return parameterized_suffering_query('ride_temp_start', 'temp_start', func='min')
 
 def snowiest_query():
-    return """
-         select A.display_name as athlete_name,
-         A.id as ath_id,
-            W.ride_precip as snow,
-            R.start_date as date,
-            R.location as loc,
-            R.moving_time as moving
-            from rides R
-            inner join ride_weather W on R.id=W.ride_id
-            inner join athletes A on A.id=R.athlete_id
-            inner join (
-              select A2.id as ath2_id,
-                  max(ride_precip) as snow2
-              from rides R2
-              inner join ride_weather W2 on R2.id=W2.ride_id
-              inner join athletes A2 on A2.id=R2.athlete_id
-              where W2.ride_snow=1
-              group by A2.id
-             ) as SQ
-           ON SQ.snow2 = W.ride_precip
-           AND SQ.ath2_id = A.id
-          group by athlete_name
-          order by snow DESC, moving DESC;
-    """;
+    return parameterized_suffering_query('ride_precip', 'snow', func='max', desc='desc', superlative_restriction='W2.ride_snow=1')
 
 def rainiest_query():
-    return """
-         select A.display_name as athlete_name,
-         A.id as ath_id,
-            W.ride_precip as rain,
-            R.start_date as date,
-            R.location as loc,
-            R.moving_time as moving
-            from rides R
-            inner join ride_weather W on R.id=W.ride_id
-            inner join athletes A on A.id=R.athlete_id
-            inner join (
-              select A2.id as ath2_id,
-                  max(ride_precip) as rain2
-              from rides R2
-              inner join ride_weather W2 on R2.id=W2.ride_id
-              inner join athletes A2 on A2.id=R2.athlete_id
-              where W2.ride_rain=1
-              group by A2.id
-             ) as SQ
-           ON SQ.rain2 = W.ride_precip
-           AND SQ.ath2_id = A.id
-          group by athlete_name
-          order by rain DESC, moving DESC;
-    """;
+    return parameterized_suffering_query('ride_precip', 'rain', func='max', desc='desc', superlative_restriction='W2.ride_rain=1')
 
 
 @blueprint.route("/indiv_coldest")
