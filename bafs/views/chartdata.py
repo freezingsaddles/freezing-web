@@ -724,7 +724,6 @@ def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
 def fmt_date(dt):
-    #dt=datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
     return dt.strftime('%Y-%m-%d')
 
 def fmt_dur(elapsed_sec):
@@ -736,20 +735,41 @@ def fmt_if_safe(fmt, val):
         return fmt % val
     return ''
 
-@blueprint.route("/indiv_coldest")
-def indiv_coldest():
-    q = text("""
-            select A.display_name as athlete_name,
-            min(ride_temp_start) as temp_start,
+def parameterized_suffering_query(weath_field,
+        weath_nick,
+        func='min',
+        desc='',
+        superlative_restriction='true'):
+    return """
+         select A.display_name as athlete_name,
+         A.id as ath_id,
+            W.{0} as {1},
             R.start_date as date,
             R.location as loc,
             R.moving_time as moving
             from rides R
             inner join ride_weather W on R.id=W.ride_id
             inner join athletes A on A.id=R.athlete_id
-            group by athlete_name
-            order by temp_start, moving DESC;
-            """)
+            inner join (
+              select A2.id as ath2_id,
+                  {2}({0}) as {1}2
+              from rides R2
+              inner join ride_weather W2 on R2.id=W2.ride_id
+              inner join athletes A2 on A2.id=R2.athlete_id
+              where {4}
+              group by A2.id
+             ) as SQ
+           ON SQ.{1}2 = W.{0}
+           AND SQ.ath2_id = A.id
+          group by athlete_name
+          order by {1} {3}, moving DESC;
+          """.format(weath_field, weath_nick, func, desc, superlative_restriction);
+
+@blueprint.route("/indiv_coldest")
+def indiv_coldest():
+    q = text(parameterized_suffering_query('ride_temp_start',
+        'temp_start',
+        func='min'))
     hl=lambda res, ql: "%.2f F for %s on %s in %s" % (
             res['temp_start'],
             fmt_dur(res['moving']),
@@ -759,19 +779,11 @@ def indiv_coldest():
 
 @blueprint.route("/indiv_snowiest")
 def indiv_snowiest():
-    q = text("""
-            select A.display_name as athlete_name,
-            max(ride_precip) as snow,
-            R.moving_time as moving,
-            R.location as loc,
-            R.start_date as date
-            from rides R
-            inner join ride_weather W on R.id=W.ride_id
-            inner join athletes A on A.id=R.athlete_id
-            where W.ride_snow=1
-            group by athlete_name
-            order by snow DESC, moving DESC;
-            """)
+    q = text(parameterized_suffering_query('ride_precip',
+        'snow',
+        func='max',
+        desc='desc',
+        superlative_restriction='W2.ride_snow=1'))
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
             res['snow'],
             fmt_dur(res['moving']),
@@ -781,19 +793,11 @@ def indiv_snowiest():
 
 @blueprint.route("/indiv_rainiest")
 def indiv_rainiest():
-    q = text("""
-            select A.display_name as athlete_name,
-            max(ride_precip) as rain,
-            R.moving_time as moving,
-            R.location as loc,
-            R.start_date as date
-            from rides R
-            inner join ride_weather W on R.id=W.ride_id
-            inner join athletes A on A.id=R.athlete_id
-            where W.ride_rain=1
-            group by athlete_name
-            order by rain DESC, moving DESC;
-            """)
+    q = text(parameterized_suffering_query('ride_precip',
+        'rain',
+        func='max',
+        desc='desc',
+        superlative_restriction='W2.ride_rain=1'))
     hl=lambda res, ql: "%.2f in for %s on %s in %s" % (
             res['rain'],
             fmt_dur(res['moving']),
