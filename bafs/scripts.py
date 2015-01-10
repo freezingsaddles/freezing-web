@@ -252,7 +252,7 @@ def sync_photos():
         db.session.query(model.Ride).update({"photos_fetched": False})
 
     q = db.session.query(model.Ride)
-    q = q.filter(model.Ride.photos_fetched==False)
+    q = q.filter_by(photos_fetched=False, private=False)
 
     for ride in q:
         logger.info("Writing out photos for {0!r}".format(ride))

@@ -1,7 +1,6 @@
 .*
 *.pyc
 *.egg-info
-env
-local_settings.py
-wunderground-cache
-ncdc-cache
+/env
+/local_settings.py
+/data/cache/*

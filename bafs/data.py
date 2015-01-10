@@ -313,7 +313,8 @@ def write_ride(activity):
             resync_photos = True
         else:
             resync_photos = False
-                
+
+        ride.private=bool(activity.private)
         ride.athlete=athlete
         ride.name=activity.name
         ride.start_date = activity.start_date_local

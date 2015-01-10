@@ -88,6 +88,7 @@ class Ride(StravaEntity):
     photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
 
     photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    private = sa.Column(sa.Boolean, default=False, nullable=False)
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
 class RideGeo(db.Model):
