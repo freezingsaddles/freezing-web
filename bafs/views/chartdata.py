@@ -344,7 +344,7 @@ def team_segment(segment_id):
 def indiv_avg_speed():
     
     q = text ("""
-                select R.athlete_id, A.display_name as athlete_name, AVG(R.average_speed) as avg_speed
+                select R.athlete_id, A.display_name as athlete_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
@@ -371,7 +371,7 @@ def indiv_avg_speed():
 def team_avg_speed():
     
     q = text ("""
-                select T.id, T.name as team_name, AVG(R.average_speed) as avg_speed
+                select T.id, T.name as team_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 join teams T on T.id = A.team_id
@@ -625,7 +625,7 @@ def indiv_elev_dist():
                 T.name as team_name,
                 SUM(R.elevation_gain) as total_elevation_gain,
                 SUM(R.distance) as total_distance,
-                AVG(R.average_speed) as avg_speed
+                SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 left join teams T on T.id = A.team_id
