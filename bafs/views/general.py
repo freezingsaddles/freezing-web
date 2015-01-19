@@ -153,10 +153,11 @@ def logged_in():
         # TODO: Actually process the login, set data in session
         if not no_teams:
             auth.login_athlete(strava_athlete)
-
-        return render_template('login_results.html', athlete=strava_athlete,
-                               team=team, multiple_teams=multiple_teams,
-                               no_teams=no_teams)
+            return redirect(url_for('user.rides'))
+        else:
+            return render_template('login_results.html', athlete=strava_athlete,
+                                   team=team, multiple_teams=multiple_teams,
+                                   no_teams=no_teams)
 
 @blueprint.route("/authorize")
 def join():
