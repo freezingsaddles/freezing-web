@@ -3,16 +3,103 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css">
 
+
+<script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawDailyPointsChart);
+      google.setOnLoadCallback(drawWeeklyPointsChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+
+      function drawDailyPointsChart() {
+
+	      var jsonData = $.ajax({
+	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
+	          dataType: "json",
+	          async: false // ... really?
+	          }).responseText;
+
+	      // Create our data table out of JSON data loaded from server.
+	      var data = new google.visualization.DataTable(jsonData);
+
+		  console.log(data);
+
+	      // Instantiate and draw our chart, passing in some options.
+	      var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_daily_points'));
+
+	      var options = {'title':'Daily Points',
+                       'width':1000,
+                       'height':250,
+                       'hAxis': {title: "Day No."},
+                       'vAxis': {title: "Points"},
+                       legend: {position: 'none'},
+                       chartArea: {left:75, top:50}
+                       };
+	      chart.draw(data, options);
+	  }
+
+	  function drawWeeklyPointsChart() {
+
+	      var jsonData = $.ajax({
+	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
+	          dataType: "json",
+	          async: false // ... really?
+	          }).responseText;
+
+	      // Create our data table out of JSON data loaded from server.
+	      var data = new google.visualization.DataTable(jsonData);
+
+		  console.log(data);
+
+	      // Instantiate and draw our chart, passing in some options.
+	      var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_weekly_points'));
+
+	      var options = {'title':'Weekly Points',
+                       'width': 1000,
+                       'height':250,
+                       'hAxis': {title: "Day No."},
+                       'vAxis': {title: "Points"},
+                       legend: {position: 'none'},
+                       chartArea: {left:75, top:50}
+                       };
+	      chart.draw(data, options);
+	  }
+
+	  </script>
 {% endblock %}
 
 {% block content %}
 
-<div class="row"><div class="col-md-12"><h1>Rides</h1></div></div>
-<div class="row">
 
-	<div class="col-md-12">
+<div class="row"><div class="col-md-12"><h2>Ride data for {{ session.athlete_fname }}</h2></div></div>
+
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">My Rides</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">My Daily Points</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">My Weekly Points</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
 		<table id="table-rides"></table>
 	</div>
+    <div role="tabpanel" class="tab-pane" id="profile">
+		<div id="chart_user_daily_points"></div>
+	</div>
+    <div role="tabpanel" class="tab-pane" id="messages">
+		<div id="chart_user_weekly_points"></div>
+	</div>
+  </div>
 
 </div>
 
@@ -83,7 +170,7 @@
 			url: "/my/rides.json",
 			striped: true,
 			checkboxHeader: false,
-			showColumns: true,
+			showColumns: false,
 			columns: [
 				{
 					field: "photos_fetched",
@@ -115,6 +202,11 @@
 					title: "Duration",
 					sortable: true,
 					formatter: movingTimeFormatter
+				},
+				{
+					field: "avg_temp",
+					title: "Avg Temp (&#8457;)",
+					sortable: true
 				}
 			]
 

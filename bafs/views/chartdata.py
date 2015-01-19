@@ -482,6 +482,79 @@ def indiv_after_sunset():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+
+@blueprint.route("/user_daily_points/<athlete_id>")
+def user_daily_points(athlete_id):
+    """
+    """
+    teams = db.session.query(Team).all() # @UndefinedVariable
+    day_q = text("""
+             select DS.points
+             from daily_scores DS
+             where DAYOFYEAR(DS.ride_date) = :yday
+             and DS.athlete_id = :id
+             ;
+             """)
+
+    cols = [{'id': 'day', 'label': 'Day No.', 'type': 'string'}]
+    cols.append({'id': 'athlete_{0}'.format(athlete_id), 'label': '', 'type': 'number'})
+
+    # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
+    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = start_date.replace(tzinfo=None)
+    day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+    rows = []
+    for i, dt in enumerate(day_r):
+        day_no = dt.timetuple().tm_yday
+        # these are 1-based, whereas mysql uses 0-based
+        cells = [{'v': '{0}'.format(dt.strftime('%b %d')), 'f': '{0}'.format(dt.strftime('%m/%d'))}, # Competition always starts at day 1, regardless of isocalendar day no
+                 ]
+
+        points = db.engine.execute(day_q, id=athlete_id, yday=day_no).scalar() # @UndefinedVariable
+        if points is None:
+            points = 0
+        cells.append({'v': points, 'f': '{0:.2f}'.format(points)})
+
+        rows.append({'c': cells})
+
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+@blueprint.route("/user_weekly_points/<athlete_id>")
+def user_weekly_points(athlete_id):
+    """
+    """
+    teams = db.session.query(Team).all() # @UndefinedVariable
+    week_q = text("""
+             select sum(DS.points) as total_score
+             from daily_scores DS
+             where DS.athlete_id = :athlete_id and week(DS.ride_date) = :week
+             ;
+             """)
+
+    cols = [{'id': 'week', 'label': 'Week No.', 'type': 'string'}]
+    for t in teams:
+        cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
+
+    # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
+    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = start_date.replace(tzinfo=None)
+    week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
+    rows = []
+    for i, dt in enumerate(week_r):
+        week_no = dt.date().isocalendar()[1]
+        # these are 1-based, whereas mysql uses 0-based
+        cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
+                 ]
+        for t in teams:
+            total_score = db.engine.execute(week_q, athlete_id=athlete_id, week=week_no-1).scalar() # @UndefinedVariable
+            if total_score is None:
+                total_score = 0
+            cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
+
+        rows.append({'c': cells})
+
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
 @blueprint.route("/team_weekly_points")
 def team_weekly_points():
     """
@@ -696,6 +769,7 @@ def riders_by_lowtemp():
         rows.append({'c': cells})
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
 
 def gviz_api_jsonify(*args, **kwargs):
     """
