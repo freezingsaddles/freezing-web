@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block head %}
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row"><div class="col-md-12"><h1>Rides</h1></div></div>
+<div class="row">
+
+	<div class="col-md-12">
+		<table id="table-rides"></table>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block foot %}
+<!-- Latest compiled and minified JavaScript -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"></script>
+<script src="/assets/js/moment.js"></script>
+<script type="text/javascript">
+
+	function stampFormatter(value, row) {
+		return moment(row.start_date).calendar();
+	}
+
+	function movingTimeFormatter(value, row) {
+		return moment.duration({seconds: row.moving_time}).humanize();
+	}
+
+	function rideFormatter(value, row) {
+		return "<a href=\"https://www.strava.com/activities/"+row.id+"\" target=\"_blank\">" + value + "</a>";
+	}
+
+	function photosFormatter(value, row) {
+		return { disabled: true, checked: row.photos_fetched }
+	}
+
+	function refetchPhotosForRide(rideId) {
+		$.ajax({
+			url: "/my/refetch_ride_photos",
+			type: "POST",
+			data: {id: rideId},
+			success: function (data) {
+				refreshTable();
+			},
+			error: function (xhr, status, errorThrown) {
+				alert("There was an error updating ride. " + errorThrown);
+			},
+			dataType: "json"
+		});
+	}
+
+	function refetchFormatter(value, row) {
+		if (row.photos_fetched) {
+			return "<a href=\"#\" onclick=\"refetchPhotosForRide("+value+")\">refetch</a>";
+		}
+	}
+
+	function refreshTable() {
+		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
+	}
+
+	$(function() {
+
+		moment.locale('en', {
+			calendar: {
+				lastDay: '[Yesterday] LTS',
+				sameDay: 'LTS',
+				nextDay: '[Tomorrow] LTS',
+				lastWeek: 'ddd LTS',
+				nextWeek: '[next] ddd LTS',
+				sameElse: 'L LTS'
+			}
+		});
+
+		$table = $('#table-rides').bootstrapTable({
+			method: "get",
+			url: "/my/rides.json",
+			striped: true,
+			checkboxHeader: false,
+			showColumns: true,
+			columns: [
+				{
+					field: "photos_fetched",
+					title: "Photos Fetched",
+					checkbox: true,
+					formatter: photosFormatter,
+				},
+				{
+					field: "id",
+					title: "Refetch Photos?",
+					sortable: true,
+					align: "center",
+					formatter: refetchFormatter
+				},
+				{
+					field: "name",
+					title: "Summary",
+					sortable: true,
+					formatter: rideFormatter
+				},
+				{
+					field: "start_date",
+					title: "Date",
+					sortable: true,
+					formatter: stampFormatter
+				},
+				{
+					field: "moving_time",
+					title: "Duration",
+					sortable: true,
+					formatter: movingTimeFormatter
+				}
+			]
+
+		});
+
+	});
+
+</script>
+{% endblock %}

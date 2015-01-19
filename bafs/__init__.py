@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 #from flask.ext.sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/assets')
 app.config.from_object('bafs.default_settings')
 if 'BAFS_SETTINGS' in os.environ:
     app.config.from_envvar('BAFS_SETTINGS')
@@ -18,7 +18,7 @@ if not app.secret_key:
 # Register our blueprints
 db = SQLAlchemy(app)
 
-from bafs.views import general, chartdata, people, pointless, photos # This needs to be after the app is created.
+from bafs.views import general, chartdata, people, user, pointless, photos # This needs to be after the app is created.
 from bafs.utils import auth
 
 app.register_blueprint(general.blueprint)
@@ -26,6 +26,7 @@ app.register_blueprint(chartdata.blueprint, url_prefix='/chartdata')
 app.register_blueprint(people.blueprint, url_prefix='/people')
 app.register_blueprint(pointless.blueprint, url_prefix='/pointless')
 app.register_blueprint(photos.blueprint, url_prefix='/photos')
+app.register_blueprint(user.blueprint, url_prefix='/my')
 
 @app.before_request
 def set_logged_in_global():
