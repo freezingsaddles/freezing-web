@@ -6,7 +6,7 @@
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawIndivChart);
+      // google.setOnLoadCallback(drawIndivChart);
 
 
 	  function drawIndivChart(api_method, label) {
@@ -36,19 +36,21 @@
 
 	  </script>
 {% endblock %}
-	  
+{% block foot %}
+<script type="text/javascript">
+	$(function(){
+	  $("#choose_api").submit(function(event) { event.preventDefault(); });	
+	});
+	function redraw() {
+		drawIndivChart($("#api_method").val(), $('#api_method option:selected').text());
+		$("#title").val($('#api_method option:selected').text());
+	}  		
+</script>
+{% endblock %}
 {% block content %}
 
   	<h1 id="title">Individual Leaderboards</h1>
-  	<script type="text/javascript">
-  		$(function(){
-  			$("#choose_api").submit(function(event) { event.preventDefault(); });	
-  		});
-		function redraw() {
-			drawIndivChart($("#api_method").val(), $('#api_method option:selected').text());
-			$("#title").val($('#api_method option:selected').text());
-		}  		
-  	</script>
+
   	<form action="#" id="choose_api">
   		<select name="api_method" id="api_method">
   			<option value="indiv_elev_gain" selected="selected">Elevation Gain</option>
