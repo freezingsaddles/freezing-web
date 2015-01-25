@@ -139,7 +139,11 @@ def logged_in():
                                                       code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
-        athlete_model = data.register_athlete(strava_athlete, access_token)
+
+        athlete_model = db.session.query(Athlete).get(strava_athlete.id)
+        if not athlete_model:
+            return render_template('login_error.html', error="ATHLETE_NOT_FOUND")
+
         multiple_teams = None
         no_teams = False
         team = None
@@ -150,7 +154,6 @@ def logged_in():
         except data.NoTeamsError:
             no_teams = True
 
-        # TODO: Actually process the login, set data in session
         if not no_teams:
             auth.login_athlete(strava_athlete)
             return redirect(url_for('user.rides'))
