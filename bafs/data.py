@@ -2,25 +2,17 @@
 Functions for interacting with the datastore and the strava apis.
 """
 from __future__ import division
-import functools
-import math
-from collections import namedtuple
 
-from dateutil import parser
-
-from geoalchemy import WKTSpatialElement
-
-#from strava.api.v1 import V1ServerProxy
-#from strava.api.v2 import V2ServerProxy
-#from strava import units
- 
 from stravalib import Client
 from stravalib import model as strava_model
 from stravalib import unithelper
 
-from bafs.model import Athlete, Ride, RideGeo, RideEffort, RidePhoto, Team
 from bafs import app, db, model
 from bafs.autolog import log
+from bafs.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError
+from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
+from geoalchemy import WKTSpatialElement
+from requests.exceptions import HTTPError
 
 
 class StravaClientForAthlete(Client):
@@ -114,15 +106,6 @@ def disambiguate_athlete_display_names():
 
     # Update the database with new values
     db.session.commit()
-            
-
-class MultipleTeamsError(RuntimeError):
-    def __init__(self, teams):
-        self.teams = teams
-
-
-class NoTeamsError(RuntimeError):
-    pass
 
 
 def register_athlete_team(strava_athlete, athlete_model):
@@ -179,7 +162,8 @@ def get_team_name(club_id):
     raise NotImplementedError()
     #client = V1ServerProxy()
     #return client.get_club(club_id)['name']
-    
+
+
 def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     """
     List all of the rides for individual athlete.
@@ -219,9 +203,17 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
                 return True
         else:
             return False
-        
-    activities = client.get_activities(after=start_date, limit=None)
-    filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not a.trainer and not is_excluded(a))]
+
+    try:
+        activities = client.get_activities(after=start_date, limit=None)
+        filtered_rides = [a for a in activities if (a.type == strava_model.Activity.RIDE and not a.trainer and not is_excluded(a))]
+    except HTTPError as e:
+        if u'access_token' in e.message:  # A bit of a kludge, but don't have a way of hooking into the response processing earlier.
+            raise InvalidAuthorizationToken("Invalid authrization token for {}".format(athlete))
+
+        # Otherwise just fall-through and re-raise same exception.
+        raise e
+
     return filtered_rides
 
 def timedelta_to_seconds(td):

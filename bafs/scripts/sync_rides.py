@@ -5,7 +5,8 @@ from sqlalchemy import and_
 from dateutil import parser as dateutil_parser
 
 from bafs import app, db, model, data
-from bafs.scripts import BaseCommand, CommandError
+from bafs.scripts import BaseCommand
+from bafs.exc import CommandError, InvalidAuthorizationToken
 
 
 class SyncRides(BaseCommand):
@@ -74,8 +75,16 @@ class SyncRides(BaseCommand):
         q = q.filter(model.Athlete.team_id != None)
 
         for athlete in q.all():
+            assert isinstance(athlete, model.Athlete)
             self.logger.info("Fetching rides for athlete: {0}".format(athlete))
-            self._write_rides(start, end_date, athlete=athlete, rewrite=options.rewrite)
+            try:
+                self._write_rides(start, end_date, athlete=athlete, rewrite=options.rewrite)
+            except InvalidAuthorizationToken:
+                self.logger.error("Invalid authorization token for {} (removing)".format(athlete))
+                athlete.access_token = None
+                sess.add(athlete)
+
+        sess.commit()
 
     def _write_rides(self, start, end, athlete, rewrite=False):
 
@@ -163,3 +172,7 @@ class SyncRides(BaseCommand):
 
 def main():
     SyncRides().run()
+
+
+if __name__ == '__main__':
+    main()

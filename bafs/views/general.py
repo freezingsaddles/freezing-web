@@ -9,6 +9,7 @@ import logging
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
+import bafs.exc
 from flask import render_template, redirect, url_for, current_app, request, Blueprint, session
 
 from sqlalchemy import text
@@ -149,9 +150,9 @@ def logged_in():
         team = None
         try:
             team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
-        except data.MultipleTeamsError as multx:
+        except bafs.exc.MultipleTeamsError as multx:
             multiple_teams = multx.teams
-        except data.NoTeamsError:
+        except bafs.exc.NoTeamsError:
             no_teams = True
 
         if not no_teams:
@@ -196,9 +197,9 @@ def authorization():
         team = None
         try:
             team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
-        except data.MultipleTeamsError as multx:
+        except bafs.exc.MultipleTeamsError as multx:
             multiple_teams = multx.teams
-        except data.NoTeamsError:
+        except bafs.exc.NoTeamsError:
             no_teams = True
             
         

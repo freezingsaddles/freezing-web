@@ -30,3 +30,7 @@ class InitDb(BaseCommand):
 
 def main():
     InitDb().run()
+
+
+if __name__ == '__main__':
+    main()

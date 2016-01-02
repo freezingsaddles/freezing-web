@@ -40,3 +40,7 @@ class SyncAthletes(BaseCommand):
 
 def main():
     SyncAthletes().run()
+
+
+if __name__ == '__main__':
+    main()

@@ -5,10 +5,7 @@ from colorlog import ColoredFormatter
 
 import abc
 from bafs import app
-
-
-class CommandError(RuntimeError):
-    pass
+from bafs.exc import CommandError
 
 
 class BaseCommand(object):

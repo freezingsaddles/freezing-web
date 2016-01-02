@@ -71,3 +71,7 @@ class SyncPhotos(BaseCommand):
 
 def main():
     SyncPhotos().run()
+
+
+if __name__ == '__main__':
+    main()
