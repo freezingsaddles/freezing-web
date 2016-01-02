@@ -34,7 +34,7 @@ class SyncRideWeather(BaseCommand):
                           help="Limit how many rides are processed (e.g. during development)")
 
         return parser
-    
+
     def execute(self, options, args):
         sess = db.session
 

@@ -15,11 +15,13 @@ app.secret_key = app.config['SESSION_SECRET']
 if not app.secret_key:
     raise RuntimeError("Configuraiton error.  No SESSION_SECRET configuration variable defined.")
 
-# Register our blueprints
+
 db = SQLAlchemy(app)
 
 from bafs.views import general, chartdata, people, user, pointless, photos # This needs to be after the app is created.
 from bafs.utils import auth
+
+# Register our blueprints
 
 app.register_blueprint(general.blueprint)
 app.register_blueprint(chartdata.blueprint, url_prefix='/chartdata')

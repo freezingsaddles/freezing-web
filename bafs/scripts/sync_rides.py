@@ -131,7 +131,8 @@ class SyncRides(BaseCommand):
                                                                                              i=i + 1,
                                                                                              num=num_rides))
             except:
-                self.logger.exception("Unable to write ride (skipping): {0}".format(strava_activity.id))
+                self.logger.debug("Error writing out ride: {0}".format(strava_activity.id), exc_info=True)
+                self.logger.error("[ERROR] Unable to write ride (skipping): {0}".format(strava_activity.id))
                 sess.rollback()
             else:
                 sess.commit()
@@ -156,21 +157,8 @@ class SyncRides(BaseCommand):
                 strava_activity = client.get_activity(ride.id)
                 data.write_ride_efforts(strava_activity, ride)
             except:
-                self.logger.exception(
-                    "Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
-
-                # TODO: This could (also) be its own function, really
-                # TODO: This could be more intelligently combined with the efforts (save at least 1 API call per activity)
-                # Write out any photos associated with these rides (not already in database)
-                # for ride in photo_sync_queue:
-                #     logger.info("Writing out photos for {0!r}".format(ride))
-                #     client = data.StravaClientForAthlete(ride.athlete)
-                #     try:
-                #         strava_activity = client.get_activity(ride.id)
-                #         data.write_ride_photos(strava_activity, ride)
-                #     except:
-                #         logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
-                #
+                self.logger.debug("Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete), exc_info=True)
+                self.logger.error("Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
 
 
 def main():
