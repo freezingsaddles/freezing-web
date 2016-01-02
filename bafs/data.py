@@ -9,7 +9,7 @@ from stravalib import unithelper
 
 from bafs import app, db, model
 from bafs.autolog import log
-from bafs.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError
+from bafs.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
 from bafs.model import Athlete, Ride, RideGeo, RideEffort, Team
 from geoalchemy import WKTSpatialElement
 from requests.exceptions import HTTPError
@@ -320,15 +320,22 @@ def write_ride(activity):
         ride.trainer = activity.trainer
         ride.manual = activity.manual
         ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
-        
+
+        # Short-circuit things that might result in more obscure db errors later.
+        if not ride.elapsed_time:
+            raise DataEntryError("Activities cannot have zero/empty elapsed time.")
+
         log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
                                                                                      ride=ride.name,
                                                                                      date=ride.start_date.strftime('%m/%d/%y')))
         
-        db.session.add(ride) # @UndefinedVariable
-        db.session.commit() # @UndefinedVariable
-    except:
-        log.exception("Error adding ride: {0}".format(activity))
+        db.session.add(ride)
+        db.session.commit()
+    except DataEntryError:
+        raise
+    except Exception as x:
+        log.debug("Error adding activity {}".format(activity), exc_info=True)
+        log.error("Error adding activity {}: {}".format(activity, x))
         raise
     
     return (ride, resync_segments, resync_photos)
