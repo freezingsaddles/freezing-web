@@ -20,6 +20,8 @@ from stravalib import unithelper
 
 from bafs.model import Athlete, Ride, RideGeo, RideEffort, RidePhoto, Team
 from bafs import app, db, model
+from bafs.autolog import log
+
 
 class StravaClientForAthlete(Client):
     """
@@ -30,9 +32,6 @@ class StravaClientForAthlete(Client):
             athlete = db.session.query(Athlete).get(athlete)
         super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
     
-
-# Just a wrapper so we're not too tightly coupled to flask logging
-logger = lambda: app.logger
 
 def register_athlete(strava_athlete, access_token):
     """
@@ -59,7 +58,7 @@ def register_athlete(strava_athlete, access_token):
     return athlete
 
 def disambiguate_athlete_display_names():
-    q = db.session.query(model.Athlete) # @UndefinedVariable
+    q = db.session.query(model.Athlete)
     q = q.filter(model.Athlete.access_token != None)
     athletes = q.all()
     
@@ -102,28 +101,29 @@ def disambiguate_athlete_display_names():
         if required_length is not None:
             for a in athletes:
                 fname,lname = firstlast(a.name)
-                logger().debug("Converting '{fname} {lname}' -> '{fname} {minlname}".format(fname=fname,
+                log.debug("Converting '{fname} {lname}' -> '{fname} {minlname}".format(fname=fname,
                                                                                             lname=lname,
                                                                                             minlname=lname[:required_length]))
                 a.display_name = '{0} {1}'.format(fname, lname[:required_length])
         else:
-            logger().debug("Unable to find a minimum lastname; using full lastname.")
+            log.debug("Unable to find a minimum lastname; using full lastname.")
             # Just use full names
             for a in athletes:
                 fname,lname = firstlast(a.name)
                 a.display_name = '{0} {1}'.format(fname, lname[:required_length])
-                
-    
+
     # Update the database with new values
-    db.session.commit() # @UndefinedVariable
+    db.session.commit()
             
 
 class MultipleTeamsError(RuntimeError):
     def __init__(self, teams):
         self.teams = teams
 
+
 class NoTeamsError(RuntimeError):
     pass
+
 
 def register_athlete_team(strava_athlete, athlete_model):
     """
@@ -148,13 +148,13 @@ def register_athlete_team(strava_athlete, athlete_model):
     assert isinstance(strava_athlete, strava_model.Athlete)
     assert isinstance(athlete_model, Athlete)
     
-    logger().info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
+    log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
     try:
         matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
-        logger().debug("Matched: {0!r}".format(matches))
+        log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
         if len(matches) > 1:
-            logger().info("Multiple teams matcheed.")
+            log.info("Multiple teams matcheed.")
             raise MultipleTeamsError(matches)
         elif len(matches) == 0:
             raise NoTeamsError()
@@ -207,13 +207,13 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     def is_excluded(activity):
         activity_end_date = (activity.start_date_local + activity.elapsed_time)
         if end_date and activity_end_date > end_date:
-            logger().info("Skipping ride {0} ({1!r}) because date ({2}) is after competition end date ({3})".format(activity.id, activity.name,
+            log.info("Skipping ride {0} ({1!r}) because date ({2}) is after competition end date ({3})".format(activity.id, activity.name,
                                                                                                                   activity_end_date, end_date))
             return True
 
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
-                logger().info("Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(activity.id,
+                log.info("Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(activity.id,
                                                                                                             activity.name,
                                                                                                             keyword))
                 return True
@@ -292,15 +292,15 @@ def write_ride(activity):
             
         # Check to see if we need to pull down efforts for this ride
         if new_ride:
-            logger().info("Queing sync of segments for activity {0!r}: new ride".format(activity))
+            log.info("Queing sync of segments for activity {0!r}: new ride".format(activity))
             resync_segments = True
         elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
-            logger().info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
+            log.info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
                                                                                                                 ride.distance,
                                                                                                                 unithelper.miles(activity.distance)))
             resync_segments = True
         elif not ride.efforts_fetched:
-            logger().info("Queing sync of segments for activity {0!r}: effort not fetched".format(activity))
+            log.info("Queing sync of segments for activity {0!r}: effort not fetched".format(activity))
             resync_segments = True
         else:
             resync_segments = False
@@ -309,7 +309,7 @@ def write_ride(activity):
         if new_ride:
             resync_photos = True
         elif not ride.photos_fetched:
-            logger().info("Queing sync of photos for activity {0!r}: effort not fetched".format(activity))
+            log.info("Queing sync of photos for activity {0!r}: effort not fetched".format(activity))
             resync_photos = True
         else:
             resync_photos = False
@@ -329,14 +329,14 @@ def write_ride(activity):
         ride.manual = activity.manual
         ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
         
-        logger().debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
+        log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
                                                                                      ride=ride.name,
                                                                                      date=ride.start_date.strftime('%m/%d/%y')))
         
         db.session.add(ride) # @UndefinedVariable
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding ride: {0}".format(activity))
+        log.exception("Error adding ride: {0}".format(activity))
         raise
     
     return (ride, resync_segments, resync_photos)
@@ -367,7 +367,7 @@ def write_ride_efforts(strava_activity, ride):
                                 segment_name=se.segment.name,
                                 segment_id=se.segment.id)
             
-            logger().debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
+            log.debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
                                                                              effort=effort.segment_name))
           
             db.session.merge(effort) # @UndefinedVariable
@@ -375,7 +375,7 @@ def write_ride_efforts(strava_activity, ride):
         ride.efforts_fetched = True
         db.session.commit() # @UndefinedVariable
     except:
-        logger().exception("Error adding effort for ride: {0}".format(ride))
+        log.exception("Error adding effort for ride: {0}".format(ride))
         raise
 #     
 
@@ -404,7 +404,7 @@ def write_ride_efforts(strava_activity, ride):
 #                               caption=p.caption,
 #                               uid=p.uid)
 #
-#             logger().debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
+#             log.debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
 #                                                                           photo=photo))
 #
 #             db.session.merge(photo) # @UndefinedVariable
@@ -412,5 +412,5 @@ def write_ride_efforts(strava_activity, ride):
 #         ride.photos_fetched = True
 #         db.session.commit() # @UndefinedVariable
 #     except:
-#         logger().exception("Error adding photo for ride: {0}".format(ride))
+#         log.exception("Error adding photo for ride: {0}".format(ride))
 #         raise
