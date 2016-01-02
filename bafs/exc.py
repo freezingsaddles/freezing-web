@@ -13,3 +13,7 @@ class MultipleTeamsError(RuntimeError):
 
 class CommandError(RuntimeError):
     pass
+
+
+class DataEntryError(ValueError):
+    pass
