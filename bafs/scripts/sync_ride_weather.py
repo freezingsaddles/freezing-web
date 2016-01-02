@@ -146,3 +146,7 @@ class SyncRideWeather(BaseCommand):
 
 def main():
     SyncRideWeather().run()
+
+
+if __name__ == '__main__':
+    main()
