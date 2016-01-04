@@ -117,8 +117,9 @@ class SyncRides(BaseCommand):
         photo_sync_queue = []
         for (i, strava_activity) in enumerate(api_ride_entries):
             self.logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i + 1, num_rides))
-            try:
-                if rewrite or not strava_activity.id in stored_ride_ids:
+
+            if rewrite or not strava_activity.id in stored_ride_ids:
+                try:
                     (ride, resync_segments, resync_photos) = data.write_ride(strava_activity)
                     self.logger.info("[NEW RIDE]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                                      name=strava_activity.name,
@@ -134,17 +135,47 @@ class SyncRides(BaseCommand):
                             id=strava_activity.id))
                         ride.photos_fetched = True
                         ride.efforts_fetched = True
+                except Exception as x:
+                    self.logger.debug("Error writing out ride, will attempt to add/update RideError: {0}".format(strava_activity.id))
+                    sess.rollback()
+                    try:
+                        ride_error = sess.query(model.RideError).get(strava_activity.id)
+                        if ride_error is None:
+                            self.logger.exception("[ERROR] Unable to write ride (skipping): {0}".format(strava_activity.id))
+                            ride_error = model.RideError()
+                        else:
+                            # We already have a record of the error, so log that message with less verbosity.
+                            self.logger.warning("[ERROR] Unable to write ride (skipping): {0}".format(strava_activity.id))
+
+                        ride_error.athlete_id = athlete.id
+                        ride_error.id = strava_activity.id
+                        ride_error.name = strava_activity.name
+                        ride_error.start_date = strava_activity.start_date_local
+                        ride_error.reason = str(x)
+                        ride_error.last_seen = datetime.now()  # FIXME: TZ?
+                        sess.add(ride_error)
+
+                        sess.commit()
+                    except:
+                        self.logger.exception("Error adding ride-error entry.")
                 else:
-                    self.logger.info("[SKIPPED EXISTING]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
-                                                                                             name=strava_activity.name,
-                                                                                             i=i + 1,
-                                                                                             num=num_rides))
-            except:
-                self.logger.debug("Error writing out ride: {0}".format(strava_activity.id), exc_info=True)
-                self.logger.error("[ERROR] Unable to write ride (skipping): {0}".format(strava_activity.id))
-                sess.rollback()
+                    sess.commit()
+                    try:
+                        # If there is an error entry, then we should remove it.
+                        q = sess.query(model.RideError)
+                        q = q.filter(model.RideError.id == ride.id)
+                        deleted = q.delete(synchronize_session=False)
+                        if deleted:
+                            self.logger.info("Removed matching error-ride entry for {0}".format(strava_activity.id))
+                        sess.commit()
+                    except:
+                        self.logger.exception("Error maybe-clearing ride-error entry.")
             else:
-                sess.commit()
+                self.logger.info("[SKIPPED EXISTING]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
+                                                                                         name=strava_activity.name,
+                                                                                         i=i + 1,
+                                                                                         num=num_rides))
+
 
         # Remove any rides that are in the database for this athlete that were not in the returned list.
         if removed_ride_ids:

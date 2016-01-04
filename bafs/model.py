@@ -61,6 +61,16 @@ class Athlete(StravaEntity):
     rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
 
 
+class RideError(StravaEntity):
+    """
+    """
+    __tablename__ = 'ride_errors'
+    athlete_id = sa.Column(sa.BigInteger, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
+    start_date = sa.Column(sa.DateTime, nullable=False, index=True)  # 2010-02-28T08:31:35Z
+    last_seen = sa.Column(sa.DateTime, nullable=False, index=True)
+    reason = sa.Column(sa.String(1024), nullable=False)
+
+
 class Ride(StravaEntity):
     """
     """
