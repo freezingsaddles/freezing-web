@@ -80,7 +80,10 @@ class BaseCommand(object):
                    logging.getLogger('requests'), logging.root]
 
         for l in loggers:
-            l.setLevel(logging.DEBUG)
+            if l is app.logger or l is logging.root:
+                l.setLevel(logging.DEBUG)
+            else:
+                l.setLevel(logging.INFO)
             l.addHandler(ch)
 
         self.logger = logging.getLogger(self.name)

@@ -169,16 +169,16 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     List all of the rides for individual athlete.
     
     :param athlete: The Athlete model object.
-    :type athlete: :class:`bafs.model.Athlete`
+    :type athlete: bafs.model.Athlete
     
     :param start_date: The date to start listing rides. 
-    :type start_date: :class:`datetime.date`
+    :type start_date: datetime.date
     
     :param exclude_keywords: A list of keywords to use for excluding rides from the results (e.g. "#NoBAFS")
     :type exclude_keywords: list
     
-    :return: list of :class:`stravalib.model.Activity` objects for rides in reverse chronological order.
-    :rtype: list
+    :return: list of activity objects for rides in reverse chronological order.
+    :rtype: list[stravalib.model.Activity]
     """
     client = StravaClientForAthlete(athlete)
     
