@@ -268,76 +268,72 @@ def write_ride(activity):
         ride_geo.end_geo = end_geo
         ride_geo.ride_id = activity.id
         db.session.merge(ride_geo) # @UndefinedVariable
-    
-    try:
-        location_parts = []
-        if activity.location_city:
-            location_parts.append(activity.location_city)
-        if activity.location_state:
-            location_parts.append(activity.location_state)
-        location_str = ', '.join(location_parts)
-        
-        ride = db.session.query(Ride).get(activity.id) # @UndefinedVariable
-        new_ride = (ride is None)
-        if ride is None:
-            ride = Ride(activity.id)
-            
-        # Check to see if we need to pull down efforts for this ride
-        if new_ride:
-            log.info("Queing sync of segments for activity {0!r}: new ride".format(activity))
-            resync_segments = True
-        elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
-            log.info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
-                                                                                                                ride.distance,
-                                                                                                                unithelper.miles(activity.distance)))
-            resync_segments = True
-        elif not ride.efforts_fetched:
-            log.info("Queing sync of segments for activity {0!r}: effort not fetched".format(activity))
-            resync_segments = True
-        else:
-            resync_segments = False
 
-        # Check to see if we need to pull down photos
-        if new_ride:
-            resync_photos = True
-        elif not ride.photos_fetched:
-            log.info("Queing sync of photos for activity {0!r}: effort not fetched".format(activity))
-            resync_photos = True
-        else:
-            resync_photos = False
+    location_parts = []
+    if activity.location_city:
+        location_parts.append(activity.location_city)
+    if activity.location_state:
+        location_parts.append(activity.location_state)
+    location_str = ', '.join(location_parts)
 
-        ride.private=bool(activity.private)
-        ride.athlete=athlete
-        ride.name=activity.name
-        ride.start_date = activity.start_date_local
-        ride.distance = round(float(unithelper.miles(activity.distance)), 3) # We need to round so that "1.0" miles in strava is "1.0" miles when we convert back from meters.
-        ride.average_speed = float(unithelper.mph(activity.average_speed))
-        ride.maximum_speed = float(unithelper.mph(activity.max_speed))
-        ride.elapsed_time = timedelta_to_seconds(activity.elapsed_time)
-        ride.moving_time = timedelta_to_seconds(activity.moving_time)
-        ride.location = location_str
-        ride.commute = activity.commute
-        ride.trainer = activity.trainer
-        ride.manual = activity.manual
-        ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
+    ride = db.session.query(Ride).get(activity.id) # @UndefinedVariable
+    new_ride = (ride is None)
+    if ride is None:
+        ride = Ride(activity.id)
 
-        # Short-circuit things that might result in more obscure db errors later.
-        if not ride.elapsed_time:
-            raise DataEntryError("Activities cannot have zero/empty elapsed time.")
+    # Check to see if we need to pull down efforts for this ride
+    if new_ride:
+        log.info("Queing sync of segments for activity {0!r}: new ride".format(activity))
+        resync_segments = True
+    elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
+        log.info("Queing resync of segments for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
+                                                                                                            ride.distance,
+                                                                                                            unithelper.miles(activity.distance)))
+        resync_segments = True
+    elif not ride.efforts_fetched:
+        log.info("Queing sync of segments for activity {0!r}: effort not fetched".format(activity))
+        resync_segments = True
+    else:
+        resync_segments = False
 
-        log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
-                                                                                     ride=ride.name,
-                                                                                     date=ride.start_date.strftime('%m/%d/%y')))
-        
-        db.session.add(ride)
-        db.session.commit()
-    except DataEntryError:
-        raise
-    except Exception as x:
-        log.debug("Error adding activity {}".format(activity), exc_info=True)
-        log.error("Error adding activity {}: {}".format(activity, x))
-        raise
-    
+    # Check to see if we need to pull down photos
+    if new_ride:
+        resync_photos = True
+    elif not ride.photos_fetched:
+        log.info("Queing sync of photos for activity {0!r}: effort not fetched".format(activity))
+        resync_photos = True
+    else:
+        resync_photos = False
+
+    ride.private=bool(activity.private)
+    ride.athlete=athlete
+    ride.name=activity.name
+    ride.start_date = activity.start_date_local
+    ride.distance = round(float(unithelper.miles(activity.distance)), 3) # We need to round so that "1.0" miles in strava is "1.0" miles when we convert back from meters.
+    ride.average_speed = float(unithelper.mph(activity.average_speed))
+    ride.maximum_speed = float(unithelper.mph(activity.max_speed))
+    ride.elapsed_time = timedelta_to_seconds(activity.elapsed_time)
+    ride.moving_time = timedelta_to_seconds(activity.moving_time)
+    ride.location = location_str
+    ride.commute = activity.commute
+    ride.trainer = activity.trainer
+    ride.manual = activity.manual
+    ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
+
+    # Short-circuit things that might result in more obscure db errors later.
+    if not ride.elapsed_time:
+        raise DataEntryError("Activities cannot have zero/empty elapsed time.")
+
+    if not ride.moving_time:
+        raise DataEntryError("Activities cannot have zero/empty moving time.")
+
+    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
+                                                                                 ride=ride.name,
+                                                                                 date=ride.start_date.strftime('%m/%d/%y')))
+
+    db.session.add(ride)
+    db.session.commit()
+
     return (ride, resync_segments, resync_photos)
 
 
