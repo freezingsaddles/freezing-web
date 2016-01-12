@@ -27,8 +27,8 @@ class SyncAthletes(BaseCommand):
         for athlete in q.all():
             self.logger.info("Updating athlete: {0}".format(athlete))
             c = data.StravaClientForAthlete(athlete)
-            strava_athlete = c.get_athlete()
             try:
+                strava_athlete = c.get_athlete()
                 data.register_athlete(strava_athlete, athlete.access_token)
                 data.register_athlete_team(strava_athlete, athlete)
             except:
