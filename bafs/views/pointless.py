@@ -71,3 +71,17 @@ def avgtemp():
         """)
     tdata = [(x['athlete_id'], x['athlete_name'], x['avgtemp']) for x in db.session.execute(q).fetchall()]
     return render_template('pointless/averagetemp.html', data=tdata)
+
+@blueprint.route("/kidmiles")
+def kidmiles():
+    q = text ("""
+        select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides,
+        sum(R.distance) as kidical_miles
+        from athletes A
+        join rides R on R.athlete_id = A.id
+        where R.name like '%#kidical%'
+        group by A.id, A.display_name
+        order by kidical_miles desc, kidical_rides desc;
+        """)
+    tdata = [(x['id'], x['athlete_name'], x['kidical_rides'], x['kidical_miles']) for x in db.session.execute(q).fetchall()]
+    return render_template('pointless/kidmiles.html', data=tdata)
