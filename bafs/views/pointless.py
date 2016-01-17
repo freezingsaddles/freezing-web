@@ -19,7 +19,7 @@ def averagespeed():
 @blueprint.route("/avgdist")
 def shortride():
     q = text("""
-        select a.id, a.display_name, avg(b.distance) as dist, count(distinct(date(b.start_date))) as distrides from athletes a, 
+        select a.id, a.display_name, avg(b.distance) as dist, count(distinct(date(b.start_date))) as distrides from athletes a,
         rides b where a.id = b.athlete_id group by a.id order by dist;
         """)
     avgdist = [(x['id'], x['display_name'], x['dist']) for x in db.session.execute(q).fetchall() if
@@ -30,7 +30,7 @@ def shortride():
 @blueprint.route("/billygoat")
 def billygoat():
     q = text("""
-    select sum(a.elevation_gain) as elev,sum(a.distance) as dist, (sum(a.elevation_gain)/sum(a.distance)) as gainpermile, 
+    select sum(a.elevation_gain) as elev,sum(a.distance) as dist, (sum(a.elevation_gain)/sum(a.distance)) as gainpermile,
     c.name from rides a, athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by gainpermile desc;
     """)
     goat = [(x['name'], x['gainpermile'], x['dist'], x['elev']) for x in db.session.execute(q).fetchall()]
@@ -49,12 +49,25 @@ def tortoiseteam():
 @blueprint.route("/weekend")
 def weekendwarrior():
     q = text("""
-        select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score, 
+        select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score,
         sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0)) as 'weekend',
-        sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as 'weekday' 
+        sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as 'weekday'
         from daily_scores DS join athletes A on A.id = DS.athlete_id group by A.id
         order by weekend desc;
         """)
     weekend = [(x['athlete_id'], x['athlete_name'], x['total_score'], x['weekend'], x['weekday']) for x in
                db.session.execute(q).fetchall()]
     return render_template('people/weekend.html', data=weekend)
+
+@blueprint.route("/avgtemp")
+def avgtemp():
+    """ sum of ride distance * ride avg temp divided by total distance """
+    q = text("""
+        select athlete_id, athlete_name, sum(temp_dist)/sum(distance) as avgtemp from (
+        select A.id as athlete_id, A.display_name as athlete_name, W.ride_temp_avg, R.distance,
+        W.ride_temp_avg * R.distance as temp_dist
+        from athletes A, ride_weather W, rides R where R.athlete_id = A.id and R.id=W.ride_id) as T
+        group by athlete_id, athlete_name order by avgtemp asc;
+        """)
+    tdata = [(x['athlete_id'], x['athlete_name'], x['avgtemp']) for x in db.session.execute(q).fetchall()]
+    return render_template('pointless/averagetemp.html', data=tdata)
