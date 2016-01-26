@@ -18,7 +18,7 @@ if not app.secret_key:
 
 db = SQLAlchemy(app)
 
-from bafs.views import general, chartdata, people, user, pointless, photos # This needs to be after the app is created.
+from bafs.views import general, chartdata, people, user, pointless, photos, api  # This needs to be after the app is created.
 from bafs.utils import auth
 
 # Register our blueprints
@@ -29,6 +29,8 @@ app.register_blueprint(people.blueprint, url_prefix='/people')
 app.register_blueprint(pointless.blueprint, url_prefix='/pointless')
 app.register_blueprint(photos.blueprint, url_prefix='/photos')
 app.register_blueprint(user.blueprint, url_prefix='/my')
+app.register_blueprint(api.blueprint, url_prefix='/api')
+
 
 @app.before_request
 def set_logged_in_global():
