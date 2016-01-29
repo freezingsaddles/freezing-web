@@ -48,7 +48,9 @@ setup(name='bafs',
       install_requires=['requests==2.0.1',
                         'stravalib>=0.4.0',
                         'SQLAlchemy==0.8.3',
-                        'alembic==0.6.1',
+                        'polyline==1.1',
+                        'alembic==0.8.4',
+                        'six==1.8.0',
                         'GeoAlchemy==0.7.2',
                         'MySQL-python==1.2.5',
                         'python-dateutil{0}'.format('>=2.0,<3.0dev' if sys.version_info[0] == 3 else '>=1.5,<2.0dev'), # version 1.x is for python 2 and version 2.x is for python 3.
@@ -70,6 +72,7 @@ setup(name='bafs',
         [console_scripts]
         bafs-init-db = bafs.scripts.init_db:main
         bafs-sync = bafs.scripts.sync_rides:main
+        bafs-sync-details = bafs.scripts.sync_activity_details:main
         bafs-sync-photos = bafs.scripts.sync_photos:main
         bafs-sync-weather = bafs.scripts.sync_ride_weather:main
         bafs-sync-athletes = bafs.scripts.sync_athletes:main

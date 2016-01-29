@@ -98,8 +98,11 @@ class Ride(StravaEntity):
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
 
-    photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    photos_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
+    track_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
+
     private = sa.Column(sa.Boolean, default=False, nullable=False)
+    manual = sa.Column(sa.Boolean, default=None, nullable=True)
 
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
@@ -108,14 +111,25 @@ class RideGeo(db.Model):
     __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8'}  # MyISAM for spatial indexes
 
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
-    start_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
-    end_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
+    start_geo = ga.GeometryColumn(ga.Point(2), nullable=False)
+    end_geo = ga.GeometryColumn(ga.Point(2), nullable=False)
 
     def __repr__(self):
         return '<{0} ride_id={1} start={2}>'.format(self.__class__.__name__,
                                                     self.ride_id,
                                                     self.start_geo)
 
+
+# Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
+class RideTrack(db.Model):
+    __tablename__ = 'ride_tracks'
+    __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8'}  # MyISAM for spatial indexes
+
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
+    gps_track = ga.GeometryColumn(ga.LineString(2), nullable=False)
+
+    def __repr__(self):
+        return '<{0} ride_id={1}>'.format(self.__class__.__name__,  self.ride_id)
 
 class RideEffort(db.Model):
     __tablename__ = 'ride_efforts'
@@ -170,7 +184,8 @@ class RideWeather(db.Model):
 
 
 # Setup Geometry columns
-ga.GeometryDDL(Ride.__table__)
+ga.GeometryDDL(RideGeo.__table__)
+ga.GeometryDDL(RideTrack.__table__)
 
 
 # Setup a Pool event to get MySQL to use strict SQL mode ...
