@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">OPM Snow Day Rides</div>
+	<div class="panel-body">
+		<p>Riders who have ridden on the most offcial OPM snow days. Ties to be broken by total mileage.</p>
+		<p>Current official snow days are 1/25/2016 and 1/26/2016.</p>
+<table class="table table-condensed">
+	<tr><th>Rank</th><th>Player</th><th>Days ridden</th><th>Distance</th></tr>
+{% for a, b, c, d in data %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td><a href="http://www.strava.com/athletes/{{ a }}" target="_blank">{{b}}</a></td>
+		<td>{{c}}</td>
+		<td>{{d | round(1)}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}
