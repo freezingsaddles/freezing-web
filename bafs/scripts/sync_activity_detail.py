@@ -159,7 +159,7 @@ class SyncActivityDetails(BaseCommand):
                     if strava_activity.total_photo_count > 0:
                         data.write_ride_photo_primary(strava_activity, ride)
                         # If there are multiple instagram photos, then request syncing of non-primary photos too.
-                        if strava_activity.photo_count > 1 and strava_activity.photos_fetched is None:
+                        if strava_activity.photo_count > 1 and ride.photos_fetched is None:
                             self.logger.debug("Scheduling non-primary photos sync for {!r}".format(ride))
                             ride.photos_fetched = False
                     else:
