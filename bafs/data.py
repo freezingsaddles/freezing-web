@@ -436,27 +436,36 @@ def _write_instagram_photo_primary(photo, ride):
     #    u'unique_id': None,
     #    u'urls': {u'100': u'https://instagram.com/p/88qaqZvrBI/media?size=t',
     #     u'600': u'https://instagram.com/p/88qaqZvrBI/media?size=l'}},
-    #   u'use_primary_photo': False},
+    #   u'use_prima ry_photo': False},
 
     insta_client = insta.configured_instagram_client()
     shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
 
-    media = insta_client.media_shortcode(shortcode)
+    try:
+        media = insta_client.media_shortcode(shortcode)
 
-    p = RidePhoto()
-    p.id = media.id
-    p.primary = True
-    p.source = photo.source
-    p.ref = media.link
-    p.img_l = media.get_standard_resolution_url()
-    p.img_t = media.get_thumbnail_url()
-    if media.caption:
-        p.caption = media.caption.text
+        p = RidePhoto()
+        p.id = media.id
+        p.primary = True
+        p.source = photo.source
+        p.ref = media.link
+        p.img_l = media.get_standard_resolution_url()
+        p.img_t = media.get_thumbnail_url()
+        if media.caption:
+            p.caption = media.caption.text
 
-    log.debug("Writing (primary) Instagram ride photo: {photo!r}".format(p))
+        log.debug("Writing (primary) Instagram ride photo: {photo!r}".format(p))
 
-    db.session.merge(p)
-    return p
+        db.session.merge(p)
+        return p
+    except InstagramAPIError as e:
+        if e.status_code == 400:
+            log.warning("Skipping photo {0} for ride {1}; user is set to private".format(photo, ride))
+        elif e.status_code == 404:
+            log.warning("Skipping photo {0} for ride {1}; not found".format(photo, ride))
+        else:
+            log.exception("Error fetching instagram photo {0} (skipping)".format(photo))
+
 
 def _write_strava_photo_primary(photo, ride):
     """
@@ -575,7 +584,9 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
         except InstagramAPIError as e:
             if e.status_code == 400:
-                log.debug("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))
+                log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))
+            elif e.status_code == 404:
+                log.warning("Skipping photo {0} for ride {1}; not found".format(activity_photo, ride))
             else:
                 log.exception("Error fetching instagram photo {0} (skipping)".format(activity_photo))
 
