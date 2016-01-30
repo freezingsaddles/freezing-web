@@ -26,7 +26,28 @@ class SyncActivityDetails(BaseCommand):
         parser.add_option("--athlete-id", dest="athlete_id",
                           help="Just sync rides for a specific athlete.",
                           metavar="STRAVA_ID")
+        parser.add_option("--use-cache", action="store_true", dest="use_cache", default=False,
+                          help="Whether to use cached activities (rather than refetch from server).")
+
         return parser
+
+    def cache_dir(self, athlete_id):
+        """
+        Gets the cache directory for specific athlete.
+        :param athlete_id: The athlete ID.
+        :type athlete_id: int | str
+        :return: The cache directory.
+        :rtype: str
+        """
+        cache_basedir = app.config['STRAVA_ACTIVITY_CACHE_DIR']
+        if not cache_basedir:
+            raise ConfigurationError("STRAVA_ACTIVITY_CACHE_DIR not configured!")
+
+        directory = os.path.join(cache_basedir, str(athlete_id))
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        return directory
 
     def cache_activity(self, strava_activity, activity_json):
         """
@@ -39,13 +60,7 @@ class SyncActivityDetails(BaseCommand):
         :type activity_json: dict
         :return:
         """
-        cache_dir = app.config['STRAVA_ACTIVITY_CACHE_DIR']
-        if not cache_dir:
-            raise ConfigurationError("STRAVA_ACTIVITY_CACHE_DIR not configured!")
-
-        directory = os.path.join(cache_dir, str(strava_activity.athlete.id))
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+        directory = self.cache_dir(strava_activity.athlete.id)
 
         activity_fname = '{}.json'.format(strava_activity.id)
         cache_path = os.path.join(directory, activity_fname)
@@ -54,6 +69,29 @@ class SyncActivityDetails(BaseCommand):
             fp.write(json.dumps(activity_json, indent=2))
 
         return cache_path
+
+    def get_cached_activity_json(self, ride):
+        """
+        Writes activity to cache dir.
+
+        :param ride: The Ride model object.
+        :type ride: bafs.model.Ride
+
+        :return: A matched Strava Activity JSON object or None if there was no cache.
+        :rtype: dict
+        """
+        directory = self.cache_dir(ride.athlete_id)
+
+        activity_fname = '{}.json'.format(ride.id)
+
+        cache_path = os.path.join(directory, activity_fname)
+
+        activity_json = None
+        if os.path.exists(cache_path):
+            with open(cache_path, 'r') as fp:
+                activity_json = json.load(fp)
+
+        return activity_json
 
     def execute(self, options, args):
 
@@ -64,25 +102,34 @@ class SyncActivityDetails(BaseCommand):
                           Ride.private==False))
 
         if options.athlete_id:
-            self.logger.info("Activity details for {}".format(options.athlete_id))
+            self.logger.info("Filtering activity details for {}".format(options.athlete_id))
             q = q.filter(Ride.athlete_id == options.athlete_id)
 
-        for ride in q:
-            self.logger.info("Writing out activity details for {!r}".format(ride))
+        self.logger.info("Fetching details for {} activities".format(q.count()))
 
+        for ride in q:
             try:
                 client = data.StravaClientForAthlete(ride.athlete)
 
-                # We do this manually, so that we can keep the JSON for later use.
-                activity_json = client.protocol.get('/activities/{id}', id=ride.id, include_all_efforts=True)
-                strava_activity = stravamodel.Activity.deserialize(activity_json, bind_client=client)
+                # TODO: Make it configurable to force refresh of data.
+                activity_json = self.get_cached_activity_json(ride) if options.use_cache else None
 
-                try:
-                    self.logger.info("Caching activity {!r}".format(ride))
-                    self.cache_activity(strava_activity, activity_json)
-                except:
-                    log.error("Error caching activity {} (ignoring)".format(strava_activity),
-                              exc_info=self.logger.isEnabledFor(logging.DEBUG))
+                if activity_json is None:
+                    self.logger.info("[CACHE-MISS] Fetching activity detail for {!r}".format(ride))
+                    # We do this manually, so that we can cache the JSON for later use.
+                    activity_json = client.protocol.get('/activities/{id}', id=ride.id, include_all_efforts=True)
+                    strava_activity = stravamodel.Activity.deserialize(activity_json, bind_client=client)
+
+                    try:
+                        self.logger.info("Caching activity {!r}".format(ride))
+                        self.cache_activity(strava_activity, activity_json)
+                    except:
+                        log.error("Error caching activity {} (ignoring)".format(strava_activity),
+                                  exc_info=self.logger.isEnabledFor(logging.DEBUG))
+
+                else:
+                    strava_activity = stravamodel.Activity.deserialize(activity_json, bind_client=client)
+                    self.logger.info("[CACHE-HIT] Using cached activity detail for {!r}".format(ride))
 
                 try:
                     self.logger.info("Writing out GPS track for {!r}".format(ride))
@@ -90,6 +137,7 @@ class SyncActivityDetails(BaseCommand):
                 except:
                     self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
+                    raise
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))
@@ -97,6 +145,7 @@ class SyncActivityDetails(BaseCommand):
                 except:
                     self.logger.error("Error writing efforts for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
+                    raise
 
                 try:
                     self.logger.info("Writing out photos for {!r}".format(ride))
@@ -111,10 +160,12 @@ class SyncActivityDetails(BaseCommand):
                 except:
                     self.logger.error("Error writing primary photo for activity {}, athlete {}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
+                    raise
 
                 # TODO: photos.  We need to distinguish between the external photo fetch and those that are present in summary.
                 # NB: Only Instagram photos merit an external fetch.
 
+                ride.detail_fetched = True
                 db.session.commit()
 
             except:
