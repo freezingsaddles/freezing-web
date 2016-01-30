@@ -40,11 +40,14 @@ class FixPhotoUrls(BaseCommand):
                 db.session.commit()
             except InstagramAPIError as e:
                 if e.status_code == 400:
-                    self.logger.error("Skipping photo {0} for ride {1}; user is set to private".format(ride_photo))
+                    self.logger.error("Skipping photo {}; user is set to private".format(ride_photo))
                     del_q.append(ride_photo.id)
                 else:
                     self.logger.exception("Error fetching instagram photo {0} (skipping)".format(ride_photo))
 
+        if del_q:
+            db.engine.execute(model.RidePhoto.__table__.delete().where(model.RidePhoto.id.in_(del_q)))
+            db.session.commit()
 
 def main():
     FixPhotoUrls().run()
