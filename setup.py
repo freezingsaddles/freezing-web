@@ -72,7 +72,7 @@ setup(name='bafs',
         [console_scripts]
         bafs-init-db = bafs.scripts.init_db:main
         bafs-sync = bafs.scripts.sync_rides:main
-        bafs-sync-details = bafs.scripts.sync_activity_details:main
+        bafs-sync-detail = bafs.scripts.sync_activity_detail:main
         bafs-sync-photos = bafs.scripts.sync_photos:main
         bafs-sync-weather = bafs.scripts.sync_ride_weather:main
         bafs-sync-athletes = bafs.scripts.sync_athletes:main
