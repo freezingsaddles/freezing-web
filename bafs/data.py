@@ -442,6 +442,7 @@ def _write_instagram_photo_primary(photo, ride):
     shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
 
     try:
+        log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
         media = insta_client.media_shortcode(shortcode)
 
         p = RidePhoto()
