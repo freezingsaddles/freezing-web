@@ -9,6 +9,10 @@ from bafs.exc import CommandError
 
 
 class BaseCommand(object):
+    """
+    :ivar logger: The configured logger for this class.
+    :type logger: logging.Logger
+    """
     __metaclass__ = abc.ABCMeta
 
     # TODO: usage, help, etc.

@@ -1,13 +1,19 @@
-from instagram import InstagramAPIError
+import os
+import json
+import logging
 
 from geoalchemy import WKTSpatialElement
 from polyline.codec import PolylineCodec
 from sqlalchemy import update, or_, and_
 
-from bafs import db, model, data
+from stravalib import model as stravamodel
+
+from bafs import db, model, data, app
 from bafs.model import Ride, RideTrack, RidePhoto
 from bafs.scripts import BaseCommand
 from bafs.utils.insta import configured_instagram_client, photo_cache_path
+from bafs.exc import ConfigurationError
+from bafs.autolog import log
 
 
 class SyncActivityDetails(BaseCommand):
@@ -22,127 +28,98 @@ class SyncActivityDetails(BaseCommand):
                           metavar="STRAVA_ID")
         return parser
 
+    def cache_activity(self, strava_activity, activity_json):
+        """
+        Writes activity to cache dir.
+
+        :param strava_activity: The Strava activity
+        :type strava_activity: stravalib.model.Activity
+
+        :param activity_json: The raw JSON for the activity.
+        :type activity_json: dict
+        :return:
+        """
+        cache_dir = app.config['STRAVA_ACTIVITY_CACHE_DIR']
+        if not cache_dir:
+            raise ConfigurationError("STRAVA_ACTIVITY_CACHE_DIR not configured!")
+
+        directory = os.path.join(cache_dir, str(strava_activity.athlete.id))
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        activity_fname = '{}.json'.format(strava_activity.id)
+        cache_path = os.path.join(directory, activity_fname)
+
+        with open(cache_path, 'w') as fp:
+            fp.write(json.dumps(activity_json, indent=2))
+
+        return cache_path
+
     def execute(self, options, args):
 
         q = db.session.query(model.Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
-        q = q.filter(and_(or_(Ride.photos_fetched==False,
-                              Ride.track_fetched==False),
+        q = q.filter(and_(Ride.detail_fetched==False,
                           Ride.private==False))
 
         if options.athlete_id:
             self.logger.info("Activity details for {}".format(options.athlete_id))
             q = q.filter(Ride.athlete_id == options.athlete_id)
 
-        # TODO: Make this system better. Store the URLs to photos in the DB.
-        # if photo_count == 1, then we don't need to fetch detail photos.
-        #
-        # Here is an Instagram photo, fetched using the /activities/<id>/photos API
-        # [{u'activity_id': 414980300,
-        #   u'activity_name': u'Pimmit Run CX',
-        #   u'caption': u'Pimmit Run cx',
-        #   u'created_at': u'2015-10-17T20:51:02Z',
-        #   u'created_at_local': u'2015-10-17T16:51:02Z',
-        #   u'id': 106409096,
-        #   u'ref': u'https://instagram.com/p/88qaqZvrBI/',
-        #   u'resource_state': 2,
-        #   u'sizes': {u'0': [150, 150]},
-        #   u'source': 2,
-        #   u'type': u'InstagramPhoto',
-        #   u'uid': u'1097938959360503880_297644011',
-        #   u'unique_id': None,
-        #   u'uploaded_at': u'2015-10-17T17:55:45Z',
-        #   u'urls': {u'0': u'https://instagram.com/p/88qaqZvrBI/media?size=t'}}]
-
-        # Here is a photo embedded in the activity:
-        #
-        # 'photos': {u'count': 1,
-        #   u'primary': {u'id': None,
-        #    u'source': 1,
-        #    u'unique_id': u'35453b4b-0fc1-46fd-a824-a4548426b57d',
-        #    u'urls': {u'100': u'https://dgtzuqphqg23d.cloudfront.net/Vvm_Mcfk1SP-VWdglQJImBvKzGKRJrHlNN4BqAqD1po-128x96.jpg',
-        #     u'600': u'https://dgtzuqphqg23d.cloudfront.net/Vvm_Mcfk1SP-VWdglQJImBvKzGKRJrHlNN4BqAqD1po-768x576.jpg'}},
-        #   u'use_primary_photo': False},
-
-        # Here is when we have an Instagram photo as primary:
-        #  u'photos': {u'count': 1,
-        #   u'primary': {u'id': 106409096,
-        #    u'source': 2,
-        #    u'unique_id': None,
-        #    u'urls': {u'100': u'https://instagram.com/p/88qaqZvrBI/media?size=t',
-        #     u'600': u'https://instagram.com/p/88qaqZvrBI/media?size=l'}},
-        #   u'use_primary_photo': False},
-
         for ride in q:
-            self.logger.info("Writing out activity details for {0!r}".format(ride))
+            self.logger.info("Writing out activity details for {!r}".format(ride))
 
             try:
                 client = data.StravaClientForAthlete(ride.athlete)
-                activity = client.get_activity(ride.id)
-                """ :type: stravalib.model.Activity """
 
-                if ride.track_fetched == False:
-                    if activity.map.polyline:
-                        gps_track_points = PolylineCodec().decode(activity.map.polyline)
-                        # LINESTRING(-80.3 38.2, -81.03 38.04, -81.2 37.89)
-                        wkt_dims = ['{} {}'.format(lat, lon) for (lat,lon) in gps_track_points]
-                        gps_track = WKTSpatialElement('LINESTRING({})'.format(', '.join(wkt_dims)))
+                # We do this manually, so that we can keep the JSON for later use.
+                activity_json = client.protocol.get('/activities/{id}', id=ride.id, include_all_efforts=True)
+                strava_activity = stravamodel.Activity.deserialize(activity_json, bind_client=client)
+
+                try:
+                    self.logger.info("Caching activity {!r}".format(ride))
+                    self.cache_activity(strava_activity, activity_json)
+                except:
+                    log.error("Error caching activity {} (ignoring)".format(strava_activity),
+                              exc_info=self.logger.isEnabledFor(logging.DEBUG))
+
+                try:
+                    self.logger.info("Writing out GPS track for {!r}".format(ride))
+                    data.write_ride_track(strava_activity, ride)
+                except:
+                    self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
+                                      exc_info=self.logger.isEnabledFor(logging.DEBUG))
+
+                try:
+                    self.logger.info("Writing out efforts for {!r}".format(ride))
+                    data.write_ride_efforts(strava_activity, ride)
+                except:
+                    self.logger.error("Error writing efforts for activity {0}, athlete {1}".format(ride.id, ride.athlete),
+                                      exc_info=self.logger.isEnabledFor(logging.DEBUG))
+
+                try:
+                    self.logger.info("Writing out photos for {!r}".format(ride))
+                    if strava_activity.total_photo_count > 0:
+                        data.write_ride_photo_primary(strava_activity, ride)
+                        # If there are multiple instagram photos, then request syncing of non-primary photos too.
+                        if strava_activity.photo_count > 1 and strava_activity.photos_fetched is None:
+                            self.logger.debug("Scheduling non-primary photos sync for {!r}".format(ride))
+                            ride.photos_fetched = False
                     else:
-                        gps_track = None
+                        self.logger.debug ("No photos for {!r}".format(ride))
+                except:
+                    self.logger.error("Error writing primary photo for activity {}, athlete {}".format(ride.id, ride.athlete),
+                                      exc_info=self.logger.isEnabledFor(logging.DEBUG))
 
-                    if gps_track is not None:
-                        ride_track = RideTrack()
-                        ride_track.gps_track = gps_track
-                        ride_track.ride_id = activity.id
-                        db.session.merge(ride_track)
+                # TODO: photos.  We need to distinguish between the external photo fetch and those that are present in summary.
+                # NB: Only Instagram photos merit an external fetch.
 
-                    ride.track_fetched = True
-
-                    db.session.commit()
-
-                if not ride.photos_fetched:
-                    pass
-
-                    # if activity.photo_count > 1:
-                    #
-                    #
-                    # try:
-                    #     # Start by removing any existing photos for the ride.
-                    #     if not options.rewrite:
-                    #         # (This would be redundant if we already cleared the entire table.)
-                    #         db.engine.execute(model.RidePhoto.__table__.delete().where(model.RidePhoto.ride_id == ride.id))
-                    #
-                    #     # Add the photos for this activity.
-                    #     for p in client.get_activity_photos(ride.id):
-                    #         try:
-                    #             # TODO: Make caching configurable?
-                    #             photo_cache_path(p.uid)
-                    #
-                    #             photo = model.RidePhoto(id=p.id,
-                    #                                     ride_id=ride.id,
-                    #                                     ref=p.ref,
-                    #                                     caption=p.caption,
-                    #                                     uid=p.uid)
-                    #
-                    #             self.logger.debug("Writing ride photo: {p_id}: {photo!r}".format(p_id=p.id,
-                    #                                                                              photo=photo))
-                    #             db.session.merge(photo)
-                    #         except InstagramAPIError as e:
-                    #             if e.status_code == 400:
-                    #                 self.logger.debug(
-                    #                     "Skipping photo {0} for ride {1}; user is set to private".format(p, ride))
-                    #             else:
-                    #                 self.logger.exception("Error fetching instagram photo {0}".format(p))
-                    #
-                    #     ride.photos_fetched = True
-                    #     db.session.commit()  # @UndefinedVariable
-                    # except:
-                    #     self.logger.exception("Error adding photo for ride: {0}".format(ride))
-                    #     continue
+                db.session.commit()
 
             except:
-                self.logger.exception("Error fetching/writing activity {0}, athlete {1}".format(ride.id, ride.athlete))
+                self.logger.exception("Error fetching/writing activity detail {}, athlete {}".format(ride.id, ride.athlete))
+                db.session.rollback()
 
 
 def main():

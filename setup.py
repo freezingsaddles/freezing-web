@@ -77,5 +77,6 @@ setup(name='bafs',
         bafs-sync-weather = bafs.scripts.sync_ride_weather:main
         bafs-sync-athletes = bafs.scripts.sync_athletes:main
         bafs-server = bafs.runserver:main
+        bafs-fix-photo-urls = bafs.scripts.fix_photo_urls:main
         """,
      )

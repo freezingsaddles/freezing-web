@@ -97,9 +97,11 @@ class Ride(StravaEntity):
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
+    track = orm.relationship("RideTrack", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
 
     photos_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
     track_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
+    detail_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
 
     private = sa.Column(sa.Boolean, default=False, nullable=False)
     manual = sa.Column(sa.Boolean, default=None, nullable=True)
@@ -140,21 +142,27 @@ class RideEffort(db.Model):
     elapsed_time = sa.Column(sa.Integer, nullable=False)
 
     def __repr__(self):
-        return '<{0} id={1} segment_name={1!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
+        return '<{} id={} segment_name={!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
 
 
 class RidePhoto(db.Model):
     __tablename__ = 'ride_photos'
+
     id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
+    source = sa.Column(sa.Integer, nullable=False, default=2)
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     ref = sa.Column(sa.String(255), nullable=False)
     caption = sa.Column(sa.Text, nullable=True)
-    uid = sa.Column(sa.String(255), nullable=False)
+
+    img_t = sa.Column(sa.String(255), nullable=True)
+    img_l = sa.Column(sa.String(255), nullable=True)
+
+    primary = sa.Column(sa.Boolean, nullable=False, default=False)
 
     # upload_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
 
     def __repr__(self):
-        return '<{0} id={1} ref={1!r}>'.format(self.__class__.__name__, self.id, self.ref)
+        return '<{} id={} primary={!r}>'.format(self.__class__.__name__, self.id, self.primary)
 
 
 class RideWeather(db.Model):
