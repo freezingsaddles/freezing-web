@@ -29,6 +29,9 @@ class SyncActivityDetails(BaseCommand):
         parser.add_option("--use-cache", action="store_true", dest="use_cache", default=False,
                           help="Whether to use cached activities (rather than refetch from server).")
 
+        parser.add_option("--only-cache", action="store_true", dest="only_cache", default=False,
+                          help="Whether to use only cached activities (rather than fetch anything from server).")
+
         return parser
 
     def cache_dir(self, athlete_id):
@@ -115,6 +118,10 @@ class SyncActivityDetails(BaseCommand):
                 activity_json = self.get_cached_activity_json(ride) if options.use_cache else None
 
                 if activity_json is None:
+                    if options.only_cache:
+                        self.logger.info("[CACHE-MISS] Skipping ride {} since there is no cached version.")
+                        continue
+
                     self.logger.info("[CACHE-MISS] Fetching activity detail for {!r}".format(ride))
                     # We do this manually, so that we can cache the JSON for later use.
                     activity_json = client.protocol.get('/activities/{id}', id=ride.id, include_all_efforts=True)
