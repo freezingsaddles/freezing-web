@@ -6,7 +6,7 @@ import urllib
 import shutil
 
 from instagram.client import InstagramAPI
-from bafs import app
+from bafs import app, exc
 
 THUMBNAIL_DIMS = (150,150)
 STANDARD_DIMS = (640, 640)
@@ -20,6 +20,12 @@ LOW = 'low_resolution'
 
 
 def configured_instagram_client():
+    """
+    Get the configured Instagram client.
+
+    :return: Instagram with configured client ID.
+    :rtype: instagram.client.InstagramAPI
+    """
     return InstagramAPI(client_id=app.config['INSTAGRAM_CLIENT_ID'])
 
 
@@ -27,7 +33,7 @@ def photo_cache_path(uid, resolution=STANDARD):
     assert resolution in (STANDARD, THUMBNAIL, LOW)
     cache_dir = app.config['INSTAGRAM_CACHE_DIR']
     if not cache_dir:
-        raise RuntimeError("INSTAGRAM_CACHE_DIR not configured!")
+        raise exc.ConfigurationError("INSTAGRAM_CACHE_DIR not configured!")
 
     photo_fname = IMG_FNAME_TPL.format(uid=uid)
     cache_path = os.path.join(cache_dir, resolution, photo_fname)
@@ -36,6 +42,18 @@ def photo_cache_path(uid, resolution=STANDARD):
     # We expect that if that executed without errors then our path is now valid
     assert os.path.exists(cache_path)
     return cache_path
+
+
+def cache_photos(uid, base_dir):
+
+    api = configured_instagram_client()
+
+    mediaobj = api.media(uid)
+
+    for res in ('standard_resolution', 'low_resolution', 'thumbnail'):
+        photo = mediaobj.images[res]
+        _write_instagram_photo(uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res))
+
 
 
 def cache_photos(uid, base_dir):

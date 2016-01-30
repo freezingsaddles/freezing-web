@@ -40,10 +40,10 @@
         </div>
         <div class="row">{% endif %}
 
-            <a href="/photos/{{ photo.uid }}.jpg" data-toggle="lightbox" data-gallery="multiimages"
+            <a href="/photos/{{ photo.id }}.jpg" data-toggle="lightbox" data-gallery="multiimages"
                data-title="{{ photo.caption if photo.caption != None }}" class="col-sm-4"
                data-footer="Taken by {{ photo.ride.athlete.display_name }}.  <a href='{{photo.ref}}' target='_blank'>View in Instagram</a>">
-                <img src="/photos/{{ photo.uid }}.jpg" class="img-responsive">
+                <img src="/photos/{{ photo.id }}.jpg" class="img-responsive">
             </a>
             {% else %}
             <h2><em>(There are no recent photos).</em></h2>

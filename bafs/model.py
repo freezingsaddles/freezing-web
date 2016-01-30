@@ -97,9 +97,14 @@ class Ride(StravaEntity):
     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
     photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
+    track = orm.relationship("RideTrack", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
 
-    photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+    photos_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
+    track_fetched = sa.Column(sa.Boolean, default=None, nullable=True)
+    detail_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
+
     private = sa.Column(sa.Boolean, default=False, nullable=False)
+    manual = sa.Column(sa.Boolean, default=None, nullable=True)
 
 
 # Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
@@ -108,14 +113,25 @@ class RideGeo(db.Model):
     __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8'}  # MyISAM for spatial indexes
 
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
-    start_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
-    end_geo = ga.GeometryColumn(ga.Point(2), nullable=True)
+    start_geo = ga.GeometryColumn(ga.Point(2), nullable=False)
+    end_geo = ga.GeometryColumn(ga.Point(2), nullable=False)
 
     def __repr__(self):
         return '<{0} ride_id={1} start={2}>'.format(self.__class__.__name__,
                                                     self.ride_id,
                                                     self.start_geo)
 
+
+# Broken out into its own table due to MySQL (5.0/1.x, anyway) not allowing NULL values in geometry columns.
+class RideTrack(db.Model):
+    __tablename__ = 'ride_tracks'
+    __table_args__ = {'mysql_engine': 'MyISAM', 'mysql_charset': 'utf8'}  # MyISAM for spatial indexes
+
+    ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
+    gps_track = ga.GeometryColumn(ga.LineString(2), nullable=False)
+
+    def __repr__(self):
+        return '<{0} ride_id={1}>'.format(self.__class__.__name__,  self.ride_id)
 
 class RideEffort(db.Model):
     __tablename__ = 'ride_efforts'
@@ -126,21 +142,27 @@ class RideEffort(db.Model):
     elapsed_time = sa.Column(sa.Integer, nullable=False)
 
     def __repr__(self):
-        return '<{0} id={1} segment_name={1!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
+        return '<{} id={} segment_name={!r}>'.format(self.__class__.__name__, self.id, self.segment_name)
 
 
 class RidePhoto(db.Model):
     __tablename__ = 'ride_photos'
+
     id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
+    source = sa.Column(sa.Integer, nullable=False, default=2)
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     ref = sa.Column(sa.String(255), nullable=False)
     caption = sa.Column(sa.Text, nullable=True)
-    uid = sa.Column(sa.String(255), nullable=False)
+
+    img_t = sa.Column(sa.String(255), nullable=True)
+    img_l = sa.Column(sa.String(255), nullable=True)
+
+    primary = sa.Column(sa.Boolean, nullable=False, default=False)
 
     # upload_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
 
     def __repr__(self):
-        return '<{0} id={1} ref={1!r}>'.format(self.__class__.__name__, self.id, self.ref)
+        return '<{} id={} primary={!r}>'.format(self.__class__.__name__, self.id, self.primary)
 
 
 class RideWeather(db.Model):
@@ -170,7 +192,8 @@ class RideWeather(db.Model):
 
 
 # Setup Geometry columns
-ga.GeometryDDL(Ride.__table__)
+ga.GeometryDDL(RideGeo.__table__)
+ga.GeometryDDL(RideTrack.__table__)
 
 
 # Setup a Pool event to get MySQL to use strict SQL mode ...

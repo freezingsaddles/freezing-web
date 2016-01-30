@@ -108,33 +108,18 @@ class SyncRides(BaseCommand):
         removed_ride_ids = list(stored_ride_ids - returned_ride_ids)
 
         num_rides = len(api_ride_entries)
-        # if rewrite:
-        #    num_rides = len(api_ride_entries)
-        # else:
-        #    num_rides = len(new_ride_ids)
 
-        segment_sync_queue = []
-        photo_sync_queue = []
         for (i, strava_activity) in enumerate(api_ride_entries):
-            self.logger.debug("Preparing to process ride: {0} ({1}/{2})".format(strava_activity.id, i + 1, num_rides))
+            self.logger.debug("Processing ride: {0} ({1}/{2})".format(strava_activity.id, i + 1, num_rides))
 
             if rewrite or not strava_activity.id in stored_ride_ids:
                 try:
-                    (ride, resync_segments, resync_photos) = data.write_ride(strava_activity)
+                    ride = data.write_ride(strava_activity)
                     self.logger.info("[NEW RIDE]: {id} {name!r} ({i}/{num}) ".format(id=strava_activity.id,
                                                                                      name=strava_activity.name,
                                                                                      i=i + 1,
                                                                                      num=num_rides))
-                    if not strava_activity.private:
-                        if resync_segments:
-                            segment_sync_queue.append(ride)
-                        if resync_photos:
-                            photo_sync_queue.append(ride)
-                    else:
-                        self.logger.info("[PRIVATE RIDE]: {id} is private, no segments/photos can be fetched.".format(
-                            id=strava_activity.id))
-                        ride.photos_fetched = True
-                        ride.efforts_fetched = True
+                    sess.commit()
                 except Exception as x:
                     self.logger.debug("Error writing out ride, will attempt to add/update RideError: {0}".format(strava_activity.id))
                     sess.rollback()
@@ -176,7 +161,6 @@ class SyncRides(BaseCommand):
                                                                                          i=i + 1,
                                                                                          num=num_rides))
 
-
         # Remove any rides that are in the database for this athlete that were not in the returned list.
         if removed_ride_ids:
             q = sess.query(model.Ride)
@@ -187,19 +171,6 @@ class SyncRides(BaseCommand):
             self.logger.info("(No removed rides for athlete {0}.)".format(athlete))
 
         sess.commit()
-
-        # TODO: This could be its own function, really
-        # Write out any efforts associated with these rides (not already in database)
-        for ride in segment_sync_queue:
-            self.logger.info("Writing out efforts for {0!r}".format(ride))
-            client = data.StravaClientForAthlete(ride.athlete)
-            try:
-                strava_activity = client.get_activity(ride.id)
-                data.write_ride_efforts(strava_activity, ride)
-            except:
-                self.logger.debug("Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete), exc_info=True)
-                self.logger.error("Unexpected error fetching/writing activity {0}, athlete {1}".format(ride.id, athlete))
-
 
 def main():
     SyncRides().run()

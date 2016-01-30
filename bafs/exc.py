@@ -17,3 +17,7 @@ class CommandError(RuntimeError):
 
 class DataEntryError(ValueError):
     pass
+
+
+class ConfigurationError(RuntimeError):
+    pass
