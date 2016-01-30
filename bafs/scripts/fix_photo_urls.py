@@ -27,7 +27,6 @@ class FixPhotoUrls(BaseCommand):
 
         q = db.session.query(model.RidePhoto)
         q = q.filter_by(img_t=None)
-        q = q.limit(10)
 
         insta_client = configured_instagram_client()
 
