@@ -442,7 +442,7 @@ def _write_instagram_photo_primary(photo, ride):
     shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
 
     try:
-        log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
+        #log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
         media = insta_client.media_shortcode(shortcode)
 
         p = RidePhoto()
@@ -455,7 +455,7 @@ def _write_instagram_photo_primary(photo, ride):
         if media.caption:
             p.caption = media.caption.text
 
-        log.debug("Writing (primary) Instagram ride photo: {photo!r}".format(p))
+        log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
 
         db.session.merge(p)
         return p
