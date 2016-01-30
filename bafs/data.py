@@ -581,7 +581,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
             db.session.add(photo)
 
-            log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=p.id, photo=photo))
+            log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
 
         except InstagramAPIError as e:
             if e.status_code == 400:
