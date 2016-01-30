@@ -19,7 +19,7 @@ from bafs.autolog import log
 class SyncActivityDetails(BaseCommand):
     @property
     def name(self):
-        return 'sync-activity-details'
+        return 'sync-activity-detail'
 
     def build_parser(self):
         parser = super(SyncActivityDetails, self).build_parser()
