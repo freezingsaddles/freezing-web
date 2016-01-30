@@ -23,9 +23,14 @@ class SyncActivityDetails(BaseCommand):
 
     def build_parser(self):
         parser = super(SyncActivityDetails, self).build_parser()
-        parser.add_option("--athlete-id", dest="athlete_id",
+        parser.add_option("--athlete-id", dest="athlete_id", type="int",
                           help="Just sync rides for a specific athlete.",
                           metavar="STRAVA_ID")
+
+        parser.add_option("--max-records", dest="max_records", type="int",
+                          help="Limit number of rides to return.",
+                          metavar="NUM")
+
         parser.add_option("--use-cache", action="store_true", dest="use_cache", default=False,
                           help="Whether to use cached activities (rather than refetch from server).")
 
@@ -107,6 +112,10 @@ class SyncActivityDetails(BaseCommand):
         if options.athlete_id:
             self.logger.info("Filtering activity details for {}".format(options.athlete_id))
             q = q.filter(Ride.athlete_id == options.athlete_id)
+
+        if options.max_records:
+            self.logger.info("Limiting to {} records".format(options.max_records))
+            q = q.limit(options.max_records)
 
         self.logger.info("Fetching details for {} activities".format(q.count()))
 
