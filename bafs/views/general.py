@@ -13,7 +13,6 @@ import bafs.exc
 from flask import render_template, redirect, url_for, current_app, request, Blueprint, session
 
 from sqlalchemy import text
-from dateutil import rrule, parser
 
 from stravalib import Client
 from stravalib import unithelper as uh

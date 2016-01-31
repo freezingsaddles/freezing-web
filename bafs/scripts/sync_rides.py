@@ -1,8 +1,8 @@
 from datetime import timedelta, datetime
 
+import arrow
 from pytz import utc
 from sqlalchemy import and_
-from dateutil import parser as dateutil_parser
 
 from bafs import app, db, model, data
 from bafs.scripts import BaseCommand
@@ -43,13 +43,13 @@ class SyncRides(BaseCommand):
         sess = db.session
 
         if options.start_date:
-            start = dateutil_parser.parse(options.start_date)
+            start = arrow.get(options.start_date).datetime
             self.logger.info("Fetching rides newer than {0}".format(start))
         else:
             start = None
             self.logger.info("Fetching all rides (since competition start)")
 
-        end_date = dateutil_parser.parse(app.config['BAFS_END_DATE'])
+        end_date = arrow.get(app.config['BAFS_END_DATE']).datetime
         grace_days = app.config['BAFS_UPLOAD_GRACE_PERIOD_DAYS']
         grace_delta = timedelta(days=grace_days)
 

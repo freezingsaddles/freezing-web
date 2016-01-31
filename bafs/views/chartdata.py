@@ -8,10 +8,12 @@ import copy
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
+import arrow
+
 from flask import render_template, redirect, url_for, current_app, request, Blueprint
 
 from sqlalchemy import text
-from dateutil import rrule, parser 
+from dateutil import rrule
 
 from bafs import app, db
 from bafs.utils import gviz_api
@@ -500,7 +502,7 @@ def user_daily_points(athlete_id):
     cols.append({'id': 'athlete_{0}'.format(athlete_id), 'label': '', 'type': 'number'})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = arrow.get(app.config['BAFS_START_DATE']).datetime
     start_date = start_date.replace(tzinfo=None)
     day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -536,7 +538,7 @@ def user_weekly_points(athlete_id):
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = arrow.get(app.config['BAFS_START_DATE']).datetime
     start_date = start_date.replace(tzinfo=None)
     week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -573,7 +575,7 @@ def team_weekly_points():
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
     
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = arrow.get(app.config['BAFS_START_DATE']).datetime
     start_date = start_date.replace(tzinfo=None)
     week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -612,7 +614,7 @@ def team_cumul_points():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = arrow.get(app.config['BAFS_START_DATE']).datetime
     start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
         
@@ -634,7 +636,7 @@ def team_cumul_points():
         
     rows = []
     for datekey in sorted(tpl_dict.keys()):
-        cells = [{'v': parser.parse(datekey).date() }]
+        cells = [{'v': arrow.get(datekey).date() }]
         for team in teams:
             cells.append({'v': daily_cumul[team.id][datekey]})
         rows.append({'c': cells})
@@ -661,7 +663,7 @@ def team_cumul_mileage():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    start_date = parser.parse(app.config['BAFS_START_DATE'])
+    start_date = arrow.get(app.config['BAFS_START_DATE']).datetime
     start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict([(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
         
@@ -683,7 +685,7 @@ def team_cumul_mileage():
         
     rows = []
     for datekey in sorted(tpl_dict.keys()):
-        cells = [{'v': parser.parse(datekey).date() }]
+        cells = [{'v': arrow.get(datekey).date() }]
         for team in teams:
             cells.append({'v': daily_cumul[team.id][datekey]})
         rows.append({'c': cells})
