@@ -24,10 +24,10 @@ def visit_create_view(element, compiler, **kw):
 
 class StravaEntity(db.Model):
     __abstract__ = True
-    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8'}  # But we use MyISAM for the spatial table.
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'utf8mb4'}  # But we use MyISAM for the spatial table.
 
     id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
-    name = sa.Column(sa.String(1024), nullable=False)
+    name = sa.Column(sa.String(1000), nullable=False)
 
     def __init__(self, id=None, name=None, **kwargs):
         self.id = id
@@ -148,7 +148,7 @@ class RideEffort(db.Model):
 class RidePhoto(db.Model):
     __tablename__ = 'ride_photos'
 
-    id = sa.Column(sa.BigInteger, primary_key=True, autoincrement=False)
+    id = sa.Column(sa.String(191), primary_key=True, autoincrement=False)
     source = sa.Column(sa.Integer, nullable=False, default=2)
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
     ref = sa.Column(sa.String(255), nullable=False)
