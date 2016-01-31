@@ -4,7 +4,7 @@ Functions for interacting with the datastore and the strava apis.
 from __future__ import division
 import re
 
-from instagram import InstagramAPIError
+from instagram import InstagramAPIError, InstagramClientError
 
 from polyline.codec import PolylineCodec
 
@@ -441,32 +441,40 @@ def _write_instagram_photo_primary(photo, ride):
     insta_client = insta.configured_instagram_client()
     shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
 
+    media = None
     try:
         #log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
         media = insta_client.media_shortcode(shortcode)
+    except (InstagramAPIError, InstagramClientError) as e:
+        if e.status_code == 400:
+            log.warning("Instagram photo {} for ride {}; user is set to private".format(shortcode, ride))
+        elif e.status_code == 404:
+            log.warning("Photo {} for ride {}; shortcode not found".format(shortcode, ride))
+        else:
+            log.exception("Error fetching instagram photo {}".format(photo))
 
-        p = RidePhoto()
+    p = RidePhoto()
+    
+    if media:
         p.id = media.id
-        p.primary = True
-        p.source = photo.source
         p.ref = media.link
         p.img_l = media.get_standard_resolution_url()
         p.img_t = media.get_thumbnail_url()
         if media.caption:
             p.caption = media.caption.text
+    else:
+        p.id = photo.id
+        p.ref = re.match(r'(.+/)media\?size=.$', photo.urls['100']).group(1)
+        p.img_l = photo.urls['600']
+        p.img_t = photo.urls['100']
 
-        log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
+    p.primary = True
+    p.source = photo.source
 
-        db.session.merge(p)
-        return p
-    except InstagramAPIError as e:
-        if e.status_code == 400:
-            log.warning("Skipping photo {0} for ride {1}; user is set to private".format(photo, ride))
-        elif e.status_code == 404:
-            log.warning("Skipping photo {0} for ride {1}; not found".format(photo, ride))
-        else:
-            log.exception("Error fetching instagram photo {0} (skipping)".format(photo))
+    log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
 
+    db.session.merge(p)
+    return p
 
 def _write_strava_photo_primary(photo, ride):
     """
@@ -583,12 +591,13 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
             log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
 
-        except InstagramAPIError as e:
+        except (InstagramAPIError, InstagramClientError) as e:
             if e.status_code == 400:
                 log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))
             elif e.status_code == 404:
                 log.warning("Skipping photo {0} for ride {1}; not found".format(activity_photo, ride))
             else:
                 log.exception("Error fetching instagram photo {0} (skipping)".format(activity_photo))
+
 
     ride.photos_fetched = True
