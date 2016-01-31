@@ -164,22 +164,15 @@ class SyncActivityDetails(BaseCommand):
                     raise
 
                 try:
-                    self.logger.info("Writing out photos for {!r}".format(ride))
+                    self.logger.info("Writing out primary photo for {!r}".format(ride))
                     if strava_activity.total_photo_count > 0:
                         data.write_ride_photo_primary(strava_activity, ride)
-                        # If there are multiple instagram photos, then request syncing of non-primary photos too.
-                        if strava_activity.photo_count > 1 and ride.photos_fetched is None:
-                            self.logger.debug("Scheduling non-primary photos sync for {!r}".format(ride))
-                            ride.photos_fetched = False
                     else:
                         self.logger.debug ("No photos for {!r}".format(ride))
                 except:
                     self.logger.error("Error writing primary photo for activity {}, athlete {}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
                     raise
-
-                # TODO: photos.  We need to distinguish between the external photo fetch and those that are present in summary.
-                # NB: Only Instagram photos merit an external fetch.
 
                 ride.detail_fetched = True
                 db.session.commit()
