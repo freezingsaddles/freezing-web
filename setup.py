@@ -5,6 +5,7 @@ import sys
 import os.path
 import re
 import warnings
+import uuid
 
 from pip.req import parse_requirements
 from setuptools import setup, find_packages
@@ -15,7 +16,7 @@ __copyright__ = "Copyright 2013 Hans Lellelid"
 version = '0.2'
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
-install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'))
+install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'), session=uuid.uuid1())
 
 # reqs is a list of requirement
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']
