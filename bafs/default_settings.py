@@ -1,6 +1,6 @@
 # Your settings
 
-SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql://freezing@localhost/freezing?charset=utf8mb4'
 
 # Need a Strava Client ID and secret in order to authorize users
 #STRAVA_CLIENT_ID = ''
