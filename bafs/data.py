@@ -495,6 +495,10 @@ def _write_strava_photo_primary(photo, ride):
     #     u'600': u'https://dgtzuqphqg23d.cloudfront.net/Vvm_Mcfk1SP-VWdglQJImBvKzGKRJrHlNN4BqAqD1po-768x576.jpg'}},
     #   u'use_primary_photo': False},
 
+    if not photo.urls:
+        log.warning("Photo {} present, but has no URLs (skipping)".format(photo))
+        return None
+
     p = RidePhoto()
     p.id = photo.unique_id
     p.primary = True
