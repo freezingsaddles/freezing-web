@@ -310,11 +310,18 @@ def write_ride(activity):
         else:
             ride.photos_fetched = None
 
-    elif round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
-        log.info("Queing resync of details for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
-                                                                                                      ride.distance,
-                                                                                                      unithelper.miles(activity.distance)))
-        ride.detail_fetched = False
+    else:
+        if round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
+            log.info("Queing resync of details for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
+                                                                                                          ride.distance,
+                                                                                                          unithelper.miles(activity.distance)))
+            ride.detail_fetched = False
+
+    # Should apply to both new and preexisting rides ...
+    # If there are multiple instagram photos, then request syncing of non-primary photos too.
+    if activity.photo_count > 1 and ride.photos_fetched is None:
+        log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
+        ride.photos_fetched = False
 
     ride.private = bool(activity.private)
     ride.athlete = athlete
