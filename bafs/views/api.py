@@ -1,12 +1,19 @@
+import re
 from datetime import timedelta
+from decimal import Decimal
 
+import arrow
+
+from flask import Blueprint, jsonify, request
+
+import geojson
 from sqlalchemy import text
 from stravalib import unithelper as uh
 
 from bafs import app, db
-from bafs.model import RidePhoto, Ride
+from bafs.autolog import log
+from bafs.model import RidePhoto, Ride, RideTrack, Athlete
 from bafs.utils import auth
-from flask import Blueprint, jsonify
 
 blueprint = Blueprint('api', __name__)
 
@@ -150,3 +157,37 @@ def team_leaderboard():
         })
 
     return jsonify(dict(leaderboard=rows))
+
+@blueprint.route("/teams/<int:team_id>/tracks.geojson")
+@auth.crossdomain(origin='*')
+def geo_tracks(team_id):
+
+    # log.info("Fetching gps tracks for team {}".format(team_id))
+
+    start_date = request.args.get('start_date')
+    if start_date:
+        start_date = arrow.get(start_date).datetime
+
+    end_date = request.args.get('start_date')
+    if end_date:
+        end_date = arrow.get(end_date).datetime
+
+    rx = re.compile('^LINESTRING\((.+)\)$')
+    sess = db.session
+
+    q = sess.query(RideTrack).join(Ride).join(Athlete).filter(Athlete.team_id==team_id)
+    if start_date:
+        q = q.filter(Ride.start_date >= start_date)
+    if end_date:
+        q = q.filter(Ride.start_date < end_date)
+
+    geometries = []
+    for ride_track in q:
+        wkt = sess.scalar(ride_track.gps_track.wkt)
+
+        points = [(Decimal(lat), Decimal(lon))
+                  for lat, lon in [latlon.split(' ') for latlon in rx.match(wkt).group(1).split(',')]]
+
+        geometries.append(geojson.LineString(points))
+
+    return geojson.dumps(geojson.GeometryCollection(geometries))
