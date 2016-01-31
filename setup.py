@@ -6,12 +6,20 @@ import os.path
 import re
 import warnings
 
+from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 __authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
 __copyright__ = "Copyright 2013 Hans Lellelid"
 
 version = '0.2'
+
+# parse_requirements() returns generator of pip.req.InstallRequirement objects
+install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'))
+
+# reqs is a list of requirement
+# e.g. ['django==1.5.1', 'mezzanine==1.4.6']
+reqs = [str(ir.req) for ir in install_reqs]
 
 news = os.path.join(os.path.dirname(__file__), 'docs', 'news.txt')
 news = open(news).read()
@@ -45,21 +53,7 @@ setup(name='bafs',
       keywords='strava api',
       test_suite="nose.collector",
       tests_require=['nose>=0.11', 'mock'],
-      install_requires=['requests==2.0.1',
-                        'stravalib>=0.4.0',
-                        'SQLAlchemy==0.8.3',
-                        'polyline==1.1',
-                        'alembic==0.8.4',
-                        'six==1.8.0',
-                        'GeoAlchemy==0.7.2',
-                        'MySQL-python==1.2.5',
-                        'python-dateutil{0}'.format('>=2.0,<3.0dev' if sys.version_info[0] == 3 else '>=1.5,<2.0dev'), # version 1.x is for python 2 and version 2.x is for python 3.
-                        'beautifulsoup4==4.3.2',
-                        'Flask==0.10.1',
-                        'Flask-SQLAlchemy==1.0',
-                        'pytz',
-                        'colorlog==2.0.0',
-                        'python-instagram==1.3.2'],
+      install_requires=install_reqs,
       classifiers=["Development Status :: 3 - Alpha",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: Apache Software License",
