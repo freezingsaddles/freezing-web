@@ -206,6 +206,8 @@ class Client(object):
                 data = self._check_cache(lp, date)
                 if data:
                     break
+        else:
+            raise RuntimeError("No lat/lon or us_city_location param strategy available.")
 
         if data is None:
             if not self.cache_only:
@@ -220,7 +222,7 @@ class Client(object):
                             continue
                         else:
                             data = res.json()
-                            if 'history' in data: # Do not break if we don't have a valid JSON response
+                            if 'history' in data and data['history'].get('observations'): # Do not break if we don't have a valid JSON response
                                 break
                 else:
                     # We tried all param options but each had an error
