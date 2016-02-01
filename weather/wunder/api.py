@@ -206,8 +206,6 @@ class Client(object):
                 data = self._check_cache(lp, date)
                 if data:
                     break
-        else:
-            raise RuntimeError("No lat/lon or us_city_location param strategy available.")
 
         if data is None:
             if not self.cache_only:
