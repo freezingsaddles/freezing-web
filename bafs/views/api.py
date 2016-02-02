@@ -181,13 +181,13 @@ def geo_tracks(team_id):
     if end_date:
         q = q.filter(Ride.start_date < end_date)
 
-    geometries = []
+    linestrings = []
     for ride_track in q:
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
         points = [(Decimal(lat), Decimal(lon))
                   for lat, lon in [latlon.split(' ') for latlon in rx.match(wkt).group(1).split(',')]]
 
-        geometries.append(geojson.LineString(points))
+        linestrings.append(points)
 
-    return geojson.dumps(geojson.MultiLineString(geometries))
+    return geojson.dumps(geojson.MultiLineString(linestrings))
