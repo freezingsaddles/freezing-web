@@ -190,4 +190,4 @@ def geo_tracks(team_id):
 
         geometries.append(geojson.LineString(points))
 
-    return geojson.dumps(geojson.GeometryCollection(geometries))
+    return geojson.dumps(geojson.MultiLineString(geometries))
