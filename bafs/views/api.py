@@ -185,7 +185,7 @@ def geo_tracks(team_id):
     for ride_track in q:
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
-        points = [(Decimal(lat), Decimal(lon))
+        points = [(Decimal(lon), Decimal(lat))
                   for lat, lon in [latlon.split(' ') for latlon in rx.match(wkt).group(1).split(',')]]
 
         linestrings.append(points)
