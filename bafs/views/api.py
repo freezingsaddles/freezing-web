@@ -14,6 +14,7 @@ from bafs import app, db
 from bafs.autolog import log
 from bafs.model import RidePhoto, Ride, RideTrack, Athlete
 from bafs.utils import auth
+from bafs.serialize import RidePhotoSchema
 
 blueprint = Blueprint('api', __name__)
 
@@ -86,17 +87,11 @@ def stats_general():
 @auth.crossdomain(origin='*')
 def list_photos():
     photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
-
+    schema = RidePhotoSchema()
     results = []
     for p in photos:
-        results.append(dict(id=p.id,
-                            ref=p.ref,
-                            caption=p.caption,
-                            uid=p.uid,
-                            ride_id=p.ride_id,
-                            thumb_url='http://127.0.0.1:5000/photos/{}.jpg'.format(p.uid)
-                            # This is temporary until we change how we store these.
-                            ))
+        results.append(schema.dump(p).data)
+
     return jsonify(dict(result=results, count=len(results)))
 
 
@@ -166,11 +161,11 @@ def geo_tracks(team_id):
 
     start_date = request.args.get('start_date')
     if start_date:
-        start_date = arrow.get(start_date).datetime
+        start_date = arrow.get(start_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
 
     end_date = request.args.get('start_date')
     if end_date:
-        end_date = arrow.get(end_date).datetime
+        end_date = arrow.get(end_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
 
     rx = re.compile('^LINESTRING\((.+)\)$')
     sess = db.session
