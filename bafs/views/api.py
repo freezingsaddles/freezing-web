@@ -163,9 +163,11 @@ def geo_tracks(team_id):
     if start_date:
         start_date = arrow.get(start_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
 
-    end_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
     if end_date:
         end_date = arrow.get(end_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
+
+    log.info("Filtering on start_date: {}".format(start_date))
 
     rx = re.compile('^LINESTRING\((.+)\)$')
     sess = db.session
