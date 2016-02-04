@@ -27,7 +27,7 @@ state_name_to_abbrev_map = {
     "Colorado": "CO",
     "Connecticut": "CT",
     "Delaware": "DE",
-    "District Of Columbia": "DC",
+    "District of Columbia": "DC",
     "Florida": "FL",
     "Georgia": "GA",
     "Guam": "GU",
@@ -206,8 +206,6 @@ class Client(object):
                 data = self._check_cache(lp, date)
                 if data:
                     break
-        else:
-            raise RuntimeError("No lat/lon or us_city_location param strategy available.")
 
         if data is None:
             if not self.cache_only:
