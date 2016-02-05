@@ -1,0 +1,46 @@
+.top-buffer {
+    margin-top:20px;
+}
+
+/* padding for the gallery */
+div.row > div > div.row {
+    margin-bottom: 15px;
+}
+
+.center-cropped {
+    width: 200px;
+    height: 200px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+    /* add some shadow for the thumbnail */
+    -webkit-box-shadow: 0 1px 2px #777;
+    -moz-box-shadow: 0 2px 1px #777;
+    box-shadow: 0 2px 2px #777;
+}
+
+/* Set the image to fill its parent and make transparent */
+.center-cropped img {
+    min-height: 100%;
+    min-width: 100%;
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    /* IE 5-7 */
+    filter: alpha(opacity=0);
+    /* modern browsers */
+    opacity: 0;
+}
+
+.thumb {
+    margin-bottom: 30px;
+}
+
+.more-images-link:hover {
+    text-decoration: none;
+}
+.more-images-link {
+    font-size: 100px;
+    padding-top: 50px;
+    padding-left: 50px;
+}

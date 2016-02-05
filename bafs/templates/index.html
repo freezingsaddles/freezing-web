@@ -3,7 +3,8 @@
 <div class="row">
     <div class="col-md-12">
         <div class="jumbotron top-buffer">
-            <h1>Freezing Saddles Competition</h1>
+            <img src="/assets/img/logo-blue-sm.png" style="float:left;" />
+            <h1>Freezing Saddles</h1>
 
             <p>
                 The official leaderboard and data analysis charts for the 2016 BikeArlington Freezing Saddles
@@ -30,26 +31,24 @@
         <span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span></h2>
 </div>
 <div>&nbsp;</div>
-<div class="row">
-    <h1>Recent Photos</h1>
-    <div class="col-md-offset-2 col-md-8">
+<div class="row gallery-wrapper">
 
-        <div class="row">
-            {% for photo in photos %}
-            {% if loop.index0 % 3 == 0 %}
-        </div>
-        <div class="row">{% endif %}
+    {% for photo in photos %}
+    <div class="col-lg-3 col-md-4 col-xs-6 thumb">
 
-            <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
-               data-title="{{ photo.caption if photo.caption != None }}" class="col-sm-4"
-               data-footer="Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}' target='_blank'>View in Instagram</a>{% endif %}">
-                <img src="{{ photo.img_l }}" class="img-responsive">
-            </a>
-            {% else %}
-            <h2><em>(There are no recent photos).</em></h2>
-            {% endfor %}
-        </div>
+        <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+           data-title="{{ photo.caption if photo.caption != None }}" data-parent=".gallery-wrapper"
+           data-footer="Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}' target='_blank'>View in Instagram</a>{% endif %}">
+            <div class="center-cropped"
+                 style="background-image: url('{{ photo.img_l }}');">
+                <img src="http://placehold.it/200x200"/>
+            </div>
+        </a>
+
     </div>
+    {% endfor %}
+    <a href="{{ url_for('photos.index') }}" class="glyphicon glyphicon-chevron-right more-images-link"></a>
+
 </div>
 <div>&nbsp;</div>
 <div>&nbsp;</div>
