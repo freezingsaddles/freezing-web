@@ -1,3 +1,6 @@
+import re
+import warnings
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.ext.compiler import compiles
@@ -156,6 +159,19 @@ class RidePhoto(db.Model):
 
     img_t = sa.Column(sa.String(255), nullable=True)
     img_l = sa.Column(sa.String(255), nullable=True)
+
+    @property
+    def img_l_dimensions(self):
+        (width, height) = (None, None)
+        if self.img_l:
+            if self.source == 1:
+                try:
+                    (width, height) = re.match('.+-(\d+)x(\d+)\.\w+$', self.img_l).groups()
+                except AttributeError:
+                    warnings.warn("Unable to get width and height from source=1 image url: {}".format(self.img_l))
+            else:
+                (width, height) = (612,612)
+        return (width, height)
 
     primary = sa.Column(sa.Boolean, nullable=False, default=False)
 

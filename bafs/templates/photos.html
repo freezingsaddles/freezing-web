@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block head %}
+<style type="text/css">
+    .center-cropped {
+        width: 200px;
+        height: 200px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+
+        /* add some shadow for the thumbnail */
+        -webkit-box-shadow: 0 1px 2px #777;
+        -moz-box-shadow: 0 2px 1px #777;
+        box-shadow: 0 2px 2px #777;
+    }
+
+    /* Set the image to fill its parent and make transparent */
+    .center-cropped img {
+        min-height: 100%;
+        min-width: 100%;
+        /* IE 8 */
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        /* IE 5-7 */
+        filter: alpha(opacity=0);
+        /* modern browsers */
+        opacity: 0;
+    }
+
+    .thumb {
+        margin-bottom: 30px;
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="row gallery-wrapper">
+
+    <div class="col-lg-12">
+        <h1 class="page-header">Competition Photos</h1>
+    </div>
+
+    {% for photo in photos %}
+    <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+
+        <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+           data-title="{{ photo.caption if photo.caption != None }}" data-parent=".gallery-wrapper"
+           data-footer="Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}' target='_blank'>View in Instagram</a>{% endif %}">
+            <div class="center-cropped"
+                 style="background-image: url('{{ photo.img_l }}');">
+                <img src="http://placehold.it/200x200"/>
+            </div>
+        </a>
+
+    </div>
+    {% endfor %}
+
+
+</div>
+Total pages = {{ total_pages }}
+page = {{ page }}
+<div class="row">
+    <nav>
+        <ul class="pager">
+            <li class="previous {% if page == 1 %}disabled{% endif %}">
+                <a href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
+            </li>
+            <li class="next {% if page >= total_pages %}disabled{% endif %}">
+                <a href="{% if page < total_pages %}{{ url_for('photos.index', page=page+1) }}{% else %}#{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}

@@ -86,7 +86,7 @@ def stats_general():
 @blueprint.route("/photos")
 @auth.crossdomain(origin='*')
 def list_photos():
-    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
+    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(20)
     schema = RidePhotoSchema()
     results = []
     for p in photos:

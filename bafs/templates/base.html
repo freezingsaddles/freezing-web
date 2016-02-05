@@ -57,6 +57,9 @@
                             <li><a href="/leaderboard/individual_various">Individual (Various)</a></li>
                         </ul>
                     </li>
+                    <li class="{% if request.path.startswith('/photos') %} active{% endif %}">
+                            <a href="/photos">Photos</a>
+                    </li>
 
                     <li class="dropdown{% if request.path.startswith('/explore') %} active{% endif %}">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
