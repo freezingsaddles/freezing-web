@@ -14,6 +14,7 @@ from bafs import app, db
 from bafs.autolog import log
 from bafs.model import RidePhoto, Ride, RideTrack, Athlete
 from bafs.utils import auth
+from bafs.wktutils import parse_linestring
 from bafs.serialize import RidePhotoSchema
 
 blueprint = Blueprint('api', __name__)
@@ -169,7 +170,6 @@ def geo_tracks(team_id):
 
     log.info("Filtering on start_date: {}".format(start_date))
 
-    rx = re.compile('^LINESTRING\((.+)\)$')
     sess = db.session
 
     q = sess.query(RideTrack).join(Ride).join(Athlete).filter(Athlete.team_id==team_id)
@@ -182,8 +182,7 @@ def geo_tracks(team_id):
     for ride_track in q:
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
-        points = [(Decimal(lon), Decimal(lat))
-                  for lat, lon in [latlon.split(' ') for latlon in rx.match(wkt).group(1).split(',')]]
+        points = [(Decimal(lon), Decimal(lat)) for lon, lat in parse_linestring(wkt)]
 
         linestrings.append(points)
 
