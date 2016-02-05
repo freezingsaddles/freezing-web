@@ -10,6 +10,7 @@ from weather.wunder import api as wu_api
 
 from bafs import db, model, app
 from bafs.scripts import BaseCommand
+from bafs.wktutils import parse_point_wkt
 
 
 class SyncRideWeather(BaseCommand):
@@ -64,8 +65,6 @@ class SyncRideWeather(BaseCommand):
                           pause=7.0,  # Max requests 10/minute for developer license
                           cache_only=options.cache_only)
 
-        rx = re.compile('^POINT\((.+)\)$')
-
         rows = db.engine.execute(q).fetchall()  # @UndefinedVariable
         num_rides = len(rows)
 
@@ -82,8 +81,8 @@ class SyncRideWeather(BaseCommand):
 
                 start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt)  # @UndefinedVariable
 
-                (lat, lon) = rx.match(start_geo_wkt).group(1).split(' ')
-                hist = c.history(ride.start_date, us_city=ride.location, lat=lat, lon=lon)
+                point = parse_point_wkt(start_geo_wkt)
+                hist = c.history(ride.start_date, us_city=ride.location, lat=point.lat, lon=point.lon)
 
                 ride_start = ride.start_date.replace(tzinfo=hist.date.tzinfo)
                 ride_end = ride_start + timedelta(seconds=ride.elapsed_time)

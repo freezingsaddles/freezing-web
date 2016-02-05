@@ -257,13 +257,13 @@ def write_ride(activity):
     """
 
     if activity.start_latlng:
-        start_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.start_latlng.lat,
+        start_geo = WKTSpatialElement('POINT({lon} {lat})'.format(lat=activity.start_latlng.lat,
                                                                   lon=activity.start_latlng.lon))
     else:
         start_geo = None
 
     if activity.end_latlng:
-        end_geo = WKTSpatialElement('POINT({lat} {lon})'.format(lat=activity.end_latlng.lat,
+        end_geo = WKTSpatialElement('POINT({lon} {lat})'.format(lat=activity.end_latlng.lat,
                                                                 lon=activity.end_latlng.lon))
     else:
         end_geo = None
