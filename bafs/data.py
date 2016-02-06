@@ -21,7 +21,7 @@ from bafs import app, db, model
 from bafs.autolog import log
 from bafs.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
 from bafs.model import Athlete, Ride, RideGeo, RideEffort, RidePhoto, RideTrack, Team
-from bafs.utils import insta
+from bafs.utils import insta, wktutils
 
 
 class StravaClientForAthlete(Client):
@@ -410,9 +410,7 @@ def write_ride_track(strava_activity, ride):
 
     if strava_activity.map.polyline:
         gps_track_points = PolylineCodec().decode(strava_activity.map.polyline)
-        # LINESTRING(-80.3 38.2, -81.03 38.04, -81.2 37.89)
-        wkt_dims = ['{} {}'.format(lat, lon) for (lat,lon) in gps_track_points]
-        gps_track = WKTSpatialElement('LINESTRING({})'.format(', '.join(wkt_dims)))
+        gps_track = WKTSpatialElement(wktutils.linestring_wkt(gps_track_points))
     else:
         gps_track = None
 

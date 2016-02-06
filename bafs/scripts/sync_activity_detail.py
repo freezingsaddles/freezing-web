@@ -117,6 +117,8 @@ class SyncActivityDetails(BaseCommand):
             self.logger.info("Limiting to {} records".format(options.max_records))
             q = q.limit(options.max_records)
 
+        use_cache = options.use_cache or options.only_cache
+
         self.logger.info("Fetching details for {} activities".format(q.count()))
 
         for ride in q:
@@ -124,7 +126,7 @@ class SyncActivityDetails(BaseCommand):
                 client = data.StravaClientForAthlete(ride.athlete)
 
                 # TODO: Make it configurable to force refresh of data.
-                activity_json = self.get_cached_activity_json(ride) if options.use_cache else None
+                activity_json = self.get_cached_activity_json(ride) if use_cache else None
 
                 if activity_json is None:
                     if options.only_cache:
