@@ -161,11 +161,13 @@ def geo_tracks(team_id):
 
     start_date = request.args.get('start_date')
     if start_date:
-        start_date = dates.parse_competition_timestamp(start_date)
+        #start_date = dates.parse_competition_timestamp(start_date)
+        start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
 
     end_date = request.args.get('end_date')
     if end_date:
-        end_date = dates.parse_competition_timestamp(end_date)
+        #end_date = dates.parse_competition_timestamp(end_date)
+        end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
 
     log.info("Filtering on start_date: {}".format(start_date))
 
