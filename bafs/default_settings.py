@@ -6,6 +6,9 @@ SQLALCHEMY_DATABASE_URI = 'mysql://freezing@localhost/freezing?charset=utf8mb4'
 #STRAVA_CLIENT_ID = ''
 #STRAVA_CLIENT_SECRETE = ''
 
+# The competition time zone.  Naive date/time values will be assumed to be in this time zone.
+BAFS_TIMEZONE = 'America/New_York'
+
 # The strava team (club) IDs
 BAFS_TEAMS = [] # This should be specified/overridden in local settings file.
 

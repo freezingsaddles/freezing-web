@@ -3,14 +3,11 @@ from datetime import timedelta
 
 from sqlalchemy import text
 
-import re
-
-from weather.sunrise import Sun
-from weather.wunder import api as wu_api
-
 from bafs import db, model, app
 from bafs.scripts import BaseCommand
-from bafs.wktutils import parse_point_wkt
+from bafs.utils.wktutils import parse_point_wkt
+from weather.sunrise import Sun
+from weather.wunder import api as wu_api
 
 
 class SyncRideWeather(BaseCommand):
