@@ -409,8 +409,9 @@ def write_ride_track(strava_activity, ride):
     db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == strava_activity.id))
 
     if strava_activity.map.polyline:
-        gps_track_points = PolylineCodec().decode(strava_activity.map.polyline)
-        gps_track = WKTSpatialElement(wktutils.linestring_wkt(gps_track_points))
+        latlon_points = PolylineCodec().decode(strava_activity.map.polyline)
+        lonlat_points = [(lon,lat) for (lat,lon) in latlon_points]
+        gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
     else:
         gps_track = None
 
