@@ -305,6 +305,9 @@ def write_ride(activity):
     if new_ride:
         ride.detail_fetched = False  # Just to be explicit
 
+        if not activity.manual:
+            ride.track_fetched = False
+
         # photo_count refers to instagram photos
         if activity.photo_count > 1:
             ride.photos_fetched = False
