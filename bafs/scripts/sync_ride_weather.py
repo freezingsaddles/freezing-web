@@ -122,7 +122,8 @@ class SyncRideWeather(BaseCommand):
                 rw.day_temp_max = hist.max_temp
 
                 ride.weather_fetched = True
-                ride.timezone = hist.date.tzinfo.zone
+                # (We get this from the activity now.)
+                # ride.timezone = hist.date.tzinfo.zone
 
                 sess.add(rw)
                 sess.flush()

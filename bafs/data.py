@@ -289,12 +289,7 @@ def write_ride(activity):
         ride_geo.ride_id = activity.id
         db.session.merge(ride_geo)
         
-    location_parts = []
-    if activity.location_city:
-        location_parts.append(activity.location_city)
-    if activity.location_state:
-        location_parts.append(activity.location_state)
-    location_str = ', '.join(location_parts)
+
 
     ride = db.session.query(Ride).get(activity.id)  
     new_ride = (ride is None)
@@ -322,29 +317,13 @@ def write_ride(activity):
             ride.detail_fetched = False
             ride.track_fetched = False
 
-    # Should apply to both new and preexisting rides ...
-    # If there are multiple instagram photos, then request syncing of non-primary photos too.
-    if activity.photo_count > 1 and ride.photos_fetched is None:
-        log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
-        ride.photos_fetched = False
-
-    ride.private = bool(activity.private)
     ride.athlete = athlete
-    ride.name = activity.name
-    ride.start_date = activity.start_date_local
 
-    # We need to round so that "1.0" miles in strava is "1.0" miles when we convert back from meters.
-    ride.distance = round(float(unithelper.miles(activity.distance)), 3)
+    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
+                                                                        ride=ride.name,
+                                                                        date=ride.start_date.strftime('%m/%d/%y')))
 
-    ride.average_speed = float(unithelper.mph(activity.average_speed))
-    ride.maximum_speed = float(unithelper.mph(activity.max_speed))
-    ride.elapsed_time = timedelta_to_seconds(activity.elapsed_time)
-    ride.moving_time = timedelta_to_seconds(activity.moving_time)
-    ride.location = location_str
-    ride.commute = activity.commute
-    ride.trainer = activity.trainer
-    ride.manual = activity.manual
-    ride.elevation_gain = float(unithelper.feet(activity.total_elevation_gain))
+    update_ride_from_activity(strava_activity=activity, ride=ride)
 
     # FIXME: These checks kinda duplicate the assertions above.
     # Short-circuit things that might result in more obscure db errors later.
@@ -354,13 +333,60 @@ def write_ride(activity):
     if not ride.moving_time:
         raise DataEntryError("Activities cannot have zero/empty moving time.")
 
-    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
-                                                                            ride=ride.name,
-                                                                            date=ride.start_date.strftime('%m/%d/%y')))
-
     db.session.add(ride)
 
     return ride
+
+
+def update_ride_from_activity(strava_activity, ride):
+    """
+    Refactoring to just set ride properties from the Strava Activity object.
+
+    :param strava_activity: The Strava Activyt
+    :type strava_activity: stravalib.model.Activity
+    :param ride: The ride model object.
+    :type ride: Ride
+    """
+     # Should apply to both new and preexisting rides ...
+    # If there are multiple instagram photos, then request syncing of non-primary photos too.
+    if strava_activity.photo_count > 1 and ride.photos_fetched is None:
+        log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
+        ride.photos_fetched = False
+
+    ride.private = bool(strava_activity.private)
+    ride.name = strava_activity.name
+    ride.start_date = strava_activity.start_date_local
+
+    # We need to round so that "1.0" miles in strava is "1.0" miles when we convert back from meters.
+    ride.distance = round(float(unithelper.miles(strava_activity.distance)), 3)
+
+    ride.average_speed = float(unithelper.mph(strava_activity.average_speed))
+    ride.maximum_speed = float(unithelper.mph(strava_activity.max_speed))
+    ride.elapsed_time = timedelta_to_seconds(strava_activity.elapsed_time)
+    ride.moving_time = timedelta_to_seconds(strava_activity.moving_time)
+
+    location_parts = []
+    if strava_activity.location_city:
+        location_parts.append(strava_activity.location_city)
+    if strava_activity.location_state:
+        location_parts.append(strava_activity.location_state)
+    location_str = ', '.join(location_parts)
+
+    ride.location = location_str
+
+    ride.commute = strava_activity.commute
+    ride.trainer = strava_activity.trainer
+    ride.manual = strava_activity.manual
+    ride.elevation_gain = float(unithelper.feet(strava_activity.total_elevation_gain))
+    ride.timezone = str(strava_activity.timezone)
+
+    # FIXME: These checks kinda duplicate the assertions above.
+    # Short-circuit things that might result in more obscure db errors later.
+    if not ride.elapsed_time:
+        raise DataEntryError("Activities cannot have zero/empty elapsed time.")
+
+    if not ride.moving_time:
+        raise DataEntryError("Activities cannot have zero/empty moving time.")
 
 
 def write_ride_efforts(strava_activity, ride):
@@ -446,6 +472,7 @@ def write_ride_streams(streams, ride):
             raise ValueError("No data points in latlng streams.")
     except (KeyError, ValueError) as x:
         log.info("No GPS track for activity {} (skipping): {}".format(ride, x), exc_info=log.isEnabledFor(logging.DEBUG))
+        ride.track_fetched = None
     else:
         # Start by removing any existing segments for the ride.
         db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))

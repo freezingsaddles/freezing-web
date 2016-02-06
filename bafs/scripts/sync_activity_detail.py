@@ -37,6 +37,9 @@ class SyncActivityDetails(BaseCommand):
         parser.add_option("--only-cache", action="store_true", dest="only_cache", default=False,
                           help="Whether to use only cached activities (rather than fetch anything from server).")
 
+        parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False,
+                          help="Whether to re-write all activity details.")
+
         return parser
 
     def cache_dir(self, athlete_id):
@@ -106,8 +109,10 @@ class SyncActivityDetails(BaseCommand):
         q = db.session.query(model.Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
-        q = q.filter(and_(Ride.detail_fetched==False,
-                          Ride.private==False))
+        q = q.filter(Ride.private==False)
+
+        if not options.rewrite:
+            q = q.filter(Ride.detail_fetched==False)
 
         if options.athlete_id:
             self.logger.info("Filtering activity details for {}".format(options.athlete_id))
@@ -156,6 +161,9 @@ class SyncActivityDetails(BaseCommand):
                 #     self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                 #                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
                 #     raise
+
+                # We do this just to take advantage of the use-cache/only-cache feature for reprocessing activities.
+                data.update_ride_from_activity(strava_activity=strava_activity, ride=ride)
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))
