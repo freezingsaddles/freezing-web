@@ -190,9 +190,9 @@ def geo_tracks(team_id):
             elapsed_time = localized_dt + timedelta(seconds=ride_track.time_stream[i])
 
             point = (
-                Decimal(lon),
-                Decimal(lat),
-                Decimal(ride_track.elevation_stream[i]),
+                float(Decimal(lon)),
+                float(Decimal(lat)),
+                float(Decimal(ride_track.elevation_stream[i])),
                 elapsed_time.isoformat()
             )
 
@@ -200,4 +200,7 @@ def geo_tracks(team_id):
 
         linestrings.append(coordinates)
 
-    return geojson.dumps(geojson.MultiLineString(linestrings))
+    geojson_structure = {"type": "MultiLineString", "coordinates": linestrings}
+
+    #return geojson.dumps(geojson.MultiLineString(linestrings))
+    return json.dumps(geojson_structure)
