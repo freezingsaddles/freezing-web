@@ -79,7 +79,9 @@ class SyncRideWeather(BaseCommand):
                 start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt)  # @UndefinedVariable
 
                 point = parse_point_wkt(start_geo_wkt)
-                hist = c.history(ride.start_date, us_city=ride.location, lat=point.lat, lon=point.lon)
+                lon = point.lon
+                lat = point.lat
+                hist = c.history(ride.start_date, us_city=ride.location, lat=lat, lon=lon)
 
                 ride_start = ride.start_date.replace(tzinfo=hist.date.tzinfo)
                 ride_end = ride_start + timedelta(seconds=ride.elapsed_time)
