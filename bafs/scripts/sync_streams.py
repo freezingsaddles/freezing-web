@@ -148,13 +148,14 @@ class SyncActivityStreams(BaseCommand):
                         self.logger.info("Caching streams for {!r}".format(ride))
                         self.cache_stream(ride, streams_json)
                     except:
-                        log.error("Error caching streams for activity {} (ignoring)".format(strava_activity),
+                        log.error("Error caching streams for activity {} (ignoring)".format(ride),
                                   exc_info=self.logger.isEnabledFor(logging.DEBUG))
 
                 else:
                     #strava_activity = stravamodel.Activity.deserialize(streams_json, bind_client=client)
                     self.logger.info("[CACHE-HIT] Using cached streams detail for {!r}".format(ride))
 
+                ride.track_fetched = True
                 db.session.commit()
 
             except:
