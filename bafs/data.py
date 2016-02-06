@@ -3,6 +3,7 @@ Functions for interacting with the datastore and the strava apis.
 """
 from __future__ import division
 import re
+import logging
 
 from instagram import InstagramAPIError, InstagramClientError
 
@@ -316,6 +317,7 @@ def write_ride(activity):
                                                                                                           ride.distance,
                                                                                                           unithelper.miles(activity.distance)))
             ride.detail_fetched = False
+            ride.track_fetched = False
 
     # Should apply to both new and preexisting rides ...
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
@@ -432,20 +434,23 @@ def write_ride_streams(streams, ride):
     :param ride: The db model object for ride.
     :type ride: :class:`bafs.model.Ride`
     """
-    # Start by removing any existing segments for the ride.
-    db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
+    try:
+        streams_dict = {s.type: s for s in streams}
+        lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
 
-    streams_dict = {s.type: s for s in streams}
-    lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
+        if not lonlat_points:
+            raise ValueError("No data points in latlng streams.")
+    except (KeyError, ValueError) as x:
+        log.info("No GPS track for activity {} (skipping): {}".format(ride, x), exc_info=log.isEnabledFor(logging.DEBUG))
+    else:
+        # Start by removing any existing segments for the ride.
+        db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
 
-    if not lonlat_points:
-        raise ValueError("No data points in latlng streams.")
+        gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
 
-    gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
-
-    ride_track = RideTrack()
-    ride_track.gps_track = gps_track
-    ride_track.ride_id = ride.id
+        ride_track = RideTrack()
+        ride_track.gps_track = gps_track
+        ride_track.ride_id = ride.id
 
     ride.track_fetched = True
 
