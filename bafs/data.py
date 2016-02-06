@@ -421,8 +421,6 @@ def write_ride_track(strava_activity, ride):
         ride_track.ride_id = strava_activity.id
         db.session.add(ride_track)
 
-    ride.track_fetched = True
-
 
 def _write_instagram_photo_primary(photo, ride):
     """
