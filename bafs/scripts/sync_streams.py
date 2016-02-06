@@ -108,7 +108,8 @@ class SyncActivityStreams(BaseCommand):
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
         q = q.filter(and_(Ride.track_fetched==False,
-                          Ride.private==False))
+                          Ride.private==False,
+                          Ride.manual==False))
 
         if options.athlete_id:
             self.logger.info("Filtering activity details for {}".format(options.athlete_id))
