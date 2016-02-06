@@ -1,21 +1,19 @@
-import re
 from datetime import timedelta
 from decimal import Decimal
 
 import arrow
-
-from flask import Blueprint, jsonify, request
-
 import geojson
+from flask import Blueprint, jsonify, request
+import pytz
 from sqlalchemy import text
 from stravalib import unithelper as uh
 
 from bafs import app, db
 from bafs.autolog import log
 from bafs.model import RidePhoto, Ride, RideTrack, Athlete
-from bafs.utils import auth
-from bafs.wktutils import parse_linestring
 from bafs.serialize import RidePhotoSchema
+from bafs.utils import auth, dates
+from bafs.utils.wktutils import parse_linestring
 
 blueprint = Blueprint('api', __name__)
 
@@ -162,11 +160,11 @@ def geo_tracks(team_id):
 
     start_date = request.args.get('start_date')
     if start_date:
-        start_date = arrow.get(start_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
+        start_date = dates.parse_competition_timestamp(start_date)
 
     end_date = request.args.get('end_date')
     if end_date:
-        end_date = arrow.get(end_date).datetime.replace(tzinfo=None)  # XXX: We may wish to convert tz before removing it?
+        end_date = dates.parse_competition_timestamp(end_date)
 
     log.info("Filtering on start_date: {}".format(start_date))
 
