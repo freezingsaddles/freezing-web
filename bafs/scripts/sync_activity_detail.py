@@ -5,6 +5,7 @@ import logging
 from geoalchemy import WKTSpatialElement
 from polyline.codec import PolylineCodec
 from sqlalchemy import update, or_, and_
+import progressbar
 
 from stravalib import model as stravamodel
 
@@ -39,6 +40,9 @@ class SyncActivityDetails(BaseCommand):
 
         parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False,
                           help="Whether to re-write all activity details.")
+
+        parser.add_option("--progress", action="store_true", dest="progress", default=False,
+                          help="Whether to display a progress bar.")
 
         return parser
 
@@ -80,6 +84,11 @@ class SyncActivityDetails(BaseCommand):
             fp.write(json.dumps(activity_json, indent=2))
 
         return cache_path
+
+    def init_logging(self, options):
+        if options.progress:
+            options.quiet = True
+        return super(SyncActivityDetails, self).init_logging(options)
 
     def get_cached_activity_json(self, ride):
         """
@@ -126,12 +135,21 @@ class SyncActivityDetails(BaseCommand):
 
         self.logger.info("Fetching details for {} activities".format(q.count()))
 
+        if options.progress:
+            i = 0
+            bar = progressbar.ProgressBar(max_value=q.count())
+
         for ride in q:
             try:
                 client = data.StravaClientForAthlete(ride.athlete)
 
                 # TODO: Make it configurable to force refresh of data.
                 activity_json = self.get_cached_activity_json(ride) if use_cache else None
+
+
+                if options.progress:
+                    i += 1
+                    bar.update(i)
 
                 if activity_json is None:
                     if options.only_cache:

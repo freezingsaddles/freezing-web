@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+import json
 
 import arrow
 import geojson
@@ -178,10 +179,23 @@ def geo_tracks(team_id):
 
     linestrings = []
     for ride_track in q:
+        assert isinstance(ride_track, RideTrack)
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
-        points = [(Decimal(lon), Decimal(lat)) for lon, lat in parse_linestring(wkt)]
+        coordinates = []
+        for (i, (lon, lat)) in enumerate(parse_linestring(wkt)):
+            localized_dt = ride_track.ride.start_date.replace(tzinfo=pytz.timezone(ride_track.ride.timezone))
+            elapsed_time = localized_dt + timedelta(seconds=ride_track.time_stream[i])
 
-        linestrings.append(points)
+            point = (
+                Decimal(lon),
+                Decimal(lat),
+                Decimal(ride_track.elevation_stream[i]),
+                elapsed_time.isoformat()
+            )
+
+            coordinates.append(point)
+
+        linestrings.append(coordinates)
 
     return geojson.dumps(geojson.MultiLineString(linestrings))
