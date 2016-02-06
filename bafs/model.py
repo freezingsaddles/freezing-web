@@ -1,14 +1,38 @@
 import re
 import warnings
+import json
 
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import Pool
 from sqlalchemy.sql.expression import Executable, ClauseElement
+from sqlalchemy.types import TypeDecorator, TEXT
 
 import geoalchemy as ga
 from bafs import db
+
+
+class JSONEncodedText(TypeDecorator):
+    """Represents an immutable structure as a json-encoded string.
+
+    Usage::
+
+        JSONEncodedText
+    """
+
+    impl = TEXT
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = json.dumps(value)
+
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = json.loads(value)
+        return value
 
 
 class CreateView(Executable, ClauseElement):
@@ -132,6 +156,8 @@ class RideTrack(db.Model):
 
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id'), primary_key=True)
     gps_track = ga.GeometryColumn(ga.LineString(2), nullable=False)
+    elevation_stream = sa.Column(JSONEncodedText, nullable=True)
+    time_stream = sa.Column(JSONEncodedText, nullable=True)
 
     def __repr__(self):
         return '<{0} ride_id={1}>'.format(self.__class__.__name__,  self.ride_id)

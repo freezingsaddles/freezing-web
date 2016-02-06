@@ -439,6 +439,7 @@ def write_ride_streams(streams, ride):
     """
     try:
         streams_dict = {s.type: s for s in streams}
+        """ :type: dict[str,stravalib.model.Stream] """
         lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
 
         if not lonlat_points:
@@ -454,6 +455,8 @@ def write_ride_streams(streams, ride):
         ride_track = RideTrack()
         ride_track.gps_track = gps_track
         ride_track.ride_id = ride.id
+        ride_track.elevation_stream = streams_dict['altitude'].data
+        ride_track.time_stream = streams_dict['time'].data
         db.session.add(ride_track)
 
     ride.track_fetched = True

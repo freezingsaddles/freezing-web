@@ -38,6 +38,9 @@ class SyncActivityStreams(BaseCommand):
         parser.add_option("--only-cache", action="store_true", dest="only_cache", default=False,
                           help="Whether to use only cached streams (rather than fetch anything from server).")
 
+        parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False,
+                          help="Whether to re-store all streams.")
+
         return parser
 
     def cache_dir(self, athlete_id):
@@ -107,9 +110,11 @@ class SyncActivityStreams(BaseCommand):
         q = db.session.query(model.Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
-        q = q.filter(and_(Ride.track_fetched==False,
-                          Ride.private==False,
+        q = q.filter(and_(Ride.private==False,
                           Ride.manual==False))
+
+        if not options.rewrite:
+            q = q.filter(Ride.track_fetched==False,)
 
         if options.athlete_id:
             self.logger.info("Filtering activity details for {}".format(options.athlete_id))
