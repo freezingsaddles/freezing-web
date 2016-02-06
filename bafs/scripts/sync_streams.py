@@ -159,7 +159,7 @@ class SyncActivityStreams(BaseCommand):
 
                 db.session.commit()
             except:
-                self.logger.exception("Error fetching/writing activity detail {}, athlete {}".format(ride.id, ride.athlete))
+                self.logger.exception("Error fetching/writing activity streams for {}, athlete {}".format(ride, ride.athlete))
                 db.session.rollback()
 
 
