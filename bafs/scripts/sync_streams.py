@@ -131,7 +131,7 @@ class SyncActivityStreams(BaseCommand):
 
                 if streams_json is None:
                     if options.only_cache:
-                        self.logger.info("[CACHE-MISS] Skipping ride {} since there is no cached stream.")
+                        self.logger.info("[CACHE-MISS] Skipping ride {} since there is no cached stream.".format(ride))
                         continue
 
                     self.logger.info("[CACHE-MISS] Fetching streams for {!r}".format(ride))
@@ -156,8 +156,8 @@ class SyncActivityStreams(BaseCommand):
                     self.logger.info("[CACHE-HIT] Using cached streams detail for {!r}".format(ride))
 
                 data.write_ride_streams(streams, ride)
-                db.session.commit()
 
+                db.session.commit()
             except:
                 self.logger.exception("Error fetching/writing activity detail {}, athlete {}".format(ride.id, ride.athlete))
                 db.session.rollback()

@@ -438,6 +438,9 @@ def write_ride_streams(streams, ride):
     streams_dict = {s.type: s for s in streams}
     lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
 
+    if not lonlat_points:
+        raise ValueError("No data points in latlng streams.")
+
     gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
 
     ride_track = RideTrack()
