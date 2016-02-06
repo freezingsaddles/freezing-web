@@ -142,7 +142,7 @@ class SyncActivityStreams(BaseCommand):
                             resolution='low'
                     )
 
-                    #strava_activity = stravamodel.Activity.deserialize(streams_json, bind_client=client)
+                    streams = [stravamodel.Stream.deserialize(stream_struct, bind_client=client) for stream_struct in streams_json]
 
                     try:
                         self.logger.info("Caching streams for {!r}".format(ride))
@@ -152,10 +152,10 @@ class SyncActivityStreams(BaseCommand):
                                   exc_info=self.logger.isEnabledFor(logging.DEBUG))
 
                 else:
-                    #strava_activity = stravamodel.Activity.deserialize(streams_json, bind_client=client)
+                    streams = [stravamodel.Stream.deserialize(stream_struct, bind_client=client) for stream_struct in streams_json]
                     self.logger.info("[CACHE-HIT] Using cached streams detail for {!r}".format(ride))
 
-                ride.track_fetched = True
+                data.write_ride_streams(streams, ride)
                 db.session.commit()
 
             except:

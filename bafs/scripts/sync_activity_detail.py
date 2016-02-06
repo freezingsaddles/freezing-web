@@ -149,13 +149,13 @@ class SyncActivityDetails(BaseCommand):
                     strava_activity = stravamodel.Activity.deserialize(activity_json, bind_client=client)
                     self.logger.info("[CACHE-HIT] Using cached activity detail for {!r}".format(ride))
 
-                try:
-                    self.logger.info("Writing out GPS track for {!r}".format(ride))
-                    data.write_ride_track(strava_activity, ride)
-                except:
-                    self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
-                                      exc_info=self.logger.isEnabledFor(logging.DEBUG))
-                    raise
+                # try:
+                #     self.logger.info("Writing out GPS track for {!r}".format(ride))
+                #     data.write_ride_track(strava_activity, ride)
+                # except:
+                #     self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
+                #                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
+                #     raise
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))

@@ -395,31 +395,66 @@ def write_ride_efforts(strava_activity, ride):
         raise
 
 
-def write_ride_track(strava_activity, ride):
+# def write_ride_track(strava_activity, ride):
+#     """
+#     Store GPS track for activity as LINESTRING in db.
+#
+#     :param strava_activity: The Strava :class:`stravalib.model.Activity` object.
+#     :type strava_activity: :class:`stravalib.model.Activity`
+#
+#     :param ride: The db model object for ride.
+#     :type ride: :class:`bafs.model.Ride`
+#     """
+#     # Start by removing any existing segments for the ride.
+#     db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == strava_activity.id))
+#
+#     if strava_activity.map.polyline:
+#         latlon_points = PolylineCodec().decode(strava_activity.map.polyline)
+#         lonlat_points = [(lon,lat) for (lat,lon) in latlon_points]
+#         gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
+#     else:
+#         gps_track = None
+#
+#     if gps_track is not None:
+#         ride_track = RideTrack()
+#         ride_track.gps_track = gps_track
+#         ride_track.ride_id = strava_activity.id
+#         db.session.add(ride_track)
+
+
+def write_ride_streams(streams, ride):
     """
     Store GPS track for activity as LINESTRING in db.
 
-    :param strava_activity: The Strava :class:`stravalib.model.Activity` object.
-    :type strava_activity: :class:`stravalib.model.Activity`
+    :param streams: The Strava :class:`stravalib.model.Activity` object.
+    :type streams: list[stravalib.model.Stream]
 
     :param ride: The db model object for ride.
     :type ride: :class:`bafs.model.Ride`
     """
     # Start by removing any existing segments for the ride.
-    db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == strava_activity.id))
+    db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
 
-    if strava_activity.map.polyline:
-        latlon_points = PolylineCodec().decode(strava_activity.map.polyline)
-        lonlat_points = [(lon,lat) for (lat,lon) in latlon_points]
-        gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
-    else:
-        gps_track = None
+    streams_dict = {s.type: s for s in streams}
+    lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
 
-    if gps_track is not None:
-        ride_track = RideTrack()
-        ride_track.gps_track = gps_track
-        ride_track.ride_id = strava_activity.id
-        db.session.add(ride_track)
+    gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
+
+    ride_track = RideTrack()
+    ride_track.gps_track = gps_track
+    ride_track.ride_id = ride.id
+
+    ride.track_fetched = True
+
+    db.session.add(ride_track)
+
+# try:
+#     self.logger.info("Writing out GPS track for {!r}".format(ride))
+#     data.write_ride_track(strava_activity, ride)
+# except:
+#     self.logger.error("Error writing track for activity {0}, athlete {1}".format(ride.id, ride.athlete),
+#                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
+#     raise
 
 
 def _write_instagram_photo_primary(photo, ride):
