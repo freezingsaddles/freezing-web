@@ -454,10 +454,10 @@ def write_ride_streams(streams, ride):
         ride_track = RideTrack()
         ride_track.gps_track = gps_track
         ride_track.ride_id = ride.id
+        db.session.add(ride_track)
 
     ride.track_fetched = True
 
-    db.session.add(ride_track)
 
 # try:
 #     self.logger.info("Writing out GPS track for {!r}".format(ride))
