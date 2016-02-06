@@ -1,11 +1,11 @@
 from datetime import timedelta, datetime
 
-import arrow
 from pytz import utc
 from sqlalchemy import and_
 
 from bafs import app, db, model, data
 from bafs.scripts import BaseCommand
+from bafs.utils.dates import parse_competition_timestamp
 from bafs.exc import CommandError, InvalidAuthorizationToken
 
 
@@ -43,13 +43,13 @@ class SyncRides(BaseCommand):
         sess = db.session
 
         if options.start_date:
-            start = arrow.get(options.start_date).datetime
+            start = parse_competition_timestamp(options.start_date)
             self.logger.info("Fetching rides newer than {0}".format(start))
         else:
             start = None
             self.logger.info("Fetching all rides (since competition start)")
 
-        end_date = arrow.get(app.config['BAFS_END_DATE']).datetime
+        end_date = parse_competition_timestamp(app.config['BAFS_END_DATE'])
         grace_days = app.config['BAFS_UPLOAD_GRACE_PERIOD_DAYS']
         grace_delta = timedelta(days=grace_days)
 
