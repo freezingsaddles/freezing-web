@@ -347,10 +347,6 @@ def update_ride_from_activity(strava_activity, ride):
      # Should apply to both new and preexisting rides ...
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
 
-    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
-                                                                            ride=ride.name,
-                                                                            date=ride.start_date.strftime('%m/%d/%y')))
-
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
 
 
@@ -384,13 +380,9 @@ def update_ride_from_activity(strava_activity, ride):
     ride.elevation_gain = float(unithelper.feet(strava_activity.total_elevation_gain))
     ride.timezone = str(strava_activity.timezone)
 
-    # FIXME: These checks kinda duplicate the assertions above.
-    # Short-circuit things that might result in more obscure db errors later.
-    if not ride.elapsed_time:
-        raise DataEntryError("Activities cannot have zero/empty elapsed time.")
-
-    if not ride.moving_time:
-        raise DataEntryError("Activities cannot have zero/empty moving time.")
+    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
+                                                                        ride=ride.name,
+                                                                        date=ride.start_date.strftime('%m/%d/%y')))
 
 
 def write_ride_efforts(strava_activity, ride):
