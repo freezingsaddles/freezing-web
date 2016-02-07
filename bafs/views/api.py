@@ -153,9 +153,8 @@ def team_leaderboard():
 
     return jsonify(dict(leaderboard=rows))
 
-@blueprint.route("/teams/<int:team_id>/tracks.geojson")
-@auth.crossdomain(origin='*')
-def geo_tracks(team_id):
+
+def _geo_tracks(team_id=None):
 
     # log.info("Fetching gps tracks for team {}".format(team_id))
 
@@ -204,3 +203,53 @@ def geo_tracks(team_id):
 
     #return geojson.dumps(geojson.MultiLineString(linestrings))
     return json.dumps(geojson_structure)
+
+
+@blueprint.route("/teams/<int:team_id>/tracks.geojson")
+@auth.crossdomain(origin='*')
+def geo_tracks(team_id):
+
+    # log.info("Fetching gps tracks for team {}".format(team_id))
+
+    start_date = request.args.get('start_date')
+    if start_date:
+        #start_date = dates.parse_competition_timestamp(start_date)
+        start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
+
+    end_date = request.args.get('end_date')
+    if end_date:
+        #end_date = dates.parse_competition_timestamp(end_date)
+        end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
+
+    log.info("Filtering on start_date: {}".format(start_date))
+
+    sess = db.session
+
+    q = sess.query(RideTrack).join(Ride).join(Athlete).filter(Athlete.team_id==team_id)
+    if start_date:
+        q = q.filter(Ride.start_date >= start_date)
+    if end_date:
+        q = q.filter(Ride.start_date < end_date)
+
+    linestrings = []
+    for ride_track in q:
+        assert isinstance(ride_track, RideTrack)
+        ride_tz = pytz.timezone(ride_track.ride.timezone)
+        wkt = sess.scalar(ride_track.gps_track.wkt)
+
+        coordinates = []
+        for (i, (lon, lat)) in enumerate(parse_linestring(wkt)):
+            elapsed_time = ride_track.ride.start_date + timedelta(seconds=ride_track.time_stream[i])
+
+            point = (
+                float(Decimal(lon)),
+                float(Decimal(lat)),
+                float(Decimal(ride_track.elevation_stream[i])),
+                ride_tz.localize(elapsed_time).isoformat()
+            )
+
+            coordinates.append(point)
+
+        linestrings.append(coordinates)
+
+    return jsonify({"type": "MultiLineString", "coordinates": linestrings})
