@@ -319,9 +319,6 @@ def write_ride(activity):
 
     ride.athlete = athlete
 
-    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=athlete.name,
-                                                                        ride=ride.name,
-                                                                        date=ride.start_date.strftime('%m/%d/%y')))
 
     update_ride_from_activity(strava_activity=activity, ride=ride)
 
@@ -349,6 +346,11 @@ def update_ride_from_activity(strava_activity, ride):
     """
      # Should apply to both new and preexisting rides ...
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
+
+    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
+                                                                            ride=ride.name,
+                                                                            date=ride.start_date.strftime('%m/%d/%y')))
+
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
         log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
         ride.photos_fetched = False
