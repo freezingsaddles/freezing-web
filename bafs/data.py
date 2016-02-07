@@ -288,8 +288,6 @@ def write_ride(activity):
         ride_geo.end_geo = end_geo
         ride_geo.ride_id = activity.id
         db.session.merge(ride_geo)
-        
-
 
     ride = db.session.query(Ride).get(activity.id)  
     new_ride = (ride is None)
@@ -322,13 +320,6 @@ def write_ride(activity):
 
     update_ride_from_activity(strava_activity=activity, ride=ride)
 
-    # FIXME: These checks kinda duplicate the assertions above.
-    # Short-circuit things that might result in more obscure db errors later.
-    if not ride.elapsed_time:
-        raise DataEntryError("Activities cannot have zero/empty elapsed time.")
-
-    if not ride.moving_time:
-        raise DataEntryError("Activities cannot have zero/empty moving time.")
 
     db.session.add(ride)
 
@@ -379,6 +370,16 @@ def update_ride_from_activity(strava_activity, ride):
     ride.manual = strava_activity.manual
     ride.elevation_gain = float(unithelper.feet(strava_activity.total_elevation_gain))
     ride.timezone = str(strava_activity.timezone)
+
+    # # Short-circuit things that might result in more obscure db errors later.
+    if ride.elapsed_time is None:
+        raise DataEntryError("Activities cannot have null elapsed time.")
+
+    if not ride.moving_time is None:
+        raise DataEntryError("Activities cannot have null moving time.")
+
+    if not ride.distance is None:
+        raise DataEntryError("Activities cannot have null distance.")
 
     log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
                                                                         ride=ride.name,
