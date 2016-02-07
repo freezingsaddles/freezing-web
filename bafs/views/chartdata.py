@@ -385,6 +385,7 @@ def indiv_avg_speed():
                 select R.athlete_id, A.display_name as athlete_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join athletes A on A.id = R.athlete_id
+                where R.manual = false
                 group by R.athlete_id, athlete_name
                 order by avg_speed desc
                 ;
@@ -413,6 +414,7 @@ def team_avg_speed():
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 join teams T on T.id = A.team_id
+                where R.manual = false
                 group by T.id, T.name
                 order by avg_speed desc
                 ;
