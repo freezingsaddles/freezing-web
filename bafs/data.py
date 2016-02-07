@@ -352,6 +352,8 @@ def update_ride_from_activity(strava_activity, ride):
                                                                             date=ride.start_date.strftime('%m/%d/%y')))
 
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
+
+
         log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
         ride.photos_fetched = False
 

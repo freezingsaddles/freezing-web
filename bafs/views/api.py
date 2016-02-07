@@ -182,18 +182,18 @@ def geo_tracks(team_id):
     linestrings = []
     for ride_track in q:
         assert isinstance(ride_track, RideTrack)
+        ride_tz = pytz.timezone(ride_track.ride.timezone)
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
         coordinates = []
         for (i, (lon, lat)) in enumerate(parse_linestring(wkt)):
-            localized_dt = ride_track.ride.start_date.replace(tzinfo=pytz.timezone(ride_track.ride.timezone))
-            elapsed_time = localized_dt + timedelta(seconds=ride_track.time_stream[i])
+            elapsed_time = ride_track.ride.start_date + timedelta(seconds=ride_track.time_stream[i])
 
             point = (
                 float(Decimal(lon)),
                 float(Decimal(lat)),
                 float(Decimal(ride_track.elevation_stream[i])),
-                elapsed_time.isoformat()
+                ride_tz.localize(elapsed_time).isoformat()
             )
 
             coordinates.append(point)
