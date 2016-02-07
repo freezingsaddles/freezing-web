@@ -34,14 +34,14 @@
 <div class="row gallery-wrapper">
 
     {% for photo in photos %}
-    <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+    <div class="col-lg-2 col-md-3 col-xs-4 thumb">
 
         <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
            data-title="{{ photo.caption if photo.caption != None }}" data-parent=".gallery-wrapper"
            data-footer="Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}' target='_blank'>View in Instagram</a>{% endif %}">
             <div class="center-cropped"
-                 style="background-image: url('{{ photo.img_l }}');">
-                <img src="http://placehold.it/200x200"/>
+                 style="background-image: url('{{ photo.img_t }}');">
+                <img src="http://placehold.it/120x120"/>
             </div>
         </a>
 

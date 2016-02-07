@@ -8,8 +8,8 @@ div.row > div > div.row {
 }
 
 .center-cropped {
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     background-position: center center;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -40,7 +40,7 @@ div.row > div > div.row {
     text-decoration: none;
 }
 .more-images-link {
-    font-size: 100px;
-    padding-top: 50px;
-    padding-left: 50px;
+    font-size: 50px;
+    padding-top: 25px;
+    padding-left: 25px;
 }

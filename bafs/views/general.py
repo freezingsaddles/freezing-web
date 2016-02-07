@@ -92,7 +92,7 @@ def index():
 
 
     # Grab some recent photos
-    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(7)
+    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(11)
 
     return render_template('index.html',
                            team_count=len(app.config['BAFS_TEAMS']),

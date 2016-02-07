@@ -28,7 +28,7 @@ def index():
     if page < 1:
         page = 1
 
-    page_size = 40
+    page_size = 60
     offset = page_size * (page - 1)
     limit = page_size
 
