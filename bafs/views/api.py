@@ -154,25 +154,24 @@ def team_leaderboard():
     return jsonify(dict(leaderboard=rows))
 
 
-def _geo_tracks(team_id=None):
+def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
-    # log.info("Fetching gps tracks for team {}".format(team_id))
-
-    start_date = request.args.get('start_date')
+    # These dates  must be made naive, since we don't have TZ info stored in our ride columns.
     if start_date:
-        #start_date = dates.parse_competition_timestamp(start_date)
         start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
 
-    end_date = request.args.get('end_date')
     if end_date:
-        #end_date = dates.parse_competition_timestamp(end_date)
         end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
 
     log.info("Filtering on start_date: {}".format(start_date))
+    log.info("Filtering on end_date: {}".format(end_date))
 
     sess = db.session
 
-    q = sess.query(RideTrack).join(Ride).join(Athlete).filter(Athlete.team_id==team_id)
+    q = sess.query(RideTrack).join(Ride).join(Athlete)
+    if team_id:
+        q = q.filter(Athlete.team_id==team_id)
+
     if start_date:
         q = q.filter(Ride.start_date >= start_date)
     if end_date:
@@ -205,51 +204,25 @@ def _geo_tracks(team_id=None):
     return json.dumps(geojson_structure)
 
 
-@blueprint.route("/teams/<int:team_id>/tracks.geojson")
+@blueprint.route("/all/tracks.geojson")
 @auth.crossdomain(origin='*')
-def geo_tracks(team_id):
+def geo_tracks_all():
 
     # log.info("Fetching gps tracks for team {}".format(team_id))
 
     start_date = request.args.get('start_date')
-    if start_date:
-        #start_date = dates.parse_competition_timestamp(start_date)
-        start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
-
     end_date = request.args.get('end_date')
-    if end_date:
-        #end_date = dates.parse_competition_timestamp(end_date)
-        end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
 
-    log.info("Filtering on start_date: {}".format(start_date))
+    return _geo_tracks(start_date=start_date, end_date=end_date)
 
-    sess = db.session
 
-    q = sess.query(RideTrack).join(Ride).join(Athlete).filter(Athlete.team_id==team_id)
-    if start_date:
-        q = q.filter(Ride.start_date >= start_date)
-    if end_date:
-        q = q.filter(Ride.start_date < end_date)
+@blueprint.route("/teams/<int:team_id>/tracks.geojson")
+@auth.crossdomain(origin='*')
+def geo_tracks_team(team_id):
 
-    linestrings = []
-    for ride_track in q:
-        assert isinstance(ride_track, RideTrack)
-        ride_tz = pytz.timezone(ride_track.ride.timezone)
-        wkt = sess.scalar(ride_track.gps_track.wkt)
+    # log.info("Fetching gps tracks for team {}".format(team_id))
 
-        coordinates = []
-        for (i, (lon, lat)) in enumerate(parse_linestring(wkt)):
-            elapsed_time = ride_track.ride.start_date + timedelta(seconds=ride_track.time_stream[i])
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
-            point = (
-                float(Decimal(lon)),
-                float(Decimal(lat)),
-                float(Decimal(ride_track.elevation_stream[i])),
-                ride_tz.localize(elapsed_time).isoformat()
-            )
-
-            coordinates.append(point)
-
-        linestrings.append(coordinates)
-
-    return jsonify({"type": "MultiLineString", "coordinates": linestrings})
+    return _geo_tracks(start_date=start_date, end_date=end_date, team_id=team_id)
