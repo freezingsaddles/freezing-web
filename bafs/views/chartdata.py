@@ -277,6 +277,43 @@ def indiv_kidical():
         
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
+
+@blueprint.route("/indiv_freeze_points")
+def indiv_freeze_points():
+
+    q = text ("""
+				select athlete_id, athlete_name, SUM(max_daily_freeze_points) as freeze_points_total
+				from (
+					select athlete_id, athlete_name, ride_date, MAX(freeze_points) as max_daily_freeze_points
+					from (
+						select R.athlete_id, A.display_name as athlete_name, date(R.start_date) as ride_date, (11*(ATAN((R.distance+4)-2*PI())+1.4)-2.66)*(1.2+ATAN((32-W.ride_temp_start)/5)) as freeze_points
+						from rides R
+						join ride_weather W on W.ride_id = R.id
+						join athletes A on A.id = R.athlete_id
+					) FP
+					group by athlete_id, athlete_name, ride_date
+				) FPMax
+				group by athlete_id, athlete_name
+				order by freeze_points_total desc
+                ;
+            """)
+
+    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+
+    cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
+            {'id': 'score', 'label': 'Freeze Points', 'type': 'number'},
+            ]
+
+    rows = []
+    for i,res in enumerate(indiv_q):
+        place = i+1
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+                 {'v': res['freeze_points_total'], 'f': "{0:.2f}".format(res['freeze_points_total'])}]
+        rows.append({'c': cells})
+
+    return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+
 @blueprint.route("/indiv_segment/<int:segment_id>")
 def indiv_segment(segment_id):
     
@@ -703,6 +740,7 @@ def indiv_elev_dist():
                 from rides R
                 join athletes A on A.id = R.athlete_id
                 left join teams T on T.id = A.team_id
+                where not R.manual
                 group by R.athlete_id, athlete_name, team_name
                 ;
             """)
