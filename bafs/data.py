@@ -375,10 +375,10 @@ def update_ride_from_activity(strava_activity, ride):
     if ride.elapsed_time is None:
         raise DataEntryError("Activities cannot have null elapsed time.")
 
-    if not ride.moving_time is None:
+    if ride.moving_time is None:
         raise DataEntryError("Activities cannot have null moving time.")
 
-    if not ride.distance is None:
+    if ride.distance is None:
         raise DataEntryError("Activities cannot have null distance.")
 
     log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
