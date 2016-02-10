@@ -124,7 +124,7 @@ class SyncRideWeather(BaseCommand):
                 rw.day_temp_min = hist.min_temp
                 rw.day_temp_max = hist.max_temp
 
-                ride.weather_fetched = True
+                # ride.weather_fetched = True  # (We don't have such an attribute, actually.)
                 # (We get this from the activity now.)
                 # ride.timezone = hist.date.tzinfo.zone
 
