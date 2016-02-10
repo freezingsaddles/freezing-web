@@ -201,6 +201,7 @@ class Client(object):
                     self.log.info("Unable to parse US state from {0!r}.".format(us_city))
 
         # Check both for cache, starting with more specific one
+        data = None
         for lp in (latlon_location_param, us_city_location_param):
             if lp is not None:
                 data = self._check_cache(lp, date)

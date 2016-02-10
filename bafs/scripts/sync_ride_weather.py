@@ -81,7 +81,10 @@ class SyncRideWeather(BaseCommand):
                 point = parse_point_wkt(start_geo_wkt)
                 lon = point.lon
                 lat = point.lat
-                hist = c.history(ride.start_date, us_city=ride.location, lat=lat, lon=lon)
+                # We are doing only lat/lon now instead of us_city, since us_city seems to resolve to regional weather stations
+                # rather than the closest weather stations ...
+                # hist = c.history(ride.start_date, us_city=ride.location, lat=lat, lon=lon)
+                hist = c.history(ride.start_date, lat=lat, lon=lon)
 
                 ride_start = ride.start_date.replace(tzinfo=hist.date.tzinfo)
                 ride_end = ride_start + timedelta(seconds=ride.elapsed_time)
