@@ -300,6 +300,6 @@ def team_weekly_points():
 def indiv_elev_dist():
     return render_template('explore/indiv_elev_dist.html')
 
-@blueprint.route("/explore/riders_by_lowtemp")
+@blueprint.route("/explore/distance_by_lowtemp")
 def riders_by_lowtemp():
-    return render_template('explore/riders_by_lowtemp.html')
+    return render_template('explore/distance_by_lowtemp.html')

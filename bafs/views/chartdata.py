@@ -8,7 +8,7 @@ import copy
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
-from flask import render_template, redirect, url_for, current_app, request, Blueprint
+from flask import render_template, redirect, url_for, current_app, request, Blueprint, jsonify
 
 from sqlalchemy import text
 from dateutil import rrule
@@ -810,6 +810,38 @@ def riders_by_lowtemp():
         rows.append({'c': cells})
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
+
+
+@blueprint.route("/distance_by_lowtemp")
+def distance_by_lowtemp():
+    """
+    """
+    q = text("""
+            select date(start_date) as start_date,
+            avg(W.day_temp_min) as low_temp,
+            sum(R.distance) as distance
+            from rides R join ride_weather W on W.ride_id = R.id
+            group by date(start_date)
+            order by date(start_date);
+            """)
+
+    cols = [{'id': 'date', 'label': 'Date', 'type': 'date'},
+            {'id': 'distance', 'label': 'Distance', 'type': 'number'},
+            {'id': 'day_temp_min', 'label': 'Low Temp', 'type': 'number'},
+            ]
+
+    rows = []
+    for res in db.session.execute(q): # @UndefinedVariable
+        if res['low_temp'] is None:
+            # This probably only happens for *today* since that isn't looked up yet.
+            continue
+        # res['start_date']
+        dt = res['start_date']
+        rows.append({'date': {'year': dt.year, 'month': dt.month, 'day': dt.day} ,
+                     'distance': res['distance'],
+                     'low_temp': res['low_temp']})
+
+    return jsonify({'data': rows})
 
 
 def gviz_api_jsonify(*args, **kwargs):

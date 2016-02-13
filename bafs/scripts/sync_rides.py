@@ -31,7 +31,7 @@ class SyncRides(BaseCommand):
                           metavar="STRAVA_ID")
 
         parser.add_option("--rewrite", action="store_true", dest="rewrite", default=False,
-                          help="Whether to rewrite the ride data already in database.")
+                          help="Whether to rewrite the ride data already in database (does not incur additional API calls).")
 
         parser.add_option("--force", action="store_true", dest="force", default=False,
                           help="Whether to force the sync (e.g. if after competition end).")
@@ -171,6 +171,7 @@ class SyncRides(BaseCommand):
             self.logger.info("(No removed rides for athlete {0}.)".format(athlete))
 
         sess.commit()
+
 
 def main():
     SyncRides().run()

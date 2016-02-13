@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block foot %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+
+    <script type="text/javascript">
+    $(function () {
+
+        /**
+         * Request data from the server, add it to the graph and set a timeout
+         * to request again
+         */
+        function requestData() {
+            $.ajax({
+                url: '/chartdata/distance_by_lowtemp',
+                success: function(data) {
+                    // console.log(data);
+                    $.each(data.data, function(key,val) {
+                        // console.log("Processing value", val);
+                        var dt = Date.UTC(val.date.year, val.date.month - 1, val.date.day);
+                        chart.series[0].addPoint([dt, val.distance]);
+                        chart.series[1].addPoint([dt, val.low_temp]);
+                    });
+
+                },
+                cache: false
+            });
+        }
+
+        var chart = new Highcharts.Chart({
+
+            chart: {
+                zoomType: 'xy',
+                renderTo: 'container',
+                //defaultSeriesType: 'spline',
+                events: {
+                    load: requestData
+                }
+            },
+            title: {
+                text: 'Miles Logged vs. Avg. Low Temp'
+            },
+            subtitle: {
+                text: 'Relationship between total number of miles logged riders and the average low daily temperatures.'
+            },
+            xAxis: [{
+                type: 'datetime',
+                dateTimeLabelFormats: { // don't display the dummy year
+                    month: '%e. %b',
+                    year: '%b'
+                },
+                title: {
+                    text: 'Date'
+                }
+            }],
+            yAxis: [{ // Primary yAxis
+                labels: {
+                    format: '{value}°F',
+                    style: {
+                        color: Highcharts.getOptions().colors[2]
+                    }
+                },
+                title: {
+                    text: 'Temperature',
+                    style: {
+                        color: Highcharts.getOptions().colors[2]
+                    }
+                },
+                opposite: true
+
+            }, { // Secondary yAxis
+                gridLineWidth: 0,
+                title: {
+                    text: 'Miles',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                labels: {
+                    format: '{value} mi',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                }
+
+            }],
+            tooltip: {
+                shared: true,
+
+                formatter: function() {
+                    var s = [];
+
+                    $.each(this.points, function(i, point) {
+                        s.push('<strong>'+ point.series.name +' : '+
+                            Highcharts.numberFormat(point.y, 0, '.', ',') +'</strong>');
+                    });
+
+                    return s.join(' and ');
+                },
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 80,
+                verticalAlign: 'top',
+                y: 55,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+            },
+            series: [{
+                name: 'Miles',
+                type: 'column',
+                yAxis: 1,
+                data: [],
+                tooltip: {
+                    valueSuffix: ' mi'
+                }
+            }, {
+                name: 'Temperature',
+                type: 'spline',
+                data: [],
+                tooltip: {
+                    valueSuffix: ' °F'
+                }
+            }]
+    });
+});
+    </script>
+{% endblock %}
+	  
+{% block content %}
+
+    <!--Div that will hold our leaderboard chart-->
+    <div id="container" style="width:100%; height:400px;"></div>
+    
+{% endblock %}
