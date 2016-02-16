@@ -545,6 +545,7 @@ def _write_instagram_photo_primary(photo, ride):
         p.img_l = photo.urls['600']
         p.img_t = photo.urls['100']
 
+    p.ride_id = ride.id
     p.primary = True
     p.source = photo.source
 
@@ -552,6 +553,7 @@ def _write_instagram_photo_primary(photo, ride):
 
     db.session.add(p)
     db.session.flush()
+
     return p
 
 def _write_strava_photo_primary(photo, ride):
@@ -674,6 +676,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
             log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
 
+            db.session.flush()
         except (InstagramAPIError, InstagramClientError) as e:
             if e.status_code == 400:
                 log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))
