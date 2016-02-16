@@ -550,7 +550,8 @@ def _write_instagram_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
 
-    db.session.merge(p)
+    db.session.add(p)
+    db.session.flush()
     return p
 
 def _write_strava_photo_primary(photo, ride):
@@ -587,7 +588,8 @@ def _write_strava_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Strava ride photo: {}".format(p))
 
-    db.session.merge(p)
+    db.session.add(p)
+    db.session.flush()
     return p
 
 
