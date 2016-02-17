@@ -608,7 +608,8 @@ def write_ride_photo_primary(strava_activity, ride):
     # If we have > 1 instagram photo, then we don't do anything.
     if strava_activity.photo_count > 1:
         log.debug("Ignoring basic sync for {} since there are > 1 instagram photos.")
-
+        return
+    
     # Start by removing any priamry photos for this ride.
     db.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == strava_activity.id,
                                                               RidePhoto.primary == True)))
