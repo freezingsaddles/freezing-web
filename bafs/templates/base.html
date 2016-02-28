@@ -103,6 +103,14 @@
                             -->
                         </ul>
                     </li>
+                    <li class="dropdown{% if request.path.startswith('/alt_scoring') %} active{% endif %}">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            Alternate Scoring <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/pointless/alt_scoring/team_riders">Ride Days by Team</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if g.logged_in %}
