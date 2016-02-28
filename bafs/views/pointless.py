@@ -97,3 +97,13 @@ def opmdays():
     opm = [(x['id'], x['athlete_name'], x['days'], x['distance']) for x in
                db.session.execute(q).fetchall()]
     return render_template('pointless/opmdays.html', data=opm)
+
+@blueprint.route("/alt_scoring/team_riders")
+def team_riders():
+    q = text("""
+		select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
+		on a.team_id = b.id where a.distance > 1 group by a.team_id order by ride_days desc;
+		"""
+    )
+    team_riders = [(x['name'], x['ride_days']) for x in db.session.execute(q).fetchall()]
+    return render_template('alt_scoring/team_riders.html', team_riders=team_riders)
