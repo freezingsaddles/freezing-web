@@ -18,13 +18,15 @@ if not app.secret_key:
 
 db = SQLAlchemy(app)
 
-from bafs.views import general, leaderboard, chartdata, people, user, pointless, photos, api  # This needs to be after the app is created.
+# This needs to be after the app is created.
+from bafs.views import general, leaderboard, chartdata, people, user, pointless, photos, api, alt_scoring
 from bafs.utils import auth
 
 # Register our blueprints
 
 app.register_blueprint(general.blueprint)
 app.register_blueprint(leaderboard.blueprint, url_prefix='/leaderboard')
+app.register_blueprint(alt_scoring.blueprint, url_prefix='/alt_scoring')
 app.register_blueprint(chartdata.blueprint, url_prefix='/chartdata')
 app.register_blueprint(people.blueprint, url_prefix='/people')
 app.register_blueprint(pointless.blueprint, url_prefix='/pointless')
