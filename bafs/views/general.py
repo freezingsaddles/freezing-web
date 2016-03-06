@@ -3,26 +3,17 @@ Created on Feb 10, 2013
 
 @author: hans
 '''
-import json
-import copy
-import logging
-from collections import defaultdict
-from datetime import datetime, timedelta, date
+from datetime import timedelta
 
-import bafs.exc
-from flask import render_template, redirect, url_for, current_app, request, Blueprint, session
-
+from flask import render_template, redirect, url_for, request, Blueprint, session
 from sqlalchemy import text
-
 from stravalib import Client
 from stravalib import unithelper as uh
 
+import bafs.exc
 from bafs import app, db, data
-from bafs.utils import gviz_api, auth
-from bafs.model import Team, Athlete, RidePhoto, Ride
-from people import people_list_users, people_show_person, ridedays
-from pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
-
+from bafs.model import Athlete, RidePhoto, Ride
+from bafs.utils import auth
 
 blueprint = Blueprint('general', __name__)
 
@@ -210,87 +201,11 @@ def authorization():
                                team=team, multiple_teams=multiple_teams,
                                no_teams=no_teams)
 
-@blueprint.route("/leaderboard")
-def leaderboard():
-    return redirect(url_for('.team_leaderboard'))
-
-@blueprint.route("/leaderboard/team")
-def team_leaderboard():
-    return render_template('leaderboard/team.html')
-
-@blueprint.route("/leaderboard/team_text")
-def team_leaderboard_classic():
-    # Get teams sorted by points
-    q = text("""
-             select T.id as team_id, T.name as team_name, sum(DS.points) as total_score,
-             sum(DS.distance) as total_distance
-             from daily_scores DS
-             join teams T on T.id = DS.team_id
-             group by T.id, T.name
-             order by total_score desc
-             ;
-             """)
-
-    team_rows = db.session.execute(q).fetchall() # @UndefinedVariable
-
-    q = text("""
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
-             sum(DS.points) as total_score, sum(DS.distance) as total_distance,
-             count(DS.points) as days_ridden
-             from daily_scores DS
-             join athletes A on A.id = DS.athlete_id
-             group by A.id, A.display_name
-             order by total_score desc
-             ;
-             """)
-
-    team_members = {}
-    for indiv_row in db.session.execute(q).fetchall(): # @UndefinedVariable
-        team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
-
-    for team_id in team_members:
-        team_members[team_id] = reversed(sorted(team_members[team_id], key=lambda m: m['total_score']))
-
-    return render_template('leaderboard/team_text.html', team_rows=team_rows, team_members=team_members)
-
-@blueprint.route("/leaderboard/team_various")
-def team_leaderboard_various():
-    return render_template('leaderboard/team_various.html')
-
-@blueprint.route("/leaderboard/individual")
-def indiv_leaderboard():
-    return render_template('leaderboard/indiv.html')
-
-@blueprint.route("/leaderboard/individual_text")
-def individual_leaderboard_text():
-
-    q = text("""
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
-             sum(DS.distance) as total_distance, sum(DS.points) as total_score,
-             count(DS.points) as days_ridden
-             from daily_scores DS
-             join athletes A on A.id = DS.athlete_id
-             join teams T on T.id = A.team_id
-             group by A.id, A.display_name
-             order by total_score desc
-             ;
-             """)
-
-    indiv_rows = db.session.execute(q).fetchall() # @UndefinedVariable
-
-    return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows)
-
-@blueprint.route("/leaderboard/individual_various")
-def indiv_leaderboard_various():
-    return render_template('leaderboard/indiv_various.html')
 
 @blueprint.route("/explore")
 def trends():
     return redirect(url_for('.team_cumul_trend'))
 
-@blueprint.route("/explore/team_cumul")
-def team_cumul_trend():
-    return render_template('explore/team_cumul.html')
 
 @blueprint.route("/explore/team_weekly")
 def team_weekly_points():
@@ -303,3 +218,8 @@ def indiv_elev_dist():
 @blueprint.route("/explore/distance_by_lowtemp")
 def riders_by_lowtemp():
     return render_template('explore/distance_by_lowtemp.html')
+
+
+@blueprint.route("/explore/team_cumul")
+def team_cumul_trend():
+    return render_template('explore/team_cumul.html')
