@@ -32,7 +32,7 @@ class SyncPhotos(BaseCommand):
             client = data.StravaClientForAthlete(ride.athlete)
             try:
 
-                activity_photos = client.get_activity_photos(ride.id)
+                activity_photos = client.get_activity_photos(ride.id, only_instagram=True)
                 """ :type: list[stravalib.model.ActivityPhoto] """
                 data.write_ride_photos_nonprimary(activity_photos, ride)
 
