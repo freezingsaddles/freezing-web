@@ -222,9 +222,9 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
             return False
 
     try:
-        activities = client.get_activities(after=start_date, limit=None)
+        activities = client.get_activities(after=start_date, limit=None)  # type: List[stravalib.model.Activity]
         filtered_rides = [a for a in activities if
-                          (a.type == strava_model.Activity.RIDE and not a.trainer and not is_excluded(a))]
+                          (a.type == strava_model.Activity.RIDE and not a.manual and not a.trainer and not is_excluded(a))]
     except HTTPError as e:
         if u'access_token' in e.message:  # A bit of a kludge, but don't have a way of hooking into the response processing earlier.
             raise InvalidAuthorizationToken("Invalid authrization token for {}".format(athlete))
