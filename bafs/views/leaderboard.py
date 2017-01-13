@@ -25,6 +25,7 @@ def team_leaderboard_classic():
              sum(DS.distance) as total_distance
              from daily_scores DS
              join teams T on T.id = DS.team_id
+             where not T.leaderboard_exclude
              group by T.id, T.name
              order by total_score desc
              ;
@@ -86,5 +87,3 @@ def individual_leaderboard_text():
 @blueprint.route("/individual_various")
 def indiv_leaderboard_various():
     return render_template('leaderboard/indiv_various.html')
-
-
