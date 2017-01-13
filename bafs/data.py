@@ -39,11 +39,11 @@ class StravaClientForAthlete(Client):
 def register_athlete(strava_athlete, access_token):
     """
     Ensure specified athlete is added to database, returns athlete model.
-    
+
     :return: The added athlete model object.
     :rtype: :class:`bafs.model.Athlete`
     """
-    athlete = db.session.query(Athlete).get(strava_athlete.id)  
+    athlete = db.session.query(Athlete).get(strava_athlete.id)
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
@@ -54,9 +54,9 @@ def register_athlete(strava_athlete, access_token):
     athlete.profile_photo = strava_athlete.profile
 
     athlete.access_token = access_token
-    db.session.add(athlete)  
-    # We really shouldn't be committing here, since we want to disambiguate names after registering 
-    db.session.commit()  
+    db.session.add(athlete)
+    # We really shouldn't be committing here, since we want to disambiguate names after registering
+    db.session.commit()
 
     return athlete
 
@@ -124,29 +124,30 @@ def disambiguate_athlete_display_names():
 def register_athlete_team(strava_athlete, athlete_model):
     """
     Updates db with configured team that matches the athlete's teams.
-    
+
     Updates the passed-in Athlete model object with created/updated team.
-    
+
     :param strava_athlete: The Strava model object for the athlete.
     :type strava_athlete: :class:`stravalib.model.Athlete`
-    
+
     :param athlete_model: The athlete model object.
     :type athlete_model: :class:`bafs.model.Athlete`
-    
-    :return: The :class:`bafs.model.Team` object will be returned which matches 
+
+    :return: The :class:`bafs.model.Team` object will be returned which matches
              configured teams.
     :rtype: :class:`bafs.model.Team`
-    
+
     :raise MultipleTeamsError: If this athlete is registered for multiple of
                                the configured teams.  That won't work.
-    :raise NoTeamsError: If no teams match. 
+    :raise NoTeamsError: If no teams match.
     """
     assert isinstance(strava_athlete, strava_model.Athlete)
     assert isinstance(athlete_model, Athlete)
 
-    log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, app.config['BAFS_TEAMS']))
+    all_teams =  app.config['BAFS_TEAMS'] + app.config['BAFS_OBSERVER_TEAMS']
+    log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
-        matches = [c for c in strava_athlete.clubs if c.id in app.config['BAFS_TEAMS']]
+        matches = [c for c in strava_athlete.clubs if c.id in all_teams]
         log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
         if len(matches) > 1:
@@ -157,13 +158,14 @@ def register_athlete_team(strava_athlete, athlete_model):
         else:
             club = matches[0]
             # create the team row if it does not exist
-            team = db.session.query(Team).get(club.id)  
+            team = db.session.query(Team).get(club.id)
             if team is None:
                 team = Team()
             team.id = club.id
             team.name = club.name
-            athlete_model.team = team
-            db.session.add(team)
+            if club.id not in app.config['BAFS_OBSERVER_TEAMS']:
+                athlete_model.team = team
+                db.session.add(team)
             return team
     finally:
         db.session.commit()
@@ -181,16 +183,16 @@ def get_team_name(club_id):
 def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     """
     List all of the rides for individual athlete.
-    
+
     :param athlete: The Athlete model object.
     :type athlete: bafs.model.Athlete
-    
-    :param start_date: The date to start listing rides. 
+
+    :param start_date: The date to start listing rides.
     :type start_date: datetime.date
-    
+
     :param exclude_keywords: A list of keywords to use for excluding rides from the results (e.g. "#NoBAFS")
     :type exclude_keywords: list
-    
+
     :return: list of activity objects for rides in reverse chronological order.
     :rtype: list[stravalib.model.Activity]
     """
@@ -249,10 +251,10 @@ def timedelta_to_seconds(td):
 def write_ride(activity):
     """
     Takes the specified activity and writes it to the database.
-    
+
     :param activity: The Strava :class:`stravalib.model.Activity` object.
     :type activity: stravalib.model.Activity
-    
+
     :return: A tuple including the written Ride model object, whether to resync segment efforts, and whether to resync photos.
     :rtype: bafs.model.Ride
     """
@@ -289,7 +291,7 @@ def write_ride(activity):
         ride_geo.ride_id = activity.id
         db.session.merge(ride_geo)
 
-    ride = db.session.query(Ride).get(activity.id)  
+    ride = db.session.query(Ride).get(activity.id)
     new_ride = (ride is None)
     if ride is None:
         ride = Ride(activity.id)
@@ -389,10 +391,10 @@ def update_ride_from_activity(strava_activity, ride):
 def write_ride_efforts(strava_activity, ride):
     """
     Writes out all effort associated with a ride to the database.
-    
+
     :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
     :type strava_activity: :class:`stravalib.model.Activity`
-    
+
     :param ride: The db model object for ride.
     :type ride: :class:`bafs.model.Ride`
     """
@@ -531,7 +533,7 @@ def _write_instagram_photo_primary(photo, ride):
             log.exception("Error fetching instagram photo {}".format(photo))
 
     p = RidePhoto()
-    
+
     if media:
         p.id = media.id
         p.ref = media.link
@@ -609,7 +611,7 @@ def write_ride_photo_primary(strava_activity, ride):
     if strava_activity.photo_count > 1:
         log.debug("Ignoring basic sync for {} since there are > 1 instagram photos.")
         return
-    
+
     # Start by removing any priamry photos for this ride.
     db.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == strava_activity.id,
                                                               RidePhoto.primary == True)))

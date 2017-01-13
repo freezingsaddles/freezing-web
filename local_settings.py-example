@@ -15,6 +15,9 @@ SESSION_SECRET= 'you-must-set-this-to-something-strong'
 # The strava team (club) IDs
 #BAFS_TEAMS = [19247, 19267, 19337, 19263, 8189, 19327, 19281, 19289, 19265, 19345, 20337]
 
+# Teams that aren't actually competing, but individuals will be part of the game for indiv leaderboards, etc.
+#BAFS_OBSERVER_TEAMS = []
+
 # When does the competition start?
 #BAFS_START_DATE = '2015-01-01'
 

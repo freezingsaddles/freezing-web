@@ -12,6 +12,9 @@ BAFS_TIMEZONE = 'America/New_York'
 # The strava team (club) IDs
 BAFS_TEAMS = [] # This should be specified/overridden in local settings file.
 
+# Teams that aren't actually playing ... but want to show up on the leaderboard.
+BAFS_OBSERVER_TEAMS = []
+
 # When does the competition start?
 BAFS_START_DATE = '2015-01-01 00:00:00-05:00'
 
