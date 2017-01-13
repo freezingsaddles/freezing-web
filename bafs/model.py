@@ -74,7 +74,7 @@ class Team(StravaEntity):
     """
     __tablename__ = 'teams'
     athletes = orm.relationship("Athlete", backref="team")
-
+    leaderboard_exclude = sa.Column(sa.Boolean, nullable=False, default=False)
 
 class Athlete(StravaEntity):
     """

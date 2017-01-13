@@ -144,7 +144,7 @@ def register_athlete_team(strava_athlete, athlete_model):
     assert isinstance(strava_athlete, strava_model.Athlete)
     assert isinstance(athlete_model, Athlete)
 
-    all_teams =  app.config['BAFS_TEAMS'] + app.config['BAFS_OBSERVER_TEAMS']
+    all_teams =  app.config['BAFS_TEAMS']
     log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
@@ -163,9 +163,9 @@ def register_athlete_team(strava_athlete, athlete_model):
                 team = Team()
             team.id = club.id
             team.name = club.name
-            athlete_model.team_id = club.id
-            if club.id not in app.config['BAFS_OBSERVER_TEAMS']:
-                db.session.add(team)
+            team.leaderboard_exclude = club.id in app.config['BAFS_OBSERVER_TEAMS']
+            athlete_model.team = team
+            db.session.add(team)
             return team
     finally:
         db.session.commit()

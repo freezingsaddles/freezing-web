@@ -106,6 +106,7 @@ def team_leaderboard():
              sum(DS.distance) as total_distance
              from daily_scores DS
              join teams T on T.id = DS.team_id
+             where not T.leaderboard_exclude
              group by T.id, T.name
              order by total_score desc
              ;
