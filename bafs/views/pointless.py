@@ -97,4 +97,12 @@ def opmdays():
                db.session.execute(q).fetchall()]
     return render_template('pointless/opmdays.html', data=opm)
 
-
+@blueprint.route("/points_per_mile")
+def points_per_mile():
+    q = text("""
+        select A.id, A.display_name as athlete_name, sum(B.distance) as dist, sum(B.points) as pnts, count(B.athlete_id) as ridedays
+        from athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
+    """)
+    ppm = [(x['athlete_name'], x['pnts'], x['dist'],(x['pnts']/x['dist']), x['ridedays']) for x in db.session.execute(q).fetchall()]
+    ppm.sort(key=lambda tup: tup[3], reverse=True)
+    return render_template('pointless/points_per_mile.html', data=ppm)

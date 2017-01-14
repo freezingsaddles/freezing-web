@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Points per Mile</div>
+	<div class="panel-body">
+		<p>Most points per mile, minimum 30 ride days (by the end of the competition)</p>
+<table class="table table-condensed">
+	<tr>
+		<th>Rank</th>
+		<th>Name</th>
+		<th>Points</th>
+		<th>Miles</th>
+		<th>Points per Mile</th>
+		<th>Ride Days</th>
+	</tr>
+{% for a, b, c, d, e in data %}
+	<tr{% if e>30 %} class="success"{% endif %}>
+		<td>{{loop.index}}</td>
+		<td>{{a}}</td>
+		<td>{{b|round(1)}}</td>
+		<td>{{c|round(1)}}</td>
+		<td style="font-weight:bold;">{{d|round(2)}}</td>
+		<td>{{e}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}
