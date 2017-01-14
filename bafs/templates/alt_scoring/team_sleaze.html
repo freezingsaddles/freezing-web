@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Team Sleaze</div>
+	<div class="panel-body">
+		<p>Now, you know it's up to you whether or not you want to just do the bare minimum. People can go for a bike ride anywhere, okay? They do Freezing Saddles for the camaraderie and the soul-crushing cold.</p>
+<p>Look, we want you to ride your bike, okay? Now if you feel that the bare minimum is enough, then okay. But some people choose to ride more and we encourage that, okay? You do want to ride your bike, don't you?</p>
+	<table class="table table-condensed">
+	<tr><th>Rank</th><th>Team</th><th>Sleaze Rides</th></tr>
+{% for a, b in team_sleaze %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td>{{a}}</td>
+		<td>{{b}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

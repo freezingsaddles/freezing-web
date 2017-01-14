@@ -29,7 +29,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
 
-    <link rel="stylesheet" href="/assets/css/bootstrap-3.3.1.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="/assets/css/navbar-fixed-top.css" rel="stylesheet">
     <link href="/assets/css/ekko-lightbox.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
@@ -61,10 +61,16 @@
                         <ul class="dropdown-menu">
                             <li><a href="/leaderboard/team_text">Team Points (Text)</a></li>
                             <li><a href="/leaderboard/team">Team Points (Chart)</a></li>
-                            <li><a href="/leaderboard/individual_text">Indiv Points (Text)</a></li>
-                            <li><a href="/leaderboard/individual">Indiv Points (Chart)</a></li>
                             <li><a href="/leaderboard/team_various">Team (Various)</a></li>
+                            <li><a href="/alt_scoring/team_sleaze">Team Sleaze Rides</a></li>
+                            <li><a href="/alt_scoring/team_hains">Team Hains Point Laps</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/leaderboard/individual_text">Individual Points (Text)</a></li>
+                            <li><a href="/leaderboard/individual">Individual Points (Chart)</a></li>
                             <li><a href="/leaderboard/individual_various">Individual (Various)</a></li>
+                            <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
+                            <li><a href="/alt_scoring/indiv_hains">Individual Hains Point Laps</a></li>
+                            <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
                         </ul>
                     </li>
                     <li class="{% if request.path.startswith('/photos') %} active{% endif %}">

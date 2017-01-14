@@ -17,6 +17,7 @@ from bafs import app, db
 from bafs.utils import gviz_api
 from bafs.utils.dates import parse_competition_timestamp
 from bafs.model import Team, RideEffort
+from bafs.views.shared_sql import *
 
 blueprint = Blueprint('chartdata', __name__)
 
@@ -194,15 +195,7 @@ def team_moving_time():
 @blueprint.route("/indiv_number_sleaze_days")
 def indiv_number_sleaze_days():
 
-    q = text ("""
-                select D.athlete_id, A.display_name as athlete_name, count(*) as num_sleaze_days
-                from daily_scores D
-                join athletes A on A.id = D.athlete_id
-                where D.points > 10 and D.points < 12
-                group by D.athlete_id, athlete_name
-                order by num_sleaze_days desc
-                ;
-            """)
+    q = indiv_sleaze_query()
 
     indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
 
@@ -222,16 +215,7 @@ def indiv_number_sleaze_days():
 @blueprint.route("/team_number_sleaze_days")
 def team_number_sleaze_days():
 
-    q = text ("""
-                select T.id, T.name as team_name, count(*) as num_sleaze_days
-                from daily_scores D
-                join athletes A on A.id = D.athlete_id
-                join teams T on T.id = A.team_id
-                where D.points > 10 and D.points < 12
-                group by T.id, T.name
-                order by num_sleaze_days desc
-                ;
-            """)
+    q = team_sleaze_query()
 
     indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
 
@@ -282,23 +266,7 @@ def indiv_kidical():
 @blueprint.route("/indiv_freeze_points")
 def indiv_freeze_points():
 
-    q = text ("""
-				select athlete_id, athlete_name, SUM(max_daily_freeze_points) as freeze_points_total
-				from (
-					select athlete_id, athlete_name, ride_date, MAX(freeze_points) as max_daily_freeze_points
-					from (
-						select R.athlete_id, A.display_name as athlete_name, date(R.start_date) as ride_date, (11*(ATAN((R.distance+4)-2*PI())+1.4)-2.66)*(1.2+ATAN((32-W.ride_temp_start)/5)) as freeze_points
-						from rides R
-						join ride_weather W on W.ride_id = R.id
-						join athletes A on A.id = R.athlete_id
-					) FP
-					group by athlete_id, athlete_name, ride_date
-				) FPMax
-				group by athlete_id, athlete_name
-				order by freeze_points_total desc
-                ;
-            """)
-
+    q = indiv_freeze_query()
     indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
@@ -320,16 +288,7 @@ def indiv_segment(segment_id):
 
     #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
-    q = text ("""
-                select A.id, A.display_name as athlete_name, count(E.id) as segment_rides
-                from athletes A
-                join rides R on R.athlete_id = A.id
-                join ride_efforts E on E.ride_id = R.id
-                where E.segment_id = :segment_id
-                group by A.id, A.display_name
-                order by segment_rides desc
-                ;
-            """)
+    q = indiv_segment_query()
 
     indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
 
@@ -351,17 +310,7 @@ def team_segment(segment_id):
 
     #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
-    q = text ("""
-                select T.id, T.name as team_name, count(E.id) as segment_rides
-                from rides R
-                join athletes A on A.id = R.athlete_id
-                join teams T on T.id = A.team_id
-                join ride_efforts E on E.ride_id = R.id
-                where E.segment_id = :segment_id
-                group by T.id, T.name
-                order by segment_rides desc
-                ;
-            """)
+    q = team_segment_query()
 
     indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
 
@@ -438,7 +387,6 @@ def team_avg_speed():
 
 @blueprint.route("/indiv_freezing")
 def indiv_freezing():
-
     q = text ("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.distance) as distance
                 from rides R

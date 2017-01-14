@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Sleaze Rides</div>
+	<div class="panel-body">
+<p>If we really want to be pedantic, and <strong>of course</strong> we want to be pedantic, it's actually Sleaze <strong>Days</strong>. Two one mile rides in a day gets you no sleaze ride credit. Since no one <strong>wants</strong> sleaze ride credit, this is a good thing.</p>
+		<table class="table table-condensed">
+	<tr><th>Rank</th><th>Name</th><th>Sleaze Rides</th></tr>
+{% for a, b in indiv_sleaze %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td>{{a}}</td>
+		<td>{{b}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}
