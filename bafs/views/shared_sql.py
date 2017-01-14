@@ -1,3 +1,6 @@
+"""
+SQL queries used in more than one class. DRY 4EVA
+"""
 from sqlalchemy import text
 
 def team_sleaze_query():
