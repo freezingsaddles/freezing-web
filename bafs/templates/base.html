@@ -37,7 +37,14 @@
     {% block head %}{% endblock %}
 </head>
 <body>
+    {% block beforenav %}
+    {#
+    See http://stackoverflow.com/a/13368485/217080
+    put modal windows before the navbar
+    #}
+    {% endblock %}
 <div class="container">
+
     <!-- Fixed navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
@@ -147,7 +154,7 @@
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/assets/js/jquery-1.11.2.min.js"></script>
-<script src="/assets/js/bootstrap-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="/assets/js/ekko-lightbox-min.js"></script>
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
