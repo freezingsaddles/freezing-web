@@ -86,11 +86,14 @@ def kidmiles():
     return render_template('pointless/kidmiles.html', data=tdata)
 
 @blueprint.route("/opmdays")
+"""
+If OPM doesn't close this year, just use Michigan's birthday for Kitty's prize
+"""
 def opmdays():
     q = text("""
         select A.id, A.display_name as athlete_name, count(distinct(date(R.start_date))) as days, sum(R.distance) as distance
         from athletes A join rides R on R.athlete_id=A.id
-        where date(R.start_date) in ('2016-01-25', '2016-01-26') group by R.athlete_id
+        where date(R.start_date) in ('2017-01-26') group by R.athlete_id
         order by days desc, distance desc;
         """)
     opm = [(x['id'], x['athlete_name'], x['days'], x['distance']) for x in
