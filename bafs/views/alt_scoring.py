@@ -78,3 +78,19 @@ def indiv_freeze():
     q = indiv_freeze_query()
     data = [(x['athlete_name'], x['freeze_points_total']) for x in db.session.execute(q).fetchall()]
     return render_template('alt_scoring/indiv_freeze.html', indiv_freeze=data)
+
+@blueprint.route("/indiv_worst_day_points")
+def indiv_worst_day_points():
+    q = text("""
+    select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
+    sum(s.distance) as total_distance, sum(s.points) as total_score, sum(s.adj_points) as total_adjusted,
+    count(s.points) as days_ridden from
+    (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,(200-DDS.num_riders))) adj_points from daily_scores DS,
+    (select ride_date, count(distinct(athlete_id)) as num_riders  from daily_scores group by ride_date order by ride_date) DDS where DS.ride_date=DDS.ride_date) s
+    join athletes A on A.id = s.athlete_id
+    join teams T on T.id = A.team_id
+    group by A.id, A.display_name
+    order by total_adjusted desc;
+    """)
+    data = [(x['athlete_name'], x['team_name'], x['total_distance'], x['total_score'], x['total_adjusted'], x['days_ridden']) for x in db.session.execute(q).fetchall()]
+    return render_template('alt_scoring/indiv_worst_day_points.html', data=data)

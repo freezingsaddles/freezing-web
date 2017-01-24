@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Steve O's Worst Day Points Proposal</div>
+	<div class="panel-body">
+		<p>So this takes 200 as the median number of riders and then, for each day, your Adjusted Points are
+			your points in the old system (1 point per mile, 10 points per day for riding at least 1 mile) multiplied
+			by 1.025*(200-[total number of riders today]).
+		</p>
+		<p>NOTE: This is calculated at the time you view the chart. This means that today's points will
+			change as more people ride. If you are the first rider of the day, you will get literally a
+			bajillion points (A sleaze ride of exactly one mile is worth almost 1500 points if you're
+			the only rider of the day). As more people ride, your points go down
+		</p>
+<div class="table-responsive">
+<table id="steve-o" class="table table-condensed">
+	<thead>
+		<tr><th>Rank</th><th>Rider</th><th>Team</th><th>Miles</th><th>Old Points</th><th>Adjusted Points</th><th>Bump %</th><th>Days Ridden</th></tr>
+	</thead>
+{% for a, b, c, d, e, f in data %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td>{{a}}</td>
+		<td>{{b}}</td>
+		<td>{{c|round(1)}}</td>
+		<td>{{d|round(1)}}</td>
+		<td>{{e|round(1)}}</td>
+		<td>{{(100*(e-d)/d)|round(1)}}%</td>
+		<td>{{f}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+</div>
+{% endblock %}
+{% block foot %}
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#steve-o').DataTable( {
+		"paging":   false,
+        "order": [[ 5, "desc" ]]
+    } );
+});
+</script>
+{% endblock %}
