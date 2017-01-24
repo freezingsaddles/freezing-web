@@ -24,7 +24,7 @@ class InitDb(BaseCommand):
 
         model.rebuild_views()
 
-        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))
+        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "..", "..", "alembic.ini"))
         command.stamp(alembic_cfg, "head")
 
 

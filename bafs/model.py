@@ -239,8 +239,10 @@ ga.GeometryDDL(RideTrack.__table__)
 
 
 # Setup a Pool event to get MySQL to use strict SQL mode ...
+# (This is the default now in 5.7+, so not necessary.)
 def _set_sql_mode(dbapi_con, connection_record):
-    dbapi_con.cursor().execute("SET sql_mode = 'STRICT_TRANS_TABLES';")
+    # dbapi_con.cursor().execute("SET sql_mode = 'STRICT_TRANS_TABLES';")
+    pass
 
 
 sa.event.listen(Pool, 'connect', _set_sql_mode)
