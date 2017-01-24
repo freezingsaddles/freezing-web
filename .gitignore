@@ -5,3 +5,4 @@
 /local_settings.py
 /data/cache/*
 /*.iml
+/docker/db/sql-scripts

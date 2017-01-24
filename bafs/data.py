@@ -1,7 +1,7 @@
 """
 Functions for interacting with the datastore and the strava apis.
 """
-from __future__ import division
+from __future__ import division, unicode_literals
 import re
 import logging
 
