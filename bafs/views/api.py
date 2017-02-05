@@ -170,6 +170,8 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = db.session
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
+    q = q.filter(Ride.private==False)
+
     if team_id:
         q = q.filter(Athlete.team_id==team_id)
 
