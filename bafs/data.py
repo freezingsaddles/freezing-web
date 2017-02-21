@@ -518,20 +518,22 @@ def _write_instagram_photo_primary(photo, ride):
     #     u'600': u'https://instagram.com/p/88qaqZvrBI/media?size=l'}},
     #   u'use_prima ry_photo': False},
 
-    insta_client = insta.configured_instagram_client()
-    shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
 
     media = None
-    try:
-        #log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
-        media = insta_client.media_shortcode(shortcode)
-    except (InstagramAPIError, InstagramClientError) as e:
-        if e.status_code == 400:
-            log.warning("Instagram photo {} for ride {}; user is set to private".format(shortcode, ride))
-        elif e.status_code == 404:
-            log.warning("Photo {} for ride {}; shortcode not found".format(shortcode, ride))
-        else:
-            log.exception("Error fetching instagram photo {}".format(photo))
+
+    # This doesn't work any more; Instagram changed their API to use OAuth.
+    #insta_client = insta.configured_instagram_client()
+    #shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
+    # try:
+    #     #log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
+    #     media = insta_client.media_shortcode(shortcode)
+    # except (InstagramAPIError, InstagramClientError) as e:
+    #     if e.status_code == 400:
+    #         log.warning("Instagram photo {} for ride {}; user is set to private".format(shortcode, ride))
+    #     elif e.status_code == 404:
+    #         log.warning("Photo {} for ride {}; shortcode not found".format(shortcode, ride))
+    #     else:
+    #         log.exception("Error fetching instagram photo {}".format(photo))
 
     p = RidePhoto()
 
