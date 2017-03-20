@@ -27,10 +27,10 @@
 	</div>
 </div>
 {% block foot %}
-<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"></script>
-<link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
 <script>
-	
+
 $(document).ready(function() {
     $('#user-list').dataTable({
 		"bPaginate": false,
@@ -54,7 +54,7 @@ function fnShowHide( iCol )
 {
 	/* Get the DataTables object again - this is not a recreation, just a get of the object */
 	var oTable = $('#user-list').dataTable();
-	
+
 	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 	oTable.fnSetColumnVis( iCol, bVis ? false : true );
 }

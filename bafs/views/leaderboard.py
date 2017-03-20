@@ -74,6 +74,7 @@ def individual_leaderboard_text():
              from daily_scores DS
              join athletes A on A.id = DS.athlete_id
              join teams T on T.id = A.team_id
+             where not T.leaderboard_exclude
              group by A.id, A.display_name
              order by total_score desc
              ;
