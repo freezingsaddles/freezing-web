@@ -6,31 +6,28 @@ volumes:
 
 services:
 
-# This is not done ...
-#  web:
-#    build: .
-#    container_name: freezing-web
-#    ports:
-#      - "5000:5000"
-#    volumnes:
-#      - ./local_settings.py:/bafs_settings.py
-#    environment:
-#      - BAFS_SETTINGS: /bafs_settings.py
-#    links:
-#      - db
-#    depends_on:
-#      - db
+ db:
+  image: mysql:5.7
+  container_name: freezing-db
+  ports:
+    - "3306:3306"
+  volumes:
+    - freezing-data:/var/lib/mysql
+    - ./docker/db/sql-scripts:/sql
+  environment:
+    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fr33z3}
+    MYSQL_DATABASE: ${MYSQL_DATABASE:-freezing}
+    MYSQL_USER: ${MYSQL_USER:-freezing}
+    MYSQL_PASSWORD: ${MYSQL_PASSWORD:-zeer0}
 
-  db:
-    image: mysql:5.7
-    container_name: freezing-db
-    ports:
-      - "3306:3306"
-    volumes:
-      - freezing-data:/var/lib/mysql
-      - ./docker/db/sql-scripts:/sql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fr33z3}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-freezing}
-      MYSQL_USER: ${MYSQL_USER:-freezing}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-zeer0}
+ web:
+   build: .
+   container_name: web
+   command: bafs-server
+   ports:
+     - "5000:5000"
+   volumes:
+     - ./data:/data
+     - ./resources/docker/settings.cfg:/config/settings.cfg
+   links:
+     - db:db.container

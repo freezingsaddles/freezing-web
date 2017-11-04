@@ -1,6 +1,6 @@
 # Your settings
 
-SQLALCHEMY_DATABASE_URI = 'mysql://freezing@localhost/freezing?charset=utf8mb4'
+SQLALCHEMY_DATABASE_URI = 'mysql://freezing@db.container/freezing?charset=utf8mb4'
 
 # Need a Strava Client ID and secret in order to authorize users
 #STRAVA_CLIENT_ID = ''
@@ -16,10 +16,10 @@ BAFS_TEAMS = [] # This should be specified/overridden in local settings file.
 BAFS_OBSERVER_TEAMS = []
 
 # When does the competition start?
-BAFS_START_DATE = '2015-01-01 00:00:00-05:00'
+BAFS_START_DATE = '2017-01-01 00:00:00-05:00'
 
 # When does the competition end?  (This can be an exact time; API will stop fetching after this time.)
-BAFS_END_DATE = '2015-03-20 00:01:00-04:00'
+BAFS_END_DATE = '2018-03-20 00:00:00-04:00'
 
 # How many days after end of competition to upload rides?
 BAFS_UPLOAD_GRACE_PERIOD_DAYS = 5

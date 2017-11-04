@@ -1,0 +1,12 @@
+.*
+*.pyc
+*.egg-info
+.eggs/*
+build/*
+dist/*
+env*/*
+data/*
+*.db
+*.dump
+.idea
+.ipynb*
