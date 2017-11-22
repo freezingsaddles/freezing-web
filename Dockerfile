@@ -8,15 +8,19 @@ RUN mkdir -p /build/wheels
 RUN pip install --upgrade pip setuptools wheel
 
 ADD requirements.txt /tmp/requirements.txt
-RUN pip wheel -r /tmp/requirements.txt --wheel-dir=/build/wheels
+RUN pip wheel -r /tmp/requirements.txt --no-binary MySQL-python --wheel-dir=/build/wheels
 
 # DEPLOY
 # =====
 
-FROM ubuntu:xenial as deploystep
-ENV BAFS_SETTINGS=/config/settings.cfg
+# FIXME: Extend from a smaller image ... but need to work out issues w/ MySQL binary .so files
+# linking against libpython2.7.so.1.0 ...
+# Or, maybe better, just use an ubuntu builder image ...
 
-COPY resources/docker/sources.list /etc/apt/sources.list
+FROM python:2.7-jessie as deploystep
+
+# This is an Ubuntu sources.list
+# COPY resources/docker/sources.list /etc/apt/sources.list
 
 RUN apt-get update \
   && apt-get install -y python2.7 python-pip libmysqlclient-dev vim-tiny --no-install-recommends \
@@ -44,6 +48,8 @@ RUN pip install /tmp/wheels/*
 RUN python setup.py develop
 
 EXPOSE 5000
+
+ENV BAFS_SETTINGS=/config/settings.cfg
 
 # There are lots of uses for this image, so we don't specify an entrypoint.
 # Available commands are basically any of the scripts:
