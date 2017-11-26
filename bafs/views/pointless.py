@@ -109,3 +109,18 @@ def points_per_mile():
     ppm = [(x['athlete_name'], x['pnts'], x['dist'],(x['pnts']/x['dist']), x['ridedays']) for x in db.session.execute(q).fetchall()]
     ppm.sort(key=lambda tup: tup[3], reverse=True)
     return render_template('pointless/points_per_mile.html', data=ppm)
+
+@blueprint.route("/hashtag/<string:hashtag>")
+def hashtag_leaderboard(hashtag):
+    ht = ''.join(ch for ch in hashtag if ch.isalnum())
+    q = text ("""
+        select A.id, A.display_name as athlete_name, count(R.id) as hashtag_rides,
+        sum(R.distance) as hashtag_miles
+        from athletes A
+        join rides R on R.athlete_id = A.id
+        where R.name like '%""" + "#" +  ht + """%'
+        group by A.id, A.display_name
+        order by hashtag_miles desc, hashtag_rides desc;
+        """)
+    tdata = [(x['id'], x['athlete_name'], x['hashtag_rides'], x['hashtag_miles']) for x in db.session.execute(q, {"hashtag":hashtag}).fetchall()]
+    return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht})
