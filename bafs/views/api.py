@@ -22,7 +22,7 @@ blueprint = Blueprint('api', __name__)
 @blueprint.route("/stats/general")
 @auth.crossdomain(origin='*')
 def stats_general():
-    q = text("""select count(*) as num_contestants from athletes WHERE team_id is not null""")
+    q = text("""select count(*) as num_contestants from lbd_athletes""")
 
     indiv_count_res = db.session.execute(q).fetchone()  # @UndefinedVariable
     contestant_count = indiv_count_res['num_contestants']
@@ -119,7 +119,7 @@ def team_leaderboard():
              sum(DS.points) as total_score, sum(DS.distance) as total_distance,
              count(DS.points) as days_ridden
              from daily_scores DS
-             join athletes A on A.id = DS.athlete_id
+             join lbd_athletes A on A.id = DS.athlete_id
              group by A.id, A.display_name
              order by total_score desc
              ;

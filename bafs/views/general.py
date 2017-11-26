@@ -31,7 +31,7 @@ def groupnum(number):
 
 @blueprint.route("/")
 def index():
-    q = text ("""select count(*) as num_contestants from athletes WHERE team_id is not null""")
+    q = text ("""select count(*) as num_contestants from lbd_athletes""")
 
     indiv_count_res = db.session.execute(q).fetchone() # @UndefinedVariable
     contestant_count = indiv_count_res['num_contestants']

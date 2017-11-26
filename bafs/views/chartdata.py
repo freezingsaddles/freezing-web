@@ -61,7 +61,7 @@ def indiv_leaderboard_data():
     q = text("""
              select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score
              from daily_scores DS
-             join athletes A on A.id = DS.athlete_id
+             join lbd_athletes A on A.id = DS.athlete_id
              group by A.id, A.display_name
              order by total_score desc
              ;
@@ -87,7 +87,7 @@ def team_elev_gain():
     q = text ("""
         select T.id, T.name as team_name, sum(R.elevation_gain) as cumul_elev_gain
         from rides R
-        join athletes A on A.id = R.athlete_id
+        join lbd_athletes A on A.id = R.athlete_id
         join teams T on T.id = A.team_id
         group by T.id, team_name
         order by cumul_elev_gain desc
@@ -116,7 +116,7 @@ def indiv_elev_gain():
     q = text ("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by cumul_elev_gain desc
                 ;
@@ -143,7 +143,7 @@ def indiv_moving_time():
     q = text ("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.moving_time) as total_moving_time
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by total_moving_time desc
                 ;
@@ -170,7 +170,7 @@ def team_moving_time():
     q = text ("""
                 select T.id, T.name as team_name, sum(R.moving_time) as total_moving_time
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 join teams T on T.id = A.team_id
                 group by T.id, T.name
                 order by total_moving_time desc
@@ -239,7 +239,7 @@ def indiv_kidical():
 
     q = text ("""
                 select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides
-                from athletes A
+                from lbd_athletes A
                 join rides R on R.athlete_id = A.id
                 where R.name like '%#kidical%'
                 group by A.id, A.display_name
@@ -334,7 +334,7 @@ def indiv_avg_speed():
     q = text ("""
                 select R.athlete_id, A.display_name as athlete_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 where R.manual = false
                 group by R.athlete_id, athlete_name
                 order by avg_speed desc
@@ -362,7 +362,7 @@ def team_avg_speed():
     q = text ("""
                 select T.id, T.name as team_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 join teams T on T.id = A.team_id
                 where R.manual = false
                 group by T.id, T.name
@@ -391,7 +391,7 @@ def indiv_freezing():
                 select R.athlete_id, A.display_name as athlete_name, sum(R.distance) as distance
                 from rides R
                 join ride_weather W on W.ride_id = R.id
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 where W.ride_temp_avg < 32
                 group by R.athlete_id, athlete_name
                 order by distance desc
@@ -421,7 +421,7 @@ def indiv_before_sunrise():
                 sum(time_to_sec(D.before_sunrise)) as dark
                 from ride_daylight D
                 join rides R on R.id = D.ride_id
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
@@ -450,7 +450,7 @@ def indiv_after_sunset():
                 sum(time_to_sec(D.after_sunset)) as dark
                 from ride_daylight D
                 join rides R on R.id = D.ride_id
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
@@ -689,7 +689,7 @@ def indiv_elev_dist():
                 SUM(R.distance) as total_distance,
                 SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
-                join athletes A on A.id = R.athlete_id
+                join lbd_athletes A on A.id = R.athlete_id
                 left join teams T on T.id = A.team_id
                 where not R.manual
                 group by R.athlete_id, athlete_name, team_name
@@ -845,13 +845,13 @@ def parameterized_suffering_query(weath_field,
             R.moving_time as moving
             from rides R
             inner join ride_weather W on R.id=W.ride_id
-            inner join athletes A on A.id=R.athlete_id
+            inner join lbd_athletes A on A.id=R.athlete_id
             inner join (
               select A2.id as ath2_id,
                   {2}({0}) as {1}2
               from rides R2
               inner join ride_weather W2 on R2.id=W2.ride_id
-              inner join athletes A2 on A2.id=R2.athlete_id
+              inner join lbd_athletes A2 on A2.id=R2.athlete_id
               where {4}
               group by A2.id
              ) as SQ
