@@ -203,10 +203,11 @@ def authorization():
                                no_teams=no_teams)
 
 
-
 @blueprint.route("/webhook")
 def webhook():
     log.info("Received a webhook.")
+    log.info("Request JSON payload: {}".format(request.json))
+
 
 @blueprint.route("/explore")
 def trends():
