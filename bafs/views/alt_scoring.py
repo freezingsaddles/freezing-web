@@ -41,11 +41,11 @@ def team_daily():
             if not team_total.get(b):
                 team_total[b] = 0
             team_total[b] += (a)
-    team_daily = [(a,b) for a,b in team_daily.iteritems()]
+    team_daily = [(a,b) for a,b in team_daily.items()]
     team_daily = sorted(team_daily)
     #NOTE: team_daily calculated to show the scores for each day
     # chart is too big to display, but leaving the calculation here just in case
-    team_total = [(b,a) for a,b in team_total.iteritems()]
+    team_total = [(b,a) for a,b in team_total.items()]
     team_total = sorted(team_total, reverse = True)
     return render_template('alt_scoring/team_daily.html', team_total=team_total)
 

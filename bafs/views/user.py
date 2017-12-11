@@ -14,9 +14,11 @@ from stravalib import unithelper as uh
 from bafs import app, db, data
 from bafs.utils import gviz_api, auth
 from bafs.model import Team, Athlete, RidePhoto, Ride, RideWeather
-from people import people_list_users, people_show_person, ridedays
-from pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
 from bafs.utils.auth import requires_auth
+
+from .people import people_list_users, people_show_person, ridedays
+from .pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
+
 
 def bt_jsonify(data):
     """

@@ -5,7 +5,7 @@ Created on Feb 10, 2013
 '''
 from datetime import timedelta
 
-from flask import render_template, redirect, url_for, request, Blueprint, session
+from flask import render_template, redirect, url_for, request, Blueprint, session, jsonify
 from sqlalchemy import text
 from stravalib import Client
 from stravalib import unithelper as uh
@@ -14,6 +14,7 @@ import bafs.exc
 from bafs import app, db, data
 from bafs.model import Athlete, RidePhoto, Ride
 from bafs.utils import auth
+from bafs.autolog import log
 
 blueprint = Blueprint('general', __name__)
 
@@ -201,6 +202,12 @@ def authorization():
                                team=team, multiple_teams=multiple_teams,
                                no_teams=no_teams)
 
+
+@blueprint.route("/webhook", methods=['GET', 'POST'])
+def webhook():
+    log.info("Received a webhook.")
+    log.info("Request JSON payload: {}".format(request.json))
+    return jsonify()
 
 @blueprint.route("/explore")
 def trends():
