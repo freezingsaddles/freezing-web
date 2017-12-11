@@ -5,7 +5,7 @@ Created on Feb 10, 2013
 '''
 from datetime import timedelta
 
-from flask import render_template, redirect, url_for, request, Blueprint, session
+from flask import render_template, redirect, url_for, request, Blueprint, session, jsonify
 from sqlalchemy import text
 from stravalib import Client
 from stravalib import unithelper as uh
@@ -203,11 +203,11 @@ def authorization():
                                no_teams=no_teams)
 
 
-@blueprint.route("/webhook")
+@blueprint.route("/webhook", methods=['GET', 'POST'])
 def webhook():
     log.info("Received a webhook.")
     log.info("Request JSON payload: {}".format(request.json))
-
+    return jsonify()
 
 @blueprint.route("/explore")
 def trends():
