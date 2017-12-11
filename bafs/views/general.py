@@ -14,6 +14,7 @@ import bafs.exc
 from bafs import app, db, data
 from bafs.model import Athlete, RidePhoto, Ride
 from bafs.utils import auth
+from bafs.autolog import log
 
 blueprint = Blueprint('general', __name__)
 
@@ -201,6 +202,11 @@ def authorization():
                                team=team, multiple_teams=multiple_teams,
                                no_teams=no_teams)
 
+
+
+@blueprint.route("/webhook")
+def webhook():
+    log.info("Received a webhook.")
 
 @blueprint.route("/explore")
 def trends():

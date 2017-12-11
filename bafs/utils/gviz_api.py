@@ -27,7 +27,7 @@ Google Visualization API.
 __author__ = "Amit Weinstein, Misha Seltzer, Jacob Baskin"
 
 import cgi
-import cStringIO
+from io import StringIO
 import csv
 import datetime
 try:
@@ -862,7 +862,7 @@ class DataTable(object):
             DataTableException: The data does not match the type.
         """
 
-        csv_buffer = cStringIO.StringIO()
+        csv_buffer = StringIO.StringIO()
         writer = csv.writer(csv_buffer, delimiter=separator)
 
         if columns_order is None:

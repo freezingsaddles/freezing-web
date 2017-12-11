@@ -1,19 +1,20 @@
+import abc
 import logging
 import optparse
 
 from colorlog import ColoredFormatter
+import six
 
-import abc
 from bafs import app
 from bafs.exc import CommandError
 
 
+@six.add_metaclass(abc.ABCMeta)
 class BaseCommand(object):
     """
     :ivar logger: The configured logger for this class.
     :type logger: logging.Logger
     """
-    __metaclass__ = abc.ABCMeta
 
     # TODO: usage, help, etc.
     @abc.abstractproperty

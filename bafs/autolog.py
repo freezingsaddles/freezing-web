@@ -223,10 +223,10 @@ def log_exceptions(fn):
             a = args or []
             a = [str(x)[:255] for x in a]
             kw = kwargs or {}
-            kw = dict([(str(k)[:255], str(v)[:255]) for k, v in kw.iteritems()])
+            kw = dict([(str(k)[:255], str(v)[:255]) for k, v in kw.items()])
             log.debug('Calling %s.%s %r %r' % (fn.__module__, fn.__name__, a, kw))
             return fn(*args, **kwargs)
-        except Exception, e:
+        except Exception as e:
             log.error("Error calling function %s: %s" % (fn.__name__, e))
             log.exception(e)
             raise

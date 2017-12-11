@@ -40,7 +40,7 @@ def build_date(dateobj):
     return datetime(year, mon, day, hour, minute, 0, tzinfo=timezone(dateobj['tzname']))
 
 def smart_cast(val, type_):
-    if val is None or val == "" or (isinstance(val, basestring) and val.startswith('-99')):
+    if val is None or val == "" or (isinstance(val, str) and val.startswith('-99')):
         return None
     else:
         return type_(val)
