@@ -6,15 +6,14 @@ FROM ubuntu:trusty as buildstep
 COPY resources/docker/sources.list /etc/apt/sources.list
 RUN apt-get update
 
-#RUN apt-get install -y software-properties-common
-#RUN add-apt-repository -y ppa:jonathonf/python-3.6
-#RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository -y ppa:jonathonf/python-3.6
+RUN apt-get update
 
-RUN apt-get install -y python3 python3-dev python3-pip libmysqlclient-dev curl build-essential
-RUN apt-get install -y git
+RUN apt-get install -y python3.6 python3.6-dev libmysqlclient-dev curl build-essential git
 
 RUN mkdir -p /build/wheels
-#RUN curl https://bootstrap.pypa.io/get-pip.py | python3.6
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3.6
 
 RUN pip3 install --upgrade pip setuptools wheel
 
@@ -29,21 +28,21 @@ FROM ubuntu:trusty as deploystep
 
 COPY resources/docker/sources.list /etc/apt/sources.list
 
-#RUN apt-get update \
-#  && apt-get install -y software-properties-common curl \
-#  && add-apt-repository -y ppa:jonathonf/python-3.6 \
-#  && apt-get update \
-#  && apt-get install -y python3.6 libmysqlclient-dev vim-tiny --no-install-recommends \
-#  && apt-get clean \
-#  && curl https://bootstrap.pypa.io/get-pip.py | python3.6 \
-#  && python3.6 -m pip install --upgrade pip setuptools wheel \
-#  && rm -rf /var/lib/apt/lists/*
-
 RUN apt-get update \
-  && apt-get install -y python3 libmysqlclient-dev vim-tiny python3-pip --no-install-recommends \
+  && apt-get install -y software-properties-common curl \
+  && add-apt-repository -y ppa:jonathonf/python-3.6 \
+  && apt-get update \
+  && apt-get install -y python3.6 libmysqlclient-dev vim-tiny --no-install-recommends \
   && apt-get clean \
+  && curl https://bootstrap.pypa.io/get-pip.py | python3.6 \
   && pip3 install --upgrade pip setuptools wheel \
   && rm -rf /var/lib/apt/lists/*
+
+#RUN apt-get update \
+#  && apt-get install -y python3 libmysqlclient-dev vim-tiny python3-pip --no-install-recommends \
+#  && apt-get clean \
+#  && pip3 install --upgrade pip setuptools wheel \
+#  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /config
 RUN mkdir -p /data
@@ -57,11 +56,11 @@ WORKDIR /app
 
 COPY --from=buildstep /build/wheels /tmp/wheels
 
-RUN pip install /tmp/wheels/*
+RUN pip3 install /tmp/wheels/*
 
 # Install app symlinks (this works better right now than python setup.py install,
 # since there are some scripts that assume they are running from app directory.)
-RUN python3 setup.py develop
+RUN python3.6 setup.py develop
 
 EXPOSE 5000
 
