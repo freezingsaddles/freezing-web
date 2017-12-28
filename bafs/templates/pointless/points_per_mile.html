@@ -3,7 +3,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">Points per Mile</div>
 	<div class="panel-body">
-		<p>Most points per mile, minimum 33 ride days (by the end of the competition)</p>
+		<p>Most points per mile, minimum {{data.days}} ride days (by the end of the competition)</p>
 <div class="table-responsive">
 <table class="table table-condensed">
 	<tr>
@@ -14,8 +14,8 @@
 		<th>Points per Mile</th>
 		<th>Ride Days</th>
 	</tr>
-{% for a, b, c, d, e in data %}
-	<tr{% if e>33 %} class="success"{% endif %}>
+{% for a, b, c, d, e in data.riders %}
+	<tr{% if e>=data.days %} class="success"{% endif %}>
 		<td>{{loop.index}}</td>
 		<td>{{a}}</td>
 		<td>{{b|round(1)}}</td>
