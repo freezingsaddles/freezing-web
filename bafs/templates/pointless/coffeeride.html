@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Coffee Rides</div>
+	<div class="panel-body">
+		<p>Leaderboard for the BAFS 2018 Coffee Ride prize</p>
+<table class="table table-condensed">
+	<tr><th>Rank</th><th>Player</th><th>{{data.hashtag}} Rides</th><th>{{data.hashtag}} Distance</th></tr>
+{% for a, b, c, d in data.tdata %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td><a href="http://www.strava.com/athletes/{{ a }}" target="_blank">{{b}}</a></td>
+		<td>{{c}}</td>
+		<td>{{d | round(1)}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

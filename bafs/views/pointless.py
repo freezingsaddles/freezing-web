@@ -1,5 +1,6 @@
 from flask import render_template, Blueprint
 from sqlalchemy import text
+import operator
 
 from bafs import db
 
@@ -110,17 +111,32 @@ def points_per_mile():
     ppm.sort(key=lambda tup: tup[3], reverse=True)
     return render_template('pointless/points_per_mile.html', data=ppm)
 
-@blueprint.route("/hashtag/<string:hashtag>")
-def hashtag_leaderboard(hashtag):
-    ht = ''.join(ch for ch in hashtag if ch.isalnum())
+def _get_hashtag_tdata(hashtag, orderby=1):
+    """
+    if orderby = 1 then order by mileage. Else by #rides
+    """
+    if orderby == 1:
+        sortkeyidx = (3, 2)
+    else:
+        sortkeyidx = (2, 3)
     q = text ("""
         select A.id, A.display_name as athlete_name, count(R.id) as hashtag_rides,
         sum(R.distance) as hashtag_miles
         from athletes A
         join rides R on R.athlete_id = A.id
-        where R.name like '%""" + "#" +  ht + """%'
-        group by A.id, A.display_name
-        order by hashtag_miles desc, hashtag_rides desc;
+        where R.name like '%""" + "#" +  hashtag + """%'
+        group by A.id, A.display_name;
         """)
-    tdata = [(x['id'], x['athlete_name'], x['hashtag_rides'], x['hashtag_miles']) for x in db.session.execute(q, {"hashtag":hashtag}).fetchall()]
+    retval = [(x['id'], x['athlete_name'], x['hashtag_rides'], x['hashtag_miles']) for x in db.session.execute(q).fetchall()]
+    return sorted(retval, key = operator.itemgetter(*sortkeyidx), reverse=True)
+
+@blueprint.route("/hashtag/<string:hashtag>")
+def hashtag_leaderboard(hashtag):
+    ht = ''.join(ch for ch in hashtag if ch.isalnum())
+    tdata = _get_hashtag_tdata(ht)
     return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht})
+
+@blueprint.route("/coffeeride")
+def coffeeride():
+    tdata = _get_hashtag_tdata("kidical", 2)#("FS2018coffeeride", 2)
+    return render_template('pointless/coffeeride.html', data={"tdata":tdata})
