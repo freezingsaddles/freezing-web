@@ -138,5 +138,5 @@ def hashtag_leaderboard(hashtag):
 
 @blueprint.route("/coffeeride")
 def coffeeride():
-    tdata = _get_hashtag_tdata("kidical", 2)#("FS2018coffeeride", 2)
+    tdata = _get_hashtag_tdata("FS2018coffeeride", 2)
     return render_template('pointless/coffeeride.html', data={"tdata":tdata})
