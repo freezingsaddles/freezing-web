@@ -10,7 +10,7 @@ blueprint = Blueprint('pointless', __name__)
 @blueprint.route("/avgspeed")
 def averagespeed():
     q = text("""
-        select a.id, a.display_name, avg(b.average_speed) as speed from athletes a, rides b where a.id = b.athlete_id group by a.id order by speed;
+        select a.id, a.display_name, avg(b.average_speed) as speed from lbd_athletes a, rides b where a.id = b.athlete_id group by a.id order by speed;
         """)
     avgspeed = [(x['id'], x['display_name'], x['speed']) for x in db.session.execute(q).fetchall()]
     return render_template('pointless/averagespeed.html', avg=avgspeed)
@@ -19,7 +19,7 @@ def averagespeed():
 @blueprint.route("/avgdist")
 def shortride():
     q = text("""
-        select a.id, a.display_name, avg(b.distance) as dist, count(distinct(date(b.start_date))) as distrides from athletes a,
+        select a.id, a.display_name, avg(b.distance) as dist, count(distinct(date(b.start_date))) as distrides from lbd_athletes a,
         rides b where a.id = b.athlete_id group by a.id order by dist;
         """)
     avgdist = [(x['id'], x['display_name'], x['dist']) for x in db.session.execute(q).fetchall() if
@@ -31,7 +31,7 @@ def shortride():
 def billygoat():
     q = text("""
     select sum(a.elevation_gain) as elev,sum(a.distance) as dist, (sum(a.elevation_gain)/sum(a.distance)) as gainpermile,
-    c.name from rides a, athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by gainpermile desc;
+    c.name from rides a, lbd_athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by gainpermile desc;
     """)
     goat = [(x['name'], x['gainpermile'], x['dist'], x['elev']) for x in db.session.execute(q).fetchall()]
     return render_template('pointless/billygoat.html', data=goat)
@@ -40,7 +40,7 @@ def billygoat():
 @blueprint.route("/tortoiseteam")
 def tortoiseteam():
     q = text("""
-    select avg(a.average_speed) as spd,    c.name from rides a, athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by spd asc;
+    select avg(a.average_speed) as spd,    c.name from rides a, lbd_athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by spd asc;
     """)
     goat = [(x['name'], x['spd']) for x in db.session.execute(q).fetchall()]
     return render_template('pointless/tortoiseteam.html', data=goat)
@@ -52,7 +52,7 @@ def weekendwarrior():
         select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score,
         sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0)) as 'weekend',
         sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as 'weekday'
-        from daily_scores DS join athletes A on A.id = DS.athlete_id group by A.id
+        from daily_scores DS join lbd_athletes A on A.id = DS.athlete_id group by A.id
         order by weekend desc;
         """)
     weekend = [(x['athlete_id'], x['athlete_name'], x['total_score'], x['weekend'], x['weekday']) for x in
@@ -66,7 +66,7 @@ def avgtemp():
         select athlete_id, athlete_name, sum(temp_dist)/sum(distance) as avgtemp from (
         select A.id as athlete_id, A.display_name as athlete_name, W.ride_temp_avg, R.distance,
         W.ride_temp_avg * R.distance as temp_dist
-        from athletes A, ride_weather W, rides R where R.athlete_id = A.id and R.id=W.ride_id) as T
+        from lbd_athletes A, ride_weather W, rides R where R.athlete_id = A.id and R.id=W.ride_id) as T
         group by athlete_id, athlete_name order by avgtemp asc;
         """)
     tdata = [(x['athlete_id'], x['athlete_name'], x['avgtemp']) for x in db.session.execute(q).fetchall()]
@@ -77,7 +77,7 @@ def kidmiles():
     q = text ("""
         select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides,
         sum(R.distance) as kidical_miles
-        from athletes A
+        from lbd_athletes A
         join rides R on R.athlete_id = A.id
         where R.name like '%#kidical%'
         group by A.id, A.display_name
@@ -93,7 +93,7 @@ def opmdays():
     """
     q = text("""
         select A.id, A.display_name as athlete_name, count(distinct(date(R.start_date))) as days, sum(R.distance) as distance
-        from athletes A join rides R on R.athlete_id=A.id
+        from lbd_athletes A join rides R on R.athlete_id=A.id
         where date(R.start_date) in ('2017-01-26') group by R.athlete_id
         order by days desc, distance desc;
         """)
@@ -105,7 +105,7 @@ def opmdays():
 def points_per_mile():
     q = text("""
         select A.id, A.display_name as athlete_name, sum(B.distance) as dist, sum(B.points) as pnts, count(B.athlete_id) as ridedays
-        from athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
+        from lbd_athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
     """)
     ppm = [(x['athlete_name'], x['pnts'], x['dist'],(x['pnts']/x['dist']), x['ridedays']) for x in db.session.execute(q).fetchall()]
     ppm.sort(key=lambda tup: tup[3], reverse=True)

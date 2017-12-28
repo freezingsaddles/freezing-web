@@ -72,7 +72,7 @@ def individual_leaderboard_text():
              sum(DS.distance) as total_distance, sum(DS.points) as total_score,
              count(DS.points) as days_ridden
              from daily_scores DS
-             join athletes A on A.id = DS.athlete_id
+             join lbd_athletes A on A.id = DS.athlete_id
              join teams T on T.id = A.team_id
              where not T.leaderboard_exclude
              group by A.id, A.display_name

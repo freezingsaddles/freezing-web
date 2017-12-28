@@ -287,6 +287,11 @@ _v_ride_daylight = sa.DDL("""
     ;
     """)
 
+_v_leaderboard_athletes = sa.DDL("""
+    create view lbd_athletes as select a.id, a.name, a.display_name, a.team_id from athletes a
+    join teams T on T.id=a.team_id where not T.leaderboard_exclude
+    ;
+    """)
 
 # sa.event.listen(RideWeather.__table__, 'after_create', _v_ride_daylight)
 
@@ -300,3 +305,5 @@ def rebuild_views():
     sess.execute(_v_buid_ride_daylight)
     sess.execute(sa.DDL("drop view if exists ride_daylight;"))
     sess.execute(_v_ride_daylight)
+    sess.execute(sa.DDL("drop view if exists lbd_athletes;"))
+    sess.execute(_v_leaderboard_athletes)

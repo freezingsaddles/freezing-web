@@ -7,15 +7,20 @@ from sqlalchemy import text
 from bafs import db
 from bafs.model import Team, Athlete
 
-
 blueprint = Blueprint('people', __name__)
 
+def get_today():
+    """
+    Sometimes you have an old database for testing and you need to set today to be something that is not actually today
+    """
+    if False:
+        return date(2013, 2, 10)
+    return date.today()
 
 @blueprint.route("/")
 def people_list_users():
-    users_list = db.session.query(Athlete).order_by(Athlete.name)  # @UndefinedVariable
-    # tdy = date(2013, 2, 10) # For testing because DB is old
-    tdy = date.today()
+    users_list = db.session.query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
+    tdy = get_today()
     week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
     week_end = week_start + timedelta(days=6)
     users = []
@@ -43,7 +48,7 @@ def people_list_users():
 def people_show_person(user_id):
     our_user = db.session.query(Athlete).filter_by(id=user_id).first()  # @UndefinedVariable
     our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()  # @UndefinedVariable
-    tdy = date.today()
+    tdy = get_today()
     week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
     week_end = week_start + timedelta(days=6)
     weekly_dist = 0
@@ -69,7 +74,7 @@ def people_show_person(user_id):
 def ridedays():
     q = text("""
 		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles, max(b.ride_date) as lastride
-		 FROM athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
+		 FROM lbd_athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
 		;
 		"""
     )
@@ -77,3 +82,22 @@ def ridedays():
     ride_days = [(x['id'], x['display_name'], x['rides'], x['miles'], x['lastride'] >= date.today()) for x in
                  db.session.execute(q).fetchall()]
     return render_template('people/ridedays.html', ride_days=ride_days, num_days=total_days)
+
+@blueprint.route("/friends")
+def friends():
+    q = text("""
+             select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
+             sum(DS.distance) as total_distance, sum(DS.points) as total_score,
+             count(DS.points) as days_ridden
+             from daily_scores DS
+             join athletes A on A.id = DS.athlete_id
+             join teams T on T.id = A.team_id
+             where T.leaderboard_exclude
+             group by A.id, A.display_name
+             order by total_score desc
+             ;
+             """)
+
+    indiv_rows = db.session.execute(q).fetchall() # @UndefinedVariable
+
+    return render_template('people/friends.html', indiv_rows=indiv_rows)

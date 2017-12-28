@@ -87,7 +87,7 @@ def indiv_worst_day_points():
     count(s.points) as days_ridden from
     (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,(200-DDS.num_riders))) adj_points from daily_scores DS,
     (select ride_date, count(distinct(athlete_id)) as num_riders  from daily_scores group by ride_date order by ride_date) DDS where DS.ride_date=DDS.ride_date) s
-    join athletes A on A.id = s.athlete_id
+    join lbd_athletes A on A.id = s.athlete_id
     join teams T on T.id = A.team_id
     group by A.id, A.display_name
     order by total_adjusted desc;
