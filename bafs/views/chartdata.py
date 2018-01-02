@@ -46,7 +46,7 @@ def team_leaderboard_data():
     rows = []
     for i,res in enumerate(team_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place)},
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place)},
                  {'v': res['total_score'], 'f': str(int(res['total_score']))}]
         rows.append({'c': cells})
 
@@ -77,7 +77,7 @@ def indiv_leaderboard_data():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) }, {'v': res['total_score'], 'f': str(int(res['total_score']))}]
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) }, {'v': res['total_score'], 'f': str(int(res['total_score']))}]
         rows.append({'c': cells})
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
@@ -104,7 +104,7 @@ def team_elev_gain():
     rows = []
     for i,res in enumerate(team_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place)},
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place)},
                  {'v': res['cumul_elev_gain'], 'f': str(int(res['cumul_elev_gain']))}]
         rows.append({'c': cells})
 
@@ -132,7 +132,7 @@ def indiv_elev_gain():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) }, {'v': res['cumul_elev_gain'], 'f': str(int(res['cumul_elev_gain']))}]
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) }, {'v': res['cumul_elev_gain'], 'f': str(int(res['cumul_elev_gain']))}]
         rows.append({'c': cells})
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
@@ -158,7 +158,7 @@ def indiv_moving_time():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['total_moving_time'], 'f': str(timedelta(seconds=int(res['total_moving_time'])))}]
         rows.append({'c': cells})
 
@@ -186,7 +186,7 @@ def team_moving_time():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place) },
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
                  {'v': res['total_moving_time'], 'f': str(timedelta(seconds=int(res['total_moving_time'])))}]
         rows.append({'c': cells})
 
@@ -206,7 +206,7 @@ def indiv_number_sleaze_days():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['num_sleaze_days'], 'f': str(int(res['num_sleaze_days']))}]
         rows.append({'c': cells})
 
@@ -226,7 +226,7 @@ def team_number_sleaze_days():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place) },
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
                  {'v': res['num_sleaze_days'], 'f': str(int(res['num_sleaze_days']))}]
         rows.append({'c': cells})
 
@@ -256,7 +256,7 @@ def indiv_kidical():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['kidical_rides'], 'f': str(int(res['kidical_rides']))}]
         rows.append({'c': cells})
 
@@ -276,7 +276,7 @@ def indiv_freeze_points():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['freeze_points_total'], 'f': "{0:.2f}".format(res['freeze_points_total'])}]
         rows.append({'c': cells})
 
@@ -299,7 +299,7 @@ def indiv_segment(segment_id):
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['segment_rides'], 'f': str(int(res['segment_rides']))}]
         rows.append({'c': cells})
 
@@ -321,7 +321,7 @@ def team_segment(segment_id):
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place) },
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
                  {'v': res['segment_rides'], 'f': str(int(res['segment_rides']))}]
         rows.append({'c': cells})
 
@@ -350,7 +350,7 @@ def indiv_avg_speed():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])}]
         rows.append({'c': cells})
 
@@ -379,7 +379,7 @@ def team_avg_speed():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'].encode('utf-8'), place) },
+        cells = [{'v': res['team_name'], 'f': '{0} [{1}]'.format(res['team_name'], place) },
                  {'v': res['avg_speed'], 'f': "{0:.2f}".format(res['avg_speed'])}]
         rows.append({'c': cells})
 
@@ -407,7 +407,7 @@ def indiv_freezing():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['distance'], 'f': "{0:.2f}".format(res['distance'])}]
         rows.append({'c': cells})
 
@@ -436,7 +436,7 @@ def indiv_before_sunrise():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['dark'], 'f': str(timedelta(seconds=int(res['dark'])))}]
         rows.append({'c': cells})
 
@@ -465,7 +465,7 @@ def indiv_after_sunset():
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1
-        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place) },
+        cells = [{'v': res['athlete_name'], 'f': '{0} [{1}]'.format(res['athlete_name'], place) },
                  {'v': res['dark'], 'f': str(timedelta(seconds=int(res['dark'])))}]
         rows.append({'c': cells})
 
@@ -812,7 +812,7 @@ def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda 
         place = i+1
         cells = [
             {'v': res['athlete_name'],
-            'f': '{0} [{1}]'.format(res['athlete_name'].encode('utf-8'), place)},
+            'f': '{0} [{1}]'.format(res['athlete_name'], place)},
             {'v': res[query_label],
              'f': hover_lambda(res, query_label)}]
         rows.append({'c': cells})
