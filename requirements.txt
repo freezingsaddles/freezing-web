@@ -4,7 +4,7 @@ polyline==1.3.2
 alembic==0.8.4
 geojson==1.3.2
 six
--e git+https://github.com/hozn/GeoAlchemy@master#egg=GeoAlchemy
+-e git+https://github.com/hozn/GeoAlchemy@271a22735fc69ccd876886e8ac32516c43e63862#egg=GeoAlchemy
 mysqlclient==1.3.12
 arrow==0.7.0
 beautifulsoup4==4.3.2
