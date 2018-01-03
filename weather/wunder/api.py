@@ -7,7 +7,7 @@ import os
 import time
 import json
 import logging
-import urlparse
+from urllib.parse import urlparse, urlunsplit
 import functools
 import requests
 from datetime import datetime
@@ -108,7 +108,7 @@ class Client(object):
 
     # Here is an example URL:
     # http://api.wunderground.com/api/{api_key}/history_20130101/q/VA/Mc_Lean.json')
-    base_url = urlparse.urlparse('http://api.wunderground.com/api/')
+    base_url = urlparse('http://api.wunderground.com/api/')
 
     def __init__(self, api_key, cache_dir=None, pause=1.0, cache_only=False):
         """
@@ -158,7 +158,7 @@ class Client(object):
         # query_params.update(urllib.urlencode(kwargs))
         #new_query_string = urllib.urlencode(query_params)
 
-        url = urlparse.urlunsplit(
+        url = urlunsplit(
             (self.base_url.scheme, self.base_url.netloc, path, self.base_url.query, self.base_url.fragment))
 
         self.log.debug("GET {0!r} with params {1!r}".format(url, params))
