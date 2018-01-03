@@ -76,6 +76,7 @@ class Team(StravaEntity):
     athletes = orm.relationship("Athlete", backref="team")
     leaderboard_exclude = sa.Column(sa.Boolean, nullable=False, default=False)
 
+
 class Athlete(StravaEntity):
     """
     """
@@ -180,7 +181,7 @@ class RidePhoto(db.Model):
     id = sa.Column(sa.String(191), primary_key=True, autoincrement=False)
     source = sa.Column(sa.Integer, nullable=False, default=2)
     ride_id = sa.Column(sa.BigInteger, sa.ForeignKey('rides.id', ondelete="cascade"), index=True)
-    ref = sa.Column(sa.String(255), nullable=False)
+    ref = sa.Column(sa.String(255), nullable=True)
     caption = sa.Column(sa.Text, nullable=True)
 
     img_t = sa.Column(sa.String(255), nullable=True)
