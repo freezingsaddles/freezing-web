@@ -418,6 +418,7 @@ def write_ride_efforts(strava_activity, ride):
                                                                         effort=effort.segment_name))
 
             db.session.add(effort)
+            db.session.flush()
 
         ride.efforts_fetched = True
 
