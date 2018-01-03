@@ -126,5 +126,5 @@ if __name__ == "__main__":
     s = Sun(lat=39.45536859, lon= -77.4142634)
     when = datetime.now(tzinfo=pytz.timezone('America/New_York'))
     print(datetime.today())
-    print s.sunrise(when)
-    print s.sunset(when)
+    print(s.sunrise(when))
+    print(s.sunset(when))
