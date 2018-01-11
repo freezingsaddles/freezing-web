@@ -151,7 +151,10 @@ def register_athlete_team(strava_athlete, athlete_model):
         log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
         if len(matches) > 1:
-            log.info("Multiple teams matcheed.")
+            # you can be on multiple teams as long as only one is an official team
+            matches = [c for c in matches if c.id not in app.config['BAFS_OBSERVER_TEAMS']]
+        if len(matches) > 1:
+            log.info("Multiple teams matched.")
             raise MultipleTeamsError(matches)
         elif len(matches) == 0:
             raise NoTeamsError()
