@@ -182,10 +182,12 @@ class SyncActivityDetails(BaseCommand):
 
                 # We do this just to take advantage of the use-cache/only-cache feature for reprocessing activities.
                 data.update_ride_from_activity(strava_activity=strava_activity, ride=ride)
+                db.session.flush()
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))
                     data.write_ride_efforts(strava_activity, ride)
+                    db.session.flush()
                 except:
                     self.logger.error("Error writing efforts for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))

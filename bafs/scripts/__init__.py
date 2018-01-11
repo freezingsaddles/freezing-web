@@ -16,8 +16,8 @@ class BaseCommand(object):
     :type logger: logging.Logger
     """
 
-    # TODO: usage, help, etc.
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def name(self):
         """
         :return: The short name for the command.

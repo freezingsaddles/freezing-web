@@ -76,8 +76,7 @@ class SyncRideWeather(BaseCommand):
 
             try:
 
-                start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt)  # @UndefinedVariable
-
+                start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt)
                 point = parse_point_wkt(start_geo_wkt)
                 lon = point.lon
                 lat = point.lat

@@ -65,7 +65,7 @@ Critical things to set include:
 ```python
 
 # The SQLALchemy connection URL for your MySQL database.
-SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://bafs@localhost/bafs?charset=utf8mb4&binary_prefix=true'
 
 # These are issued when you create the Strava app.
 STRAVA_CLIENT_ID = 'xxxx1234'

@@ -232,15 +232,15 @@ class DataTable(object):
             return bool(value)
 
         elif value_type == "number":
-            if isinstance(value, (int, long, float)):
+            if isinstance(value, (int, float)):
                 return value
             raise DataTableException("Wrong type %s when expected number" % t_value)
 
         elif value_type == "string":
-            if isinstance(value, unicode):
+            if isinstance(value, str):
                 return value
             else:
-                return str(value).decode("utf-8")
+                return bytes(value).decode("utf-8")
 
         elif value_type == "date":
             if isinstance(value, datetime.datetime):
@@ -302,12 +302,12 @@ class DataTable(object):
                                                         datetime.date,
                                                         datetime.time)):
             return str(value)
-        elif isinstance(value, unicode):
+        elif isinstance(value, str):
             return value
         elif isinstance(value, bool):
             return str(value).lower()
         else:
-            return str(value).decode("utf-8")
+            return bytes(value).decode("utf-8")
 
     @staticmethod
     def ColumnTypeParser(description):
