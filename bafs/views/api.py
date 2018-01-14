@@ -164,8 +164,8 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     if end_date:
         end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
 
-    log.info("Filtering on start_date: {}".format(start_date))
-    log.info("Filtering on end_date: {}".format(end_date))
+    log.debug("Filtering on start_date: {}".format(start_date))
+    log.debug("Filtering on end_date: {}".format(end_date))
 
     sess = db.session
 
