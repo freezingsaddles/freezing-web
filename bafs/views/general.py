@@ -203,11 +203,20 @@ def authorization():
                                no_teams=no_teams)
 
 
-@blueprint.route("/webhook", methods=['GET', 'POST'])
-def webhook():
-    log.info("Received a webhook.")
-    log.info("Request JSON payload: {}".format(request.json))
+@blueprint.route("/webhook", methods=['GET'])
+def webhook_challenge():
+    client = Client()
+    strava_request = {k: request.args.get(k) for k in ('hub.challenge', 'hub.mode', 'hub.verify_token')}
+    log.info("Webhook challenge: {}".format(strava_request))
+    challenge_resp = client.handle_subscription_callback(strava_request, verify_token=app.config['STRAVA_VERIFY_TOKEN'])
+    return jsonify(challenge_resp)
+
+
+@blueprint.route("/webhook", methods=['POST'])
+def webhook_activity():
+    log.info("Activity webhook: {}".format(request.json))
     return jsonify()
+
 
 @blueprint.route("/explore")
 def trends():

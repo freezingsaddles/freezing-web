@@ -5,6 +5,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql://bafs@localhost/bafs?charset=utf8'
 # Need a Strava Client ID and secret in order to authorize users
 STRAVA_CLIENT_ID = 'xxxxxxxx'
 STRAVA_CLIENT_SECRETE = 'xxxxxxxx'
+STRAVA_VERIFY_TOKEN = 'yyyyyy'
 
 SESSION_SECRET= 'you-must-set-this-to-something-strong'
 
