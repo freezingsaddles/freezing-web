@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from datetime import datetime
 
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, abort
 from sqlalchemy import text
 
 from bafs import db
@@ -46,8 +46,11 @@ def people_list_users():
 
 @blueprint.route("/<user_id>")
 def people_show_person(user_id):
-    our_user = db.session.query(Athlete).filter_by(id=user_id).first()  # @UndefinedVariable
-    our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()  # @UndefinedVariable
+    our_user = db.session.query(Athlete).filter_by(id=user_id).first()
+    if not our_user:
+        abort(404)
+
+    our_team = db.session.query(Team).filter_by(id=our_user.team_id).first()
     tdy = get_today()
     week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
     week_end = week_start + timedelta(days=6)
