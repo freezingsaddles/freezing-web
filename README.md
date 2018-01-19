@@ -1,38 +1,34 @@
 # BikeArlington Freezing Saddles
 
-The BikeArlington Freezing Saddles ("bafs") project is a python web application that integrates with Strava APIs to
+The BikeArlington Freezing Saddles (aka "BAFS") project is a python web application that integrates with Strava APIs to
 provide charting (and intended to provide other reports too) for the Freezing Saddles cycling competition organized
 on BikeArlington forums.
 
+**NOTE:** This application is being refactored into different comopnents and minimize use of cron and polling for activity sync.  These instructions still assume the legacy system is in place. 
+
 ## Dependencies
 
-* Python 2.6+.  (This will not currently work with Python 3.)
-* Setuptools/Distribute
-* Virtualenv
-* [Stravalib](http://github.com/hozn/stravalib) 0.2 development version (from git)
+* Python 3.6+.  (This will not currently work with Python 2.)
+* Pip
+* Virtualenv (venv)
+* MySQL.  Sadly.
+
+You can also use the provided `Dockerfile` and `docker-compose.yml` to make this easier.
 
 ## Installation
 
-Eventually this will be installable via setuptools/distribute/pip; however, currently you must
-download / clone the source and run the python setup.py install command.
+Here are some instructions for setting up a development environment:
 
-Here are some instructions for setting up a development environment, which is more appropriate
-at this juncture.  Note that this library requires stravalib.
+```python
+# Clone repo
+shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
-	# Clone both bafs and stravalib repositories
-	shell$ git clone https://github.com/hozn/freezingsaddles.git
-	shell$ git clone https://github.com/hozn/stravalib.git
-
-	# Create and activate a virtual environment for bafs
-	shell$ cd bafs
-	shell$ python -m virtualenv --no-site-packages --distribute env
-	shell$ source env/bin/activate
-
-	# Install stravalib symlink into bafs virtual environment
-	(env) shell$ cd ../stravalib && python setup.py develop
-
-	# Now download the rest of the deps for bafs
-	(env) shell$ cd ../bafs && python setup.py develop
+# Create and activate a virtual environment for freezing-web
+shell$ cd freezing-web
+shell$ python3 -m venv env
+shell$ source env/bin/activate
+(env) shell$ python setup.py develop 
+```
 
 We will assume for all subsequent shell examples that you are running in the bafs activated virtualenv.  (This is denoted by using
 the "(env) shell$" prefix before shell commands.)    
@@ -44,9 +40,11 @@ provider only supports MySQL), it's what we're doing.
 
 You should create a database and create a user that can access the database.  Something like this should work in the default case:
 
-	shell$ mysql -uroot
-	mysql> create database bafs;
-	mysql> grant all on bafs.* to bafs@localhost;
+```bash
+shell$ mysql -uroot
+mysql> create database freezing;
+mysql> grant all on freezing.* to freezing@localhost;
+```
 
 ## Basic Usage
 
@@ -65,7 +63,8 @@ Critical things to set include:
 ```python
 
 # The SQLALchemy connection URL for your MySQL database.
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://bafs@localhost/bafs?charset=utf8mb4&binary_prefix=true'
+# NOTE THE CHARSET!
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true'
 
 # These are issued when you create the Strava app.
 STRAVA_CLIENT_ID = 'xxxx1234'
@@ -76,16 +75,21 @@ STRAVA_CLIENT_SECRET = '5678zzzz'
 
 You need to pull data from Strava (and any other APIs) into the local database for reporting.
 
-	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync
+```bash
+(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync
+```
 
 It is slow the first time because it does not parallelize the work.  By default it will only pull down rides that aren't
 already in the system.  Periodically (daily?) you probably also want to clear things out and pull down everything (e.g. in
 case someone edited a ride, etc.)
 
+```bash
 	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync --clear
+```
 
 Generally you'll want to set up cron.  Here is an example of my crontab while competition is running:
 
+(See note above; this is currently being redesigned to rely less on cron and polling for activity sync.)
 ```bash
 MAILTO="user@example.com"
 BAFS_SETTINGS=/home/freezingsaddles/sites/freezingsaddles.com/settings.cfg
@@ -117,7 +121,10 @@ BAFS_SETTINGS=/home/freezingsaddles/sites/freezingsaddles.com/settings.cfg
 
 You can start up the Flask development server for testing using the `bafs-server` command.
 
-	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-server
+```bash
+(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-server
+```
+
 
 ## Starting a New competition
 
