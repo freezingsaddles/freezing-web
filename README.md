@@ -19,7 +19,7 @@ You can also use the provided `Dockerfile` and `docker-compose.yml` to make this
 
 Here are some instructions for setting up a development environment:
 
-```python
+```bash
 # Clone repo
 shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
