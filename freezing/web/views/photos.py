@@ -5,10 +5,11 @@ from datetime import datetime
 from flask import render_template, Blueprint, app, send_file, request
 from sqlalchemy import text
 
-from bafs import db
-from bafs.model import Team, Athlete, RidePhoto, Ride
-from bafs.utils import insta
-from bafs.autolog import log
+from freezing.model import meta
+from freezing.model.orm import Team, Athlete, RidePhoto, Ride
+
+from freezing.web.utils import insta
+from freezing.web.autolog import log
 
 blueprint = Blueprint('photos', __name__)
 
@@ -34,7 +35,7 @@ def index():
 
     log.debug("Page = {0}, offset={1}, limit={2}".format(page, offset, limit))
 
-    total_q = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
+    total_q = meta.session_factory().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
     num_photos = total_q.count()
 
     page_q = total_q.limit(limit).offset(offset)

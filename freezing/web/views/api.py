@@ -9,12 +9,14 @@ import pytz
 from sqlalchemy import text
 from stravalib import unithelper as uh
 
-from bafs import app, db
-from bafs.autolog import log
-from bafs.model import RidePhoto, Ride, RideTrack, Athlete
-from bafs.serialize import RidePhotoSchema
-from bafs.utils import auth, dates
-from bafs.utils.wktutils import parse_linestring
+from freezing.model import meta
+from freezing.model.orm import RidePhoto, Ride, RideTrack, Athlete
+
+from freezing.web import app
+from freezing.web.autolog import log
+from freezing.web.serialize import RidePhotoSchema
+from freezing.web.utils import auth, dates
+from freezing.web.utils.wktutils import parse_linestring
 
 blueprint = Blueprint('api', __name__)
 
@@ -24,7 +26,7 @@ blueprint = Blueprint('api', __name__)
 def stats_general():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
 
-    indiv_count_res = db.session.execute(q).fetchone()  # @UndefinedVariable
+    indiv_count_res = meta.session_factory().execute(q).fetchone()  # @UndefinedVariable
     contestant_count = indiv_count_res['num_contestants']
 
     q = text("""
@@ -34,7 +36,7 @@ def stats_general():
                 ;
             """)
 
-    all_res = db.session.execute(q).fetchone()  # @UndefinedVariable
+    all_res = meta.session_factory().execute(q).fetchone()  # @UndefinedVariable
     total_miles = int(all_res['distance'])
     total_hours = uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
     total_rides = all_res['num_rides']
@@ -47,7 +49,7 @@ def stats_general():
                 ;
             """)
 
-    sub32_res = db.session.execute(q).fetchone()  # @UndefinedVariable
+    sub32_res = meta.session_factory().execute(q).fetchone()  # @UndefinedVariable
     sub_freezing_hours = uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
 
     q = text("""
@@ -58,7 +60,7 @@ def stats_general():
                 ;
             """)
 
-    rain_res = db.session.execute(q).fetchone()  # @UndefinedVariable
+    rain_res = meta.session_factory().execute(q).fetchone()  # @UndefinedVariable
     rain_hours = uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
 
     q = text("""
@@ -69,7 +71,7 @@ def stats_general():
                 ;
             """)
 
-    snow_res = db.session.execute(q).fetchone()  # @UndefinedVariable
+    snow_res = meta.session_factory().execute(q).fetchone()  # @UndefinedVariable
     snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
 
     return jsonify(
@@ -86,7 +88,7 @@ def stats_general():
 @blueprint.route("/photos")
 @auth.crossdomain(origin='*')
 def list_photos():
-    photos = db.session.query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(20)
+    photos = meta.session_factory().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(20)
     schema = RidePhotoSchema()
     results = []
     for p in photos:
@@ -112,7 +114,7 @@ def team_leaderboard():
              ;
              """)
 
-    team_rows = db.session.execute(q).fetchall()  # @UndefinedVariable
+    team_rows = meta.session_factory().execute(q).fetchall()  # @UndefinedVariable
 
     q = text("""
              select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
@@ -126,7 +128,7 @@ def team_leaderboard():
              """)
 
     team_members = {}
-    for indiv_row in db.session.execute(q).fetchall():  # @UndefinedVariable
+    for indiv_row in meta.session_factory().execute(q).fetchall():  # @UndefinedVariable
         team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
 
     for team_id in team_members:
@@ -167,7 +169,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     log.debug("Filtering on start_date: {}".format(start_date))
     log.debug("Filtering on end_date: {}".format(end_date))
 
-    sess = db.session
+    sess = meta.session_factory()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
     q = q.filter(Ride.private==False)

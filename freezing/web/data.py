@@ -18,11 +18,13 @@ from stravalib import Client
 from stravalib import model as strava_model
 from stravalib import unithelper
 
-from bafs import app, db, model
-from bafs.autolog import log
-from bafs.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
-from bafs.model import Athlete, Ride, RideGeo, RideEffort, RidePhoto, RideTrack, Team
-from bafs.utils import insta, wktutils
+from freezing.model import meta, orm
+from freezing.model.orm import Athlete, Ride, RideGeo, RideEffort, RidePhoto, RideTrack, Team
+
+from freezing.web import app
+from freezing.web.autolog import log
+from freezing.web.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
+from freezing.web.utils import insta, wktutils
 
 
 class StravaClientForAthlete(Client):
@@ -32,18 +34,18 @@ class StravaClientForAthlete(Client):
 
     def __init__(self, athlete):
         if not isinstance(athlete, Athlete):
-            athlete = db.session.query(Athlete).get(athlete)
+            athlete = meta.session_factory().query(Athlete).get(athlete)
         super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
 
 
 def register_athlete(strava_athlete, access_token):
     """
-    Ensure specified athlete is added to database, returns athlete model.
+    Ensure specified athlete is added to database, returns athlete orm.
 
     :return: The added athlete model object.
-    :rtype: :class:`bafs.model.Athlete`
+    :rtype: :class:`bafs.orm.Athlete`
     """
-    athlete = db.session.query(Athlete).get(strava_athlete.id)
+    athlete = meta.session_factory().query(Athlete).get(strava_athlete.id)
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
@@ -54,16 +56,16 @@ def register_athlete(strava_athlete, access_token):
     athlete.profile_photo = strava_athlete.profile
 
     athlete.access_token = access_token
-    db.session.add(athlete)
+    meta.session_factory().add(athlete)
     # We really shouldn't be committing here, since we want to disambiguate names after registering
-    db.session.commit()
+    meta.session_factory().commit()
 
     return athlete
 
 
 def disambiguate_athlete_display_names():
-    q = db.session.query(model.Athlete)
-    q = q.filter(model.Athlete.access_token != None)
+    q = meta.session_factory().query(orm.Athlete)
+    q = q.filter(orm.Athlete.access_token != None)
     athletes = q.all()
 
     # Ok, here is the plan; bin these things together based on firstname and last initial.
@@ -118,7 +120,7 @@ def disambiguate_athlete_display_names():
                 a.display_name = '{0} {1}'.format(fname, lname[:required_length])
 
     # Update the database with new values
-    db.session.commit()
+    meta.session_factory().commit()
 
 
 def register_athlete_team(strava_athlete, athlete_model):
@@ -128,14 +130,14 @@ def register_athlete_team(strava_athlete, athlete_model):
     Updates the passed-in Athlete model object with created/updated team.
 
     :param strava_athlete: The Strava model object for the athlete.
-    :type strava_athlete: :class:`stravalib.model.Athlete`
+    :type strava_athlete: :class:`stravalib.orm.Athlete`
 
     :param athlete_model: The athlete model object.
-    :type athlete_model: :class:`bafs.model.Athlete`
+    :type athlete_model: :class:`bafs.orm.Athlete`
 
-    :return: The :class:`bafs.model.Team` object will be returned which matches
+    :return: The :class:`bafs.orm.Team` object will be returned which matches
              configured teams.
-    :rtype: :class:`bafs.model.Team`
+    :rtype: :class:`bafs.orm.Team`
 
     :raise MultipleTeamsError: If this athlete is registered for multiple of
                                the configured teams.  That won't work.
@@ -161,17 +163,17 @@ def register_athlete_team(strava_athlete, athlete_model):
         else:
             club = matches[0]
             # create the team row if it does not exist
-            team = db.session.query(Team).get(club.id)
+            team = meta.session_factory().query(Team).get(club.id)
             if team is None:
                 team = Team()
             team.id = club.id
             team.name = club.name
             team.leaderboard_exclude = club.id in app.config['BAFS_OBSERVER_TEAMS']
             athlete_model.team = team
-            db.session.add(team)
+            meta.session_factory().add(team)
             return team
     finally:
-        db.session.commit()
+        meta.session_factory().commit()
 
 
 def get_team_name(club_id):
@@ -188,7 +190,7 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     List all of the rides for individual athlete.
 
     :param athlete: The Athlete model object.
-    :type athlete: bafs.model.Athlete
+    :type athlete: bafs.orm.Athlete
 
     :param start_date: The date to start listing rides.
     :type start_date: datetime.date
@@ -197,7 +199,7 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     :type exclude_keywords: list
 
     :return: list of activity objects for rides in reverse chronological order.
-    :rtype: list[stravalib.model.Activity]
+    :rtype: list[stravalib.orm.Activity]
     """
     client = StravaClientForAthlete(athlete)
 
@@ -227,7 +229,7 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
             return False
 
     try:
-        activities = client.get_activities(after=start_date, limit=None)  # type: List[stravalib.model.Activity]
+        activities = client.get_activities(after=start_date, limit=None)  # type: List[stravalib.orm.Activity]
         filtered_rides = [a for a in activities if
                           ((a.type == strava_model.Activity.RIDE or a.type == strava_model.Activity.EBIKERIDE)
                           and not a.manual and not a.trainer and not is_excluded(a))]
@@ -256,11 +258,11 @@ def write_ride(activity):
     """
     Takes the specified activity and writes it to the database.
 
-    :param activity: The Strava :class:`stravalib.model.Activity` object.
-    :type activity: stravalib.model.Activity
+    :param activity: The Strava :class:`stravalib.orm.Activity` object.
+    :type activity: stravalib.orm.Activity
 
     :return: A tuple including the written Ride model object, whether to resync segment efforts, and whether to resync photos.
-    :rtype: bafs.model.Ride
+    :rtype: bafs.orm.Ride
     """
 
     if activity.start_latlng:
@@ -283,7 +285,7 @@ def write_ride(activity):
     assert activity.distance is not None
 
     # Find the model object for that athlete (or create if doesn't exist)
-    athlete = db.session.query(Athlete).get(athlete_id)
+    athlete = meta.session_factory().query(Athlete).get(athlete_id)
     if not athlete:
         # The athlete has to exist since otherwise we wouldn't be able to query their rides
         raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
@@ -293,9 +295,9 @@ def write_ride(activity):
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo
         ride_geo.ride_id = activity.id
-        db.session.merge(ride_geo)
+        meta.session_factory().merge(ride_geo)
 
-    ride = db.session.query(Ride).get(activity.id)
+    ride = meta.session_factory().query(Ride).get(activity.id)
     new_ride = (ride is None)
     if ride is None:
         ride = Ride(activity.id)
@@ -327,7 +329,7 @@ def write_ride(activity):
     update_ride_from_activity(strava_activity=activity, ride=ride)
 
 
-    db.session.add(ride)
+    meta.session_factory().add(ride)
 
     return ride
 
@@ -337,7 +339,7 @@ def update_ride_from_activity(strava_activity, ride):
     Refactoring to just set ride properties from the Strava Activity object.
 
     :param strava_activity: The Strava Activyt
-    :type strava_activity: stravalib.model.Activity
+    :type strava_activity: stravalib.orm.Activity
     :param ride: The ride model object.
     :type ride: Ride
     """
@@ -396,18 +398,18 @@ def write_ride_efforts(strava_activity, ride):
     """
     Writes out all effort associated with a ride to the database.
 
-    :param strava_activity: The :class:`stravalib.model.Activity` that is associated with this effort.
-    :type strava_activity: :class:`stravalib.model.Activity`
+    :param strava_activity: The :class:`stravalib.orm.Activity` that is associated with this effort.
+    :type strava_activity: :class:`stravalib.orm.Activity`
 
     :param ride: The db model object for ride.
-    :type ride: :class:`bafs.model.Ride`
+    :type ride: :class:`bafs.orm.Ride`
     """
     assert isinstance(strava_activity, strava_model.Activity)
     assert isinstance(ride, Ride)
 
     try:
         # Start by removing any existing segments for the ride.
-        db.engine.execute(RideEffort.__table__.delete().where(RideEffort.ride_id == strava_activity.id))
+        meta.engine.execute(RideEffort.__table__.delete().where(RideEffort.ride_id == strava_activity.id))
 
         # Then add them back in
         for se in strava_activity.segment_efforts:
@@ -420,8 +422,8 @@ def write_ride_efforts(strava_activity, ride):
             log.debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
                                                                         effort=effort.segment_name))
 
-            db.session.add(effort)
-            db.session.flush()
+            meta.session_factory().add(effort)
+            meta.session_factory().flush()
 
         ride.efforts_fetched = True
 
@@ -434,14 +436,14 @@ def write_ride_efforts(strava_activity, ride):
 #     """
 #     Store GPS track for activity as LINESTRING in db.
 #
-#     :param strava_activity: The Strava :class:`stravalib.model.Activity` object.
-#     :type strava_activity: :class:`stravalib.model.Activity`
+#     :param strava_activity: The Strava :class:`stravalib.orm.Activity` object.
+#     :type strava_activity: :class:`stravalib.orm.Activity`
 #
 #     :param ride: The db model object for ride.
-#     :type ride: :class:`bafs.model.Ride`
+#     :type ride: :class:`bafs.orm.Ride`
 #     """
 #     # Start by removing any existing segments for the ride.
-#     db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == strava_activity.id))
+#     meta.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == strava_activity.id))
 #
 #     if strava_activity.map.polyline:
 #         latlon_points = PolylineCodec().decode(strava_activity.map.polyline)
@@ -454,22 +456,22 @@ def write_ride_efforts(strava_activity, ride):
 #         ride_track = RideTrack()
 #         ride_track.gps_track = gps_track
 #         ride_track.ride_id = strava_activity.id
-#         db.session.add(ride_track)
+#         meta.session_factory().add(ride_track)
 
 
 def write_ride_streams(streams, ride):
     """
     Store GPS track for activity as LINESTRING in db.
 
-    :param streams: The Strava :class:`stravalib.model.Activity` object.
-    :type streams: list[stravalib.model.Stream]
+    :param streams: The Strava :class:`stravalib.orm.Activity` object.
+    :type streams: list[stravalib.orm.Stream]
 
     :param ride: The db model object for ride.
-    :type ride: :class:`bafs.model.Ride`
+    :type ride: :class:`bafs.orm.Ride`
     """
     try:
         streams_dict = {s.type: s for s in streams}
-        """ :type: dict[str,stravalib.model.Stream] """
+        """ :type: dict[str,stravalib.orm.Stream] """
         lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
 
         if not lonlat_points:
@@ -479,7 +481,7 @@ def write_ride_streams(streams, ride):
         ride.track_fetched = None
     else:
         # Start by removing any existing segments for the ride.
-        db.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
+        meta.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
 
         gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
 
@@ -488,7 +490,7 @@ def write_ride_streams(streams, ride):
         ride_track.ride_id = ride.id
         ride_track.elevation_stream = streams_dict['altitude'].data
         ride_track.time_stream = streams_dict['time'].data
-        db.session.add(ride_track)
+        meta.session_factory().add(ride_track)
 
     ride.track_fetched = True
 
@@ -507,11 +509,11 @@ def _write_instagram_photo_primary(photo, ride):
     Writes an instagram primary photo to db.
 
     :param photo: The primary photo from an activity.
-    :type photo: stravalib.model.ActivityPhotoPrimary
+    :type photo: stravalib.orm.ActivityPhotoPrimary
     :param ride: The db model object for ride.
-    :type ride: bafs.model.Ride
+    :type ride: bafs.orm.Ride
     :return: The newly added ride photo object.
-    :rtype: bafs.model.RidePhoto
+    :rtype: bafs.orm.RidePhoto
     """
     # Here is when we have an Instagram photo as primary:
     #  u'photos': {u'count': 1,
@@ -560,8 +562,8 @@ def _write_instagram_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
 
-    db.session.add(p)
-    db.session.flush()
+    meta.session_factory().add(p)
+    meta.session_factory().flush()
 
     return p
 
@@ -570,11 +572,11 @@ def _write_strava_photo_primary(photo, ride):
     Writes a strava native (source=1) primary photo to db.
 
     :param photo: The primary photo from an activity.
-    :type photo: stravalib.model.ActivityPhotoPrimary
+    :type photo: stravalib.orm.ActivityPhotoPrimary
     :param ride: The db model object for ride.
-    :type ride: bafs.model.Ride
+    :type ride: bafs.orm.Ride
     :return: The newly added ride photo object.
-    :rtype: bafs.model.RidePhoto
+    :rtype: bafs.orm.RidePhoto
     """
     # 'photos': {u'count': 1,
     #   u'primary': {u'id': None,
@@ -599,8 +601,8 @@ def _write_strava_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Strava ride photo: {}".format(p))
 
-    db.session.add(p)
-    db.session.flush()
+    meta.session_factory().add(p)
+    meta.session_factory().flush()
     return p
 
 
@@ -608,11 +610,11 @@ def write_ride_photo_primary(strava_activity, ride):
     """
     Store primary photo for activity from the main detail-level activity.
 
-    :param strava_activity: The Strava :class:`stravalib.model.Activity` object.
-    :type strava_activity: :class:`stravalib.model.Activity`
+    :param strava_activity: The Strava :class:`stravalib.orm.Activity` object.
+    :type strava_activity: :class:`stravalib.orm.Activity`
 
     :param ride: The db model object for ride.
-    :type ride: bafs.model.Ride
+    :type ride: bafs.orm.Ride
     """
     # If we have > 1 instagram photo, then we don't do anything.
     if strava_activity.photo_count > 1:
@@ -620,7 +622,7 @@ def write_ride_photo_primary(strava_activity, ride):
         return
 
     # Start by removing any priamry photos for this ride.
-    db.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == strava_activity.id,
+    meta.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == strava_activity.id,
                                                               RidePhoto.primary == True)))
 
     primary_photo = strava_activity.photos.primary
@@ -637,10 +639,10 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     Writes out non-primary photos (currently only instagram) associated with a ride to the database.
 
     :param activity_photos: Photos for an activity.
-    :type activity_photos: list[stravalib.model.ActivityPhoto]
+    :type activity_photos: list[stravalib.orm.ActivityPhoto]
 
     :param ride: The db model object for ride.
-    :type ride: bafs.model.Ride
+    :type ride: bafs.orm.Ride
     """
     # [{u'activity_id': 414980300,
     #   u'activity_name': u'Pimmit Run CX',
@@ -658,7 +660,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     #   u'uploaded_at': u'2015-10-17T17:55:45Z',
     #   u'urls': {u'0': u'https://instagram.com/p/88qaqZvrBI/media?size=t'}}]
 
-    db.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == ride.id,
+    meta.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == ride.id,
                                                               RidePhoto.primary == False)))
 
     insta_client = insta.configured_instagram_client()
@@ -666,7 +668,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     for activity_photo in activity_photos:
 
         # If it's already in the db, then skip it.
-        existing = db.session.query(RidePhoto).get(activity_photo.uid)
+        existing = meta.session_factory().query(RidePhoto).get(activity_photo.uid)
         if existing:
             log.info("Skipping photo {} because it's already in database: {}".format(activity_photo, existing))
             continue
@@ -682,11 +684,11 @@ def write_ride_photos_nonprimary(activity_photos, ride):
             photo.img_l = media.get_standard_resolution_url()
             photo.img_t = media.get_thumbnail_url()
 
-            db.session.add(photo)
+            meta.session_factory().add(photo)
 
             log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
 
-            db.session.flush()
+            meta.session_factory().flush()
         except (InstagramAPIError, InstagramClientError) as e:
             if e.status_code == 400:
                 log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))

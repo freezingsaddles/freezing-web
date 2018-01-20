@@ -1,8 +1,9 @@
 from instagram import InstagramAPIError
 
-from bafs import db, model, data
-from bafs.scripts import BaseCommand
-from bafs.utils.insta import configured_instagram_client, photo_cache_path
+from freezing.model import meta, orm
+from freezing.web import data
+from freezing.web.scripts import BaseCommand
+from freezing.web.utils.insta import configured_instagram_client, photo_cache_path
 
 
 class SyncPhotos(BaseCommand):
@@ -21,10 +22,11 @@ class SyncPhotos(BaseCommand):
     def execute(self, options, args):
 
         # if options.rewrite:
-        #     db.engine.execute(model.RidePhoto.__table__.delete())
-        #     db.session.query(model.Ride).update({"photos_fetched": False})
+        #     meta.engine.execute(orm.RidePhoto.__table__.delete())
+        #     meta.session_factory().query(orm.Ride).update({"photos_fetched": False})
+        sess = meta.session_factory()
 
-        q = db.session.query(model.Ride)
+        q = sess.query(orm.Ride)
         q = q.filter_by(photos_fetched=False, private=False)
 
         for ride in q:
@@ -33,12 +35,12 @@ class SyncPhotos(BaseCommand):
             try:
 
                 activity_photos = client.get_activity_photos(ride.id, only_instagram=True)
-                """ :type: list[stravalib.model.ActivityPhoto] """
+                """ :type: list[stravalib.orm.ActivityPhoto] """
                 data.write_ride_photos_nonprimary(activity_photos, ride)
 
-                db.session.commit()
+                sess.commit()
             except:
-                db.session.rollback()
+                sess.rollback()
                 self.logger.exception("Error fetching/writing non-primary photos activity {0}, athlete {1}".format(ride.id, ride.athlete))
 
 def main():

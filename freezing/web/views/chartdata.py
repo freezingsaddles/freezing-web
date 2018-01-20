@@ -13,11 +13,13 @@ from flask import render_template, redirect, url_for, current_app, request, Blue
 from sqlalchemy import text
 from dateutil import rrule
 
-from bafs import app, db
-from bafs.utils import gviz_api
-from bafs.utils.dates import parse_competition_timestamp
-from bafs.model import Team, RideEffort
-from bafs.views.shared_sql import *
+from freezing.model import meta
+from freezing.model.orm import Team, RideEffort
+
+from freezing.web import app
+from freezing.web.utils import gviz_api
+from freezing.web.utils.dates import parse_competition_timestamp
+from freezing.web.views.shared_sql import *
 
 blueprint = Blueprint('chartdata', __name__)
 
@@ -36,7 +38,7 @@ def team_leaderboard_data():
              ;
              """)
 
-    team_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    team_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'team_name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -67,7 +69,7 @@ def indiv_leaderboard_data():
              ;
              """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -94,7 +96,7 @@ def team_elev_gain():
         ;
         """)
 
-    team_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    team_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -122,7 +124,7 @@ def indiv_elev_gain():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Elevation', 'type': 'number'},
@@ -149,7 +151,7 @@ def indiv_moving_time():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -177,7 +179,7 @@ def team_moving_time():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -197,7 +199,7 @@ def indiv_number_sleaze_days():
 
     q = indiv_sleaze_query()
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -217,7 +219,7 @@ def team_number_sleaze_days():
 
     q = team_sleaze_query()
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -235,7 +237,7 @@ def team_number_sleaze_days():
 @blueprint.route("/indiv_kidical")
 def indiv_kidical():
 
-    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    #an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
     q = text ("""
                 select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides
@@ -247,7 +249,7 @@ def indiv_kidical():
                 ;
             """)
 
-    indiv_q = db.engine.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.engine.execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Kidical Rides', 'type': 'number'},
@@ -267,7 +269,7 @@ def indiv_kidical():
 def indiv_freeze_points():
 
     q = indiv_freeze_query()
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Freeze Points', 'type': 'number'},
@@ -286,11 +288,11 @@ def indiv_freeze_points():
 @blueprint.route("/indiv_segment/<int:segment_id>")
 def indiv_segment(segment_id):
 
-    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    #an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
     q = indiv_segment_query()
 
-    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    indiv_q = meta.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
@@ -308,11 +310,11 @@ def indiv_segment(segment_id):
 @blueprint.route("/team_segment/<int:segment_id>")
 def team_segment(segment_id):
 
-    #an_effort = db.session.query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
+    #an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
     q = team_segment_query()
 
-    indiv_q = db.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
+    indiv_q = meta.engine.execute(q, segment_id=segment_id).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Times Ridden', 'type': 'number'},
@@ -341,7 +343,7 @@ def indiv_avg_speed():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -370,7 +372,7 @@ def team_avg_speed():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -398,7 +400,7 @@ def indiv_freezing():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Miles Below Freezing', 'type': 'number'},
@@ -427,7 +429,7 @@ def indiv_before_sunrise():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Before Sunrise', 'type': 'number'},
@@ -456,7 +458,7 @@ def indiv_after_sunset():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'After Sunset', 'type': 'number'},
@@ -476,7 +478,7 @@ def indiv_after_sunset():
 def user_daily_points(athlete_id):
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
     day_q = text("""
              select DS.points
              from daily_scores DS
@@ -499,7 +501,7 @@ def user_daily_points(athlete_id):
         cells = [{'v': '{0}'.format(dt.strftime('%b %d')), 'f': '{0}'.format(dt.strftime('%m/%d'))}, # Competition always starts at day 1, regardless of isocalendar day no
                  ]
 
-        points = db.engine.execute(day_q, id=athlete_id, yday=day_no).scalar() # @UndefinedVariable
+        points = meta.engine.execute(day_q, id=athlete_id, yday=day_no).scalar() # @UndefinedVariable
         if points is None:
             points = 0
         cells.append({'v': points, 'f': '{0:.2f}'.format(points)})
@@ -512,7 +514,7 @@ def user_daily_points(athlete_id):
 def user_weekly_points(athlete_id):
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
     week_q = text("""
              select sum(DS.points) as total_score
              from daily_scores DS
@@ -535,7 +537,7 @@ def user_weekly_points(athlete_id):
         cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
                  ]
         for t in teams:
-            total_score = db.engine.execute(week_q, athlete_id=athlete_id, week=week_no-1).scalar() # @UndefinedVariable
+            total_score = meta.engine.execute(week_q, athlete_id=athlete_id, week=week_no-1).scalar() # @UndefinedVariable
             if total_score is None:
                 total_score = 0
             cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
@@ -548,7 +550,7 @@ def user_weekly_points(athlete_id):
 def team_weekly_points():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
     week_q = text("""
              select sum(DS.points) as total_score
              from daily_scores DS
@@ -572,7 +574,7 @@ def team_weekly_points():
         cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)}, # Competition always starts at week 1, regardless of isocalendar week no
                  ]
         for t in teams:
-            total_score = db.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar() # @UndefinedVariable
+            total_score = meta.engine.execute(week_q, team_id=t.id, week=week_no-1).scalar() # @UndefinedVariable
             if total_score is None:
                 total_score = 0
             cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
@@ -585,7 +587,7 @@ def team_weekly_points():
 def team_cumul_points():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
 
     q = text("""
             select team_id, ride_date, points,
@@ -610,7 +612,7 @@ def team_cumul_points():
 
     for team in teams:
         daily_cumul[team.id] = copy.copy(tpl_dict) # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in db.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
+        for row in meta.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
             daily_cumul[team.id][row['ride_date'].strftime('%Y-%m-%d')] = row['cumulative_points']
 
         # Fill in any None gaps with the previous non-None value
@@ -634,7 +636,7 @@ def team_cumul_points():
 def team_cumul_mileage():
     """
     """
-    teams = db.session.query(Team).all() # @UndefinedVariable
+    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
 
     q = text("""
             select team_id, ride_date, points,
@@ -659,7 +661,7 @@ def team_cumul_mileage():
 
     for team in teams:
         daily_cumul[team.id] = copy.copy(tpl_dict) # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in db.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
+        for row in meta.engine.execute(q, team_id=team.id).fetchall(): # @UndefinedVariable
             daily_cumul[team.id][row['ride_date'].strftime('%Y-%m-%d')] = row['cumulative_distance']
 
         # Fill in any None gaps with the previous non-None value
@@ -696,7 +698,7 @@ def indiv_elev_dist():
                 ;
             """)
 
-    indiv_q = db.session.execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'ID', 'label': 'ID', 'type': 'string'},
             {'id': 'score', 'label': 'Distance', 'type': 'number'},
@@ -748,7 +750,7 @@ def riders_by_lowtemp():
             ]
 
     rows = []
-    for res in db.session.execute(q): # @UndefinedVariable
+    for res in meta.session_factory().execute(q): # @UndefinedVariable
         if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
@@ -780,7 +782,7 @@ def distance_by_lowtemp():
             ]
 
     rows = []
-    for res in db.session.execute(q): # @UndefinedVariable
+    for res in meta.session_factory().execute(q): # @UndefinedVariable
         if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
@@ -806,7 +808,7 @@ def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda 
             {'id': 'score', 'label': display_label, 'type': 'number'},
             ]
 
-    indiv_q = db.session.execute(q).fetchall()
+    indiv_q = meta.session_factory().execute(q).fetchall()
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1

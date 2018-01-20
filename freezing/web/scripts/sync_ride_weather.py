@@ -3,9 +3,12 @@ from datetime import timedelta
 
 from sqlalchemy import text
 
-from bafs import db, model, app
-from bafs.scripts import BaseCommand
-from bafs.utils.wktutils import parse_point_wkt
+from freezing.model import meta, orm
+
+from freezing.web import app
+from freezing.web.scripts import BaseCommand
+from freezing.web.utils.wktutils import parse_point_wkt
+
 from weather.sunrise import Sun
 from weather.wunder import api as wu_api
 
@@ -34,11 +37,11 @@ class SyncRideWeather(BaseCommand):
         return parser
 
     def execute(self, options, args):
-        sess = db.session
+        sess = meta.session_factory()
 
         if options.clear:
             self.logger.info("Clearing all weather data!")
-            sess.query(model.RideWeather).delete()
+            sess.query(orm.RideWeather).delete()
 
         if options.limit:
             self.logger.info("Fetching weather for first {0} rides".format(options.limit))
@@ -46,7 +49,7 @@ class SyncRideWeather(BaseCommand):
             self.logger.info("Fetching weather for all rides")
 
         # Find rides that have geo, but no weather
-        sess.query(model.RideWeather)
+        sess.query(orm.RideWeather)
         q = text("""
             select R.id from rides R
             join ride_geo G on G.ride_id = R.id
@@ -62,7 +65,7 @@ class SyncRideWeather(BaseCommand):
                           pause=7.0,  # Max requests 10/minute for developer license
                           cache_only=options.cache_only)
 
-        rows = db.engine.execute(q).fetchall()  # @UndefinedVariable
+        rows = meta.engine.execute(q).fetchall()  # @UndefinedVariable
         num_rides = len(rows)
 
         for i, r in enumerate(rows):
@@ -71,12 +74,12 @@ class SyncRideWeather(BaseCommand):
                 logging.info("Limit ({0}) reached".format(options.limit))
                 break
 
-            ride = sess.query(model.Ride).get(r['id'])
+            ride = sess.query(orm.Ride).get(r['id'])
             self.logger.info("Processing ride: {0} ({1}/{2})".format(ride.id, i, num_rides))
 
             try:
 
-                start_geo_wkt = db.session.scalar(ride.geo.start_geo.wkt)
+                start_geo_wkt = meta.session_factory().scalar(ride.geo.start_geo.wkt)
                 point = parse_point_wkt(start_geo_wkt)
                 lon = point.lon
                 lat = point.lat
@@ -102,7 +105,7 @@ class SyncRideWeather(BaseCommand):
                         return None
                     return sum(no_nulls) / len(no_nulls) * 1.0  # to force float
 
-                rw = model.RideWeather()
+                rw = orm.RideWeather()
                 rw.ride_id = ride.id
                 rw.ride_temp_start = start_obs.temp
                 rw.ride_temp_end = end_obs.temp

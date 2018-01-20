@@ -1,6 +1,3 @@
-"""
-Library for the Bike Arlington Freezing Saddles (BAFS) competition.
-"""
 import sys
 import os.path
 import re
@@ -11,9 +8,13 @@ from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 __authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
-__copyright__ = "Copyright 2013 Hans Lellelid"
+__copyright__ = "Copyright 2018 Hans Lellelid"
 
-version = '0.2'
+version = '1.0'
+
+long_description="""
+The freezing saddles cycling competition website/scoreboard.
+"""
 
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
 install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requirements.txt'), session=uuid.uuid1())
@@ -22,27 +23,8 @@ install_reqs = parse_requirements(os.path.join(os.path.dirname(__file__), 'requi
 # e.g. ['django==1.5.1', 'mezzanine==1.4.6']
 reqs = [str(ir.req) for ir in install_reqs]
 
-news = os.path.join(os.path.dirname(__file__), 'docs', 'news.txt')
-news = open(news).read()
-parts = re.split(r'([0-9\.]+)\s*\n\r?-+\n\r?', news)
-found_news = ''
-for i in range(len(parts)-1):
-    if parts[i] == version:
-        found_news = parts[i+i]
-        break
-if not found_news:
-    warnings.warn('No news for this version found.')
 
-long_description="""
-Library for the bike arlington freezing saddles
-"""
-
-if found_news:
-    title = 'Changes in %s' % version
-    long_description += "\n%s\n%s\n" % (title, '-'*len(title))
-    long_description += found_news
-    
-setup(name='bafs',
+setup(name='freezing-web',
       version=version,
       description=__doc__,
       long_description=long_description,
@@ -50,7 +32,7 @@ setup(name='bafs',
       author_email="hans@xmpl.org",
       packages = find_packages(exclude=['tests', 'ez_setup.py', '*.tests.*', 'tests.*', '*.tests']),
       license='Apache',
-      url="http://github.com/hozn/freezing",
+      url="http://github.com/freezingsaddles/freezing-web",
       keywords='strava api',
       test_suite="nose.collector",
       tests_require=['nose>=0.11', 'mock'],
@@ -59,20 +41,18 @@ setup(name='bafs',
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: Apache Software License",
                    "Operating System :: OS Independent",
-                   "Programming Language :: Python :: 2.6",
-                   "Programming Language :: Python :: 2.7",
-                   #"Topic :: Software Development :: Libraries :: Python Modules",
+                   "Programming Language :: Python :: 3.6",
                    ],
       entry_points="""
         [console_scripts]
-        bafs-init-db = bafs.scripts.init_db:main
-        bafs-sync = bafs.scripts.sync_rides:main
-        bafs-sync-detail = bafs.scripts.sync_activity_detail:main
-        bafs-sync-streams = bafs.scripts.sync_streams:main
-        bafs-sync-photos = bafs.scripts.sync_photos:main
-        bafs-sync-weather = bafs.scripts.sync_ride_weather:main
-        bafs-sync-athletes = bafs.scripts.sync_athletes:main
-        bafs-server = bafs.runserver:main
-        bafs-fix-photo-urls = bafs.scripts.fix_photo_urls:main
+        bafs-init-db = freezing.web.scripts.init_db:main
+        bafs-sync = freezing.web.scripts.sync_rides:main
+        bafs-sync-detail = freezing.web.scripts.sync_activity_detail:main
+        bafs-sync-streams = freezing.web.scripts.sync_streams:main
+        bafs-sync-photos = freezing.web.scripts.sync_photos:main
+        bafs-sync-weather = freezing.web.scripts.sync_ride_weather:main
+        bafs-sync-athletes = freezing.web.scripts.sync_athletes:main
+        bafs-server = freezing.web.runserver:main
+        bafs-fix-photo-urls = freezing.web.scripts.fix_photo_urls:main
         """,
      )

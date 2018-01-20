@@ -1,23 +1,13 @@
 import json
-import copy
 import logging
-from collections import defaultdict
-from datetime import datetime, timedelta, date
+from datetime import datetime
 
-from flask import render_template, redirect, url_for, current_app, request, Blueprint, session, g, jsonify
+from flask import render_template, current_app, request, Blueprint, session, jsonify
 
-from sqlalchemy import text
+from freezing.model import meta
+from freezing.model.orm import Ride
 
-from stravalib import Client
-from stravalib import unithelper as uh
-
-from bafs import app, db, data
-from bafs.utils import gviz_api, auth
-from bafs.model import Team, Athlete, RidePhoto, Ride, RideWeather
-from bafs.utils.auth import requires_auth
-
-from .people import people_list_users, people_show_person, ridedays
-from .pointless import averagespeed, shortride, billygoat, tortoiseteam, weekendwarrior
+from freezing.web.utils.auth import requires_auth
 
 
 def bt_jsonify(data):
@@ -43,10 +33,10 @@ def rides():
 @requires_auth
 def ride_refetch_photos():
     ride_id = request.form['id']
-    ride = db.session.query(Ride).filter(Ride.id==ride_id).filter(Ride.athlete_id==session.get('athlete_id')).one()
+    ride = meta.session_factory().query(Ride).filter(Ride.id==ride_id).filter(Ride.athlete_id==session.get('athlete_id')).one()
     ride.photos_fetched = False
     logging.info("Marking photos to be refetched for ride {}".format(ride))
-    db.session.commit()
+    meta.session_factory().commit()
     return jsonify(success=True)  # I don't really have anything useful to spit back.
 
 @blueprint.route("/rides.json")
@@ -54,7 +44,7 @@ def ride_refetch_photos():
 def rides_data():
     athlete_id = session.get('athlete_id')
 
-    rides_q = db.session.query(Ride).filter(Ride.athlete_id==athlete_id).order_by(Ride.start_date.desc())
+    rides_q = meta.session_factory().query(Ride).filter(Ride.athlete_id==athlete_id).order_by(Ride.start_date.desc())
     results = []
 
     for r in rides_q:
@@ -75,7 +65,7 @@ def rides_data():
                             avg_temp=avg_temp
                             ))
 
-    #rides = db.session.query(Ride).all()
+    #rides = meta.session_factory().query(Ride).all()
     return bt_jsonify(results)
 
 #     athlete_id = sa.Column(sa.BigInteger, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)

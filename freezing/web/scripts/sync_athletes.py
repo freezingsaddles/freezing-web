@@ -1,5 +1,7 @@
-from bafs import db, model, data
-from bafs.scripts import BaseCommand
+from freezing.model import meta, orm
+
+from freezing.web import data
+from freezing.web.scripts import BaseCommand
 
 
 class SyncAthletes(BaseCommand):
@@ -16,13 +18,13 @@ class SyncAthletes(BaseCommand):
 
     def execute(self, options, args):
 
-        sess = db.session
+        sess = meta.session_factory()
 
         # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
         # for those that don't.)
 
-        q = sess.query(model.Athlete)
-        q = q.filter(model.Athlete.access_token != None)
+        q = sess.query(orm.Athlete)
+        q = q.filter(orm.Athlete.access_token != None)
 
         for athlete in q.all():
             self.logger.info("Updating athlete: {0}".format(athlete))

@@ -6,7 +6,7 @@ import urllib
 import shutil
 
 from instagram.client import InstagramAPI
-from bafs import app, exc
+from freezing.web import app, exc
 
 THUMBNAIL_DIMS = (150,150)
 STANDARD_DIMS = (640, 640)

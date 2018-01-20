@@ -9,12 +9,15 @@ import progressbar
 
 from stravalib import model as stravamodel
 
-from bafs import db, model, data, app
-from bafs.model import Ride, RideTrack, RidePhoto
-from bafs.scripts import BaseCommand
-from bafs.utils.insta import configured_instagram_client, photo_cache_path
-from bafs.exc import ConfigurationError
-from bafs.autolog import log
+from freezing.model import meta
+from freezing.model.orm import Ride, RideTrack, RidePhoto
+
+from freezing.web import data, app
+
+from freezing.web.scripts import BaseCommand
+from freezing.web.utils.insta import configured_instagram_client, photo_cache_path
+from freezing.web.exc import ConfigurationError
+from freezing.web.autolog import log
 
 
 class SyncActivityDetails(BaseCommand):
@@ -115,7 +118,7 @@ class SyncActivityDetails(BaseCommand):
 
     def execute(self, options, args):
 
-        q = db.session.query(model.Ride)
+        q = meta.session_factory().query(Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
         q = q.filter(Ride.private==False)
@@ -182,12 +185,12 @@ class SyncActivityDetails(BaseCommand):
 
                 # We do this just to take advantage of the use-cache/only-cache feature for reprocessing activities.
                 data.update_ride_from_activity(strava_activity=strava_activity, ride=ride)
-                db.session.flush()
+                meta.session_factory().flush()
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))
                     data.write_ride_efforts(strava_activity, ride)
-                    db.session.flush()
+                    meta.session_factory().flush()
                 except:
                     self.logger.error("Error writing efforts for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
@@ -205,11 +208,11 @@ class SyncActivityDetails(BaseCommand):
                     raise
 
                 ride.detail_fetched = True
-                db.session.commit()
+                meta.session_factory().commit()
 
             except:
                 self.logger.exception("Error fetching/writing activity detail {}, athlete {}".format(ride.id, ride.athlete))
-                db.session.rollback()
+                meta.session_factory().rollback()
 
 
 def main():

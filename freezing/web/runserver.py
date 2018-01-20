@@ -1,6 +1,6 @@
 import logging
 
-from bafs import app
+from freezing.web import app
 from colorlog import ColoredFormatter
 
 def main():

@@ -5,8 +5,8 @@ import optparse
 from colorlog import ColoredFormatter
 import six
 
-from bafs import app
-from bafs.exc import CommandError
+from freezing.web import app
+from freezing.web.exc import CommandError
 
 
 @six.add_metaclass(abc.ABCMeta)

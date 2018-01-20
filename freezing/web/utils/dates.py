@@ -3,7 +3,7 @@ import pytz
 from datetime import datetime
 from dateutil import parser as date_parser
 
-from bafs import app
+from freezing.web import app
 
 
 def parse_competition_timestamp(ts):

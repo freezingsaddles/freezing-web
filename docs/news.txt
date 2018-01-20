@@ -1,9 +1,0 @@
-News: bafs
-=================
-
-.. contents::
-
-0.1
----
-
-* Initial release.

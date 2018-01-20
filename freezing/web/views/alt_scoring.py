@@ -4,8 +4,9 @@ from itertools import groupby
 from flask import render_template, Blueprint
 from sqlalchemy import text
 
-from bafs import db
-from bafs.views.shared_sql import *
+from freezing.model import meta
+
+from freezing.web.views.shared_sql import *
 
 
 blueprint = Blueprint('alt_scoring', __name__)
@@ -18,7 +19,7 @@ def team_riders():
 		on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
 		"""
     )
-    team_riders = [(x['name'], x['ride_days']) for x in db.session.execute(q).fetchall()]
+    team_riders = [(x['name'], x['ride_days']) for x in meta.session_factory().execute(q).fetchall()]
     return render_template('alt_scoring/team_riders.html', team_riders=team_riders)
 
 
@@ -28,7 +29,7 @@ def team_daily():
         teams b where a.team_id=b.id and b.leaderboard_exclude=0
         group by a.ride_date, b.name order by a.ride_date, team_score;"""
     )
-    temp = [(x['ride_date'], x['team_name']) for x in db.session.execute(q).fetchall()]
+    temp = [(x['ride_date'], x['team_name']) for x in meta.session_factory().execute(q).fetchall()]
     temp = groupby(temp, lambda x:x[0])
     team_daily = defaultdict(list)
     team_total = defaultdict(int)
@@ -52,31 +53,31 @@ def team_daily():
 @blueprint.route("/team_sleaze")
 def team_sleaze():
     q = team_sleaze_query()
-    data = [(x['team_name'], x['num_sleaze_days']) for x in db.session.execute(q).fetchall()]
+    data = [(x['team_name'], x['num_sleaze_days']) for x in meta.session_factory().execute(q).fetchall()]
     return render_template('alt_scoring/team_sleaze.html', team_sleaze=data)
 
 @blueprint.route("/team_hains")
 def team_hains():
     q = team_segment_query()
-    data = [(x['team_name'], x['segment_rides']) for x in db.engine.execute(q,segment_id=1081507).fetchall()]
+    data = [(x['team_name'], x['segment_rides']) for x in meta.engine.execute(q,segment_id=1081507).fetchall()]
     return render_template('alt_scoring/team_hains.html', team_hains=data)
 
 @blueprint.route("/indiv_sleaze")
 def indiv_sleaze():
     q = indiv_sleaze_query()
-    data = [(x['athlete_name'], x['num_sleaze_days']) for x in db.session.execute(q).fetchall()]
+    data = [(x['athlete_name'], x['num_sleaze_days']) for x in meta.session_factory().execute(q).fetchall()]
     return render_template('alt_scoring/indiv_sleaze.html', indiv_sleaze=data)
 
 @blueprint.route("/indiv_hains")
 def indiv_hains():
     q = indiv_segment_query(join_miles=True)
-    data = [(x['athlete_name'], x['segment_rides'], x['dist']) for x in db.engine.execute(q,segment_id=1081507).fetchall()]
+    data = [(x['athlete_name'], x['segment_rides'], x['dist']) for x in meta.engine.execute(q,segment_id=1081507).fetchall()]
     return render_template('alt_scoring/indiv_hains.html', indiv_hains=data)
 
 @blueprint.route("/indiv_freeze")
 def indiv_freeze():
     q = indiv_freeze_query()
-    data = [(x['athlete_name'], x['freeze_points_total']) for x in db.session.execute(q).fetchall()]
+    data = [(x['athlete_name'], x['freeze_points_total']) for x in meta.session_factory().execute(q).fetchall()]
     return render_template('alt_scoring/indiv_freeze.html', indiv_freeze=data)
 
 @blueprint.route("/indiv_worst_day_points")
@@ -92,5 +93,5 @@ def indiv_worst_day_points():
     group by A.id, A.display_name
     order by total_adjusted desc;
     """)
-    data = [(x['athlete_name'], x['team_name'], x['total_distance'], x['total_score'], x['total_adjusted'], x['days_ridden']) for x in db.session.execute(q).fetchall()]
+    data = [(x['athlete_name'], x['team_name'], x['total_distance'], x['total_score'], x['total_adjusted'], x['days_ridden']) for x in meta.session_factory().execute(q).fetchall()]
     return render_template('alt_scoring/indiv_worst_day_points.html', data=data)

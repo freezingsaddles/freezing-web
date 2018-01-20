@@ -1,9 +1,12 @@
 from instagram import InstagramAPIError
 
-from bafs.autolog import log
-from bafs import db, model, data
-from bafs.scripts import BaseCommand
-from bafs.utils.insta import configured_instagram_client
+from freezing.model import meta
+from freezing.model.orm import RidePhoto
+
+from freezing.web.autolog import log
+
+from freezing.web.scripts import BaseCommand
+from freezing.web.utils.insta import configured_instagram_client
 
 
 class FixPhotoUrls(BaseCommand):
@@ -22,10 +25,10 @@ class FixPhotoUrls(BaseCommand):
     def execute(self, options, args):
 
         # if options.rewrite:
-        #     db.engine.execute(model.RidePhoto.__table__.delete())
-        #     db.session.query(model.Ride).update({"photos_fetched": False})
+        #     meta.engine.execute(model.RidePhoto.__table__.delete())
+        #     meta.session_factory().query(model.Ride).update({"photos_fetched": False})
 
-        q = db.session.query(model.RidePhoto)
+        q = meta.session_factory().query(RidePhoto)
         q = q.filter_by(img_t=None)
 
         insta_client = configured_instagram_client()
@@ -37,7 +40,7 @@ class FixPhotoUrls(BaseCommand):
                 media = insta_client.media(ride_photo.id)
                 ride_photo.img_l = media.get_standard_resolution_url()
                 ride_photo.img_t = media.get_thumbnail_url()
-                db.session.commit()
+                meta.session_factory().commit()
             except InstagramAPIError as e:
                 if e.status_code == 400:
                     self.logger.error("Skipping photo {}; user is set to private".format(ride_photo))
@@ -46,8 +49,8 @@ class FixPhotoUrls(BaseCommand):
                     self.logger.exception("Error fetching instagram photo {0} (skipping)".format(ride_photo))
 
         if del_q:
-            db.engine.execute(model.RidePhoto.__table__.delete().where(model.RidePhoto.id.in_(del_q)))
-            db.session.commit()
+            meta.engine.execute(RidePhoto.__table__.delete().where(RidePhoto.id.in_(del_q)))
+            meta.session_factory().commit()
 
 def main():
     FixPhotoUrls().run()

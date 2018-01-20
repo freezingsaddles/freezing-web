@@ -8,12 +8,14 @@ from sqlalchemy import update, or_, and_
 
 from stravalib import model as stravamodel
 
-from bafs import db, model, data, app
-from bafs.model import Ride, RideTrack, RidePhoto
-from bafs.scripts import BaseCommand
-from bafs.utils.insta import configured_instagram_client, photo_cache_path
-from bafs.exc import ConfigurationError
-from bafs.autolog import log
+from freezing.model import meta, orm
+from freezing.model.orm import Ride, RideTrack, RidePhoto
+
+from freezing.web import data, app
+from freezing.web.scripts import BaseCommand
+from freezing.web.utils.insta import configured_instagram_client, photo_cache_path
+from freezing.web.exc import ConfigurationError
+from freezing.web.autolog import log
 
 
 class SyncActivityStreams(BaseCommand):
@@ -107,7 +109,7 @@ class SyncActivityStreams(BaseCommand):
 
     def execute(self, options, args):
 
-        q = db.session.query(model.Ride)
+        q = meta.session_factory().query(model.Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
         q = q.filter(and_(Ride.private==False,
@@ -163,10 +165,10 @@ class SyncActivityStreams(BaseCommand):
 
                 data.write_ride_streams(streams, ride)
 
-                db.session.commit()
+                meta.session_factory().commit()
             except:
                 self.logger.exception("Error fetching/writing activity streams for {}, athlete {}".format(ride, ride.athlete))
-                db.session.rollback()
+                meta.session_factory().rollback()
 
 
 def main():

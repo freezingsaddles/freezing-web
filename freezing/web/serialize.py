@@ -1,8 +1,5 @@
 from marshmallow import Schema, fields
 
-from bafs import db
-from bafs.model import Ride, RidePhoto, Athlete, Team
-
 # shortcut
 optional = dict(allow_none=True, required=False)
 

@@ -1,8 +1,11 @@
 import os
 from alembic import command
 from alembic.config import Config
-from bafs import app, db, model
-from bafs.scripts import BaseCommand
+
+from freezing.model import meta, init_model, create_supplemental_db_objects, drop_supplemental_db_objects
+
+from freezing.web import app
+from freezing.web.scripts import BaseCommand
 
 
 class InitDb(BaseCommand):
@@ -19,14 +22,11 @@ class InitDb(BaseCommand):
     def execute(self, options, args):
         if options.drop:
             app.logger.info("Dropping tables.")
-            db.drop_all()
-        db.create_all()
+        init_model(app.config['SQLALCHEMY_DATABASE_URI'], drop=options.drop)
 
-        model.rebuild_views()
-
-        alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "..", "..", "alembic.ini"))
-        command.stamp(alembic_cfg, "head")
-
+        # Drop and re-add supplementary objects
+        drop_supplemental_db_objects(meta.engine)
+        create_supplemental_db_objects(meta.engine)
 
 def main():
     InitDb().run()
