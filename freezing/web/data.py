@@ -34,7 +34,7 @@ class StravaClientForAthlete(Client):
 
     def __init__(self, athlete):
         if not isinstance(athlete, Athlete):
-            athlete = meta.session_factory().query(Athlete).get(athlete)
+            athlete = meta.scoped_session().query(Athlete).get(athlete)
         super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
 
 
@@ -45,7 +45,7 @@ def register_athlete(strava_athlete, access_token):
     :return: The added athlete model object.
     :rtype: :class:`bafs.orm.Athlete`
     """
-    athlete = meta.session_factory().query(Athlete).get(strava_athlete.id)
+    athlete = meta.scoped_session().query(Athlete).get(strava_athlete.id)
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
@@ -56,15 +56,15 @@ def register_athlete(strava_athlete, access_token):
     athlete.profile_photo = strava_athlete.profile
 
     athlete.access_token = access_token
-    meta.session_factory().add(athlete)
+    meta.scoped_session().add(athlete)
     # We really shouldn't be committing here, since we want to disambiguate names after registering
-    meta.session_factory().commit()
+    meta.scoped_session().commit()
 
     return athlete
 
 
 def disambiguate_athlete_display_names():
-    q = meta.session_factory().query(orm.Athlete)
+    q = meta.scoped_session().query(orm.Athlete)
     q = q.filter(orm.Athlete.access_token != None)
     athletes = q.all()
 
@@ -120,7 +120,7 @@ def disambiguate_athlete_display_names():
                 a.display_name = '{0} {1}'.format(fname, lname[:required_length])
 
     # Update the database with new values
-    meta.session_factory().commit()
+    meta.scoped_session().commit()
 
 
 def register_athlete_team(strava_athlete, athlete_model):
@@ -163,17 +163,17 @@ def register_athlete_team(strava_athlete, athlete_model):
         else:
             club = matches[0]
             # create the team row if it does not exist
-            team = meta.session_factory().query(Team).get(club.id)
+            team = meta.scoped_session().query(Team).get(club.id)
             if team is None:
                 team = Team()
             team.id = club.id
             team.name = club.name
             team.leaderboard_exclude = club.id in app.config['BAFS_OBSERVER_TEAMS']
             athlete_model.team = team
-            meta.session_factory().add(team)
+            meta.scoped_session().add(team)
             return team
     finally:
-        meta.session_factory().commit()
+        meta.scoped_session().commit()
 
 
 def get_team_name(club_id):
@@ -285,7 +285,7 @@ def write_ride(activity):
     assert activity.distance is not None
 
     # Find the model object for that athlete (or create if doesn't exist)
-    athlete = meta.session_factory().query(Athlete).get(athlete_id)
+    athlete = meta.scoped_session().query(Athlete).get(athlete_id)
     if not athlete:
         # The athlete has to exist since otherwise we wouldn't be able to query their rides
         raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
@@ -295,9 +295,9 @@ def write_ride(activity):
         ride_geo.start_geo = start_geo
         ride_geo.end_geo = end_geo
         ride_geo.ride_id = activity.id
-        meta.session_factory().merge(ride_geo)
+        meta.scoped_session().merge(ride_geo)
 
-    ride = meta.session_factory().query(Ride).get(activity.id)
+    ride = meta.scoped_session().query(Ride).get(activity.id)
     new_ride = (ride is None)
     if ride is None:
         ride = Ride(activity.id)
@@ -329,7 +329,7 @@ def write_ride(activity):
     update_ride_from_activity(strava_activity=activity, ride=ride)
 
 
-    meta.session_factory().add(ride)
+    meta.scoped_session().add(ride)
 
     return ride
 
@@ -422,8 +422,8 @@ def write_ride_efforts(strava_activity, ride):
             log.debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
                                                                         effort=effort.segment_name))
 
-            meta.session_factory().add(effort)
-            meta.session_factory().flush()
+            meta.scoped_session().add(effort)
+            meta.scoped_session().flush()
 
         ride.efforts_fetched = True
 
@@ -490,7 +490,7 @@ def write_ride_streams(streams, ride):
         ride_track.ride_id = ride.id
         ride_track.elevation_stream = streams_dict['altitude'].data
         ride_track.time_stream = streams_dict['time'].data
-        meta.session_factory().add(ride_track)
+        meta.scoped_session().add(ride_track)
 
     ride.track_fetched = True
 
@@ -562,8 +562,8 @@ def _write_instagram_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Instagram ride photo: {!r}".format(p))
 
-    meta.session_factory().add(p)
-    meta.session_factory().flush()
+    meta.scoped_session().add(p)
+    meta.scoped_session().flush()
 
     return p
 
@@ -601,8 +601,8 @@ def _write_strava_photo_primary(photo, ride):
 
     log.debug("Writing (primary) Strava ride photo: {}".format(p))
 
-    meta.session_factory().add(p)
-    meta.session_factory().flush()
+    meta.scoped_session().add(p)
+    meta.scoped_session().flush()
     return p
 
 
@@ -668,7 +668,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     for activity_photo in activity_photos:
 
         # If it's already in the db, then skip it.
-        existing = meta.session_factory().query(RidePhoto).get(activity_photo.uid)
+        existing = meta.scoped_session().query(RidePhoto).get(activity_photo.uid)
         if existing:
             log.info("Skipping photo {} because it's already in database: {}".format(activity_photo, existing))
             continue
@@ -684,11 +684,11 @@ def write_ride_photos_nonprimary(activity_photos, ride):
             photo.img_l = media.get_standard_resolution_url()
             photo.img_t = media.get_thumbnail_url()
 
-            meta.session_factory().add(photo)
+            meta.scoped_session().add(photo)
 
             log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
 
-            meta.session_factory().flush()
+            meta.scoped_session().flush()
         except (InstagramAPIError, InstagramClientError) as e:
             if e.status_code == 400:
                 log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))

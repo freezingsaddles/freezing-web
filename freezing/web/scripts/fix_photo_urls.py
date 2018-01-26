@@ -28,7 +28,7 @@ class FixPhotoUrls(BaseCommand):
         #     meta.engine.execute(model.RidePhoto.__table__.delete())
         #     meta.session_factory().query(model.Ride).update({"photos_fetched": False})
 
-        q = meta.session_factory().query(RidePhoto)
+        q = meta.scoped_session().query(RidePhoto)
         q = q.filter_by(img_t=None)
 
         insta_client = configured_instagram_client()
@@ -40,7 +40,7 @@ class FixPhotoUrls(BaseCommand):
                 media = insta_client.media(ride_photo.id)
                 ride_photo.img_l = media.get_standard_resolution_url()
                 ride_photo.img_t = media.get_thumbnail_url()
-                meta.session_factory().commit()
+                meta.scoped_session().commit()
             except InstagramAPIError as e:
                 if e.status_code == 400:
                     self.logger.error("Skipping photo {}; user is set to private".format(ride_photo))
@@ -50,7 +50,7 @@ class FixPhotoUrls(BaseCommand):
 
         if del_q:
             meta.engine.execute(RidePhoto.__table__.delete().where(RidePhoto.id.in_(del_q)))
-            meta.session_factory().commit()
+            meta.scoped_session().commit()
 
 def main():
     FixPhotoUrls().run()

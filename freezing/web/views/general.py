@@ -36,7 +36,7 @@ def groupnum(number):
 def index():
     q = text ("""select count(*) as num_contestants from lbd_athletes""")
 
-    indiv_count_res = meta.session_factory().execute(q).fetchone() # @UndefinedVariable
+    indiv_count_res = meta.scoped_session().execute(q).fetchone() # @UndefinedVariable
     contestant_count = indiv_count_res['num_contestants']
 
     q = text ("""
@@ -46,7 +46,7 @@ def index():
                 ;
             """)
 
-    all_res = meta.session_factory().execute(q).fetchone() # @UndefinedVariable
+    all_res = meta.scoped_session().execute(q).fetchone() # @UndefinedVariable
     total_miles = int(all_res['distance'])
     total_hours = uh.timedelta_to_seconds(timedelta(seconds=int(all_res['moving_time']))) / 3600
     total_rides = all_res['num_rides']
@@ -59,7 +59,7 @@ def index():
                 ;
             """)
 
-    sub32_res = meta.session_factory().execute(q).fetchone() # @UndefinedVariable
+    sub32_res = meta.scoped_session().execute(q).fetchone() # @UndefinedVariable
     sub_freezing_hours = uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res['moving_time']))) / 3600
 
     q = text ("""
@@ -70,7 +70,7 @@ def index():
                 ;
             """)
 
-    rain_res = meta.session_factory().execute(q).fetchone() # @UndefinedVariable
+    rain_res = meta.scoped_session().execute(q).fetchone() # @UndefinedVariable
     rain_hours = uh.timedelta_to_seconds(timedelta(seconds=int(rain_res['moving_time']))) / 3600
 
     q = text ("""
@@ -81,12 +81,12 @@ def index():
                 ;
             """)
 
-    snow_res = meta.session_factory().execute(q).fetchone() # @UndefinedVariable
+    snow_res = meta.scoped_session().execute(q).fetchone() # @UndefinedVariable
     snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
 
 
     # Grab some recent photos
-    photos = meta.session_factory().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(11)
+    photos = meta.scoped_session().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(11)
 
     return render_template('index.html',
                            team_count=len(app.config['BAFS_TEAMS']),
@@ -134,7 +134,7 @@ def logged_in():
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
 
-        athlete_model = meta.session_factory().query(Athlete).get(strava_athlete.id)
+        athlete_model = meta.scoped_session().query(Athlete).get(strava_athlete.id)
         if not athlete_model:
             return render_template('login_error.html', error="ATHLETE_NOT_FOUND")
 

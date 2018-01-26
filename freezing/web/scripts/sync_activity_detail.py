@@ -118,7 +118,7 @@ class SyncActivityDetails(BaseCommand):
 
     def execute(self, options, args):
 
-        q = meta.session_factory().query(Ride)
+        q = meta.scoped_session().query(Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
         q = q.filter(Ride.private==False)
@@ -185,12 +185,12 @@ class SyncActivityDetails(BaseCommand):
 
                 # We do this just to take advantage of the use-cache/only-cache feature for reprocessing activities.
                 data.update_ride_from_activity(strava_activity=strava_activity, ride=ride)
-                meta.session_factory().flush()
+                meta.scoped_session().flush()
 
                 try:
                     self.logger.info("Writing out efforts for {!r}".format(ride))
                     data.write_ride_efforts(strava_activity, ride)
-                    meta.session_factory().flush()
+                    meta.scoped_session().flush()
                 except:
                     self.logger.error("Error writing efforts for activity {0}, athlete {1}".format(ride.id, ride.athlete),
                                       exc_info=self.logger.isEnabledFor(logging.DEBUG))
@@ -208,11 +208,11 @@ class SyncActivityDetails(BaseCommand):
                     raise
 
                 ride.detail_fetched = True
-                meta.session_factory().commit()
+                meta.scoped_session().commit()
 
             except:
                 self.logger.exception("Error fetching/writing activity detail {}, athlete {}".format(ride.id, ride.athlete))
-                meta.session_factory().rollback()
+                meta.scoped_session().rollback()
 
 
 def main():

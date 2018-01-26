@@ -109,7 +109,7 @@ class SyncActivityStreams(BaseCommand):
 
     def execute(self, options, args):
 
-        q = meta.session_factory().query(model.Ride)
+        q = meta.scoped_session().query(model.Ride)
 
         # TODO: Construct a more complex query to catch photos_fetched=False, track_fetched=False, etc.
         q = q.filter(and_(Ride.private==False,
@@ -165,10 +165,10 @@ class SyncActivityStreams(BaseCommand):
 
                 data.write_ride_streams(streams, ride)
 
-                meta.session_factory().commit()
+                meta.scoped_session().commit()
             except:
                 self.logger.exception("Error fetching/writing activity streams for {}, athlete {}".format(ride, ride.athlete))
-                meta.session_factory().rollback()
+                meta.scoped_session().rollback()
 
 
 def main():

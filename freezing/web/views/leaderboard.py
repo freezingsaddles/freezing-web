@@ -31,7 +31,7 @@ def team_leaderboard_classic():
              ;
              """)
 
-    team_rows = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    team_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     q = text("""
              select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
@@ -45,7 +45,7 @@ def team_leaderboard_classic():
              """)
 
     team_members = {}
-    for indiv_row in meta.session_factory().execute(q).fetchall(): # @UndefinedVariable
+    for indiv_row in meta.scoped_session().execute(q).fetchall(): # @UndefinedVariable
         team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
 
     for team_id in team_members:
@@ -80,7 +80,7 @@ def individual_leaderboard_text():
              ;
              """)
 
-    indiv_rows = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows)
 

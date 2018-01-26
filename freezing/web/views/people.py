@@ -22,7 +22,7 @@ def get_today():
 
 @blueprint.route("/")
 def people_list_users():
-    users_list = meta.session_factory().query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
+    users_list = meta.scoped_session().query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
     tdy = get_today()
     week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
     week_end = week_start + timedelta(days=6)
@@ -49,11 +49,11 @@ def people_list_users():
 
 @blueprint.route("/<user_id>")
 def people_show_person(user_id):
-    our_user = meta.session_factory().query(Athlete).filter_by(id=user_id).first()
+    our_user = meta.scoped_session().query(Athlete).filter_by(id=user_id).first()
     if not our_user:
         abort(404)
 
-    our_team = meta.session_factory().query(Team).filter_by(id=our_user.team_id).first()
+    our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
     tdy = get_today()
     week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
     week_end = week_start + timedelta(days=6)
@@ -86,7 +86,7 @@ def ridedays():
     )
     total_days = datetime.now().timetuple().tm_yday
     ride_days = [(x['id'], x['display_name'], x['rides'], x['miles'], x['lastride'] >= date.today()) for x in
-                 meta.session_factory().execute(q).fetchall()]
+                 meta.scoped_session().execute(q).fetchall()]
     return render_template('people/ridedays.html', ride_days=ride_days, num_days=total_days)
 
 @blueprint.route("/friends")
@@ -104,6 +104,6 @@ def friends():
              ;
              """)
 
-    indiv_rows = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     return render_template('people/friends.html', indiv_rows=indiv_rows)

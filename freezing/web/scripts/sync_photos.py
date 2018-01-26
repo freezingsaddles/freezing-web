@@ -24,7 +24,7 @@ class SyncPhotos(BaseCommand):
         # if options.rewrite:
         #     meta.engine.execute(orm.RidePhoto.__table__.delete())
         #     meta.session_factory().query(orm.Ride).update({"photos_fetched": False})
-        sess = meta.session_factory()
+        sess = meta.scoped_session()
 
         q = sess.query(orm.Ride)
         q = q.filter_by(photos_fetched=False, private=False)

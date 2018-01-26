@@ -35,7 +35,7 @@ def index():
 
     log.debug("Page = {0}, offset={1}, limit={2}".format(page, offset, limit))
 
-    total_q = meta.session_factory().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
+    total_q = meta.scoped_session().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc())
     num_photos = total_q.count()
 
     page_q = total_q.limit(limit).offset(offset)

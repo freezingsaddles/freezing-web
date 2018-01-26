@@ -38,7 +38,7 @@ def team_leaderboard_data():
              ;
              """)
 
-    team_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    team_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'team_name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -69,7 +69,7 @@ def indiv_leaderboard_data():
              ;
              """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -96,7 +96,7 @@ def team_elev_gain():
         ;
         """)
 
-    team_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    team_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Score', 'type': 'number'},
@@ -124,7 +124,7 @@ def indiv_elev_gain():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Elevation', 'type': 'number'},
@@ -151,7 +151,7 @@ def indiv_moving_time():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -179,7 +179,7 @@ def team_moving_time():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Moving Time', 'type': 'number'},
@@ -199,7 +199,7 @@ def indiv_number_sleaze_days():
 
     q = indiv_sleaze_query()
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -219,7 +219,7 @@ def team_number_sleaze_days():
 
     q = team_sleaze_query()
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Sleaze Days', 'type': 'number'},
@@ -269,7 +269,7 @@ def indiv_kidical():
 def indiv_freeze_points():
 
     q = indiv_freeze_query()
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Freeze Points', 'type': 'number'},
@@ -343,7 +343,7 @@ def indiv_avg_speed():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -372,7 +372,7 @@ def team_avg_speed():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Team', 'type': 'string'},
             {'id': 'score', 'label': 'Average Speed', 'type': 'number'},
@@ -400,7 +400,7 @@ def indiv_freezing():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Miles Below Freezing', 'type': 'number'},
@@ -429,7 +429,7 @@ def indiv_before_sunrise():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'Before Sunrise', 'type': 'number'},
@@ -458,7 +458,7 @@ def indiv_after_sunset():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'name', 'label': 'Athlete', 'type': 'string'},
             {'id': 'score', 'label': 'After Sunset', 'type': 'number'},
@@ -478,7 +478,7 @@ def indiv_after_sunset():
 def user_daily_points(athlete_id):
     """
     """
-    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
+    teams = meta.scoped_session().query(Team).all() # @UndefinedVariable
     day_q = text("""
              select DS.points
              from daily_scores DS
@@ -514,7 +514,7 @@ def user_daily_points(athlete_id):
 def user_weekly_points(athlete_id):
     """
     """
-    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
+    teams = meta.scoped_session().query(Team).all() # @UndefinedVariable
     week_q = text("""
              select sum(DS.points) as total_score
              from daily_scores DS
@@ -550,7 +550,7 @@ def user_weekly_points(athlete_id):
 def team_weekly_points():
     """
     """
-    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
+    teams = meta.scoped_session().query(Team).all() # @UndefinedVariable
     week_q = text("""
              select sum(DS.points) as total_score
              from daily_scores DS
@@ -587,7 +587,7 @@ def team_weekly_points():
 def team_cumul_points():
     """
     """
-    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
+    teams = meta.scoped_session().query(Team).all() # @UndefinedVariable
 
     q = text("""
             select team_id, ride_date, points,
@@ -636,7 +636,7 @@ def team_cumul_points():
 def team_cumul_mileage():
     """
     """
-    teams = meta.session_factory().query(Team).all() # @UndefinedVariable
+    teams = meta.scoped_session().query(Team).all() # @UndefinedVariable
 
     q = text("""
             select team_id, ride_date, points,
@@ -698,7 +698,7 @@ def indiv_elev_dist():
                 ;
             """)
 
-    indiv_q = meta.session_factory().execute(q).fetchall() # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
     cols = [{'id': 'ID', 'label': 'ID', 'type': 'string'},
             {'id': 'score', 'label': 'Distance', 'type': 'number'},
@@ -750,7 +750,7 @@ def riders_by_lowtemp():
             ]
 
     rows = []
-    for res in meta.session_factory().execute(q): # @UndefinedVariable
+    for res in meta.scoped_session().execute(q): # @UndefinedVariable
         if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
@@ -782,7 +782,7 @@ def distance_by_lowtemp():
             ]
 
     rows = []
-    for res in meta.session_factory().execute(q): # @UndefinedVariable
+    for res in meta.scoped_session().execute(q): # @UndefinedVariable
         if res['low_temp'] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
@@ -808,7 +808,7 @@ def exec_and_jsonify_query(q, display_label, query_label, hover_lambda = lambda 
             {'id': 'score', 'label': display_label, 'type': 'number'},
             ]
 
-    indiv_q = meta.session_factory().execute(q).fetchall()
+    indiv_q = meta.scoped_session().execute(q).fetchall()
     rows = []
     for i,res in enumerate(indiv_q):
         place = i+1

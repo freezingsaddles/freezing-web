@@ -18,7 +18,7 @@ class SyncAthletes(BaseCommand):
 
     def execute(self, options, args):
 
-        sess = meta.session_factory()
+        sess = meta.scoped_session()
 
         # We iterate over all of our athletes that have access tokens.  (We can't fetch anything
         # for those that don't.)

@@ -33,10 +33,10 @@ def rides():
 @requires_auth
 def ride_refetch_photos():
     ride_id = request.form['id']
-    ride = meta.session_factory().query(Ride).filter(Ride.id==ride_id).filter(Ride.athlete_id==session.get('athlete_id')).one()
+    ride = meta.scoped_session().query(Ride).filter(Ride.id == ride_id).filter(Ride.athlete_id == session.get('athlete_id')).one()
     ride.photos_fetched = False
     logging.info("Marking photos to be refetched for ride {}".format(ride))
-    meta.session_factory().commit()
+    meta.scoped_session().commit()
     return jsonify(success=True)  # I don't really have anything useful to spit back.
 
 @blueprint.route("/rides.json")
@@ -44,7 +44,7 @@ def ride_refetch_photos():
 def rides_data():
     athlete_id = session.get('athlete_id')
 
-    rides_q = meta.session_factory().query(Ride).filter(Ride.athlete_id==athlete_id).order_by(Ride.start_date.desc())
+    rides_q = meta.scoped_session().query(Ride).filter(Ride.athlete_id == athlete_id).order_by(Ride.start_date.desc())
     results = []
 
     for r in rides_q:

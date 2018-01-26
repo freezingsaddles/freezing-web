@@ -41,7 +41,7 @@ class SyncRides(BaseCommand):
 
     def execute(self, options, args):
 
-        sess = meta.session_factory()
+        sess = meta.scoped_session()
 
         if options.start_date:
             start = parse_competition_timestamp(options.start_date)
@@ -89,7 +89,7 @@ class SyncRides(BaseCommand):
 
     def _write_rides(self, start, end, athlete, rewrite=False):
 
-        sess = meta.session_factory()
+        sess = meta.scoped_session()
 
         api_ride_entries = data.list_rides(athlete=athlete, start_date=start, end_date=end,
                                            exclude_keywords=app.config.get('BAFS_EXCLUDE_KEYWORDS'))

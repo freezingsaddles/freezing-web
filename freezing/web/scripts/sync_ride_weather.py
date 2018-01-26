@@ -37,7 +37,7 @@ class SyncRideWeather(BaseCommand):
         return parser
 
     def execute(self, options, args):
-        sess = meta.session_factory()
+        sess = meta.scoped_session()
 
         if options.clear:
             self.logger.info("Clearing all weather data!")
@@ -79,7 +79,7 @@ class SyncRideWeather(BaseCommand):
 
             try:
 
-                start_geo_wkt = meta.session_factory().scalar(ride.geo.start_geo.wkt)
+                start_geo_wkt = meta.scoped_session().scalar(ride.geo.start_geo.wkt)
                 point = parse_point_wkt(start_geo_wkt)
                 lon = point.lon
                 lat = point.lat
