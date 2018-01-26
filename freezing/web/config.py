@@ -1,3 +1,4 @@
+import os
 from typing import List
 from datetime import datetime, tzinfo
 from envparse import env
@@ -5,6 +6,8 @@ from envparse import env
 import arrow
 import pytz
 
+# Support finding a ".env" file in cwd for development
+env.read_envfile(os.path.join(os.getcwd(), '.env'))
 
 class Config:
 

@@ -40,7 +40,9 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Place app source in container.
-COPY . /app
+RUN mkdir -p /app
+COPY freezing/web/static /app/static
+
 WORKDIR /app
 
 COPY --from=buildstep /build/wheels /tmp/wheels
