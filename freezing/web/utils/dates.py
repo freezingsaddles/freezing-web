@@ -3,7 +3,7 @@ import pytz
 from datetime import datetime
 from dateutil import parser as date_parser
 
-from freezing.web import app
+from freezing.web import app, Config
 
 
 def parse_competition_timestamp(ts):
@@ -19,5 +19,5 @@ def parse_competition_timestamp(ts):
     """
     dt = date_parser.parse(ts)
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=pytz.timezone(app.config['BAFS_TIMEZONE']))
+        dt = dt.replace(tzinfo=Config.TIMEZONE)
     return dt

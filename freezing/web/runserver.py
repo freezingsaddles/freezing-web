@@ -3,6 +3,7 @@ import logging
 from freezing.web import app
 from colorlog import ColoredFormatter
 
+
 def main():
     # Setup some *fancy* logging :)
 

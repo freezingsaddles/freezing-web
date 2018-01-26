@@ -2,23 +2,16 @@ import os
 import os.path
 
 from flask import Flask, session, g
-
-#from flask.ext.sqlalchemy import SQLAlchemy
-
-app = Flask(__name__, static_url_path='/assets')
-app.config.from_object('freezing.web.default_settings')
-if 'BAFS_SETTINGS' in os.environ:
-    app.config.from_envvar('BAFS_SETTINGS')
-
-app.secret_key = app.config['SESSION_SECRET']
-if not app.secret_key:
-    raise RuntimeError("Configuration error.  No SESSION_SECRET configuration variable defined.")
-
 from freezing.model import init_model
 
-init_model(app.config['SQLALCHEMY_DATABASE_URI'])
+from .config import Config
 
-# This needs to be after the app is created.
+app = Flask(__name__, static_url_path='/assets')
+app.config.from_object(Config)
+
+init_model(Config.SQLALCHEMY_URL)
+
+# This needs to be after the app is created, unfortunately.
 from freezing.web.views import general, leaderboard, chartdata, people, user, pointless, photos, api, alt_scoring
 from freezing.web.utils import auth
 

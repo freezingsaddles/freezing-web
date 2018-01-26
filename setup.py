@@ -43,16 +43,9 @@ setup(name='freezing-web',
                    "Operating System :: OS Independent",
                    "Programming Language :: Python :: 3.6",
                    ],
+      zip_safe=False,
       entry_points="""
         [console_scripts]
-        bafs-init-db = freezing.web.scripts.init_db:main
-        bafs-sync = freezing.web.scripts.sync_rides:main
-        bafs-sync-detail = freezing.web.scripts.sync_activity_detail:main
-        bafs-sync-streams = freezing.web.scripts.sync_streams:main
-        bafs-sync-photos = freezing.web.scripts.sync_photos:main
-        bafs-sync-weather = freezing.web.scripts.sync_ride_weather:main
-        bafs-sync-athletes = freezing.web.scripts.sync_athletes:main
-        bafs-server = freezing.web.runserver:main
-        bafs-fix-photo-urls = freezing.web.scripts.fix_photo_urls:main
+        freezing-server = freezing.web.runserver:main
         """,
      )

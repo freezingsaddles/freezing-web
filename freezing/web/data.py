@@ -21,7 +21,7 @@ from stravalib import unithelper
 from freezing.model import meta, orm
 from freezing.model.orm import Athlete, Ride, RideGeo, RideEffort, RidePhoto, RideTrack, Team
 
-from freezing.web import app
+from freezing.web import app, Config
 from freezing.web.autolog import log
 from freezing.web.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
 from freezing.web.utils import insta, wktutils
@@ -146,7 +146,7 @@ def register_athlete_team(strava_athlete, athlete_model):
     assert isinstance(strava_athlete, strava_model.Athlete)
     assert isinstance(athlete_model, Athlete)
 
-    all_teams =  app.config['BAFS_TEAMS']
+    all_teams = Config.COMPETITION_TEAMS
     log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
@@ -154,7 +154,7 @@ def register_athlete_team(strava_athlete, athlete_model):
         athlete_model.team = None
         if len(matches) > 1:
             # you can be on multiple teams as long as only one is an official team
-            matches = [c for c in matches if c.id not in app.config['BAFS_OBSERVER_TEAMS']]
+            matches = [c for c in matches if c.id not in Config.OBSERVER_TEAMS]
         if len(matches) > 1:
             log.info("Multiple teams matched.")
             raise MultipleTeamsError(matches)
@@ -168,7 +168,7 @@ def register_athlete_team(strava_athlete, athlete_model):
                 team = Team()
             team.id = club.id
             team.name = club.name
-            team.leaderboard_exclude = club.id in app.config['BAFS_OBSERVER_TEAMS']
+            team.leaderboard_exclude = club.id in Config.OBSERVER_TEAMS
             athlete_model.team = team
             meta.scoped_session().add(team)
             return team

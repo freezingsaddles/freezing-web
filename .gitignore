@@ -1,5 +1,6 @@
 .*
 *.pyc
+*.cfg
 *.egg-info
 /env
 /local_settings.py
@@ -7,3 +8,5 @@
 /*.iml
 /resources/docker/db/sql-scripts
 /resources/docker/settings.cfg
+/build
+/dist
