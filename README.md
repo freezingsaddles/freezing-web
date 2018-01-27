@@ -54,13 +54,13 @@ mysql> grant all on freezing.* to freezing@localhost;
 
 Configuration files are shell environment files (or you can use environment variables dirctly).
 
-There is a sample file (`example.env`) that you can reference.  You need to set an environment variable called 
+There is a sample file (`example.cfg`) that you can reference.  You need to set an environment variable called 
 `APP_SETTINGS` to the path to the file you wish to use.
 
 Here is an example of starting the webserver using settings from a new `development.env` config file:
 ```bash
-(env) shell$ cp example.env development.env
-
+(env) shell$ cp example.cfg development.cfg
+# Edit the file
 (env) shell$ APP_SETTINGS=development.env freezing-server
 ```
 
