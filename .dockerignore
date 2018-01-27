@@ -10,3 +10,4 @@ data/*
 *.dump
 .idea
 .ipynb*
+Dockerfile

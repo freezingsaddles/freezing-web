@@ -21,6 +21,11 @@ ADD requirements.txt /tmp/requirements.txt
 #RUN pip wheel -r /tmp/requirements.txt --no-binary MySQL-python --wheel-dir=/build/wheels
 RUN pip3 wheel -r /tmp/requirements.txt --wheel-dir=/build/wheels
 
+ADD . /app
+WORKDIR /app
+
+RUN python3.6 setup.py bdist_wheel -d /build/wheels
+
 
 # DEPLOY
 # =====
@@ -40,6 +45,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Place app source in container.
+VOLUME /app/static
+
 RUN mkdir -p /app
 COPY freezing/web/static /app/static
 
@@ -48,8 +55,6 @@ WORKDIR /app
 COPY --from=buildstep /build/wheels /tmp/wheels
 
 RUN pip3 install /tmp/wheels/*
-
-RUN python3.6 setup.py install
 
 EXPOSE 8000
 
