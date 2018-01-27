@@ -12,3 +12,4 @@ marshmallow==2.15.0
 gunicorn==19.7.1
 Flask==0.12
 envparse==0.2.0
+-e git+https://github.com/hozn/GeoAlchemy@0.7.3dev1#egg=GeoAlchemy

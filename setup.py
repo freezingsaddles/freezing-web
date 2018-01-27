@@ -30,7 +30,9 @@ setup(name='freezing-web',
       long_description=long_description,
       author="Hans Lellelid",
       author_email="hans@xmpl.org",
-      packages = ['freezing.web'],
+      # This is a workaround for https://github.com/pypa/setuptools/issues/97
+      packages = ['freezing.web', 'freezing.web.views', 'freezing.web.utils'],
+      # packages=find_packages(include=['freezing.web.*'])
       include_package_data=True,
       package_data={'freezing.web': ['static/*', 'templates/*']},
       license='Apache',
