@@ -58,4 +58,4 @@ RUN pip3 install /tmp/wheels/*
 
 EXPOSE 8000
 
-ENTRYPOINT gunicorn --bind 0.0.0.0:8000 'freezing.web.app'
+ENTRYPOINT gunicorn --bind 0.0.0.0:8000 'freezing.web:app'
