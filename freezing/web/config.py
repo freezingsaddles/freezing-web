@@ -6,8 +6,12 @@ from envparse import env
 import arrow
 import pytz
 
-# Support finding a ".env" file in cwd for development
-env.read_envfile(os.path.join(os.getcwd(), '.env'))
+
+envfile = os.environ.get('APP_SETTINGS', os.path.join(os.getcwd(), '.env'))
+
+if os.path.exists(envfile):
+    env.read_envfile(envfile)
+
 
 class Config:
 
@@ -27,3 +31,6 @@ class Config:
     START_DATE: datetime = env('START_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     END_DATE: datetime = env('END_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     TIMEZONE: tzinfo = env('TIMEZONE', default='America/New_York', postprocessor=lambda val: pytz.timezone(val))
+
+
+config = Config()

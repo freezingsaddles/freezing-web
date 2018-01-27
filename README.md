@@ -1,19 +1,21 @@
-# BikeArlington Freezing Saddles
+# Freezing Saddles Web
 
-The BikeArlington Freezing Saddles (aka "BAFS") project is a python web application that integrates with Strava APIs to
-provide charting (and intended to provide other reports too) for the Freezing Saddles cycling competition organized
-on BikeArlington forums.
+This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based
+winter cycling competition software.
 
-**NOTE:** This application is being refactored into different comopnents and minimize use of cron and polling for activity sync.  These instructions still assume the legacy system is in place. 
+**NOTE:** This application conists of multiple components that work together (designed to run as Docker containers).
+1. [freezing-web](https://github.com/freezingsaddles/freezing-web) - The website for viewing leaderboards   
+1. [freezing-model](https://github.com/freezingsaddles/freezing-model) - A library of shared database and messaging classes. 
+1. [freezing-sync](https://github.com/freezingsaddles/freezing-sync) - The component that syncs ride data from Strava. 
+1. [freezing-nq](https://github.com/freezingsaddles/freezing-nq) - The component that receives webhooks and queues them up for syncing.
 
 ## Dependencies
 
-* Python 3.6+.  (This will not currently work with Python 2.)
+* Python 3.6+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
-* MySQL.  Sadly.
+* MySQL.  (Sadly.)
 
-You can also use the provided `Dockerfile` and `docker-compose.yml` to make this easier.
 
 ## Installation
 
@@ -25,7 +27,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
 # Create and activate a virtual environment for freezing-web
 shell$ cd freezing-web
-shell$ python3 -m venv env
+shell$ python3.6 -m venv env
 shell$ source env/bin/activate
 (env) shell$ python setup.py develop 
 ```
@@ -38,7 +40,7 @@ the "(env) shell$" prefix before shell commands.)
 This application requires MySQL.  I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting
 provider only supports MySQL), it's what we're doing.
 
-You should create a database and create a user that can access the database.  Something like this should work in the default case:
+You should create a database and create a user that can access the database.  Something like this might work in the default case:
 
 ```bash
 shell$ mysql -uroot
@@ -50,11 +52,17 @@ mysql> grant all on freezing.* to freezing@localhost;
 
 ### Configuration
 
-Configuration files are Python files (since we're using Flask framework).  There is a default one configured for the 2013 BAFS competition;
-if you want to do something else you'll need to specify an environment variable that points to your config file:
+Configuration files are shell environment files (or you can use environment variables dirctly).
 
-	(env) shell$ cp local_settings.py-example local_settings.py
-	(env) shell$ BAFS_SETTINGS=`pwd`/local_settings.py <bafs-script>
+There is a sample file (`example.env`) that you can reference.  You need to set an environment variable called 
+`APP_SETTINGS` to the path to the file you wish to use.
+
+Here is an example of starting the webserver using settings from a new `development.env` config file:
+```bash
+(env) shell$ cp example.env development.env
+
+(env) shell$ APP_SETTINGS=development.env freezing-server
+```
 
 Critical things to set include:
 * Database URI
@@ -66,70 +74,11 @@ Critical things to set include:
 # NOTE THE CHARSET!
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true'
 
-# These are issued when you create the Strava app.
+# These are issued when you create a Strava application.
 STRAVA_CLIENT_ID = 'xxxx1234'
 STRAVA_CLIENT_SECRET = '5678zzzz'
 ```
 
-### Synchronizing
+## Deployment
 
-You need to pull data from Strava (and any other APIs) into the local database for reporting.
-
-```bash
-(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync
-```
-
-It is slow the first time because it does not parallelize the work.  By default it will only pull down rides that aren't
-already in the system.  Periodically (daily?) you probably also want to clear things out and pull down everything (e.g. in
-case someone edited a ride, etc.)
-
-```bash
-	(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-sync --clear
-```
-
-Generally you'll want to set up cron.  Here is an example of my crontab while competition is running:
-
-(See note above; this is currently being redesigned to rely less on cron and polling for activity sync.)
-```bash
-MAILTO="user@example.com"
-BAFS_SETTINGS=/home/freezingsaddles/sites/freezingsaddles.com/settings.cfg
-
-# The basic activity sync happens every 20 minutes.
-*/20  *   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync --quiet
-
-# (Hourly) We sync the full detail for all activities, up to max-records
-10    *   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync-detail --quiet --max-records=800
-
-# (Hourly) We sync the GPS streams, up to max-records
-50    *   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync-streams --quiet --max-records=800
-
-# (Every 2 hours) we rewrite activities that appear to have changed (e.g. if an activity was trimmed, renamed, etc.)
-
-30    */2 * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync --rewrite --quiet
-
-# (Every day) we sync weather from wunderground.com
-0     4   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync-weather --quiet
-
-# (Every day) we sync the athletes.  (This should be more frequent during registration period.)
-30    4   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync-athletes --quiet
-
-# (Twice an hour) we sync photos
-25,55 *   * * *    /home/freezingsaddles/sites/freezingsaddles.com/env/bin/bafs-sync-photos --quiet
-```
-
-### Running the (Development) Server
-
-You can start up the Flask development server for testing using the `bafs-server` command.
-
-```bash
-(env) shell$ BAFS_SETTINGS=/path/to/local_settings.py bafs-server
-```
-
-
-## Starting a New competition
-
-1. First things you'll need to do is backup the current database.
-2. Once backed up, clear out the database tables.
-3. Next, you'll want to clear out any team IDs from the config file (assuming new competition means new teams).
-4. Generally you'll want to create a single competition team for folks to use when they first are registering; configure that single team in the config file for now.
-5. Once teams have been created, you can add the new teams to the config file and eventually remove the single competition team.
+This is designed to be deployed with Docker.  See the `Dockerfile` for details.

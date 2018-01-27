@@ -13,7 +13,7 @@ from stravalib import unithelper as uh
 from freezing.model import meta
 from freezing.model.orm import Athlete, RidePhoto, Ride
 
-from freezing.web import app, data, Config
+from freezing.web import app, data, config
 from freezing.web.utils import auth
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
@@ -89,7 +89,7 @@ def index():
     photos = meta.scoped_session().query(RidePhoto).join(Ride).order_by(Ride.start_date.desc()).limit(11)
 
     return render_template('index.html',
-                           team_count=len(Config.COMPETITION_TEAMS),
+                           team_count=len(config.COMPETITION_TEAMS),
                            contestant_count=contestant_count,
                            total_rides=total_rides,
                            total_hours=total_hours,
@@ -102,7 +102,7 @@ def index():
 @blueprint.route("/login")
 def login():
     c = Client()
-    url = c.authorization_url(client_id=Config.STRAVA_CLIENT_ID,
+    url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
                               redirect_uri=url_for('.logged_in', _external=True),
                               approval_prompt='auto')
     return render_template('login.html', authorize_url=url)
@@ -128,8 +128,8 @@ def logged_in():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=Config.STRAVA_CLIENT_ID,
-                                                      client_secret=Config.STRAVA_CLIENT_SECRET,
+        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                      client_secret=config.STRAVA_CLIENT_SECRET,
                                                       code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
@@ -159,10 +159,10 @@ def logged_in():
 @blueprint.route("/authorize")
 def join():
     c = Client()
-    public_url = c.authorization_url(client_id=Config.STRAVA_CLIENT_ID,
+    public_url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
                                      redirect_uri=url_for('.authorization', _external=True),
                                      approval_prompt='auto')
-    private_url = c.authorization_url(client_id=Config.STRAVA_CLIENT_ID,
+    private_url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
                                       redirect_uri=url_for('.authorization', _external=True),
                                       approval_prompt='auto',
                                       scope='view_private')
@@ -183,8 +183,8 @@ def authorization():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=Config.STRAVA_CLIENT_ID,
-                                                      client_secret=Config.STRAVA_CLIENT_SECRET,
+        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                      client_secret=config.STRAVA_CLIENT_SECRET,
                                                       code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
@@ -210,7 +210,7 @@ def webhook_challenge():
     client = Client()
     strava_request = {k: request.args.get(k) for k in ('hub.challenge', 'hub.mode', 'hub.verify_token')}
     log.info("Webhook challenge: {}".format(strava_request))
-    challenge_resp = client.handle_subscription_callback(strava_request, verify_token=Config.STRAVA_VERIFY_TOKEN)
+    challenge_resp = client.handle_subscription_callback(strava_request, verify_token=config.STRAVA_VERIFY_TOKEN)
     return jsonify(challenge_resp)
 
 

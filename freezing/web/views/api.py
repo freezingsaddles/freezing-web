@@ -12,7 +12,7 @@ from stravalib import unithelper as uh
 from freezing.model import meta
 from freezing.model.orm import RidePhoto, Ride, RideTrack, Athlete
 
-from freezing.web import app, Config
+from freezing.web import app, config
 from freezing.web.autolog import log
 from freezing.web.serialize import RidePhotoSchema
 from freezing.web.utils import auth, dates
@@ -75,7 +75,7 @@ def stats_general():
     snow_hours = uh.timedelta_to_seconds(timedelta(seconds=int(snow_res['moving_time']))) / 3600
 
     return jsonify(
-            team_count=len(Config.COMPETITION_TEAMS),
+            team_count=len(config.COMPETITION_TEAMS),
             contestant_count=contestant_count,
             total_rides=total_rides,
             total_hours=total_hours,

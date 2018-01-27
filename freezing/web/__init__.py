@@ -4,12 +4,12 @@ import os.path
 from flask import Flask, session, g
 from freezing.model import init_model
 
-from .config import Config
+from .config import config
 
 app = Flask(__name__, static_url_path='/assets')
-app.config.from_object(Config)
+app.config.from_object(config)
 
-init_model(Config.SQLALCHEMY_URL)
+init_model(config.SQLALCHEMY_URL)
 
 # This needs to be after the app is created, unfortunately.
 from freezing.web.views import general, leaderboard, chartdata, people, user, pointless, photos, api, alt_scoring

@@ -16,7 +16,7 @@ from dateutil import rrule
 from freezing.model import meta
 from freezing.model.orm import Team, RideEffort
 
-from freezing.web import app, Config
+from freezing.web import app, config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
 from freezing.web.views.shared_sql import *
@@ -493,7 +493,7 @@ def user_daily_points(athlete_id):
     cols.append({'id': 'athlete_{0}'.format(athlete_id), 'label': '', 'type': 'number'})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = Config.START_DATE
+    start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
     day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -531,7 +531,7 @@ def user_weekly_points(athlete_id):
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = Config.START_DATE
+    start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
     week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -571,7 +571,7 @@ def team_weekly_points():
         cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = Config.START_DATE
+    start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
     week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
@@ -612,7 +612,7 @@ def team_cumul_points():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    start_date = Config.START_DATE
+    start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict(
         [(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
@@ -664,7 +664,7 @@ def team_cumul_mileage():
     for team in teams:
         cols.append({'id': 'team_{0}'.format(team.id), 'label': team.name, 'type': 'number'})
 
-    start_date = Config.START_DATE
+    start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict(
         [(dt.strftime('%Y-%m-%d'), None) for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())])
