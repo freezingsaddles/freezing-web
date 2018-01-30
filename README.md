@@ -9,13 +9,14 @@ winter cycling competition software.
 1. [freezing-sync](https://github.com/freezingsaddles/freezing-sync) - The component that syncs ride data from Strava. 
 1. [freezing-nq](https://github.com/freezingsaddles/freezing-nq) - The component that receives webhooks and queues them up for syncing.
 
+# Development Setup
+
 ## Dependencies
 
 * Python 3.6+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
 * MySQL.  (Sadly.)
-
 
 ## Installation
 
@@ -48,9 +49,7 @@ mysql> create database freezing;
 mysql> grant all on freezing.* to freezing@localhost;
 ```
 
-## Basic Usage
-
-### Configuration
+## Configure and Run Server
 
 Configuration files are shell environment files (or you can use environment variables dirctly).
 
@@ -61,24 +60,36 @@ Here is an example of starting the webserver using settings from a new `developm
 ```bash
 (env) shell$ cp example.cfg development.cfg
 # Edit the file
-(env) shell$ APP_SETTINGS=development.env freezing-server
+(env) shell$ APP_SETTINGS=development.cfg freezing-server
 ```
 
 Critical things to set include:
 * Database URI
-* Strava Client info (ID and secret)
+* Strava Client info (ID and secret), if you want to test registration/authorization/login.
 
-```python
-
+```bash
 # The SQLALchemy connection URL for your MySQL database.
 # NOTE THE CHARSET!
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true'
+SQLALCHEMY_DATABASE_URI=mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true
 
 # These are issued when you create a Strava application.
-STRAVA_CLIENT_ID = 'xxxx1234'
-STRAVA_CLIENT_SECRET = '5678zzzz'
+# These are really only needed if you want to test app authorization or login features.
+STRAVA_CLIENT_ID=xxxx1234
+STRAVA_CLIENT_SECRET=5678zzzz
 ```
 
-## Deployment
 
-This is designed to be deployed with Docker.  See the `Dockerfile` for details.
+## Docker Deployment
+
+This component is designed to run as a container and should be configured with environment variables for:
+- `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
+- `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
+- `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
+- `SQLALCHEMY_URL`: The URL to the database.
+- `STRAVA_CLIENT_ID`: The ID of the Strava application.
+- `STRAVA_CLIENT_SECRET`: Secret key for the app (available from App settings page in Strava)
+- `TEAMS`: A comma-separated list of team (Strava club) IDs for the competition. = env('TEAMS', cast=list, subcast=int, default=[])
+- `OBSERVER_TEAMS`: Comma-separated list of any teams that are just observing, not playing (they can get their overall stats included, but won't be part of leaderboards)
+- `START_DATE`: The beginning of the competition.
+- `END_DATE`: The end of the competition.
+
