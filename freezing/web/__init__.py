@@ -2,7 +2,7 @@ import os
 import os.path
 
 from flask import Flask, session, g
-from freezing.model import init_model
+from freezing.model import init_model, meta
 
 from .config import config
 
@@ -34,3 +34,13 @@ def set_logged_in_global():
         g.logged_in = True
     else:
         g.logged_in = False
+
+
+@app.teardown_request
+def teardown_request(exception):
+    session = meta.scoped_session()
+    if exception:
+        session.rollback()
+    else:
+        session.commit()
+    meta.scoped_session.remove()
