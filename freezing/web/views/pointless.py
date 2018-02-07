@@ -1,10 +1,28 @@
-from flask import render_template, Blueprint
-from sqlalchemy import text
+import os
 import operator
+from datetime import date, datetime
+
+from flask import render_template, Blueprint, abort
+from sqlalchemy import text
+import yaml
 
 from freezing.model import meta
+from freezing.web.config import config
+from freezing.web.exc import ObjectNotFound
+from freezing.web.utils.genericboard import load_board_and_data
 
 blueprint = Blueprint('pointless', __name__)
+
+
+@blueprint.route('/generic/<leaderboard>')
+def generic(leaderboard):
+    try:
+        board, data = load_board_and_data(leaderboard)
+    except ObjectNotFound:
+        abort(404)
+    else:
+        return render_template('pointless/generic.html', fields=board.fields, title=board.title,
+                               description=board.description, data=data)
 
 
 @blueprint.route("/avgspeed")

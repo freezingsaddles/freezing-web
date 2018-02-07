@@ -21,3 +21,7 @@ class DataEntryError(ValueError):
 
 class ConfigurationError(RuntimeError):
     pass
+
+
+class ObjectNotFound(RuntimeError):
+    pass

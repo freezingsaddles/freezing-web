@@ -1,0 +1,21 @@
+---
+title: Average Speed
+description: Rider average speed
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: speed
+    label: Average Speed
+query: |
+  select a.id,
+         a.display_name as athlete_name,
+         sum(r.distance) / (sum(r.moving_time) / 3600) as speed
+  from lbd_athletes a
+  join rides r on r.athlete_id = a.id
+  group by a.id, a.display_name
+  order by speed desc
+
+# select a.id, a.display_name, avg(b.average_speed) as speed from lbd_athletes a, rides b where a.id = b.athlete_id group by a.id order by speed;

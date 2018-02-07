@@ -15,6 +15,7 @@ envfile = os.environ.get('APP_SETTINGS', os.path.join(os.getcwd(), '.env'))
 if os.path.exists(envfile):
     env.read_envfile(envfile)
 
+_basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 class Config:
 
@@ -34,6 +35,8 @@ class Config:
     START_DATE: datetime = env('START_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     END_DATE: datetime = env('END_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     TIMEZONE: tzinfo = env('TIMEZONE', default='America/New_York', postprocessor=lambda val: pytz.timezone(val))
+
+    LEADERBOARDS_DIR = env('LEADERBOARDS_DIR', default=os.path.join(_basedir, 'leaderboards'))
 
 
 config = Config()

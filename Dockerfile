@@ -44,13 +44,10 @@ RUN apt-get update \
   && pip3 install --upgrade pip setuptools wheel \
   && rm -rf /var/lib/apt/lists/*
 
-# Place app source in container.
-# VOLUME /app/static
+ENV LEADERBOARDS_DIR=/data/leaderboards
 
-#RUN mkdir -p /app
-# COPY freezing/web/static /app/static
-
-# WORKDIR /app
+RUN mkdir -p /data
+COPY leaderboards /data/leaderboards
 
 COPY --from=buildstep /build/wheels /tmp/wheels
 

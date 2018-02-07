@@ -1,0 +1,24 @@
+---
+title: Average Distance
+description: Rider average distance per ride, minimum ten days with a ride for CPTJohnC's Pointless Prize
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: dist
+    label: Average Distance
+  - name: num_rides
+    label: Num Rides
+query: |
+  select
+          a.id,
+          a.display_name as athlete_name,
+          avg(r.distance) as dist,
+          count(distinct(date(r.start_date))) as num_rides
+  from lbd_athletes a
+  join rides r ON r.athlete_id = a.id
+  group by a.id, a.display_name
+  having num_rides >= 10
+  order by dist desc
