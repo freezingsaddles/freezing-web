@@ -1,0 +1,23 @@
+---
+title: Dirty Biker
+description: Number of days with at least 1 off-road ride (#fs2018dirtybiker).
+url: http://bikearlingtonforum.com/showthread.php?12874-fs2018dirtybiker-Pointless-Prize-Mountain-for-Dirt-Miles-for-Freezing-Saddles-2018
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: dirty_ride_days
+    label: Dirty Ride Days
+query: |
+  select *, count(*) as dirty_ride_days from (
+  select
+  A.id, A.display_name as athlete_name, DATE(R.start_date)
+                  from lbd_athletes A
+                  join rides R on R.athlete_id = A.id
+                  where R.name like '%#fs2018dirtybiker%'
+                  group by A.id, A.display_name, DATE(R.start_date)
+      ) as T
+   group  by T.id, T.athlete_name
+   order by dirty_ride_days desc

@@ -1,0 +1,23 @@
+---
+title: Billy Goat (Elevation Gain)
+description: Elevation gain per mile by team
+fields:
+  - name: team_name
+    label: Team
+  - name: elev
+    label: Elevation (ft)
+  - name: dist
+    label: Distance (mi)
+  - name: gainpermile
+    label: Ft. / Mile
+query: |
+  select
+    sum(R.elevation_gain) as elev,
+    sum(R.distance) as dist,
+    (sum(R.elevation_gain) / sum(R.distance)) as gainpermile,
+    T.name as team_name
+  from rides R
+  join  lbd_athletes A on A.id = R.athlete_id
+  join teams T on T.id = A.team_id
+  group by team_name
+  order by gainpermile desc

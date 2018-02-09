@@ -1,3 +1,4 @@
+import decimal
 import os
 import enum
 from datetime import datetime
@@ -32,12 +33,21 @@ class GenericBoardField(BaseMessage):
             else:
                 return v
 
-        elif isinstance(v, float):
+        elif isinstance(v, (float, decimal.Decimal)):
             # '{number:.{digits}f}'.format(number=p, digits=n)
+            # {:,}
             if self.format:
                 return self.format.format(v)
             else:
-                return round(v, 2)
+                return '{0:,.2f}'.format(v)
+
+        elif isinstance(v, int):
+            # '{number:.{digits}f}'.format(number=p, digits=n)
+            # {:,}
+            if self.format:
+                return self.format.format(v)
+            else:
+                return '{0:,}'.format(v)
 
         elif isinstance(v, datetime):
             if self.format:
@@ -62,6 +72,7 @@ class GenericBoardFieldSchema(BaseSchema):
 class GenericBoard(BaseMessage):
     title = None
     description = None
+    url = None
     query = None
     fields: List[GenericBoardField] = None
 
@@ -71,6 +82,7 @@ class GenericBoardSchema(BaseSchema):
 
     title = fields.Str()
     description = fields.Str()
+    url = fields.Str()
     query = fields.Str(required=True, allow_none=False)
     fields = fields.Nested(GenericBoardFieldSchema, many=True, required=False)
 
@@ -99,5 +111,4 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
         except KeyError as ke:
             raise RuntimeError("Field not found in result row: {}".format(ke))
 
-        print(rows)
         return board, rows

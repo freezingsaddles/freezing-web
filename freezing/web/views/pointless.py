@@ -22,37 +22,30 @@ def generic(leaderboard):
         abort(404)
     else:
         return render_template('pointless/generic.html', fields=board.fields, title=board.title,
-                               description=board.description, data=data)
+                               description=board.description, url=board.url, data=data)
 
 
 @blueprint.route("/avgspeed")
 def averagespeed():
-    q = text("""
-        select a.id, a.display_name, avg(b.average_speed) as speed from lbd_athletes a, rides b where a.id = b.athlete_id group by a.id order by speed;
-        """)
-    avgspeed = [(x['id'], x['display_name'], x['speed']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/averagespeed.html', avg=avgspeed)
+    return generic('avgspeed')
 
 
 @blueprint.route("/avgdist")
 def shortride():
-    q = text("""
-        select a.id, a.display_name, avg(b.distance) as dist, count(distinct(date(b.start_date))) as distrides from lbd_athletes a,
-        rides b where a.id = b.athlete_id group by a.id order by dist;
-        """)
-    avgdist = [(x['id'], x['display_name'], x['dist']) for x in meta.scoped_session().execute(q).fetchall() if
-               x['distrides'] >= 10]
-    return render_template('pointless/distance.html', avg=avgdist)
+    return generic('avgdist')
+
+
+@blueprint.route("/dirtybiker")
+def dirtybiker():
+    return generic("dirtybiker")
 
 
 @blueprint.route("/billygoat")
 def billygoat():
-    q = text("""
-    select sum(a.elevation_gain) as elev,sum(a.distance) as dist, (sum(a.elevation_gain)/sum(a.distance)) as gainpermile,
-    c.name from rides a, lbd_athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by gainpermile desc;
-    """)
-    goat = [(x['name'], x['gainpermile'], x['dist'], x['elev']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/billygoat.html', data=goat)
+    return generic('billygoat')
+
+
+# TODO: Replace all of the rest of these with generic queries
 
 
 @blueprint.route("/tortoiseteam")
