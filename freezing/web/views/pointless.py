@@ -49,72 +49,34 @@ def billygoat_team():
 def billygoat_invid():
     return generic('billygoat-indiv')
 
-# TODO: Replace all of the rest of these with generic queries
-
 
 @blueprint.route("/tortoiseteam")
 def tortoiseteam():
-    q = text("""
-    select avg(a.average_speed) as spd,    c.name from rides a, lbd_athletes b, teams c where a.athlete_id=b.id and b.team_id=c.id group by c.name order by spd asc;
-    """)
-    goat = [(x['name'], x['spd']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/tortoiseteam.html', data=goat)
+    return generic('tortoiseteam')
 
 
 @blueprint.route("/weekend")
 def weekendwarrior():
-    q = text("""
-        select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score,
-        sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0)) as 'weekend',
-        sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as 'weekday'
-        from daily_scores DS join lbd_athletes A on A.id = DS.athlete_id group by A.id
-        order by weekend desc;
-        """)
-    weekend = [(x['athlete_id'], x['athlete_name'], x['total_score'], x['weekend'], x['weekday']) for x in
-               meta.scoped_session().execute(q).fetchall()]
-    return render_template('people/weekend.html', data=weekend)
+    return generic('weekend')
+
 
 @blueprint.route("/avgtemp")
 def avgtemp():
     """ sum of ride distance * ride avg temp divided by total distance """
-    q = text("""
-        select athlete_id, athlete_name, sum(temp_dist)/sum(distance) as avgtemp from (
-        select A.id as athlete_id, A.display_name as athlete_name, W.ride_temp_avg, R.distance,
-        W.ride_temp_avg * R.distance as temp_dist
-        from lbd_athletes A, ride_weather W, rides R where R.athlete_id = A.id and R.id=W.ride_id) as T
-        group by athlete_id, athlete_name order by avgtemp asc;
-        """)
-    tdata = [(x['athlete_id'], x['athlete_name'], x['avgtemp']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/averagetemp.html', data=tdata)
+    return generic('/avgtemp')
+
 
 @blueprint.route("/kidmiles")
 def kidmiles():
-    q = text ("""
-        select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides,
-        sum(R.distance) as kidical_miles
-        from lbd_athletes A
-        join rides R on R.athlete_id = A.id
-        where R.name like '%#kidical%'
-        group by A.id, A.display_name
-        order by kidical_miles desc, kidical_rides desc;
-        """)
-    tdata = [(x['id'], x['athlete_name'], x['kidical_rides'], x['kidical_miles']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/kidmiles.html', data=tdata)
+    return generic('kidmiles')
+
 
 @blueprint.route("/opmdays")
 def opmdays():
     """
     If OPM doesn't close this year, just use Michigan's birthday for Kitty's prize
     """
-    q = text("""
-        select A.id, A.display_name as athlete_name, count(distinct(date(R.start_date))) as days, sum(R.distance) as distance
-        from lbd_athletes A join rides R on R.athlete_id=A.id
-        where date(R.start_date) in ('2018-01-26') group by R.athlete_id
-        order by days desc, distance desc;
-        """)
-    opm = [(x['id'], x['athlete_name'], x['days'], x['distance']) for x in
-           meta.scoped_session().execute(q).fetchall()]
-    return render_template('pointless/opmdays.html', data=opm)
+    return generic('opmdays')
 
 @blueprint.route("/points_per_mile")
 def points_per_mile():

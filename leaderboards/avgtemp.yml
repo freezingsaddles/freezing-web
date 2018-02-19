@@ -1,0 +1,24 @@
+---
+title: Weighted Average Temperature
+description: Weighted average of average ride temperature.
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
+  - name: avgtemp
+    label: Avg Temp (F)
+query: |
+  select
+    athlete_id,
+    athlete_name,
+    sum(temp_dist)/sum(distance) as avgtemp
+  from (select A.id as athlete_id, A.display_name as athlete_name, W.ride_temp_avg, R.distance,
+        W.ride_temp_avg * R.distance as temp_dist
+        from lbd_athletes A
+          join rides R on R.athlete_id = A.id
+          join ride_weather W on W.ride_id = R.id
+        where R.athlete_id = A.id and R.id=W.ride_id) as t
+  group by athlete_id, athlete_name
+  order by avgtemp asc

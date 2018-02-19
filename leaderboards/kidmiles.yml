@@ -1,0 +1,24 @@
+---
+title: Kidical Rides & Miles
+description: Rides with kids (tagged #kidical)
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
+  - name: kidical_rides
+    label: Kidical Rides
+  - name: kidical_miles
+    label: Kidical Miles
+query: |
+  select
+    A.id as athlete_id,
+    A.display_name as athlete_name,
+    count(R.id) as kidical_rides,
+    sum(R.distance) as kidical_miles
+  from lbd_athletes A
+    join rides R on R.athlete_id = A.id
+  where R.name like '%#kidical%'
+  group by A.id, A.display_name
+  order by kidical_miles desc, kidical_rides desc

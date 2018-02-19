@@ -4,7 +4,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">{{ title }}</div>
 	<div class="panel-body">
-		<p>{{ description }}</p>
+		<p>{{ description | safe }}</p>
 		{% if url %}<p>See: <a href="{{ url }}">{{ url }}</a></p>{% endif %}
 		<table class="table table-condensed">
 			<thead>

@@ -1,0 +1,29 @@
+---
+title: Weekend Warrior
+description: Points on the weekend vs points during the week
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
+  - name: weekend
+    label: Weekend Points
+  - name: weekday
+    label: Weekday Points
+  - name: total
+    label: Total Points
+  - name: weekend_percentage
+    label: Weekend %
+query: |
+  select
+    A.id as athlete_id,
+    A.display_name as athlete_name,
+    sum(DS.points) as total,
+    (sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0))  / sum(DS.points)) * 100 as weekend_percentage,
+    sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0)) as weekend,
+    sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as weekday
+  from daily_scores DS
+    join lbd_athletes A on A.id = DS.athlete_id
+  group by A.id, A.display_name
+  order by weekend_percentage desc

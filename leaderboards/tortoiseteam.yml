@@ -1,0 +1,17 @@
+---
+title: Slowest Team
+description: Teams ranked by speed, slowest first.
+fields:
+  - name: team_name
+    label: Team
+  - name: avg_speed
+    label: Average Speed (mph)
+query: |
+  select avg(r.average_speed) as avg_speed,
+          sum(r.distance) / (sum(r.moving_time) / 3600) as avg_speed,
+          t.name as team_name
+  from rides r
+    join lbd_athletes a on a.id = r.athlete_id
+    join teams t on t.id = a.team_id
+  group by t.id, t.name
+  order by avg_speed asc
