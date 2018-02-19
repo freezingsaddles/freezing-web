@@ -97,6 +97,7 @@ def _get_hashtag_tdata(hashtag, orderby=1):
     """
     if orderby = 1 then order by mileage. Else by #rides
     """
+    sess = meta.scoped_session()
     if orderby == 1:
         sortkeyidx = (3, 2)
     else:
@@ -106,10 +107,11 @@ def _get_hashtag_tdata(hashtag, orderby=1):
         sum(R.distance) as hashtag_miles
         from athletes A
         join rides R on R.athlete_id = A.id
-        where R.name like '%""" + "#" +  hashtag + """%'
+        where R.name like concat('%', '#', :hashtag, '%')
         group by A.id, A.display_name;
         """)
-    retval = [(x['id'], x['athlete_name'], x['hashtag_rides'], x['hashtag_miles']) for x in meta.scoped_session().execute(q).fetchall()]
+    rs = sess.execute(q, params=dict(hashtag=hashtag))
+    retval = [(x['id'], x['athlete_name'], x['hashtag_rides'], x['hashtag_miles']) for x in rs.fetchall()]
     return sorted(retval, key = operator.itemgetter(*sortkeyidx), reverse=True)
 
 @blueprint.route("/hashtag/<string:hashtag>")
