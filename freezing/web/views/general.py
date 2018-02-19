@@ -199,7 +199,6 @@ def authorization():
         except NoTeamsError:
             no_teams = True
 
-
         return render_template('authorization_success.html', athlete=strava_athlete,
                                team=team, multiple_teams=multiple_teams,
                                no_teams=no_teams)

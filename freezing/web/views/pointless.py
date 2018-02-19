@@ -40,10 +40,14 @@ def dirtybiker():
     return generic("dirtybiker")
 
 
-@blueprint.route("/billygoat")
-def billygoat():
-    return generic('billygoat')
+@blueprint.route("/billygoat-team")
+def billygoat_team():
+    return generic('billygoat-team')
 
+
+@blueprint.route("/billygoat-indiv")
+def billygoat_invid():
+    return generic('billygoat-indiv')
 
 # TODO: Replace all of the rest of these with generic queries
 
