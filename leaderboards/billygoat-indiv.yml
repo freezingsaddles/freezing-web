@@ -16,10 +16,10 @@ fields:
 query: |
   select
     A.id,
-    A.display_name as athlete_name
+    A.display_name as athlete_name,
     sum(R.elevation_gain) as elev,
     sum(R.distance) as dist,
-    (sum(R.elevation_gain) / sum(R.distance)) as gainpermile,
+    (sum(R.elevation_gain) / sum(R.distance)) as gainpermile
   from rides R
   join  lbd_athletes A on A.id = R.athlete_id
   group by A.id, A.display_name
