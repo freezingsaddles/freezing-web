@@ -88,10 +88,10 @@ STRAVA_CLIENT_ID=xxxx1234
 STRAVA_CLIENT_SECRET=5678zzzz
 ```
 
-
 ## Docker Deployment
 
-See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for guide to deploying this in production.
+See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for guide to deploying this in production along
+with the related containers.
 
 This component is designed to run as a container and should be configured with environment variables for:
 - `DEBUG`: Whether to display exception stack traces, etc.
