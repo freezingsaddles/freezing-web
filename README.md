@@ -5,8 +5,8 @@ winter cycling competition software.
 
 **NOTE:** This application conists of multiple components that work together (designed to run as Docker containers).
 1. [freezing-web](https://github.com/freezingsaddles/freezing-web) - The website for viewing leaderboards   
-1. [freezing-model](https://github.com/freezingsaddles/freezing-model) - A library of shared database and messaging classes. 
-1. [freezing-sync](https://github.com/freezingsaddles/freezing-sync) - The component that syncs ride data from Strava. 
+1. [freezing-model](https://github.com/freezingsaddles/freezing-model) - A library of shared database and messaging classes.
+1. [freezing-sync](https://github.com/freezingsaddles/freezing-sync) - The component that syncs ride data from Strava.
 1. [freezing-nq](https://github.com/freezingsaddles/freezing-nq) - The component that receives webhooks and queues them up for syncing.
 
 # Development Setup
@@ -30,16 +30,25 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 shell$ cd freezing-web
 shell$ python3.6 -m venv env
 shell$ source env/bin/activate
-(env) shell$ python setup.py develop 
+(env) shell$ pip install -r requirements.txt
+(env) shell$ python setup.py develop
 ```
 
-We will assume for all subsequent shell examples that you are running in the bafs activated virtualenv.  (This is denoted by using
+We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using
 the "(env) shell$" prefix before shell commands.)    
 
 ### Database Setup
 
 This application requires MySQL.  I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting
 provider only supports MySQL), it's what we're doing.
+
+#### DB Setup using Docker
+
+We have some development support Docker Compose files that can help make database setup simpler, head over to the [freezing-compose](https://github.com/freezingsaddles/freezing-compose) repo for those instructions.
+
+#### Manual DB Setup
+
+Install MySQL, version 5.6 ideally.  (A newer 5.x may work fine too, but current production db server is 5.6 so there might be differences in supported db features.)
 
 You should create a database and create a user that can access the database.  Something like this might work in the default case:
 
@@ -53,10 +62,10 @@ mysql> grant all on freezing.* to freezing@localhost;
 
 Configuration files are shell environment files (or you can use environment variables dirctly).
 
-There is a sample file (`example.cfg`) that you can reference.  You need to set an environment variable called 
+There is a sample file (`example.cfg`) that you can reference.  You need to set an environment variable called
 `APP_SETTINGS` to the path to the file you wish to use.
 
-Here is an example of starting the webserver using settings from a new `development.env` config file:
+Here is an example of starting the webserver using settings from a new `development.cfg` config file:
 ```bash
 (env) shell$ cp example.cfg development.cfg
 # Edit the file
@@ -70,6 +79,7 @@ Critical things to set include:
 ```bash
 # The SQLALchemy connection URL for your MySQL database.
 # NOTE THE CHARSET!
+# NOTE: If you are using docker use 127.0.0.1 as the host, NOT localhost
 SQLALCHEMY_DATABASE_URI=mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true
 
 # These are issued when you create a Strava application.
@@ -81,7 +91,10 @@ STRAVA_CLIENT_SECRET=5678zzzz
 
 ## Docker Deployment
 
+See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for guide to deploying this in production.
+
 This component is designed to run as a container and should be configured with environment variables for:
+- `DEBUG`: Whether to display exception stack traces, etc.
 - `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
 - `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
 - `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
@@ -92,4 +105,3 @@ This component is designed to run as a container and should be configured with e
 - `OBSERVER_TEAMS`: Comma-separated list of any teams that are just observing, not playing (they can get their overall stats included, but won't be part of leaderboards)
 - `START_DATE`: The beginning of the competition.
 - `END_DATE`: The end of the competition.
-
