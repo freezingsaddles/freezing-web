@@ -7,6 +7,7 @@ import shutil
 
 from instagram.client import InstagramAPI
 from freezing.web import app, exc
+from freezing.web.config import config
 
 THUMBNAIL_DIMS = (150,150)
 STANDARD_DIMS = (640, 640)
@@ -26,12 +27,12 @@ def configured_instagram_client():
     :return: Instagram with configured client ID.
     :rtype: instagram.client.InstagramAPI
     """
-    return InstagramAPI(client_id=Config.INSTAGRAM_CLIENT_ID)
+    return InstagramAPI(client_id=config.INSTAGRAM_CLIENT_ID)
 
 
 def photo_cache_path(uid, resolution=STANDARD):
     assert resolution in (STANDARD, THUMBNAIL, LOW)
-    cache_dir = Config.INSTAGRAM_CACHE_DIR
+    cache_dir = config.INSTAGRAM_CACHE_DIR
     if not cache_dir:
         raise exc.ConfigurationError("INSTAGRAM_CACHE_DIR not configured!")
 
