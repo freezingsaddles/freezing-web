@@ -32,3 +32,19 @@ services:
       - ./resources/docker/settings.cfg:/config/settings.cfg
     links:
       - db:db.container
+    environment:
+      VIRTUAL_HOST: ${FREEZING_WEB_FQDN}
+      LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      SQLALCHEMY_URL: ${SQLALCHEMY_URL}
+      BEANSTALKD_HOST: beanstalkd.container
+      BEANSTALKD_PORT: 11300
+      STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
+      STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
+      TEAMS: ${TEAMS}
+      OBSERVER_TEAMS: ${OBSERVER_TEAMS}
+      START_DATE: ${START_DATE}
+      END_DATE: ${END_DATE}
+      TIMEZONE: ${TIMEZONE:-America/New_York}
