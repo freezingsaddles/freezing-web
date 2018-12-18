@@ -3,6 +3,7 @@ from sqlalchemy import text
 from werkzeug.utils import redirect
 
 from freezing.model import meta
+from freezing.web import config
 
 blueprint = Blueprint('leaderboard', __name__)
 
@@ -14,7 +15,8 @@ def leaderboard():
 
 @blueprint.route("/team")
 def team_leaderboard():
-    return render_template('leaderboard/team.html')
+    return render_template('leaderboard/team.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/team_text")
@@ -51,17 +53,22 @@ def team_leaderboard_classic():
     for team_id in team_members:
         team_members[team_id] = reversed(sorted(team_members[team_id], key=lambda m: m['total_score']))
 
-    return render_template('leaderboard/team_text.html', team_rows=team_rows, team_members=team_members)
+    return render_template('leaderboard/team_text.html',
+                           team_rows=team_rows,
+                           team_members=team_members,
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/team_various")
 def team_leaderboard_various():
-    return render_template('leaderboard/team_various.html')
+    return render_template('leaderboard/team_various.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/individual")
 def indiv_leaderboard():
-    return render_template('leaderboard/indiv.html')
+    return render_template('leaderboard/indiv.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/individual_text")
@@ -82,9 +89,11 @@ def individual_leaderboard_text():
 
     indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
-    return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows)
+    return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows,
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/individual_various")
 def indiv_leaderboard_various():
-    return render_template('leaderboard/indiv_various.html')
+    return render_template('leaderboard/indiv_various.html',
+                           competition_title=config.COMPETITION_TITLE)

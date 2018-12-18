@@ -7,6 +7,8 @@ from sqlalchemy import text
 from freezing.model import meta
 from freezing.model.orm import Team, Athlete
 
+from freezing.web import config
+
 
 blueprint = Blueprint('people', __name__)
 
@@ -44,7 +46,11 @@ def people_list_users():
                       "weektotal": weekly_dist,
                       "totaldist": total_dist,
                       "totalrides": total_rides})
-    return render_template('people/list.html', users=users, weekstart=week_start, weekend=week_end)
+    return render_template('people/list.html',
+                           users=users,
+                           weekstart=week_start,
+                           weekend=week_end,
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/<user_id>")
@@ -73,7 +79,8 @@ def people_show_person(user_id):
         "weekrides": weekly_rides,
         "weektotal": weekly_dist,
         "totaldist": total_dist,
-        "totalrides": total_rides})
+        "totalrides": total_rides},
+        competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/ridedays")
@@ -106,4 +113,5 @@ def friends():
 
     indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
-    return render_template('people/friends.html', indiv_rows=indiv_rows)
+    return render_template('people/friends.html', indiv_rows=indiv_rows,
+                           competition_title=config.COMPETITION_TITLE)

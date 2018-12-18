@@ -8,6 +8,7 @@ from sqlalchemy import text
 from freezing.model import meta
 from freezing.model.orm import Team, Athlete, RidePhoto, Ride
 
+from freezing.web import config
 from freezing.web.utils import insta
 from freezing.web.autolog import log
 
@@ -51,4 +52,5 @@ def index():
     return render_template('photos.html',
                            photos=page_q,
                            page=page,
-                           total_pages=total_pages)
+                           total_pages=total_pages,
+                           competition_title=config.COMPETITION_TITLE)
