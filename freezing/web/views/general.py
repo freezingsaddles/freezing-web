@@ -97,7 +97,8 @@ def index():
                            rain_hours=rain_hours,
                            snow_hours=snow_hours,
                            sub_freezing_hours=sub_freezing_hours,
-                           photos=photos)
+                           photos=photos,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/login")
 def login():
@@ -105,7 +106,9 @@ def login():
     url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
                               redirect_uri=url_for('.logged_in', _external=True),
                               approval_prompt='auto')
-    return render_template('login.html', authorize_url=url)
+    return render_template('login.html',
+			   authorize_url=url,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/logout")
 def logout():
@@ -124,7 +127,9 @@ def logged_in():
     error = request.args.get('error')
     state = request.args.get('state')
     if error:
-        return render_template('login_error.html', error=error)
+        return render_template('login_error.html',
+                               error=error,
+                               competition_title=config.COMPETITION_TITLE)
     else:
         code = request.args.get('code')
         client = Client()
@@ -136,7 +141,9 @@ def logged_in():
 
         athlete_model = meta.scoped_session().query(Athlete).get(strava_athlete.id)
         if not athlete_model:
-            return render_template('login_error.html', error="ATHLETE_NOT_FOUND")
+            return render_template('login_error.html',
+                                   error="ATHLETE_NOT_FOUND",
+                                   competition_title=config.COMPETITION_TITLE)
 
         multiple_teams = None
         no_teams = False
@@ -154,7 +161,8 @@ def logged_in():
         else:
             return render_template('login_results.html', athlete=strava_athlete,
                                    team=team, multiple_teams=multiple_teams,
-                                   no_teams=no_teams)
+                                   no_teams=no_teams,
+                                   competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/authorize")
 def join():
@@ -166,7 +174,10 @@ def join():
                                       redirect_uri=url_for('.authorization', _external=True),
                                       approval_prompt='auto',
                                       scope='view_private')
-    return render_template('authorize.html', public_authorize_url=public_url, private_authorize_url=private_url)
+    return render_template('authorize.html',
+                           public_authorize_url=public_url,
+                           private_authorize_url=private_url,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/authorization")
 def authorization():
@@ -179,7 +190,9 @@ def authorization():
     error = request.args.get('error')
     state = request.args.get('state')
     if error:
-        return render_template('authorization_error.html', error=error)
+        return render_template('authorization_error.html',
+                               error=error,
+                               competition_title=config.COMPETITION_TITLE)
     else:
         code = request.args.get('code')
         client = Client()
@@ -201,7 +214,8 @@ def authorization():
 
         return render_template('authorization_success.html', athlete=strava_athlete,
                                team=team, multiple_teams=multiple_teams,
-                               no_teams=no_teams)
+                               no_teams=no_teams,
+                               competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/webhook", methods=['GET'])
@@ -226,17 +240,21 @@ def trends():
 
 @blueprint.route("/explore/team_weekly")
 def team_weekly_points():
-    return render_template('explore/team_weekly_points.html')
+    return render_template('explore/team_weekly_points.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/explore/indiv_elev_dist")
 def indiv_elev_dist():
-    return render_template('explore/indiv_elev_dist.html')
+    return render_template('explore/indiv_elev_dist.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/explore/distance_by_lowtemp")
 def riders_by_lowtemp():
-    return render_template('explore/distance_by_lowtemp.html')
+    return render_template('explore/distance_by_lowtemp.html',
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/explore/team_cumul")
 def team_cumul_trend():
-    return render_template('explore/team_cumul.html')
+    return render_template('explore/team_cumul.html',
+                           competition_title=config.COMPETITION_TITLE)

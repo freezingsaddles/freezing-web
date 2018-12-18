@@ -2,7 +2,7 @@
 <html xml:lang="en" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{% block title %}Freezing Saddles{% endblock %}</title>
+    <title>{% block title %}{{ competition_title }}{% endblock %}</title>
 
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -61,6 +61,12 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <!-- <li class="{% if request.path == '/' %}active{% endif %}"><a href="/">Home</a></li> -->
+                    <li>
+                            <a href="http://register.freezingsaddles.com">Register</a>
+                    </li>
+                    <li>
+                            <a href="http://bikearlingtonforum.com/forumdisplay.php?41-Freezing-Saddles-Winter-Riding-Competition">Forum</a>
+                    </li>
                     <li class="dropdown{% if request.path.startswith('/leaderboard') %} active{% endif %}">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Leaderboards <span class="caret"></span>
