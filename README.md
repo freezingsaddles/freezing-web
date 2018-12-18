@@ -24,7 +24,8 @@ Here are some instructions for setting up a development environment:
 
 ```bash
 # Clone repo
-shell$ git clone https://github.com/freezingsaddles/freezing-web.git
+shell$ mkdir freezingsaddles && cd freezingsaddles
+shell$ for part in sync web compose nq model; do git clone https://github.com/freezingsaddles/freezing-$part.git; done
 
 # Create and activate a virtual environment for freezing-web
 shell$ cd freezing-web
@@ -97,6 +98,7 @@ This component is designed to run as a container and should be configured with e
 - `DEBUG`: Whether to display exception stack traces, etc.
 - `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
 - `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
+shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 - `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
 - `SQLALCHEMY_URL`: The URL to the database.
 - `STRAVA_CLIENT_ID`: The ID of the Strava application.
@@ -105,3 +107,15 @@ This component is designed to run as a container and should be configured with e
 - `OBSERVER_TEAMS`: Comma-separated list of any teams that are just observing, not playing (they can get their overall stats included, but won't be part of leaderboards)
 - `START_DATE`: The beginning of the competition.
 - `END_DATE`: The end of the competition.
+
+## Beginning of year procedures
+
+* Update the Strava team id for the new team for observers to be the team for the overall Freezing Saddles team for the year
+* Update the start and end dates in the production `.env` file
+* Truncate the following MySQL tables: (see freezing/sql/year-start.sql)
+  * teams
+  * athletes
+  * rides
+  * ride_geo
+  * ride_weather
+* Restart the services
