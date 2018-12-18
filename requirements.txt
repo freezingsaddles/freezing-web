@@ -1,6 +1,6 @@
 stravalib>=0.8.0
 polyline==1.3.2
--e git+https://github.com/freezingsaddles/freezing-model@0.2.5#egg=freezing-model
+-e git+https://github.com/freezingsaddles/freezing-model@0.2.6#egg=freezing-model
 geojson==1.3.2
 PyMySQL==0.8.0
 arrow==0.12.1
