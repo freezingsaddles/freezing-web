@@ -173,7 +173,7 @@ def join():
     private_url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
                                       redirect_uri=url_for('.authorization', _external=True),
                                       approval_prompt='auto',
-                                      scope='view_private')
+                                      scope=['read_all','activity:read_all','profile:read_all'])
     return render_template('authorize.html',
                            public_authorize_url=public_url,
                            private_authorize_url=private_url,
