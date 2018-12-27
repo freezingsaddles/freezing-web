@@ -57,7 +57,7 @@ def register_athlete(strava_athlete, token_dict):
 
     athlete.access_token = token_dict['access_token']
     athlete.refresh_token = token_dict['refresh_token']
-    athlete.expires_at = token_dict['exipires_at']
+    athlete.expires_at = token_dict['expires_at']
     meta.scoped_session().add(athlete)
     # We really shouldn't be committing here, since we want to disambiguate names after registering
     meta.scoped_session().commit()
@@ -76,7 +76,7 @@ def update_athlete_auth(strava_athlete, token_dict):
     if athlete is not None:
         athlete.access_token = token_dict['access_token']
         athlete.refresh_token = token_dict['refresh_token']
-        athlete.expires_at = token_dict['exipires_at']
+        athlete.expires_at = token_dict['expires_at']
         meta.scoped_session().add(athlete)
         meta.scoped_session().commit()
     return athlete
