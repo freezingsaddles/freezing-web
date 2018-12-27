@@ -133,13 +133,13 @@ def logged_in():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
-                                                      client_secret=config.STRAVA_CLIENT_SECRET,
-                                                      code=code)
+        token_dict = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                    client_secret=config.STRAVA_CLIENT_SECRET,
+                                                    code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
 
-        athlete_model = meta.scoped_session().query(Athlete).get(strava_athlete.id)
+        athlete_model = data.update_athlete_auth(strava_athlete.id, token_dict)
         if not athlete_model:
             return render_template('login_error.html',
                                    error="ATHLETE_NOT_FOUND",
@@ -196,12 +196,12 @@ def authorization():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
-                                                      client_secret=config.STRAVA_CLIENT_SECRET,
-                                                      code=code)
+        token_dict = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                    client_secret=config.STRAVA_CLIENT_SECRET,
+                                                    code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
-        athlete_model = data.register_athlete(strava_athlete, access_token)
+        athlete_model = data.register_athlete(strava_athlete, token_dict)
         multiple_teams = None
         no_teams = False
         team = None
