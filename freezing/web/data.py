@@ -38,7 +38,7 @@ class StravaClientForAthlete(Client):
         super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
 
 
-def register_athlete(strava_athlete, access_token):
+def register_athlete(strava_athlete, token_dict):
     """
     Ensure specified athlete is added to database, returns athlete orm.
 
@@ -55,11 +55,30 @@ def register_athlete(strava_athlete, access_token):
     athlete.display_name = strava_athlete.firstname
     athlete.profile_photo = strava_athlete.profile
 
-    athlete.access_token = access_token
+    athlete.access_token = token_dict['access_token']
+    athlete.refresh_token = token_dict['refresh_token']
+    athlete.expires_at = token_dict['expires_at']
     meta.scoped_session().add(athlete)
     # We really shouldn't be committing here, since we want to disambiguate names after registering
     meta.scoped_session().commit()
 
+    return athlete
+
+
+def update_athlete_auth(strava_athlete, token_dict):
+    """
+    Update auth tokens for specified athlete
+
+    :return: The updated athlete model object, or None if no athlete found.
+    :rtype: :class:`bafs.orm.Athlete`
+    """
+    athlete = meta.scoped_session().query(Athlete).get(strava_athlete.id)
+    if athlete is not None:
+        athlete.access_token = token_dict['access_token']
+        athlete.refresh_token = token_dict['refresh_token']
+        athlete.expires_at = token_dict['expires_at']
+        meta.scoped_session().add(athlete)
+        meta.scoped_session().commit()
     return athlete
 
 
@@ -147,6 +166,8 @@ def register_athlete_team(strava_athlete, athlete_model):
     all_teams = config.COMPETITION_TEAMS
     log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
+        if strava_athlete.clubs is None:
+            raise NoTeamsError()
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
         log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None

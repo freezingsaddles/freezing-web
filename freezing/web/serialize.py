@@ -10,6 +10,8 @@ class AthleteSchema(Schema):
     display_name = fields.String()
     team_id = fields.Integer(**optional)
     access_token = fields.String(**optional)
+    refresh_token = fields.String(**optional)
+    expires_at = fields.Integer()
     profile_photo = fields.String(**optional)
 
     # rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")

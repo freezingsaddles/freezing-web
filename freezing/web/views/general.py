@@ -103,11 +103,14 @@ def index():
 @blueprint.route("/login")
 def login():
     c = Client()
-    url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
-                              redirect_uri=url_for('.logged_in', _external=True),
-                              approval_prompt='auto')
+    url = c.authorization_url(
+        client_id=config.STRAVA_CLIENT_ID,
+        redirect_uri=url_for('.logged_in', _external=True),
+        approval_prompt='auto',
+        scope=['read_all', 'activity:read_all', 'profile:read_all'],
+    )
     return render_template('login.html',
-			   authorize_url=url,
+                           authorize_url=url,
                            competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/logout")
@@ -133,13 +136,13 @@ def logged_in():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
-                                                      client_secret=config.STRAVA_CLIENT_SECRET,
-                                                      code=code)
+        token_dict = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                    client_secret=config.STRAVA_CLIENT_SECRET,
+                                                    code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
 
-        athlete_model = meta.scoped_session().query(Athlete).get(strava_athlete.id)
+        athlete_model = data.update_athlete_auth(strava_athlete, token_dict)
         if not athlete_model:
             return render_template('login_error.html',
                                    error="ATHLETE_NOT_FOUND",
@@ -167,13 +170,18 @@ def logged_in():
 @blueprint.route("/authorize")
 def join():
     c = Client()
-    public_url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
-                                     redirect_uri=url_for('.authorization', _external=True),
-                                     approval_prompt='auto')
-    private_url = c.authorization_url(client_id=config.STRAVA_CLIENT_ID,
-                                      redirect_uri=url_for('.authorization', _external=True),
-                                      approval_prompt='auto',
-                                      scope='view_private')
+    public_url = c.authorization_url(
+        client_id=config.STRAVA_CLIENT_ID,
+        redirect_uri=url_for('.authorization', _external=True),
+        approval_prompt='auto',
+        scope=['read', 'activity:read', 'profile:read_all'],
+    )
+    private_url = c.authorization_url(
+        client_id=config.STRAVA_CLIENT_ID,
+        redirect_uri=url_for('.authorization', external=True),
+        approval_prompt='auto',
+        scope=['read_all', 'activity:read_all', 'profile:read_all'],
+    )
     return render_template('authorize.html',
                            public_authorize_url=public_url,
                            private_authorize_url=private_url,
@@ -196,12 +204,12 @@ def authorization():
     else:
         code = request.args.get('code')
         client = Client()
-        access_token = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
-                                                      client_secret=config.STRAVA_CLIENT_SECRET,
-                                                      code=code)
+        token_dict = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
+                                                    client_secret=config.STRAVA_CLIENT_SECRET,
+                                                    code=code)
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
-        athlete_model = data.register_athlete(strava_athlete, access_token)
+        athlete_model = data.register_athlete(strava_athlete, token_dict)
         multiple_teams = None
         no_teams = False
         team = None
