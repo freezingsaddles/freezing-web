@@ -166,6 +166,8 @@ def register_athlete_team(strava_athlete, athlete_model):
     all_teams = config.COMPETITION_TEAMS
     log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
+        if strava_athlete.clubs is None:
+            raise NoTeamsError()
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
         log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
