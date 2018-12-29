@@ -8,7 +8,7 @@ import copy
 from collections import defaultdict
 from datetime import datetime, timedelta, date
 
-from flask import render_template, redirect, url_for, current_app, request, Blueprint, jsonify
+from flask import redirect, url_for, current_app, request, Blueprint, jsonify
 
 from sqlalchemy import text
 from dateutil import rrule

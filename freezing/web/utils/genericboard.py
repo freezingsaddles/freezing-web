@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import List, Dict, Any, Tuple
 
 import yaml
-from flask import render_template, abort
 
 from marshmallow import fields
 from marshmallow_enum import EnumField

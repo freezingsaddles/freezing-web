@@ -29,6 +29,7 @@ class Config:
     STRAVA_CLIENT_ID = env('STRAVA_CLIENT_ID')
     STRAVA_CLIENT_SECRET = env('STRAVA_CLIENT_SECRET')
 
+    COMPETITION_TITLE = env('COMPETITION_TITLE', default='Freezing Saddles')
     COMPETITION_TEAMS: List[int] = env('TEAMS', cast=list, subcast=int, default=[])
     OBSERVER_TEAMS: List[int] = env('OBSERVER_TEAMS', cast=list, subcast=int, default=[])
 
