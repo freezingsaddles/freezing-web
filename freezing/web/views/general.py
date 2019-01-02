@@ -151,21 +151,31 @@ def logged_in():
         multiple_teams = None
         no_teams = False
         team = None
+        message = None
         try:
-            team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
+            team = data.register_athlete_team(
+                    strava_athlete=strava_athlete,
+                    athlete_model=athlete_model,
+                    )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams
-        except NoTeamsError:
+            message = multx.str()
+        except NoTeamsError as noteamsx:
             no_teams = True
-
+            message = noteamsx.str()
         if not no_teams:
             auth.login_athlete(strava_athlete)
             return redirect(url_for('user.rides'))
         else:
-            return render_template('login_results.html', athlete=strava_athlete,
-                                   team=team, multiple_teams=multiple_teams,
-                                   no_teams=no_teams,
-                                   competition_title=config.COMPETITION_TITLE)
+            return render_template(
+                    'login_results.html',
+                    athlete=strava_athlete,
+                    team=team,
+                    multiple_teams=multiple_teams,
+                    no_teams=no_teams,
+                    message=message,
+                    competition_title=config.COMPETITION_TITLE,
+                    )
 
 @blueprint.route("/authorize")
 def join():
@@ -222,10 +232,10 @@ def authorization():
                     )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams
-            message = multx.message
+            message = multx.str()
         except NoTeamsError as noteamx:
             no_teams = True
-            message = noteamx.message
+            message = noteamx.str()
 
         return render_template(
             'authorization_success.html',
