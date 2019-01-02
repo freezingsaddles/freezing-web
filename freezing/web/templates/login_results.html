@@ -6,6 +6,7 @@
 </p>
 
 {% if no_teams %}
+<h2>Uh-oh, something went wrong</h2>
 <p>
 	So you are a Strava athlete, we get that. Unfortunately, one of these two things is true:
     <ol>
@@ -14,6 +15,8 @@
     </ul>
 </p>
 <p>If the latter is true, try to login again and grant us permission to "View your complete Strava profile".</p>
+<h2>Detailed error message:</h2>
+<p>{{ message }}</p>
 {% else %}
 <p>
 	<strong>You are logged-in and have access to otherwise-private activity and athlete data.</strong>

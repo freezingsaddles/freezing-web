@@ -196,7 +196,6 @@ def authorization():
     - error
     """
     error = request.args.get('error')
-    state = request.args.get('state')
     if error:
         return render_template('authorization_error.html',
                                error=error,
@@ -204,26 +203,39 @@ def authorization():
     else:
         code = request.args.get('code')
         client = Client()
-        token_dict = client.exchange_code_for_token(client_id=config.STRAVA_CLIENT_ID,
-                                                    client_secret=config.STRAVA_CLIENT_SECRET,
-                                                    code=code)
+        token_dict = client.exchange_code_for_token(
+                client_id=config.STRAVA_CLIENT_ID,
+                client_secret=config.STRAVA_CLIENT_SECRET,
+                code=code,
+                )
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
         athlete_model = data.register_athlete(strava_athlete, token_dict)
         multiple_teams = None
         no_teams = False
         team = None
+        message = None
         try:
-            team = data.register_athlete_team(strava_athlete=strava_athlete, athlete_model=athlete_model)
+            team = data.register_athlete_team(
+                    strava_athlete=strava_athlete,
+                    athlete_model=athlete_model,
+                    )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams
-        except NoTeamsError:
+            message = multx.message
+        except NoTeamsError as noteamx:
             no_teams = True
+            message = noteamx.message
 
-        return render_template('authorization_success.html', athlete=strava_athlete,
-                               team=team, multiple_teams=multiple_teams,
-                               no_teams=no_teams,
-                               competition_title=config.COMPETITION_TITLE)
+        return render_template(
+            'authorization_success.html',
+            athlete=strava_athlete,
+            team=team,
+            multiple_teams=multiple_teams,
+            no_teams=no_teams,
+            message=message,
+            competition_title=config.COMPETITION_TITLE,
+        )
 
 
 @blueprint.route("/webhook", methods=['GET'])
