@@ -159,10 +159,10 @@ def logged_in():
                     )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams
-            message = multx.str()
+            message = multx
         except NoTeamsError as noteamsx:
             no_teams = True
-            message = noteamsx.str()
+            message = noteamsx
         if not no_teams:
             auth.login_athlete(strava_athlete)
             return redirect(url_for('user.rides'))
