@@ -162,23 +162,45 @@ def register_athlete_team(strava_athlete, athlete_model):
                                the configured teams.  That won't work.
     :raise NoTeamsError: If no teams match.
     """
+    # TODO: This is redundant with freezingsaddles/freezing-sync which has a
+    # very similar method in freezing/sync/data/athlete.py
+    # Figure out how to DRY (Don't Repeat Yourself) for this code.
 
     all_teams = config.COMPETITION_TEAMS
-    log.info("Checking {0!r} against {1!r}".format(strava_athlete.clubs, all_teams))
     try:
         if strava_athlete.clubs is None:
-            raise NoTeamsError()
+            raise NoTeamsError(
+                "Athlete {0} ({1} {2}): No clubs returned- {3}. {4}.".format(
+                    strava_athlete.id,
+                    strava_athlete.firstname,
+                    strava_athlete.lastname,
+                    "Full Profile Access required",
+                    "Please re-authorize"
+                )
+            )
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
-        log.debug("Matched: {0!r}".format(matches))
         athlete_model.team = None
         if len(matches) > 1:
-            # you can be on multiple teams as long as only one is an official team
-            matches = [c for c in matches if c.id not in config.OBSERVER_TEAMS]
+            # you can be on multiple teams
+            # as long as only one is an official team
+            matches = [c for c in matches
+                       if c.id not in config.OBSERVER_TEAMS]
         if len(matches) > 1:
-            log.info("Multiple teams matched.")
             raise MultipleTeamsError(matches)
-        elif len(matches) == 0:
-            raise NoTeamsError()
+        if len(matches) == 0:
+            # Fall back to main team if it is the only team they are in
+            matches = [c for c in strava_athlete.clubs
+                       if c.id == config.MAIN_TEAM]
+        if len(matches) == 0:
+            raise NoTeamsError(
+                "Athlete {0} ({1} {2}): {3} {4}".format(
+                        strava_athlete.id,
+                        strava_athlete.firstname,
+                        strava_athlete.lastname,
+                        "No teams matched ours. Teams defined:",
+                        strava_athlete.clubs,
+                        )
+            )
         else:
             club = matches[0]
             # create the team row if it does not exist

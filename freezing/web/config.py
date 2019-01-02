@@ -32,6 +32,7 @@ class Config:
     COMPETITION_TITLE = env('COMPETITION_TITLE', default='Freezing Saddles')
     COMPETITION_TEAMS: List[int] = env('TEAMS', cast=list, subcast=int, default=[])
     OBSERVER_TEAMS: List[int] = env('OBSERVER_TEAMS', cast=list, subcast=int, default=[])
+    MAIN_TEAM: int = env('MAIN_TEAM')
 
     START_DATE: datetime = env('START_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     END_DATE: datetime = env('END_DATE', postprocessor=lambda val: arrow.get(val).datetime)
