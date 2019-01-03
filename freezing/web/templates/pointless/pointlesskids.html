@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">Pointless Kids</div>
+	<div class="panel-body">
+		<p class="lead">Leaderboard for pointless kids</p>
+      <p>When you ride with your kids (that is, they are riding with you on their own bikes), tag your ride #withkid[kid codename] and they'll show up here. If you ride with
+      multiple kids at once, multiple hashtags are supported. Keep it consistent and make your name unique. For example, jrenaut's kids are gremlin1 and gremlin2, so when he
+   rides with one or both of them, he adds #withkidgremlin1 or #withkidgremlin2, as appropriate. Keep in mind if you ride with another BAFS parcipant AND your kid, make sure
+only one of you tags the kid, or else the miles will be double counted.</p>
+<p>Questions can go to the <a href="http://bikearlingtonforum.com/showthread.php?13955-Pointless-Kid-leaderboard">forum post for the prize</a><p>
+    <table class="table table-condensed">
+	<tr><th>Rank</th><th>Pointless Kid</th><th>Distance</th></tr>
+{% for a, b in data.tdata %}
+	<tr>
+		<td>{{loop.index}}</td>
+		<td>{{a}}</td>
+		<td>{{b| round(1)}}</td>
+		</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

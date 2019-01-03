@@ -1,6 +1,8 @@
 import os
 import operator
 from datetime import date, datetime
+from collections import defaultdict
+import re
 
 from flask import render_template, Blueprint, abort
 from sqlalchemy import text
@@ -122,5 +124,18 @@ def hashtag_leaderboard(hashtag):
 
 @blueprint.route("/coffeeride")
 def coffeeride():
-    tdata = _get_hashtag_tdata("FS2019coffeeride", 2)
-    return render_template('pointless/coffeeride.html', data={"tdata":tdata})
+    year = datetime.now().year
+    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), 2)
+    return render_template('pointless/coffeeride.html', data={"tdata":tdata, 'year':year})
+
+@blueprint.route("/pointlesskids")
+def pointlesskids():
+    q = text("""
+        select name, distance from rides where upper(name) like '%WITHKID%';
+    """)
+    rs = meta.scoped_session().execute(q)
+    d = defaultdict(int)
+    for x in rs.fetchall():
+        for match in re.findall('(#withkid\w+)', x['name']):
+            d[match.replace('#withkid', '')] += x['distance']
+    return render_template('pointless/pointlesskids.html', data={'tdata':sorted(d.items(), key=lambda v: v[1], reverse=True)})
