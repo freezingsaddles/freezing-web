@@ -83,7 +83,7 @@ def opmdays():
 @blueprint.route("/points_per_mile")
 def points_per_mile():
     """
-    Note: set num_days to the minimum number of ride days to be eligible for the prize. This was 33 in 2017, 36 in 2018.
+    Note: set num_days to the minimum number of ride days to be eligible for the prize. This was 33 in 2017, 36 in 2019.
     I didn't pay enough attention to determine if this is something we can calculate.
     """
     num_days = 36
