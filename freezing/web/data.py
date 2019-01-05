@@ -51,8 +51,25 @@ def register_athlete(strava_athlete, token_dict):
     athlete.id = strava_athlete.id
     athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
     # Temporary; we will update this in disambiguation phase.  (This isn't optimal; needs to be
-    # refactored....)
-    athlete.display_name = strava_athlete.firstname
+    # refactored....
+    #
+    #     Where does the disambiguation phase get called now? Nowhere...
+    #     so let's fix it here for now.
+    #     * Do not override already set display_names.
+    #     * Use a first name and last initial (if available).
+    #     See also:
+    #       https://github.com/freezingsaddles/freezing-web/issues/80
+    #       https://github.com/freezingsaddles/freezing-web/issues/75
+    #       https://github.com/freezingsaddles/freezing-web/issues/73
+    #     - @obscurerichard]
+    if athlete.display_name is None:
+        if strava_athlete.lastname is None:
+            athlete.display_name = strava_athlete.firstname
+        else:
+            athlete.display_name = '{0} {1}'.format(
+                    strava_athlete.firstname.strip(),
+                    strava_athlete.lastname.strip(),
+                    )
     athlete.profile_photo = strava_athlete.profile
 
     athlete.access_token = token_dict['access_token']
