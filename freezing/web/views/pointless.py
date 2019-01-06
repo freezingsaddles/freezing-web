@@ -139,3 +139,8 @@ def pointlesskids():
         for match in re.findall('(#withkid\w+)', x['name']):
             d[match.replace('#withkid', '')] += x['distance']
     return render_template('pointless/pointlesskids.html', data={'tdata':sorted(d.items(), key=lambda v: v[1], reverse=True)})
+
+
+@blueprint.route("/tandem")
+def tandem():
+    return generic("tandem")
