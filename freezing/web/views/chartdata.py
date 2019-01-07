@@ -29,15 +29,7 @@ def team_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
-    q = text("""
-             select T.id as team_id, T.name as team_name, sum(DS.points) as total_score
-             from daily_scores DS
-             join teams T on T.id = DS.team_id
-             where not T.leaderboard_exclude
-             group by T.id, T.name
-             order by total_score desc
-             ;
-             """)
+    q = team_leaderboard_query()
 
     team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -559,10 +551,9 @@ def team_weekly_points():
     """
     teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     week_q = text("""
-             select sum(DS.points) as total_score
-             from daily_scores DS
-             join teams T on T.id = DS.team_id
-             where T.id = :team_id and week(DS.ride_date) = :week
+             select (sum(WS.team_distance) + sum(WS.days)*10) as total_score
+             from weekly_stats WS
+             where WS.team_id = :team_id and WS.week_num = :week
              ;
              """)
 
