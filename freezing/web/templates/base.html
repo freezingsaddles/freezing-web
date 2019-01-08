@@ -30,23 +30,23 @@
     <!-- Bootstrap -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="/assets/css/navbar-fixed-top.css" rel="stylesheet">
     <link href="/assets/css/ekko-lightbox.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
 
     {% block head %}{% endblock %}
 </head>
 <body>
+   <div class="container-fluid">
     {% block beforenav %}
     {#
     See http://stackoverflow.com/a/13368485/217080
     put modal windows before the navbar
     #}
     {% endblock %}
-<div class="container">
+
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
