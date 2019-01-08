@@ -7,6 +7,7 @@ import json
 import copy
 from collections import defaultdict
 from datetime import datetime, timedelta, date
+import logging
 
 from flask import redirect, url_for, current_app, request, Blueprint, jsonify
 
@@ -549,36 +550,27 @@ def user_weekly_points(athlete_id):
 def team_weekly_points():
     """
     """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
-    week_q = text("""
-             select (sum(WS.team_distance) + sum(WS.days)*10) as total_score
-             from weekly_stats WS
-             where WS.team_id = :team_id and WS.week_num = :week
+
+    q = text("""
+             select WS.team_id, WS.team_name, WS.week_num, (sum(WS.team_distance) + sum(WS.days)*10) as total_score
+             from weekly_stats WS group by WS.team_id, WS.team_name, WS.week_num order by WS.team_id, WS.week_num
              ;
              """)
-
     cols = [{'id': 'week', 'label': 'Week No.', 'type': 'string'}]
-    for t in teams:
-        cols.append({'id': 'team_{0}'.format(t.id), 'label': t.name, 'type': 'number'})
-
-    # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
     rows = []
-    for i, dt in enumerate(week_r):
-        week_no = dt.date().isocalendar()[1]
-        # these are 1-based, whereas mysql uses 0-based
-        cells = [{'v': 'Week {0}'.format(i + 1), 'f': 'Week {0}'.format(i + 1)},
-                 # Competition always starts at week 1, regardless of isocalendar week no
-                 ]
-        for t in teams:
-            total_score = meta.engine.execute(week_q, team_id=t.id, week=week_no - 1).scalar()  # @UndefinedVariable
-            if total_score is None:
-                total_score = 0
-            cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
+    res = meta.scoped_session().execute(q).fetchall()
 
+    d = defaultdict(list)
+    for r in res:
+        d[r['week_num']].append((r['team_id'], r['team_name'], r['total_score']))
+    for week, datalist in d.items():
+        cells = [{'v': 'Week {0}'.format(week), 'f': 'Week {0}'.format(week)}]
+        for team_id, team_name, total_score in datalist:
+            cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
         rows.append({'c': cells})
+    teams = {(r['team_id'], r['team_name']) for r in res} #first time using a set comprehension, pretty sweet
+    for id, name in teams:
+        cols.append({'id': 'team_{0}'.format(id), 'label': name, 'type': 'number'})
 
     return gviz_api_jsonify({'cols': cols, 'rows': rows})
 
