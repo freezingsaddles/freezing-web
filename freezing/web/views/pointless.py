@@ -4,7 +4,7 @@ from datetime import date, datetime
 from collections import defaultdict
 import re
 
-from flask import render_template, Blueprint, abort
+from flask import render_template, Blueprint, abort, redirect, url_for
 from sqlalchemy import text
 import yaml
 
@@ -139,3 +139,12 @@ def pointlesskids():
         for match in re.findall('(#withkid\w+)', x['name']):
             d[match.replace('#withkid', '')] += x['distance']
     return render_template('pointless/pointlesskids.html', data={'tdata':sorted(d.items(), key=lambda v: v[1], reverse=True)})
+
+
+@blueprint.route("/tandem")
+def tandem():
+    """
+    Really this should not have been defined as a specific endpoint, since it is
+    available as a generic. Redirect to the generic leaderboard instead.
+    """
+    return redirect("/pointless/generic/tandem")

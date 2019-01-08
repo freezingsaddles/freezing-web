@@ -80,7 +80,7 @@ Critical things to set include:
 # The SQLALchemy connection URL for your MySQL database.
 # NOTE THE CHARSET!
 # NOTE: If you are using docker use 127.0.0.1 as the host, NOT localhost
-SQLALCHEMY_DATABASE_URI=mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true
+SQLALCHEMY_URL=mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binary_prefix=true
 
 # These are issued when you create a Strava application.
 # These are really only needed if you want to test app authorization or login features.
