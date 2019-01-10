@@ -1,4 +1,4 @@
--e git+https://github.com/freezingsaddles/freezing-model@0.3.2#egg=freezing-model
+-e git+https://github.com/freezingsaddles/freezing-model@0.3.4#egg=freezing-model
 -e git+https://github.com/hozn/GeoAlchemy@0.7.3dev1#egg=GeoAlchemy
 Flask==0.12.4
 PyMySQL==0.8.0
