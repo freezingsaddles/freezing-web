@@ -1,6 +1,6 @@
 ---
 title: Average Distance (Shortest Rides)
-description: Rider average distance per ride, minimum ten days with a ride for CPTJohnC's Pointless Prize
+description: Rider average distance per ride, minimum ten days with a ride. In 2019, this prize is not yet sponsored.
 fields:
   - name: id
     visible: false
