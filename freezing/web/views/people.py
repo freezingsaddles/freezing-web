@@ -26,7 +26,7 @@ def get_today():
 def people_list_users():
     users_list = meta.scoped_session().query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
     tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
+    week_start = tdy - timedelta(days=(tdy.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     users = []
     for u in users_list:
@@ -61,7 +61,7 @@ def people_show_person(user_id):
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
     tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
+    week_start = tdy - timedelta(days=(tdy.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     weekly_dist = 0
     weekly_rides = 0
