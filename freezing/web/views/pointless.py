@@ -148,3 +148,26 @@ def tandem():
     available as a generic. Redirect to the generic leaderboard instead.
     """
     return redirect("/pointless/generic/tandem")
+
+@blueprint.route("/kidsathlon")
+def kidsathlon():
+    q = text("""
+        select
+        A.id as athlete_id,
+        A.display_name as athlete_name,
+        sum(case when (upper(R.name) like '%#KIDICAL%' and upper(R.name) like '%#WITHKID%') then R.distance else 0 end) as miles_both,
+        sum(case when (upper(R.name) like '%#KIDICAL%' and upper(R.name) not like '%#WITHKID%')then R.distance else 0 end) as kidical,
+        sum(case when (upper(R.name) like '%#WITHKID%' and upper(R.name) not like '%#KIDICAL%') then R.distance else 0 end) as withkid
+        from lbd_athletes A
+        join rides R on R.athlete_id = A.id
+        where (upper(R.name) like '%#KIDICAL%' or upper(R.name) like '%#WITHKID%')
+        group by A.id, A.display_name
+    """)
+    data = [(
+        x['athlete_id'],
+        x['athlete_name'],
+        x['kidical'] + x['miles_both'],
+        x['withkid'] + x['miles_both'],
+        x['kidical'] + x['withkid'] + x['miles_both'] if (x['withkid']>0 and x['kidical']>0) else 0
+    ) for x in meta.scoped_session().execute(q).fetchall()]
+    return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})
