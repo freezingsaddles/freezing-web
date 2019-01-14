@@ -16,12 +16,15 @@ winter cycling competition software.
 * Python 3.6+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
-* MySQL.  (Sadly.)
+* MySQL 5.6+ (Sadly.)
+
+We recommend that for ease of development and debugging, that you install Python 3.6 and pip directly on your workstation. This is tested to work on macOS 13.x (High Sierra), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
 
 ## Installation
 
 Here are some instructions for setting up a development environment:
 
+(If you are running in Windows, run `env/Scripts/activate` instead of `source env/bin/activate`.)
 ```bash
 # Clone repo
 shell$ git clone https://github.com/freezingsaddles/freezing-web.git
@@ -48,7 +51,7 @@ We have some development support Docker Compose files that can help make databas
 
 #### Manual DB Setup
 
-Install MySQL, version 5.6 ideally.  (A newer 5.x may work fine too, but current production db server is 5.6 so there might be differences in supported db features.)
+Install MySQL, version 5.6 or newer. The current production server for https://freezingsaddles.org/ runs MySQL 5.6.
 
 You should create a database and create a user that can access the database.  Something like this might work in the default case:
 
@@ -87,6 +90,25 @@ SQLALCHEMY_URL=mysql+pymysql://freezing@localhost/freezing?charset=utf8mb4&binar
 STRAVA_CLIENT_ID=xxxx1234
 STRAVA_CLIENT_SECRET=5678zzzz
 ```
+
+### Development setup to work with `freezing-model`
+
+During development, you may find you need to make changes to the database. Because this suite of projects uses SQLAlchemy and Alembic, and multiple projects depend on the model, it is in a [separate git repo](https://github.com/freezingsaddles/freezing-model). 
+
+This an easy pattern to use to make changes to the project `freezing-model` that this depends on, without having to push tags to the repository. Assuming you have the project checked out in a directory called `workspace` below your home directory, try this:
+
+1. `cd ~/workspace/freezing-web`
+2. `python3 -m venv env`
+3. `source env/bin/activate`
+4. `cd ~/workspace/freezing-model`
+5. `pip install -r requirements.txt && python setup.py develop`
+6. `cd -`
+7. `pip install -r requirements.txt && python setup.py develop`
+
+Now freezing-model is symlinked in, so you can make changes and add migrations to it.
+
+To get `freezing-web` to permanently use the `freezing-model` changes you will have to tag the `freezing-model` repository with a new version number (don't forget to update `setup.py` also) and update the tag in [freezing-web/requirements.txt](requirements.txt) to match the tag number. It's ok to make a pull request in `freezing-model` and bump the version after merging `master` into your branch.
+
 
 ## Docker Deployment
 
