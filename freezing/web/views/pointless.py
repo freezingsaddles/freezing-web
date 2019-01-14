@@ -164,13 +164,6 @@ def kidsathlon():
         group by A.id, A.display_name
     """)
     data = []
-    # data = [(
-    #     x['athlete_id'],
-    #     x['athlete_name'],
-    #     x['kidical'] + x['miles_both'],
-    #     x['withkid'] + x['miles_both'],
-    #     x['kidical'] + x['withkid'] + x['miles_both'] if (x['withkid']>0 and x['kidical']>0) else 0
-    # ) for x in meta.scoped_session().execute(q).fetchall()]
     for x in meta.scoped_session().execute(q).fetchall():
         miles_both = float(x['miles_both'])
         kidical = miles_both + float(x['kidical'])
