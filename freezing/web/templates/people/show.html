@@ -1,4 +1,53 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+	.btn-strava {
+  color: #ffffff;
+  background-color: #FC4C02;
+  border-color: #FC3C02;
+}
+
+.btn-strava:hover,
+.btn-strava:focus,
+.btn-strava:active,
+.btn-strava.active,
+.open .dropdown-toggle.btn-strava {
+  color: #ffffff;
+  background-color: #D62600;
+  border-color: #FC3C02;
+}
+
+.btn-strava:active,
+.btn-strava.active,
+.open .dropdown-toggle.btn-strava {
+  background-image: none;
+}
+
+.btn-strava.disabled,
+.btn-strava[disabled],
+fieldset[disabled] .btn-strava,
+.btn-strava.disabled:hover,
+.btn-strava[disabled]:hover,
+fieldset[disabled] .btn-strava:hover,
+.btn-strava.disabled:focus,
+.btn-strava[disabled]:focus,
+fieldset[disabled] .btn-strava:focus,
+.btn-strava.disabled:active,
+.btn-strava[disabled]:active,
+fieldset[disabled] .btn-strava:active,
+.btn-strava.disabled.active,
+.btn-strava[disabled].active,
+fieldset[disabled] .btn-strava.active {
+  background-color: #FC4C02;
+  border-color: #FC3C02;
+}
+
+.btn-strava .badge {
+  color: #FC4C02;
+  background-color: #ffffff;
+}
+</style>
+{% endblock %}
 {% block content %}
 	<div class="row top-buffer">
 		<div class="col-md-8">
@@ -13,7 +62,7 @@
 								<li class="list-group-item">Total Rides: <span class="pull-right">{{data.totalrides}}</span></li>
 								<li class="list-group-item">Total Mileage: <span class="pull-right">{{data.totaldist | round(1)}}</span></li>
 								<li class="list-group-item">Rides This Week: <span class="pull-right">{{data.weekrides}}</span></li>
-								<li class="list-group-item">Mileage This Week: <span class="pull-right">{{data.weektotal | round(1)}}</span></li>								
+								<li class="list-group-item">Mileage This Week: <span class="pull-right">{{data.weektotal | round(1)}}</span></li>
 							</ul>
 						</div>
 						<div class="col-md-6">
@@ -31,7 +80,11 @@
 									{% else %}
 										N/A
 									{% endif%}
-									</span></li>							
+									</span>
+								</li>
+								<li class="list-group-item">
+									<a class="btn btn-strava btn-sm" href="https://www.strava.com/athletes/{{data.user.id}}">Strava Profile</a>
+								</li>
 							</ul>
 						</div>
 					</div>
