@@ -83,15 +83,23 @@ def opmdays():
 @blueprint.route("/points_per_mile")
 def points_per_mile():
     """
-    Note: set num_days to the minimum number of ride days to be eligible for the prize. This was 33 in 2017, 36 in 2019.
-    I didn't pay enough attention to determine if this is something we can calculate.
+    Note: set num_days to the minimum number of ride days to be eligible for the prize.
+    This was 33 in 2017, 36 in 2018, and 40 in 2019.
+
+    (@hozn noted: I didn't pay enough attention to determine if this is something we can calculate.)
     """
-    num_days = 36
-    q = text("""
-        select A.id, A.display_name as athlete_name, sum(B.distance) as dist, sum(B.points) as pnts, count(B.athlete_id) as ridedays
+    num_days = 40
+    query = text("""
+        select
+            A.id,
+            A.display_name as athlete_name,
+            sum(B.distance) as dist,
+            sum(B.points) as pnts,
+            count(B.athlete_id) as ridedays
         from lbd_athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
     """)
-    ppm = [(x['athlete_name'], x['pnts'], x['dist'],(x['pnts']/x['dist']), x['ridedays']) for x in meta.scoped_session().execute(q).fetchall()]
+    ppm = [(x['athlete_name'], x['pnts'], x['dist'], (x['pnts']/x['dist']), x['ridedays'])
+           for x in meta.scoped_session().execute(query).fetchall()]
     ppm.sort(key=lambda tup: tup[3], reverse=True)
     return render_template('pointless/points_per_mile.html', data={"riders":ppm, "days":num_days})
 

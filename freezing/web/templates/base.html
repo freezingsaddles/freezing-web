@@ -30,23 +30,23 @@
     <!-- Bootstrap -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="/assets/css/navbar-fixed-top.css" rel="stylesheet">
     <link href="/assets/css/ekko-lightbox.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
 
     {% block head %}{% endblock %}
 </head>
 <body>
+   <div class="container-fluid">
     {% block beforenav %}
     {#
     See http://stackoverflow.com/a/13368485/217080
     put modal windows before the navbar
     #}
     {% endblock %}
-<div class="container">
+
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -98,9 +98,10 @@
                             Data Exploration <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
+
                             <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
                             <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
-                            <li><a href="/explore/team_cumul">Team Cumulative</a></li>
+                            <li class="disabled"><a class="disabled" {# href="/explore/team_cumul" #} data-toggle="tooltip" data-placement="top" title="This leaderboard is returning soon!">Team Cumulative</a></li>
                             <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
                         </ul>
                     </li>
@@ -207,7 +208,9 @@
                 });
             });
         });
-
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
 </script>
 
 {% block foot %} {% endblock %}
