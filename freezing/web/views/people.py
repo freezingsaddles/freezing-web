@@ -47,7 +47,8 @@ def people_list_users():
         for r in u.rides:
             total_rides += 1
             total_dist += r.distance
-            if week_start <= r.start_date.replace(tzinfo=timezone(r.timezone)).date() <= week_end:
+            ride_date = r.start_date.replace(tzinfo=timezone(r.timezone)).date()
+            if week_start <= ride_date <= week_end:
                 weekly_dist += r.distance
                 weekly_rides += 1
         users.append({"name": u.display_name,
@@ -80,7 +81,8 @@ def people_show_person(user_id):
     for r in our_user.rides:
         total_rides += 1
         total_dist += r.distance
-        if week_start <= r.start_date.replace(tzinfo=timezone(r.timezone)).date() <= week_end:
+        ride_date = r.start_date.replace(tzinfo=timezone(r.timezone)).date()
+        if week_start <= ride_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
