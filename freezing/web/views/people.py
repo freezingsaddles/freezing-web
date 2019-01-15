@@ -29,7 +29,7 @@ def get_today():
     """
     if False:
         return date(2013, 2, 10)
-    return get_local_datetime().today()
+    return get_local_datetime()
 
 
 @blueprint.route("/")
