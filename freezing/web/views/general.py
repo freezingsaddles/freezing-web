@@ -232,10 +232,10 @@ def authorization():
                     )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams
-            message = multx.str()
+            message = multx
         except NoTeamsError as noteamx:
             no_teams = True
-            message = noteamx.str()
+            message = noteamx
 
         return render_template(
             'authorization_success.html',
