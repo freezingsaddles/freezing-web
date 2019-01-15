@@ -9,7 +9,7 @@ from freezing.model.orm import Team, Athlete
 
 from freezing.web import config
 
-from pytz import utc
+from pytz import utc, timezone
 
 
 blueprint = Blueprint('people', __name__)
@@ -35,8 +35,8 @@ def get_today():
 @blueprint.route("/")
 def people_list_users():
     users_list = meta.scoped_session().query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
-    tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday()) % 7)
+    today = get_today()
+    week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     users = []
     for u in users_list:
@@ -47,7 +47,7 @@ def people_list_users():
         for r in u.rides:
             total_rides += 1
             total_dist += r.distance
-            if week_start <= r.start_date <= week_end:
+            if week_start <= r.start_date.replace(tzinfo=timezone(r.timezone)).date() <= week_end:
                 weekly_dist += r.distance
                 weekly_rides += 1
         users.append({"name": u.display_name,
@@ -70,8 +70,8 @@ def people_show_person(user_id):
         abort(404)
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
-    tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday()) % 7)
+    today = get_today()
+    week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     weekly_dist = 0
     weekly_rides = 0
@@ -80,7 +80,7 @@ def people_show_person(user_id):
     for r in our_user.rides:
         total_rides += 1
         total_dist += r.distance
-        if week_start <= r.start_date <= week_end:
+        if week_start <= r.start_date.replace(tzinfo=timezone(r.timezone)).date() <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
