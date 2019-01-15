@@ -9,6 +9,8 @@ from freezing.model.orm import Team, Athlete
 
 from freezing.web import config
 
+from pytz import timezone
+
 
 blueprint = Blueprint('people', __name__)
 
@@ -86,15 +88,36 @@ def people_show_person(user_id):
 @blueprint.route("/ridedays")
 def ridedays():
     q = text("""
-		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles, max(b.ride_date) as lastride
-		 FROM lbd_athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
-		;
-		"""
-    )
-    total_days = datetime.now().timetuple().tm_yday
-    ride_days = [(x['id'], x['display_name'], x['rides'], x['miles'], x['lastride'] >= date.today()) for x in
-                 meta.scoped_session().execute(q).fetchall()]
-    return render_template('people/ridedays.html', ride_days=ride_days, num_days=total_days)
+                SELECT
+                    a.id,
+                    a.display_name,
+                    count(b.ride_date) as rides,
+                    sum(b.distance) as miles,
+                    max(b.ride_date) as lastride
+                FROM
+                    lbd_athletes a,
+                    daily_scores b where a.id = b.athlete_id
+                group by b.athlete_id
+                order by
+                    rides desc,
+                    miles desc,
+                    display_name
+                ;
+                """)
+    loc_total_days = datetime.utcnow().replace(
+            tzinfo=config.TIMEZONE).timetuple().tm_yday
+    ride_days = [(
+        x['id'],
+        x['display_name'],
+        x['rides'],
+        x['miles'],
+        x['lastride'] >= date.today())
+        for x in meta.scoped_session().execute(q).fetchall()]
+    return render_template(
+            'people/ridedays.html',
+            ride_days=ride_days,
+            num_days=loc_total_days)
+
 
 @blueprint.route("/friends")
 def friends():
