@@ -491,7 +491,7 @@ def user_daily_points(athlete_id):
     day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
     rows = []
     for i, dt in enumerate(day_r):
-        day_no = dt.timetuple().tm_yday
+        day_no = dt.replace(tzinfo=config.TIMEZONE).timetuple().tm_yday
         # these are 1-based, whereas mysql uses 0-based
         cells = [{'v': '{0}'.format(dt.strftime('%b %d')), 'f': '{0}'.format(dt.strftime('%m/%d'))},
                  # Competition always starts at day 1, regardless of isocalendar day no
