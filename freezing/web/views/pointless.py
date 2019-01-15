@@ -171,11 +171,14 @@ def kidsathlon():
         where (upper(R.name) like '%#KIDICAL%' or upper(R.name) like '%#WITHKID%')
         group by A.id, A.display_name
     """)
-    data = [(
-        x['athlete_id'],
-        x['athlete_name'],
-        x['kidical'] + x['miles_both'],
-        x['withkid'] + x['miles_both'],
-        x['kidical'] + x['withkid'] + x['miles_both'] if (x['withkid']>0 and x['kidical']>0) else 0
-    ) for x in meta.scoped_session().execute(q).fetchall()]
+    data = []
+    for x in meta.scoped_session().execute(q).fetchall():
+        miles_both = float(x['miles_both'])
+        kidical = miles_both + float(x['kidical'])
+        withkid = miles_both + float(x['withkid'])
+        if kidical > 0 and withkid > 0:
+            kidsathlon = kidical + withkid
+        else:
+            kidsathlon = float(0)
+        data.append((x['athlete_id'], x['athlete_name'], kidical, withkid, kidsathlon))
     return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})
