@@ -80,7 +80,7 @@ def people_show_person(user_id):
     for r in our_user.rides:
         total_rides += 1
         total_dist += r.distance
-        if week_start <= r.start_date.date() <= week_end:
+        if week_start <= r.start_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
