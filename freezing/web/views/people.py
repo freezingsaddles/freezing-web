@@ -9,14 +9,19 @@ from freezing.model.orm import Team, Athlete
 
 from freezing.web import config
 
-from pytz import timezone
+from pytz import utc
 
 
 blueprint = Blueprint('people', __name__)
 
 
 def get_local_datetime():
-    return datetime.utcnow().replace(tzinfo=config.TIMEZONE)
+    # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
+    return utc.localize(
+            datetime.now(),
+            is_dst=None
+            ).astimezone(config.TIMEZONE)
+
 
 def get_today():
     """
@@ -24,7 +29,7 @@ def get_today():
     """
     if False:
         return date(2013, 2, 10)
-    return get_local_datetime().today()
+    return get_local_datetime()
 
 
 @blueprint.route("/")
@@ -75,7 +80,7 @@ def people_show_person(user_id):
     for r in our_user.rides:
         total_rides += 1
         total_dist += r.distance
-        if week_start <= r.start_date.date() <= week_end:
+        if week_start <= r.start_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
@@ -107,7 +112,7 @@ def ridedays():
                     display_name
                 ;
                 """)
-    loc_time = datetime.utcnow().replace(tzinfo=config.TIMEZONE)
+    loc_time = get_today()
     loc_total_days = loc_time.timetuple().tm_yday
     ride_days = [(
         x['id'],

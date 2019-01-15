@@ -22,6 +22,8 @@ from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
 from freezing.web.views.shared_sql import *
 
+from pytz import utc
+
 blueprint = Blueprint('chartdata', __name__)
 
 
@@ -491,7 +493,11 @@ def user_daily_points(athlete_id):
     day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
     rows = []
     for i, dt in enumerate(day_r):
-        day_no = dt.replace(tzinfo=config.TIMEZONE).timetuple().tm_yday
+        # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
+        day_no = utc.localize(
+                dt,
+                is_dst=None,
+                ).astimezone(config.TIMEZONE).timetuple().tm_yday
         # these are 1-based, whereas mysql uses 0-based
         cells = [{'v': '{0}'.format(dt.strftime('%b %d')), 'f': '{0}'.format(dt.strftime('%m/%d'))},
                  # Competition always starts at day 1, regardless of isocalendar day no
