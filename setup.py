@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 __authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
 __copyright__ = "Copyright 2018 Hans Lellelid"
 
-version = '1.1.4'
+version = '1.1.5'
 
 long_description="""
 The freezing saddles cycling competition website/scoreboard.

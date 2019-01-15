@@ -15,13 +15,16 @@ from pytz import timezone
 blueprint = Blueprint('people', __name__)
 
 
+def get_local_datetime():
+    return datetime.utcnow().replace(tzinfo=config.TIMEZONE)
+
 def get_today():
     """
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
     if False:
         return date(2013, 2, 10)
-    return date.today()
+    return get_local_datetime().today()
 
 
 @blueprint.route("/")
@@ -39,7 +42,7 @@ def people_list_users():
         for r in u.rides:
             total_rides += 1
             total_dist += r.distance
-            if week_start <= r.start_date.date() <= week_end:
+            if week_start <= r.start_date <= week_end:
                 weekly_dist += r.distance
                 weekly_rides += 1
         users.append({"name": u.display_name,
@@ -104,14 +107,14 @@ def ridedays():
                     display_name
                 ;
                 """)
-    loc_total_days = datetime.utcnow().replace(
-            tzinfo=config.TIMEZONE).timetuple().tm_yday
+    loc_time = datetime.utcnow().replace(tzinfo=config.TIMEZONE)
+    loc_total_days = loc_time.timetuple().tm_yday
     ride_days = [(
         x['id'],
         x['display_name'],
         x['rides'],
         x['miles'],
-        x['lastride'] >= date.today())
+        x['lastride'] >= loc_time.date())
         for x in meta.scoped_session().execute(q).fetchall()]
     return render_template(
             'people/ridedays.html',
