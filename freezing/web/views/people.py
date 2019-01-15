@@ -16,6 +16,7 @@ blueprint = Blueprint('people', __name__)
 
 
 def get_local_datetime():
+    # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
     return utc.localize(
             datetime.utcnow(),
             is_dst=None

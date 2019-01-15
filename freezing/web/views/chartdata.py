@@ -493,6 +493,7 @@ def user_daily_points(athlete_id):
     day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
     rows = []
     for i, dt in enumerate(day_r):
+        # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
         day_no = utc.localize(
                 dt,
                 is_dst=None,
