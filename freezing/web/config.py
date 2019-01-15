@@ -17,6 +17,7 @@ if os.path.exists(envfile):
 
 _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
+
 class Config:
 
     DEBUG: bool = env('DEBUG', cast=bool, default=False)
