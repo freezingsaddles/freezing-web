@@ -12,7 +12,7 @@
 {% for a, b, c, d in data.tdata %}
 	<tr>
 		<td>{{loop.index}}</td>
-		<td><a href="http://www.strava.com/athletes/{{ a }}" target="_blank">{{b}}</a></td>
+		<td><a href="/people/{{ a }}">{{b}}</a></td>
 		<td>{{c}}</td>
 		<td>{{d | round(1)}}</td>
 		</tr>
