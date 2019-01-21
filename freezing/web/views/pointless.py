@@ -177,7 +177,7 @@ def kidsathlon():
         kidical = miles_both + float(x['kidical'])
         withkid = miles_both + float(x['withkid'])
         if kidical > 0 and withkid > 0:
-            kidsathlon = kidical + withkid
+            kidsathlon = kidical + withkid - miles_both
         else:
             kidsathlon = float(0)
         data.append((x['athlete_id'], x['athlete_name'], kidical, withkid, kidsathlon))
