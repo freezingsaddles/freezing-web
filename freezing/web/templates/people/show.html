@@ -50,10 +50,12 @@ fieldset[disabled] .btn-strava.active {
 {% endblock %}
 {% block content %}
 	<div class="row top-buffer">
-		<div class="col-md-8">
+		<div class="col-md-12">
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h1>{{data.user.display_name}} <small>{{data.team.name}}</small></h1>
+                <div class="panel-heading">
+                    <img style="float: right" src="{{data.user.profile_photo}}" alt="photo of {{data.user.display_name}}">
+                    <h1><a href="https://www.strava.com/athletes/{{data.user.id}}">{{data.user.display_name}}</a></h1>
+                    <h2><a href="https://www.strava.com/clubs/{{data.team.id}}">{{data.team.name}}</a></h2>
 				</div>
 				<div class="panel-body">
 					<div class="row">

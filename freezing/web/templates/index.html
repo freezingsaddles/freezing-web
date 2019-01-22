@@ -34,7 +34,7 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
         </div>
         <div class="modal-body">
         <img src="{{photo.img_l}}" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
-        Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}' target='_blank'>View in Instagram</a>{% endif %}
+        Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
 		</div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

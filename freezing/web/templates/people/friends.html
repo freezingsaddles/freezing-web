@@ -6,7 +6,7 @@
   	<ul>
       {% for indiv_row in indiv_rows %}
   		<li>
-        <a href="http://www.strava.com/athletes/{{ indiv_row['athlete_id'] }}" target="_blank">{{ indiv_row['athlete_name'] }}</a>
+        <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
         <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
         ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles)
         </li>
