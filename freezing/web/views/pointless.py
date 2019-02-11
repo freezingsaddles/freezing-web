@@ -1,6 +1,6 @@
 import os
 import operator
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from collections import defaultdict
 import re
 
@@ -182,3 +182,24 @@ def kidsathlon():
             kidsathlon = float(0)
         data.append((x['athlete_id'], x['athlete_name'], kidical, withkid, kidsathlon))
     return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})
+
+@blueprint.route("/daily_variance")
+def daily_variance():
+    q = text("""
+        select a.display_name as name, vbd.* from variance_by_day vbd, lbd_athletes a where vbd.athlete_id=a.id
+    """)
+    days_left = (config.END_DATE - datetime.now(timezone.utc)).days #how many days left in the competition
+    if days_left < 0:
+        days_left = 0
+    min_days = 50 # minimum number of ride days to qualify, Chris inititally said 2/3 and this is a nice round number close to 2/3
+    data = []
+    for x in meta.scoped_session().execute(q).fetchall():
+        days_raw = [x['mon_var_pop'], x['tue_var_pop'], x['wed_var_pop'], x['thu_var_pop'], x['fri_var_pop'], x['sat_var_pop'], x['sun_var_pop']]
+        days = [x for x in days_raw if x is not None]
+        avg = round(sum(days)/len(days), 2)
+        qualified = x['ride_days'] + days_left >= min_days #Either you've ridden enough days or you still can ride enough days
+        if qualified:
+            qualified = float(x['total_miles'])/float(x['ride_days']) > float(2.00) #you're averaging more than 2 miles per day you ride
+        days_clean = [round(x, 2) if x is not None else '-' for x in days_raw]
+        data.append((x['athlete_id'], x['name'], x['ride_days'], round(x['total_miles'],1), qualified , avg,) + tuple(days_clean))
+    return render_template("pointless/daily_variance.html", data={'tdata':data, 'min_days':min_days})
