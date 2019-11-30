@@ -3,8 +3,8 @@
 <div class="panel panel-default">
 	<div class="panel-heading">Coffee Rides</div>
 	<div class="panel-body">
-		<p>Leaderboard for the BAFS 2018 Coffee Ride prize</p>
-		<p>Note that the hashtag to appear on this list is #FS2018coffeeride, and it's case-sensitive and subject to review by the offerer of the prize or any other BAFS staff member
+		<p>Leaderboard for the BAFS {{data.year}} Coffee Ride prize</p>
+		<p>Note that the hashtag to appear on this list is #FS{{data.year}}coffeeride, and it's case-sensitive and subject to review by the offerer of the prize or any other BAFS staff member
 			 (which is every participant because this is a volunteer game and we all are in charge (some of us more in charge than others but totally not in a 1984 kind of way))
 		 </p>
 <table class="table table-condensed">
@@ -12,7 +12,7 @@
 {% for a, b, c, d in data.tdata %}
 	<tr>
 		<td>{{loop.index}}</td>
-		<td><a href="http://www.strava.com/athletes/{{ a }}" target="_blank">{{b}}</a></td>
+		<td><a href="/people/{{ a }}">{{b}}</a></td>
 		<td>{{c}}</td>
 		<td>{{d | round(1)}}</td>
 		</tr>

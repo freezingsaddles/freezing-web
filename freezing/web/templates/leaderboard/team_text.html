@@ -2,24 +2,41 @@
 {% block content %}
 <button class="pull-right btn btn-default" id="show_hide_people">Show/Hide people</button>
   	<h1>Team Leaderboard (Text)</h1>
-  	<p>This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>.</p>
+  	<p>This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>. What are <a href="#" onclick="$('#myModal').modal()">team miles</a>?</p>
   	<ol>
   		{% for team_row in team_rows %}
   		<li>
         <h4>
-          <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}" target="_blank">{{ team_row['team_name'] }}</a>:
-  		   <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
+          <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
+  		   <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} team miles)
        </h4>
         <ol class="people">
 	  			{% for member_row in team_members[team_row['team_id']] %}
-	  			<li><a href="http://www.strava.com/athletes/{{ member_row['athlete_id'] }}" target="_blank">{{ member_row['athlete_name'] }}</a>:
-	  			{{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} miles)</li>
+                <li><a href="/people/{{ member_row['athlete_id'] }}">{{ member_row['athlete_name'] }}</a>:
+	  			{{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} team miles)</li>
 	  			{% endfor %}
 	  		</ol>
   		</li>
   		{% endfor %}
   	</ol>
 
+   <!-- Modal -->
+   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+     <div class="modal-dialog" role="document">
+       <div class="modal-content">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+           <h4 class="modal-title" id="myModalLabel">What are team miles?</h4>
+         </div>
+         <div class="modal-body">
+           <p>Team Miles are total miles capped at 100 miles a week. So if you rode 125 miles week 1 and 75 miles week two your Team Miles are 175. Your team points are based on this mileage, not total miles ridden.</p>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+       </div>
+     </div>
+   </div>
 {% endblock %}
 
 {% block foot %}

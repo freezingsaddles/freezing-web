@@ -6,10 +6,17 @@
 </p>
 
 {% if no_teams %}
+<h2>Uh-oh, something went wrong</h2>
 <p>
-	So you are a Strava athlete, we get that.  Unfortunately you are not registered with any of the configured Freezing
-	Saddles teams, so we can't authenticate you.
+	So you are a Strava athlete, we get that. Unfortunately, one of these two things is true:
+    <ol>
+        <li>you are not registered with any of the configured Freezing Saddles teams, or</li>
+        <li>you did not give Strava permission for us to "View your complete Strava profile". Without that, we can't see what clubs you belong to.</li>
+    </ul>
 </p>
+<p>If the latter is true, try to login again and grant us permission to "View your complete Strava profile".</p>
+<h2>Detailed error message:</h2>
+<p>{{ message }}</p>
 {% else %}
 <p>
 	<strong>You are logged-in and have access to otherwise-private activity and athlete data.</strong>

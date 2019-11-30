@@ -4,13 +4,18 @@ import re
 import warnings
 import uuid
 
-from pip.req import parse_requirements
+# Ugh, pip 10 is backward incompatible, but there is a workaround:
+# Thanks Stack Overflow https://stackoverflow.com/a/49867265
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
 __authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
 __copyright__ = "Copyright 2018 Hans Lellelid"
 
-version = '1.0'
+version = '1.1.9'
 
 long_description="""
 The freezing saddles cycling competition website/scoreboard.

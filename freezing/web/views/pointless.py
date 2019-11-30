@@ -1,8 +1,10 @@
 import os
 import operator
 from datetime import date, datetime
+from collections import defaultdict
+import re
 
-from flask import render_template, Blueprint, abort
+from flask import render_template, Blueprint, abort, redirect, url_for
 from sqlalchemy import text
 import yaml
 
@@ -81,15 +83,23 @@ def opmdays():
 @blueprint.route("/points_per_mile")
 def points_per_mile():
     """
-    Note: set num_days to the minimum number of ride days to be eligible for the prize. This was 33 in 2017, 36 in 2018.
-    I didn't pay enough attention to determine if this is something we can calculate.
+    Note: set num_days to the minimum number of ride days to be eligible for the prize.
+    This was 33 in 2017, 36 in 2018, and 40 in 2019.
+
+    (@hozn noted: I didn't pay enough attention to determine if this is something we can calculate.)
     """
-    num_days = 36
-    q = text("""
-        select A.id, A.display_name as athlete_name, sum(B.distance) as dist, sum(B.points) as pnts, count(B.athlete_id) as ridedays
+    num_days = 40
+    query = text("""
+        select
+            A.id,
+            A.display_name as athlete_name,
+            sum(B.distance) as dist,
+            sum(B.points) as pnts,
+            count(B.athlete_id) as ridedays
         from lbd_athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
     """)
-    ppm = [(x['athlete_name'], x['pnts'], x['dist'],(x['pnts']/x['dist']), x['ridedays']) for x in meta.scoped_session().execute(q).fetchall()]
+    ppm = [(x['athlete_name'], x['pnts'], x['dist'], (x['pnts']/x['dist']), x['ridedays'])
+           for x in meta.scoped_session().execute(query).fetchall()]
     ppm.sort(key=lambda tup: tup[3], reverse=True)
     return render_template('pointless/points_per_mile.html', data={"riders":ppm, "days":num_days})
 
@@ -122,5 +132,53 @@ def hashtag_leaderboard(hashtag):
 
 @blueprint.route("/coffeeride")
 def coffeeride():
-    tdata = _get_hashtag_tdata("FS2018coffeeride", 2)
-    return render_template('pointless/coffeeride.html', data={"tdata":tdata})
+    year = datetime.now().year
+    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), 2)
+    return render_template('pointless/coffeeride.html', data={"tdata":tdata, 'year':year})
+
+@blueprint.route("/pointlesskids")
+def pointlesskids():
+    q = text("""
+        select name, distance from rides where upper(name) like '%WITHKID%';
+    """)
+    rs = meta.scoped_session().execute(q)
+    d = defaultdict(int)
+    for x in rs.fetchall():
+        for match in re.findall('(#withkid\w+)', x['name']):
+            d[match.replace('#withkid', '')] += x['distance']
+    return render_template('pointless/pointlesskids.html', data={'tdata':sorted(d.items(), key=lambda v: v[1], reverse=True)})
+
+
+@blueprint.route("/tandem")
+def tandem():
+    """
+    Really this should not have been defined as a specific endpoint, since it is
+    available as a generic. Redirect to the generic leaderboard instead.
+    """
+    return redirect("/pointless/generic/tandem")
+
+@blueprint.route("/kidsathlon")
+def kidsathlon():
+    q = text("""
+        select
+        A.id as athlete_id,
+        A.display_name as athlete_name,
+        sum(case when (upper(R.name) like '%#KIDICAL%' and upper(R.name) like '%#WITHKID%') then R.distance else 0 end) as miles_both,
+        sum(case when (upper(R.name) like '%#KIDICAL%' and upper(R.name) not like '%#WITHKID%')then R.distance else 0 end) as kidical,
+        sum(case when (upper(R.name) like '%#WITHKID%' and upper(R.name) not like '%#KIDICAL%') then R.distance else 0 end) as withkid
+        from lbd_athletes A
+        join rides R on R.athlete_id = A.id
+        where (upper(R.name) like '%#KIDICAL%' or upper(R.name) like '%#WITHKID%')
+        group by A.id, A.display_name
+    """)
+    data = []
+    for x in meta.scoped_session().execute(q).fetchall():
+        miles_both = float(x['miles_both'])
+        kidical = miles_both + float(x['kidical'])
+        withkid = miles_both + float(x['withkid'])
+        if kidical > 0 and withkid > 0:
+            kidsathlon = kidical + withkid - miles_both
+        else:
+            kidsathlon = float(0)
+        data.append((x['athlete_id'], x['athlete_name'], kidical, withkid, kidsathlon))
+    return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})

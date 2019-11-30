@@ -17,6 +17,7 @@ if os.path.exists(envfile):
 
 _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
+
 class Config:
 
     DEBUG: bool = env('DEBUG', cast=bool, default=False)
@@ -29,8 +30,10 @@ class Config:
     STRAVA_CLIENT_ID = env('STRAVA_CLIENT_ID')
     STRAVA_CLIENT_SECRET = env('STRAVA_CLIENT_SECRET')
 
+    COMPETITION_TITLE = env('COMPETITION_TITLE', default='Freezing Saddles')
     COMPETITION_TEAMS: List[int] = env('TEAMS', cast=list, subcast=int, default=[])
     OBSERVER_TEAMS: List[int] = env('OBSERVER_TEAMS', cast=list, subcast=int, default=[])
+    MAIN_TEAM: int = env('MAIN_TEAM', cast=int)
 
     START_DATE: datetime = env('START_DATE', postprocessor=lambda val: arrow.get(val).datetime)
     END_DATE: datetime = env('END_DATE', postprocessor=lambda val: arrow.get(val).datetime)

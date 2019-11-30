@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import List, Dict, Any, Tuple
 
 import yaml
-from flask import render_template, abort
 
 from marshmallow import fields
 from marshmallow_enum import EnumField
@@ -93,7 +92,7 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
-    with open(path) as fp:
+    with open(path, 'rt', encoding='utf-8') as fp:
         doc = yaml.load(fp)
 
     schema = GenericBoardSchema()

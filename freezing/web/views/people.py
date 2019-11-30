@@ -7,8 +7,20 @@ from sqlalchemy import text
 from freezing.model import meta
 from freezing.model.orm import Team, Athlete
 
+from freezing.web import config
+
+from pytz import utc, timezone
+
 
 blueprint = Blueprint('people', __name__)
+
+
+def get_local_datetime():
+    # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
+    return utc.localize(
+            datetime.now(),
+            is_dst=None
+            ).astimezone(config.TIMEZONE)
 
 
 def get_today():
@@ -17,14 +29,14 @@ def get_today():
     """
     if False:
         return date(2013, 2, 10)
-    return date.today()
+    return get_local_datetime()
 
 
 @blueprint.route("/")
 def people_list_users():
     users_list = meta.scoped_session().query(Athlete).filter(Athlete.team.has(leaderboard_exclude=0)).order_by(Athlete.name)  # @UndefinedVariable
-    tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
+    today = get_today()
+    week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     users = []
     for u in users_list:
@@ -35,7 +47,8 @@ def people_list_users():
         for r in u.rides:
             total_rides += 1
             total_dist += r.distance
-            if week_start <= r.start_date.date() <= week_end:
+            ride_date = r.start_date.replace(tzinfo=timezone(r.timezone)).date()
+            if week_start <= ride_date <= week_end:
                 weekly_dist += r.distance
                 weekly_rides += 1
         users.append({"name": u.display_name,
@@ -44,7 +57,11 @@ def people_list_users():
                       "weektotal": weekly_dist,
                       "totaldist": total_dist,
                       "totalrides": total_rides})
-    return render_template('people/list.html', users=users, weekstart=week_start, weekend=week_end)
+    return render_template('people/list.html',
+                           users=users,
+                           weekstart=week_start,
+                           weekend=week_end,
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/<user_id>")
@@ -54,8 +71,8 @@ def people_show_person(user_id):
         abort(404)
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
-    tdy = get_today()
-    week_start = tdy - timedelta(days=(tdy.weekday() + 1) % 7)
+    today = get_today()
+    week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
     weekly_dist = 0
     weekly_rides = 0
@@ -64,7 +81,8 @@ def people_show_person(user_id):
     for r in our_user.rides:
         total_rides += 1
         total_dist += r.distance
-        if week_start <= r.start_date.date() <= week_end:
+        ride_date = r.start_date.replace(tzinfo=timezone(r.timezone)).date()
+        if week_start <= ride_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
     return render_template('people/show.html', data={
@@ -73,21 +91,43 @@ def people_show_person(user_id):
         "weekrides": weekly_rides,
         "weektotal": weekly_dist,
         "totaldist": total_dist,
-        "totalrides": total_rides})
+        "totalrides": total_rides},
+        competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/ridedays")
 def ridedays():
     q = text("""
-		SELECT a.id, a.display_name, count(b.ride_date) as rides, sum(b.distance) as miles, max(b.ride_date) as lastride
-		 FROM lbd_athletes a, daily_scores b where a.id = b.athlete_id group by b.athlete_id order by rides desc, miles desc, display_name
-		;
-		"""
-    )
-    total_days = datetime.now().timetuple().tm_yday
-    ride_days = [(x['id'], x['display_name'], x['rides'], x['miles'], x['lastride'] >= date.today()) for x in
-                 meta.scoped_session().execute(q).fetchall()]
-    return render_template('people/ridedays.html', ride_days=ride_days, num_days=total_days)
+                SELECT
+                    a.id,
+                    a.display_name,
+                    count(b.ride_date) as rides,
+                    sum(b.distance) as miles,
+                    max(b.ride_date) as lastride
+                FROM
+                    lbd_athletes a,
+                    daily_scores b where a.id = b.athlete_id
+                group by b.athlete_id
+                order by
+                    rides desc,
+                    miles desc,
+                    display_name
+                ;
+                """)
+    loc_time = get_today()
+    loc_total_days = loc_time.timetuple().tm_yday
+    ride_days = [(
+        x['id'],
+        x['display_name'],
+        x['rides'],
+        x['miles'],
+        x['lastride'] >= loc_time.date())
+        for x in meta.scoped_session().execute(q).fetchall()]
+    return render_template(
+            'people/ridedays.html',
+            ride_days=ride_days,
+            num_days=loc_total_days)
+
 
 @blueprint.route("/friends")
 def friends():
@@ -106,4 +146,5 @@ def friends():
 
     indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
 
-    return render_template('people/friends.html', indiv_rows=indiv_rows)
+    return render_template('people/friends.html', indiv_rows=indiv_rows,
+                           competition_title=config.COMPETITION_TITLE)

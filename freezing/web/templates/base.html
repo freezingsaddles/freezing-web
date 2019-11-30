@@ -2,7 +2,7 @@
 <html xml:lang="en" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{% block title %}Freezing Saddles{% endblock %}</title>
+    <title>{% block title %}{{ competition_title }}{% endblock %}</title>
 
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -30,23 +30,23 @@
     <!-- Bootstrap -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="/assets/css/navbar-fixed-top.css" rel="stylesheet">
     <link href="/assets/css/ekko-lightbox.min.css" rel="stylesheet">
     <link href="/assets/css/styles.css" rel="stylesheet">
 
     {% block head %}{% endblock %}
 </head>
 <body>
+   <div class="container-fluid">
     {% block beforenav %}
     {#
     See http://stackoverflow.com/a/13368485/217080
     put modal windows before the navbar
     #}
     {% endblock %}
-<div class="container">
+
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -61,26 +61,31 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <!-- <li class="{% if request.path == '/' %}active{% endif %}"><a href="/">Home</a></li> -->
+                    <li>
+                            <a href="http://register.freezingsaddles.com">Register</a>
+                    </li>
+                    <li>
+                            <a href="http://bikearlingtonforum.com/forumdisplay.php?41-Freezing-Saddles-Winter-Riding-Competition">Forum</a>
+                    </li>
                     <li class="dropdown{% if request.path.startswith('/leaderboard') %} active{% endif %}">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Leaderboards <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/leaderboard/team_text">Team Points (Text)</a></li>
                             <li><a href="/leaderboard/team">Team Points (Chart)</a></li>
-                            <li><a href="/leaderboard/team_various">Team (Various)</a></li>
-                            <li><a href="/alt_scoring/team_sleaze">Team Sleaze Rides</a></li>
-                            <li><a href="/alt_scoring/team_hains">Team Hains Point Laps</a></li>
-
+                            <li><a href="/leaderboard/team_text">Team Points (Text)</a></li>
                             <li role="separator" class="divider"></li>
-
-                            <li><a href="/leaderboard/individual_text">Individual Points (Text)</a></li>
+                            <li><a href="/alt_scoring/team_hains">Team Hains Point Laps</a></li>
+                            <li><a href="/leaderboard/team_various">Team Pointless (Various)</a></li>
+                            <li><a href="/alt_scoring/team_sleaze">Team Sleaze Rides</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="/leaderboard/individual">Individual Points (Chart)</a></li>
-
-                            <li><a href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
-                            <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
+                            <li><a href="/leaderboard/individual_text">Individual Points (Text)</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="/alt_scoring/indiv_hains">Individual Hains Point Laps</a></li>
                             <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
+                            <li><a href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
+                            <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
 
                         </ul>
                     </li>
@@ -93,10 +98,11 @@
                             Data Exploration <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/explore/team_cumul">Team Cumulative</a></li>
-                            <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
-                            <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
+
                             <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
+                            <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
+                            <li class="disabled"><a class="disabled" {# href="/explore/team_cumul" #} data-toggle="tooltip" data-placement="top" title="This leaderboard is returning soon!">Team Cumulative</a></li>
+                            <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
                         </ul>
                     </li>
                     <li class="dropdown{% if request.path.startswith('/people') %} active{% endif %}">
@@ -114,18 +120,24 @@
                             Pointless <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="/pointless/kidmiles">Kidical by Mileage</a></li>
-                            <li><a href="/pointless/hashtag/withkid">Riding with Kids</a></li>
-                            <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
-                            <li><a href="/pointless/opmdays">Michigander snow day riders</a></li>
                             <li><a href="/pointless/coffeeride">Coffee Ride</a></li>
-                            <li><a href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
-                            <li><a href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
                             <li><a href="/pointless/dirtybiker">Dirty Biker</a></li>
-                            <!--
-                            <li><a href="/pointless/avgspeed">Tortoise</a></li>
-                            <li><a href="/pointless/avgdist">Shortest Rides</a></li>
-                            -->
+                            <li><a href="/pointless/generic/dumpling">Dumpling Rides</a></li>
+                            <li><a href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
+                            <li><a href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
+                            <li><a href="/pointless/generic/londonbridge">London Bridge Rides</a></li>
+                            <li><a href="/pointless/generic/lostdog">Lost Dog Rides</a></li>
+                            <li><a href="/pointless/hashtag/bafsmetro">METRO PEAK PIONEER Rides</a></li>
+                            <li><a href="/pointless/opmdays">Michigander Snow Day Rides</a></li>
+                            <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
+                           <!-- <li><a href="/pointless/avgdist">Shortest Rides</a></li> -->
+                            <li><a href="/pointless/generic/tandem">Tandem Rides</a></li>
+                            <li><a href="/pointless/avgspeed">Tortoise and Hare</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/pointless/kidmiles">Kidical by Mileage</a></li>
+                            <li><a href="/pointless/kidsathlon">Kidsathlon</a></li>
+                            <li><a href="/pointless/pointlesskids">Pointless Kids</a></li>
+                            <li><a href="/pointless/hashtag/withkid">Riding with Kids</a></li>
                         </ul>
                     </li>
                     <li class="dropdown{% if request.path.startswith('/alt_scoring') %} active{% endif %}">
@@ -134,8 +146,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="/alt_scoring/team_riders">Ride Days by Team</a></li>
-                            <li><a href="/alt_scoring/team_daily">Team Wins by Day</a></li>
                             <li><a href="/alt_scoring/indiv_worst_day_points">Steve O's Crazy Idea</a></li>
+                            <li><a href="/alt_scoring/team_daily">Team Wins by Day</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -198,7 +210,9 @@
                 });
             });
         });
-
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
 </script>
 
 {% block foot %} {% endblock %}

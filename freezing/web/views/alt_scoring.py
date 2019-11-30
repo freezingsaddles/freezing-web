@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 from freezing.model import meta
 
+from freezing.web import config
 from freezing.web.views.shared_sql import *
 
 
@@ -20,7 +21,8 @@ def team_riders():
 		"""
     )
     team_riders = [(x['name'], x['ride_days']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('alt_scoring/team_riders.html', team_riders=team_riders)
+    return render_template('alt_scoring/team_riders.html', team_riders=team_riders,
+                           competition_title=config.COMPETITION_TITLE)
 
 
 @blueprint.route("/team_daily")
@@ -48,37 +50,43 @@ def team_daily():
     # chart is too big to display, but leaving the calculation here just in case
     team_total = [(b,a) for a,b in team_total.items()]
     team_total = sorted(team_total, reverse = True)
-    return render_template('alt_scoring/team_daily.html', team_total=team_total)
+    return render_template('alt_scoring/team_daily.html', team_total=team_total,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/team_sleaze")
 def team_sleaze():
     q = team_sleaze_query()
     data = [(x['team_name'], x['num_sleaze_days']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('alt_scoring/team_sleaze.html', team_sleaze=data)
+    return render_template('alt_scoring/team_sleaze.html', team_sleaze=data,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/team_hains")
 def team_hains():
     q = team_segment_query()
     data = [(x['team_name'], x['segment_rides']) for x in meta.engine.execute(q,segment_id=1081507).fetchall()]
-    return render_template('alt_scoring/team_hains.html', team_hains=data)
+    return render_template('alt_scoring/team_hains.html', team_hains=data,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/indiv_sleaze")
 def indiv_sleaze():
     q = indiv_sleaze_query()
     data = [(x['athlete_name'], x['num_sleaze_days']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('alt_scoring/indiv_sleaze.html', indiv_sleaze=data)
+    return render_template('alt_scoring/indiv_sleaze.html', indiv_sleaze=data,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/indiv_hains")
 def indiv_hains():
     q = indiv_segment_query(join_miles=True)
     data = [(x['athlete_name'], x['segment_rides'], x['dist']) for x in meta.engine.execute(q,segment_id=1081507).fetchall()]
-    return render_template('alt_scoring/indiv_hains.html', indiv_hains=data)
+    return render_template('alt_scoring/indiv_hains.html', indiv_hains=data,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/indiv_freeze")
 def indiv_freeze():
     q = indiv_freeze_query()
     data = [(x['athlete_name'], x['freeze_points_total']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('alt_scoring/indiv_freeze.html', indiv_freeze=data)
+    return render_template('alt_scoring/indiv_freeze.html', indiv_freeze=data,
+                           competition_title=config.COMPETITION_TITLE)
 
 @blueprint.route("/indiv_worst_day_points")
 def indiv_worst_day_points():
@@ -86,7 +94,7 @@ def indiv_worst_day_points():
     select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
     sum(s.distance) as total_distance, sum(s.points) as total_score, sum(s.adj_points) as total_adjusted,
     count(s.points) as days_ridden from
-    (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,(200-DDS.num_riders))) adj_points from daily_scores DS,
+    (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,(145-DDS.num_riders))) adj_points from daily_scores DS,
     (select ride_date, count(distinct(athlete_id)) as num_riders  from daily_scores group by ride_date order by ride_date) DDS where DS.ride_date=DDS.ride_date) s
     join lbd_athletes A on A.id = s.athlete_id
     join teams T on T.id = A.team_id
@@ -94,4 +102,5 @@ def indiv_worst_day_points():
     order by total_adjusted desc;
     """)
     data = [(x['athlete_name'], x['team_name'], x['total_distance'], x['total_score'], x['total_adjusted'], x['days_ridden']) for x in meta.scoped_session().execute(q).fetchall()]
-    return render_template('alt_scoring/indiv_worst_day_points.html', data=data)
+    return render_template('alt_scoring/indiv_worst_day_points.html', data=data,
+                           competition_title=config.COMPETITION_TITLE)
