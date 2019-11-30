@@ -27,7 +27,8 @@ Here are some instructions for setting up a development environment:
 (If you are running in Windows, run `env/Scripts/activate` instead of `source env/bin/activate`.)
 ```bash
 # Clone repo
-shell$ git clone https://github.com/freezingsaddles/freezing-web.git
+shell$ mkdir freezingsaddles && cd freezingsaddles
+shell$ for part in sync web compose nq model; do git clone https://github.com/freezingsaddles/freezing-$part.git; done
 
 # Create and activate a virtual environment for freezing-web
 shell$ cd freezing-web
@@ -119,6 +120,7 @@ This component is designed to run as a container and should be configured with e
 - `DEBUG`: Whether to display exception stack traces, etc.
 - `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
 - `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
+shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 - `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
 - `SQLALCHEMY_URL`: The URL to the database.
 - `STRAVA_CLIENT_ID`: The ID of the Strava application.
@@ -127,3 +129,24 @@ This component is designed to run as a container and should be configured with e
 - `OBSERVER_TEAMS`: Comma-separated list of any teams that are just observing, not playing (they can get their overall stats included, but won't be part of leaderboards)
 - `START_DATE`: The beginning of the competition.
 - `END_DATE`: The end of the competition.
+
+## Beginning of year procedures
+
+* Gain access to the production server via SSH
+* Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means.
+* In the `.env` file for the production server (look in `/opt/compose/.env`), do this:
+  * Update the start and end dates
+  * Update the main Strava team id in the production `.env` file.
+  * Remove all the teams in COMPETITION_TEAMS and OBSERVER_TEAMS in the `.env` file.
+* Delete all the data in the following MySQL tables: (see freezing/sql/year-start.sql)
+  * teams
+  * athletes
+  * rides
+  * ride_geo
+  * ride_weather
+* Insert a new record in the `teams` table matching the MAIN_TEAM id.
+* Restart the services: `cd /opt/compose && docker-compose up -d`
+* Once the teams are announced (for the original Freezing Saddles competion, typically at the Happy Hour in early January):
+  * Add the team IDs for the competition teams and any observer teams (ringer teams) into the production `.env` file
+  * Restart the services: `cd /opt/compose && docker-compose up -d`
+  * Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competiton teams.
