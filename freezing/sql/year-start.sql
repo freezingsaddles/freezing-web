@@ -19,3 +19,8 @@ delete from ride_geo;
 select 'cleaning out ride_weather';
 delete from ride_weather;
 /* commit; */
+/* don't forget to add the new competion's team back in after
+   deleting last year's data, for example:
+
+   insert into teams values (23456, 'Freezing Saddles 2020', 1);
+*/
