@@ -1,6 +1,6 @@
 -e git+https://github.com/freezingsaddles/freezing-model@0.3.7#egg=freezing-model
 -e git+https://github.com/hozn/GeoAlchemy@0.7.3dev1#egg=GeoAlchemy
-Flask==0.12.4
+Flask==1.0
 PyMySQL==0.8.0
 PyYAML>=4.2b1
 arrow==0.12.1
