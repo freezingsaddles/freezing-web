@@ -1,24 +1,15 @@
-# BUILD
-FROM alpine as buildstep
+FROM alpine
 RUN apk update
 RUN apk add python3 py3-mysqlclient git
 RUN pip3 install --upgrade pip
 ADD requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
-RUN mkdir -p /build/wheels
-RUN pip3 wheel -r /tmp/requirements.txt --wheel-dir=/build/wheels
-
-# DEPLOY
-FROM alpine as deploystep
-RUN apk update
-RUN apk add python3 py3-mysqlclient
-RUN pip3 install --upgrade pip
+RUN apk del git
 RUN addgroup -S freezing && adduser -S -G freezing freezing
 ADD . /app
-WORKDIR /app
-RUN python3 setup.py bdist_wheel -d /build/wheels
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
+WORKDIR /app
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000
