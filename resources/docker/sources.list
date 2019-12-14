@@ -1,5 +1,0 @@
-deb http://archive.ubuntu.com/ubuntu/ xenial main universe
-deb http://archive.ubuntu.com/ubuntu/ xenial-updates main universe
-
-deb http://security.ubuntu.com/ubuntu xenial-security main
-deb http://security.ubuntu.com/ubuntu xenial-security universe
