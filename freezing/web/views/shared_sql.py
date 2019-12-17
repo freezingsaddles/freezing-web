@@ -82,13 +82,3 @@ def team_segment_query():
                 order by segment_rides desc
                 ;
             """)
-
-def team_leaderboard_query():
-	return text("""
-		select WS.team_id, WS.team_name, sum(WS.team_distance) as total_distance,
-		(sum(WS.team_distance) + sum(WS.days)*10) as total_score
-		from weekly_stats WS
-		group by WS.team_id, WS.team_name
-		order by total_score desc;
-		;
-	""")
