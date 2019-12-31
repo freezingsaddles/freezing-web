@@ -1,0 +1,25 @@
+---
+title: POGGIO (Individual)
+description: "Number of individual rides of the POGGIO segment. Francisco Velez V."
+url: http://bikearlingtonforum.com/showthread.php?12345-The-POGGIO-Award-NotYet
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: poggio_rides
+    label: POGGIO Rides
+query: |
+  select
+    A.id,
+    A.display_name as athlete_name,
+    count(E.id) as poggio_rides
+  from
+    lbd_athletes A join
+    rides R on R.athlete_id = A.id join
+    ride_efforts E on E.ride_id = R.id
+  where
+    E.segment_id = 650024
+  group by A.id
+  order by poggio_rides desc
