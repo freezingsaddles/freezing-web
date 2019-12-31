@@ -10,6 +10,7 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: poggio_rides
     label: POGGIO Rides
+    rank_by: true
 query: |
   select
     A.id,
@@ -22,4 +23,6 @@ query: |
   where
     E.segment_id = 650024
   group by A.id
-  order by poggio_rides desc
+  order by
+    poggio_rides desc,
+    A.display_name asc

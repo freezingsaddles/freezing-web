@@ -23,6 +23,7 @@ class GenericBoardField(BaseMessage):
     type = None  # Do we need this ...?
     format = None
     visible: bool = True
+    rank_by: bool = False
 
     def format_value(self, v, row):
 
@@ -66,6 +67,7 @@ class GenericBoardFieldSchema(BaseSchema):
     type = fields.Str()
     format = fields.Str()
     visible = fields.Bool()
+    rank_by = fields.Bool()
 
 
 class GenericBoard(BaseMessage):
@@ -109,5 +111,15 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
             rows = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rs.fetchall()]
         except KeyError as ke:
             raise RuntimeError("Field not found in result row: {}".format(ke))
+
+        rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
+        if rank_by is not None:
+            rank = 0
+            rank_value = None
+            for index, row in enumerate(rows):
+                if row[rank_by] is not rank_value:
+                    rank = index + 1
+                    rank_value = row[rank_by]
+                row['rank'] = rank
 
         return board, rows
