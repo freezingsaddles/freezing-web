@@ -122,17 +122,17 @@ def load_board(leaderboard) -> GenericBoard:
 def format_rows(rows, board) -> List[Dict[str, Any]]:
     try:
         formatted = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rows]
-        return rank_rows(formatted, board)
+        rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
+        return formatted if rank_by is None else rank_rows(formatted, rank_by)
     except KeyError as ke:
         raise RuntimeError("Field not found in result row: {}".format(ke))
 
 
-def rank_rows(rows, board, index=1, rank=0, rank_value=None) -> List[Dict[str, Any]]:
-    rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
-    if rank_by is None or len(rows) == 0:
+def rank_rows(rows, rank_by, index=1, rank=0, rank_value=None) -> List[Dict[str, Any]]:
+    if len(rows) == 0:
         return rows
     else:
         head, *tail = rows
         head_value = head[rank_by]
         head_rank = rank if index > 1 and head_value == rank_value else index
-        return [{**head, 'rank': head_rank}] + rank_rows(tail, board, 1 + index, head_rank, head_value)
+        return [{**head, 'rank': head_rank}] + rank_rows(tail, rank_by, 1 + index, head_rank, head_value)
