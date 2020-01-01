@@ -115,9 +115,9 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
         rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
         if rank_by is not None:
             rank = 0
-            rank_value = None
+            rank_value = 0
             for index, row in enumerate(rows):
-                if row[rank_by] is not rank_value:
+                if index == 0 or row[rank_by] != rank_value:
                     rank = index + 1
                     rank_value = row[rank_by]
                 row['rank'] = rank
