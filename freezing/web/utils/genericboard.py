@@ -90,6 +90,22 @@ class GenericBoardSchema(BaseSchema):
 
 def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]]:
 
+    board = load_board(leaderboard)
+
+    with meta.transaction_context(read_only=True) as session:
+
+        rs = session.execute(board.query)
+
+        if not board.fields:
+            board.fields = [GenericBoardField(name=k, label=k) for k in rs.keys()]
+
+        rows = rs.fetchall()
+
+        return board, format_rows(rows, board)
+
+
+def load_board(leaderboard) -> GenericBoard:
+
     path = os.path.join(config.LEADERBOARDS_DIR, '{}.yml'.format(os.path.basename(leaderboard)))
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
@@ -100,26 +116,23 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
     schema = GenericBoardSchema()
     board: GenericBoard = schema.load(doc).data
 
-    with meta.transaction_context(read_only=True) as session:
+    return board
 
-        rs = session.execute(board.query)
 
-        if not board.fields:
-            board.fields = [GenericBoardField(name=k, label=k) for k in rs.keys()]
+def format_rows(rows, board) -> List[Dict[str, Any]]:
+    try:
+        formatted = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rows]
+        return rank_rows(formatted, board)
+    except KeyError as ke:
+        raise RuntimeError("Field not found in result row: {}".format(ke))
 
-        try:
-            rows = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rs.fetchall()]
-        except KeyError as ke:
-            raise RuntimeError("Field not found in result row: {}".format(ke))
 
-        rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
-        if rank_by is not None:
-            rank = 0
-            rank_value = 0
-            for index, row in enumerate(rows):
-                if index == 0 or row[rank_by] != rank_value:
-                    rank = index + 1
-                    rank_value = row[rank_by]
-                row['rank'] = rank
-
-        return board, rows
+def rank_rows(rows, board, index=1, rank=0, rank_value=None) -> List[Dict[str, Any]]:
+    rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
+    if rank_by is None or len(rows) == 0:
+        return rows
+    else:
+        head, *tail = rows
+        head_value = head[rank_by]
+        head_rank = rank if index > 1 and head_value == rank_value else index
+        return [{**head, 'rank': head_rank}] + rank_rows(tail, board, 1 + index, head_rank, head_value)

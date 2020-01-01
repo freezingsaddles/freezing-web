@@ -1,20 +1,20 @@
 ---
 title: POGGIO (Team)
-description: "Number of team rides of the POGGIO segment. Francisco Velez V."
-url: http://bikearlingtonforum.com/showthread.php?12345-The-POGGIO-Award-NotYet
+description: "Number of team rides of the <a href=\"https://www.strava.com/segments/650024\">POGGIO</a> segment."
+not-yet-url: http://bikearlingtonforum.com/showthread.php?XXX
 fields:
   - name: id
     visible: false
   - name: team_name
     label: Team
-  - name: poggio_rides
-    label: POGGIO Rides
+  - name: total_rides
+    label: Total Rides
     rank_by: true
 query: |
   select
     T.id,
     T.name as team_name,
-    count(E.id) as poggio_rides
+    count(E.id) as total_rides
   from
     lbd_athletes A join
     teams T on T.id = A.team_id join
@@ -24,5 +24,5 @@ query: |
     E.segment_id = 650024
   group by T.id
   order by
-    poggio_rides desc,
-    T.name asc
+    total_rides desc,
+    team_name asc
