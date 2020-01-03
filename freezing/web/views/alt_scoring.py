@@ -3,6 +3,7 @@ from itertools import groupby
 
 from flask import render_template, Blueprint
 from sqlalchemy import text
+from statistics import median
 
 from freezing.model import meta
 
@@ -90,11 +91,16 @@ def indiv_freeze():
 
 @blueprint.route("/indiv_worst_day_points")
 def indiv_worst_day_points():
-    q = text("""
+    ridersq = text("""
+    select count(distinct(athlete_id)) as riders from rides group by date(start_date)
+    """)
+    riders = [x['riders'] for x in meta.scoped_session().execute(ridersq).fetchall()]
+    median_riders = 0 if len(riders) == 0 else median(riders)
+    q = text(f"""
     select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
     sum(s.distance) as total_distance, sum(s.points) as total_score, sum(s.adj_points) as total_adjusted,
     count(s.points) as days_ridden from
-    (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,(145-DDS.num_riders))) adj_points from daily_scores DS,
+    (select DS.athlete_id, DS.distance, DS.points, DS.ride_date, DDS.num_riders, (DS.points*POW(1.025,({median_riders}-DDS.num_riders))) adj_points from daily_scores DS,
     (select ride_date, count(distinct(athlete_id)) as num_riders  from daily_scores group by ride_date order by ride_date) DDS where DS.ride_date=DDS.ride_date) s
     join lbd_athletes A on A.id = s.athlete_id
     join teams T on T.id = A.team_id
@@ -103,4 +109,4 @@ def indiv_worst_day_points():
     """)
     data = [(x['athlete_name'], x['team_name'], x['total_distance'], x['total_score'], x['total_adjusted'], x['days_ridden']) for x in meta.scoped_session().execute(q).fetchall()]
     return render_template('alt_scoring/indiv_worst_day_points.html', data=data,
-                           competition_title=config.COMPETITION_TITLE)
+                           competition_title=config.COMPETITION_TITLE, median=median_riders)
