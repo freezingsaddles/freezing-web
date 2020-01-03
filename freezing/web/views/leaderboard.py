@@ -44,6 +44,7 @@ def team_leaderboard_classic():
              """)
 
     team_members = {}
+    # @UndefinedVariable
     for indiv_row in meta.scoped_session().execute(q).fetchall():
         team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
 
