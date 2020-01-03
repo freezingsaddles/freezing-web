@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:20191114
 RUN apk update
 RUN apk add python3 py3-mysqlclient git
 RUN pip3 install --upgrade pip
