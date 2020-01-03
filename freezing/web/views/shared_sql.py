@@ -82,3 +82,19 @@ def team_segment_query():
                 order by segment_rides desc
                 ;
             """)
+
+
+def team_leaderboard_query():
+    return text("""
+                select
+                  T.id as team_id,
+                  T.name as team_name,
+                  sum(DS.points) as total_score,
+                  sum(DS.distance) as total_distance
+                from
+                  daily_scores DS join teams T on T.id = DS.team_id
+                where not T.leaderboard_exclude
+                group by T.id, T.name
+                order by total_score desc
+                ;
+                """)
