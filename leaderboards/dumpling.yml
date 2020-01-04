@@ -10,6 +10,7 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: dumpling_rides 
     label: Dumpling Rides
+    rank_by: true
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as dumpling_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id

@@ -1,0 +1,29 @@
+---
+title: POGGIO (Team)
+description: "Number of team rides of the <a href=\"https://www.strava.com/segments/650024\">POGGIO</a> segment."
+# FIXME: switch this to the thread that will go with POGGIO
+#url: http://bikearlingtonforum.com/forumdisplay.php?41-Freezing-Saddles-Winter-Riding-Competition
+fields:
+  - name: id
+    visible: false
+  - name: team_name
+    label: Team
+  - name: total_rides
+    label: Total Rides
+    rank_by: true
+query: |
+  select
+    T.id,
+    T.name as team_name,
+    count(E.id) as total_rides
+  from
+    lbd_athletes A join
+    teams T on T.id = A.team_id join
+    rides R on R.athlete_id = A.id join
+    ride_efforts E on E.ride_id = R.id
+  where
+    E.segment_id = 650024
+  group by T.id
+  order by
+    total_rides desc,
+    team_name asc

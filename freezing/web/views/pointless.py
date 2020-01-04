@@ -11,7 +11,7 @@ import yaml
 from freezing.model import meta
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
-from freezing.web.utils.genericboard import load_board_and_data
+from freezing.web.utils.genericboard import load_board_and_data, load_board, format_rows
 
 blueprint = Blueprint('pointless', __name__)
 
@@ -183,6 +183,33 @@ def kidsathlon():
         data.append((x['athlete_id'], x['athlete_name'], kidical, withkid, kidsathlon))
     return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})
 
+
+@blueprint.route("/alexandria")
+def alexandria():
+    # include anyone who has ridden on any segment, but count as zero any segment they've missed
+    board = load_board('alexandria')
+    rides = meta.scoped_session().execute(board.query).fetchall()
+    # segment_id -> segment_name
+    segments = {ride['segment_id']: ride['segment_name'] for ride in rides}
+    # athlete_id -> athlete_name
+    athletes = {ride['id']: ride['athlete_name'] for ride in rides}
+    # (athlete_id, segment_id) -> segment_rides
+    segment_rides = {(ride['id'], ride['segment_id']): ride['segment_rides'] for ride in rides}
+    # athlete_id -> segment_id
+    worst_segments = {id: min(segments.keys(), key=lambda s:segment_rides.get((id, s), 0)) for id in athletes.keys()}
+    data = [{
+        'id': id,
+        'athlete_name': athletes[id],
+        'segment_id': segment,
+        'segment_name': segments[segment],
+        'segment_rides': segment_rides.get((id, segment), 0)
+    } for id, segment in worst_segments.items()]
+    data.sort(key=lambda d:(-d['segment_rides'], d['athlete_name']))
+    formatted = format_rows(data, board)
+    return render_template('pointless/generic.html', fields=board.fields, title=board.title,
+                           description=board.description, url=board.url, data=formatted)
+
+  
 @blueprint.route("/daily_variance")
 def daily_variance():
     q = text("""

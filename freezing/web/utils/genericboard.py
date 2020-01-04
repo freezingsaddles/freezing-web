@@ -23,6 +23,7 @@ class GenericBoardField(BaseMessage):
     type = None  # Do we need this ...?
     format = None
     visible: bool = True
+    rank_by: bool = False
 
     def format_value(self, v, row):
 
@@ -66,6 +67,7 @@ class GenericBoardFieldSchema(BaseSchema):
     type = fields.Str()
     format = fields.Str()
     visible = fields.Bool()
+    rank_by = fields.Bool()
 
 
 class GenericBoard(BaseMessage):
@@ -88,15 +90,7 @@ class GenericBoardSchema(BaseSchema):
 
 def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]]:
 
-    path = os.path.join(config.LEADERBOARDS_DIR, '{}.yml'.format(os.path.basename(leaderboard)))
-    if not os.path.exists(path):
-        raise ObjectNotFound("Could not find yaml board definition {}".format(path))
-
-    with open(path, 'rt', encoding='utf-8') as fp:
-        doc = yaml.load(fp)
-
-    schema = GenericBoardSchema()
-    board: GenericBoard = schema.load(doc).data
+    board = load_board(leaderboard)
 
     with meta.transaction_context(read_only=True) as session:
 
@@ -105,9 +99,40 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
         if not board.fields:
             board.fields = [GenericBoardField(name=k, label=k) for k in rs.keys()]
 
-        try:
-            rows = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rs.fetchall()]
-        except KeyError as ke:
-            raise RuntimeError("Field not found in result row: {}".format(ke))
+        rows = rs.fetchall()
 
-        return board, rows
+        return board, format_rows(rows, board)
+
+
+def load_board(leaderboard) -> GenericBoard:
+
+    path = os.path.join(config.LEADERBOARDS_DIR, '{}.yml'.format(os.path.basename(leaderboard)))
+    if not os.path.exists(path):
+        raise ObjectNotFound("Could not find yaml board definition {}".format(path))
+
+    with open(path, 'rt', encoding='utf-8') as fp:
+        doc = yaml.load(fp)
+
+    schema = GenericBoardSchema()
+    board: GenericBoard = schema.load(doc)
+
+    return board
+
+
+def format_rows(rows, board) -> List[Dict[str, Any]]:
+    try:
+        formatted = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rows]
+        rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
+        return formatted if rank_by is None else rank_rows(formatted, rank_by)
+    except KeyError as ke:
+        raise RuntimeError("Field not found in result row: {}".format(ke))
+
+
+def rank_rows(rows, rank_by, index=1, rank=0, rank_value=None) -> List[Dict[str, Any]]:
+    if len(rows) == 0:
+        return rows
+    else:
+        head, *tail = rows
+        head_value = head[rank_by]
+        head_rank = rank if index > 1 and head_value == rank_value else index
+        return [{**head, 'rank': head_rank}] + rank_rows(tail, rank_by, 1 + index, head_rank, head_value)
