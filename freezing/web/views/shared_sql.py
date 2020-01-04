@@ -83,12 +83,18 @@ def team_segment_query():
                 ;
             """)
 
+
 def team_leaderboard_query():
-	return text("""
-		select WS.team_id, WS.team_name, sum(WS.team_distance) as total_distance,
-		(sum(WS.team_distance) + sum(WS.days)*10) as total_score
-		from weekly_stats WS
-		group by WS.team_id, WS.team_name
-		order by total_score desc;
-		;
-	""")
+    return text("""
+                select
+                  T.id as team_id,
+                  T.name as team_name,
+                  sum(DS.points) as total_score,
+                  sum(DS.distance) as total_distance
+                from
+                  daily_scores DS join teams T on T.id = DS.team_id
+                where not T.leaderboard_exclude
+                group by T.id, T.name
+                order by total_score desc
+                ;
+                """)

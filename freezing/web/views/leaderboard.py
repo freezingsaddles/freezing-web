@@ -25,26 +25,32 @@ def team_leaderboard_classic():
     # Get teams sorted by points
     q = team_leaderboard_query()
 
-    team_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
+    # @UndefinedVariable
+    team_rows = meta.scoped_session().execute(q).fetchall()
 
     q = text("""
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
-             (sum(WS.team_distance) + sum(WS.days)*10) as total_score,
-             sum(WS.team_distance) as total_distance,
-             sum(WS.days) as days_ridden
-             from weekly_stats WS
-             join athletes A on A.id = WS.athlete_id
+             select
+               A.id as athlete_id,
+               A.team_id,
+               A.display_name as athlete_name,
+               sum(DS.points) as total_score,
+               sum(DS.distance) as total_distance,
+               count(DS.points) as days_ridden
+             from
+               daily_scores DS join athletes A on A.id = DS.athlete_id
              group by A.id, A.display_name
              order by total_score desc
              ;
              """)
 
     team_members = {}
-    for indiv_row in meta.scoped_session().execute(q).fetchall(): # @UndefinedVariable
+    # @UndefinedVariable
+    for indiv_row in meta.scoped_session().execute(q).fetchall():
         team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
 
     for team_id in team_members:
-        team_members[team_id] = reversed(sorted(team_members[team_id], key=lambda m: m['total_score']))
+        team_members[team_id] = reversed(sorted(
+            team_members[team_id], key=lambda m: m['total_score']))
 
     return render_template('leaderboard/team_text.html',
                            team_rows=team_rows,
@@ -68,21 +74,29 @@ def indiv_leaderboard():
 def individual_leaderboard_text():
 
     q = text("""
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
-             sum(DS.distance) as total_distance, sum(DS.points) as total_score,
-             count(DS.points) as days_ridden
-             from daily_scores DS
-             join lbd_athletes A on A.id = DS.athlete_id
-             join teams T on T.id = A.team_id
+             select
+               A.id as athlete_id,
+               A.team_id,
+               A.display_name as athlete_name,
+               T.name as team_name,
+               sum(DS.distance) as total_distance,
+               sum(DS.points) as total_score,
+               count(DS.points) as days_ridden
+             from
+               daily_scores DS
+                 join lbd_athletes A on A.id = DS.athlete_id
+                 join teams T on T.id = A.team_id
              where not T.leaderboard_exclude
              group by A.id, A.display_name
              order by total_score desc
              ;
              """)
 
-    indiv_rows = meta.scoped_session().execute(q).fetchall() # @UndefinedVariable
+    # @UndefinedVariable
+    indiv_rows = meta.scoped_session().execute(q).fetchall()
 
-    return render_template('leaderboard/indiv_text.html', indiv_rows=indiv_rows,
+    return render_template('leaderboard/indiv_text.html',
+                           indiv_rows=indiv_rows,
                            competition_title=config.COMPETITION_TITLE)
 
 
