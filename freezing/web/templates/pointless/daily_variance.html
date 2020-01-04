@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Least Daily Variance{% endblock %}
+{% block content %}
+<div class="row"><div class="col-md-12"><h1>Least Daily Variance</h1></div></div>
+<div class="row"><div class="col-md-12">
+	<p>This prize is dedicated in memory of Chris Maimone (CPTJohnC on the forum).</p>
+	<p>This prize is given to the player with the lowest avarage variance in miles per day. To qualify you must ride at least 50 days (about 2/3 of the total days in BAFS)
+		and average more than 2 miles per ride day. If your name is in red, you don't qualify.</p>
+	<p>Further details in the <a href="http://bikearlingtonforum.com/showthread.php?14193-Lowest-mileage-variance-prize-in-honor-of-Chris-Maimone">forum post</a>.</p>
+</div></div>
+<div class="row">
+	<div class="col-md-12">
+      {{tdata}}
+	<table id="variance" class="table table-striped">
+      <thead><tr>
+         <th>Athlete</th>
+         <th>Ride Days</th>
+			<th>Total Distance</th>
+         <th>Average Variance</th>
+         <th>Monday Variance</th>
+         <th>Tuesday Variance</th>
+         <th>Wednesday Variance</th>
+         <th>Thursday Variance</th>
+         <th>Friday Variance</th>
+         <th>Saturday Variance</th>
+         <th>Sunday Variance</th>
+      </tr>
+         </thead>
+
+		<tbody>
+			{% for a,b,c,dist,can_win,d,e,f,g,h,i,j,k in data.tdata %}
+         <tr{% if not can_win %} class="danger" {% endif %}>
+         <td><a href="/people/{{a}}">{{b}}</a></td>
+         <td>{{c}}</td>
+			<td>{{dist}}</td>
+         <td><b>{{d}}</b></td>
+         <td>{{e}}</td>
+         <td>{{f}}</td>
+         <td>{{g}}</td>
+         <td>{{h}}</td>
+         <td>{{i}}</td>
+         <td>{{j}}</td>
+         <td>{{k}}</td>
+         </tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
+{% endblock %}
+{% block foot %}
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#variance').dataTable({
+		"order": [[ 3, "asc" ]],
+		"bPaginate": false,
+		"bLengthChange": false,
+		"bFilter": true,
+		"bSort": true,
+		"bInfo": false,
+		"bAutoWidth": false,
+		"bDestroy": true
+		 } );
+} );
+</script>
+{% endblock %}
