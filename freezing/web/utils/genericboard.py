@@ -114,7 +114,7 @@ def load_board(leaderboard) -> GenericBoard:
         doc = yaml.load(fp)
 
     schema = GenericBoardSchema()
-    board: GenericBoard = schema.load(doc).data
+    board: GenericBoard = schema.load(doc)
 
     return board
 

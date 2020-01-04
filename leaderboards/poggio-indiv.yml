@@ -1,7 +1,8 @@
 ---
 title: POGGIO (Individual)
 description: "Number of individual rides of the <a href=\"https://www.strava.com/segments/650024\">POGGIO</a> segment."
-not-yet-url: http://bikearlingtonforum.com/showthread.php?XXX
+# FIXME: switch this to the thread that will go with POGGIO
+#url: http://bikearlingtonforum.com/forumdisplay.php?41-Freezing-Saddles-Winter-Riding-Competition
 fields:
   - name: id
     visible: false
