@@ -2,7 +2,7 @@
 #
 # wget-spider.sh
 #
-# Uses wget to spider all the assets of a web site
+# Uses wget to spider all the assets of a web site, as the simplest possible functional test. If any resources come back with 500 errors, wget will exit with a non-zero error code, and this will print the output of wget and try to highlight errors.
 #
 # MIT Licensed
 #
