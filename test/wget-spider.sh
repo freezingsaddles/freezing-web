@@ -7,6 +7,12 @@
 # wget will exit with a non-zero error code, and this will print the
 # output of wget and try to highlight errors.
 #
+# See these 2 wget documentation pages for the inspiration that lead to
+# this script:
+#
+#    https://www.gnu.org/software/wget/manual/html_node/Recursive-Retrieval-Options.html
+#    https://www.gnu.org/software/wget/manual/html_node/Exit-Status.html
+#
 # MIT Licensed
 #
 # Copyright 2020 Richard Bullington-McGuire
