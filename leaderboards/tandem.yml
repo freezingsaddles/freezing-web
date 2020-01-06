@@ -1,6 +1,6 @@
 ---
 title: Tandem
-description: "Number of tandem rideds (tagged with #FS2019tandem). In 2019 shirag is sponsoring this prize."
+description: "Number of tandem rideds (tagged with #tandem)."
 url: http://bikearlingtonforum.com/showthread.php?14077-Tandem-Ride-Pointless-Prize-FS2019tandem
 fields:
   - name: id
@@ -14,6 +14,8 @@ fields:
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as tandem_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id
-  where R.name like '%#FS2019tandem%' collate utf8mb4_general_ci
+  where 
+    R.name like '%#FS2019tandem%' collate utf8mb4_general_ci or 
+    R.name like '%#tandem' collate utf8mb4_general_ci
   group by A.id, A.display_name
   order by tandem_rides desc
