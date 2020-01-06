@@ -1,6 +1,6 @@
 ---
 title: Dirty Biker
-description: Number of days with at least 1 off-road ride (#DirtyBikerFS20). Dachs6 sponsors this prize.
+description: "Number of days with at least 1 off-road ride (#dirtybiker or #DirtyBikerFS20). Dachs6 sponsors this prize."
 url: http://bikearlingtonforum.com/showthread.php?15710-Dirty-Biker-DirtyBikerFS20
 fields:
   - name: id
