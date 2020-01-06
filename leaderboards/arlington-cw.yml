@@ -1,7 +1,9 @@
 ---
-title: Alexandria Infrastructure
-description: "Number of rides of all Alexandria Infrastructure segments (i.e. the minimum rides of any one segment)."
-url: http://bikearlingtonforum.com/showthread.php?14047-Ride-Alexandria-Infrastructure-Pointless-Prize-2019
+title: Clockwise Loopy for Arlington
+description: |
+  Number of clockwise rides of the Arlington loop (ArLoopCW1 through ArLoopCW8).
+  Part of <a href="../arlington">Loopy for Arlington</a>.
+url: http://bikearlingtonforum.com/showthread.php?11507-Loopy-For-Arlington-Pointless-Prize
 fields:
   - name: id
     visible: false
@@ -12,7 +14,7 @@ fields:
     label: Least-Ridden Segment
     format: "<a href=\"https://www.strava.com/segments/{segment_id}\">{segment_name}</a>"
   - name: segment_rides
-    label: Infrastructure Rides
+    label: Loop Rides
     rank_by: true
 query: |
   select
@@ -26,7 +28,7 @@ query: |
     rides R on R.athlete_id = A.id join
     ride_efforts E on E.ride_id = R.id
   where
-    E.segment_id in (16700352, 16700518, 16700365, 16700527, 16700619, 2489428, 16700441, 7107707)
+    E.segment_id in (22395425, 13943716, 13943733, 13943744, 13943752, 13943762, 22382566, 13943773)
   group by
     A.id,
     E.segment_id
