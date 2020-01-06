@@ -12,6 +12,7 @@ from freezing.model import meta
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import load_board_and_data, load_board, format_rows
+from freezing.web.utils.hashboard import load_hashtag
 
 blueprint = Blueprint('pointless', __name__)
 
@@ -126,9 +127,10 @@ def _get_hashtag_tdata(hashtag, orderby=1):
 
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
+    meta = load_hashtag(hashtag)
     ht = ''.join(ch for ch in hashtag if ch.isalnum())
-    tdata = _get_hashtag_tdata(ht)
-    return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht})
+    tdata = _get_hashtag_tdata(ht, 1 if meta is None or not meta.rank_by_rides else 2)
+    return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht}, meta=meta)
 
 @blueprint.route("/coffeeride")
 def coffeeride():
@@ -184,10 +186,42 @@ def kidsathlon():
     return render_template('pointless/kidsathlon.html', data={'tdata':sorted(data, key=lambda v: v[4], reverse=True)})
 
 
-@blueprint.route("/alexandria")
-def alexandria():
+@blueprint.route("/multisegment/<string:leaderboard>")
+def multisegment(leaderboard):
+    board = load_board(leaderboard)
+    data = load_multisegment_board_data(board)
+    data.sort(key=lambda d:(-d['segment_rides'], d['athlete_name']))
+    formatted = format_rows(data, board)
+    return render_template('pointless/generic.html', fields=board.fields, title=board.title,
+                           description=board.description, url=board.url, data=formatted)
+
+
+@blueprint.route("/arlington")
+def arlington():
+
+    def combine(cw, ccw):
+        # if you have ridden no segments of ccw this will report cw as worst but that's okay in my book
+        cw_worse = (ccw is None) or (cw is not None and cw['segment_rides'] < ccw['segment_rides'])
+        return {
+            'id': cw['id'] if cw else ccw['id'],
+            'athlete_name': cw['athlete_name'] if cw else ccw['athlete_name'],
+            'segment_id': cw['segment_id'] if cw_worse else ccw['segment_id'],
+            'segment_name': cw['segment_name'] if cw_worse else ccw['segment_name'],
+            'segment_rides': (cw['segment_rides'] if cw else 0) + (ccw['segment_rides'] if ccw else 0)
+        }
+
+    board = load_board('arlington')
+    data_cw = {d['id']: d for d in load_multisegment_board_data(load_board('arlington-cw'))}
+    data_ccw = {d['id']: d for d in load_multisegment_board_data(load_board('arlington-ccw'))}
+    data = [combine(data_cw.get(id), data_ccw.get(id)) for id in set(data_cw.keys()).union(data_ccw.keys())]
+    data.sort(key=lambda d:(-d['segment_rides'], d['athlete_name']))
+    formatted = format_rows(data, board)
+    return render_template('pointless/generic.html', fields=board.fields, title=board.title,
+                           description=board.description, url=board.url, data=formatted)
+
+
+def load_multisegment_board_data(board):
     # include anyone who has ridden on any segment, but count as zero any segment they've missed
-    board = load_board('alexandria')
     rides = meta.scoped_session().execute(board.query).fetchall()
     # segment_id -> segment_name
     segments = {ride['segment_id']: ride['segment_name'] for ride in rides}
@@ -204,12 +238,9 @@ def alexandria():
         'segment_name': segments[segment],
         'segment_rides': segment_rides.get((id, segment), 0)
     } for id, segment in worst_segments.items()]
-    data.sort(key=lambda d:(-d['segment_rides'], d['athlete_name']))
-    formatted = format_rows(data, board)
-    return render_template('pointless/generic.html', fields=board.fields, title=board.title,
-                           description=board.description, url=board.url, data=formatted)
+    return data
 
-  
+
 @blueprint.route("/daily_variance")
 def daily_variance():
     q = text("""

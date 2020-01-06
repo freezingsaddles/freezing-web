@@ -1,0 +1,18 @@
+---
+tags:
+  - tag: FS2020tacoloco
+    name: Tacos Tacos Tacos
+    description: The object is to visit as many DIFFERENT, taco places as possible (on your bike, of course!) and <code>#FS2020tacoloco</code> one up.
+    url: http://bikearlingtonforum.com/showthread.php?15707-TACOS-TACOS-TACOS-This-ain%92t-no-burrito-pointless-prize-ride
+    rank_by_rides: True
+
+  - tag: donut
+    name: Doughnut Rides
+    description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
+    rank_by_rides: True
+
+  - tag: Deflated
+    name: Don’t be deflated this prize is for you!
+    description: Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code> (case-sensitive!), the person with the most flats wins! Well loses.
+    url: http://bikearlingtonforum.com/showthread.php?15757-Don%92t-be-deflated-this-prize-is-for-you!
+    rank_by_rides: True

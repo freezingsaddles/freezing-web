@@ -1,0 +1,20 @@
+---
+title: Loopy for Arlington
+description: |
+  Number of rides of the Arlington loop in either direction.
+  Combines <a href="multisegment/arlington-cw">Clockwise Loopy for Arlington</a>
+  and <a href="multisegment/arlington-ccw">Counter-Clockwise Loopy for Arlington</a>.
+url: http://bikearlingtonforum.com/showthread.php?11507-Loopy-For-Arlington-Pointless-Prize
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: segment_name
+    label: Least-Ridden Segment
+    format: "<a href=\"https://www.strava.com/segments/{segment_id}\">{segment_name}</a>"
+  - name: segment_rides
+    label: Loop Rides
+    rank_by: true
+query: select 1

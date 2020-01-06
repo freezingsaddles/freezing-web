@@ -1,6 +1,6 @@
 ---
 title: Tortoise and Hare (Average Speed)
-description: Rider average speed
+description: Rider average speed.
 fields:
   - name: id
     visible: false
