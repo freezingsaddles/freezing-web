@@ -12,6 +12,7 @@ from freezing.model import meta
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import load_board_and_data, load_board, format_rows
+from freezing.web.utils.hashboard import load_hashtag
 
 blueprint = Blueprint('pointless', __name__)
 
@@ -126,9 +127,10 @@ def _get_hashtag_tdata(hashtag, orderby=1):
 
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
+    meta = load_hashtag(hashtag)
     ht = ''.join(ch for ch in hashtag if ch.isalnum())
-    tdata = _get_hashtag_tdata(ht)
-    return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht})
+    tdata = _get_hashtag_tdata(ht, 1 if meta is None or not meta.rank_by_rides else 2)
+    return render_template('pointless/hashtag.html', data={"tdata":tdata, "hashtag":"#" + ht, "hashtag_notag":ht}, meta=meta)
 
 @blueprint.route("/coffeeride")
 def coffeeride():
