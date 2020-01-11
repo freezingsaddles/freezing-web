@@ -1,0 +1,44 @@
+---
+title: Supple Ride
+description: |
+  Number of miles multiplied by tyre width (2" is <code>#FSrealsuppleride2</code>,
+  3" is <code>#FSrealsuppleride3</code>, 4" is <code>#FSrealsuppleride4</code>).
+  Drevil sponsors this prize.
+url: http://bikearlingtonforum.com/showthread.php?15642-Pointless-Prize-Real-Supple-Ride-FSrealsuppleride
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: supple_score
+    label: Supple Mile Score
+    rank_by: true
+query: |
+  select
+    T.id,
+    T.athlete_name,
+    sum(T.distance * T.tyre_width) as supple_score
+  from (
+    select
+      A.id,
+      A.display_name as athlete_name,
+      R.distance,
+      case
+        when R.name like '%#FSrealsuppleride2%' collate utf8mb4_general_ci then 2
+        when R.name like '%#FSrealsuppleride3%' collate utf8mb4_general_ci then 3
+        when R.name like '%#FSrealsuppleride4%' collate utf8mb4_general_ci then 4
+      end as tyre_width
+    from
+      rides R join
+      lbd_athletes A on A.id = R.athlete_id
+    where
+      R.name like '%#FSrealsuppleride2%' collate utf8mb4_general_ci or
+      R.name like '%#FSrealsuppleride3%' collate utf8mb4_general_ci or
+      R.name like '%#FSrealsuppleride4%' collate utf8mb4_general_ci
+    ) as T
+  group by
+    T.id
+  order by
+    supple_score desc,
+    athlete_name asc

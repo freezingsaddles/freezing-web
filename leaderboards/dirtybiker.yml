@@ -17,7 +17,7 @@ query: |
                   from lbd_athletes A
                   join rides R on R.athlete_id = A.id
                   where 
-                    R.name like '%#FS20DirtyBiker' collate utf8mb4_general_ci or
+                    R.name like '%#FS20DirtyBiker%' collate utf8mb4_general_ci or
                     R.name like '%#DirtyBikerFS20%' collate utf8mb4_general_ci or
                     R.name like '%#dirtybiker%' collate utf8mb4_general_ci
                   group by A.id, A.display_name, DATE(R.start_date)
