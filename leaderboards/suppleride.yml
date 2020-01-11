@@ -32,11 +32,9 @@ query: |
     from
       rides R join
       lbd_athletes A on A.id = R.athlete_id
-    where
-      R.name like '%#FSrealsuppleride2%' collate utf8mb4_general_ci or
-      R.name like '%#FSrealsuppleride3%' collate utf8mb4_general_ci or
-      R.name like '%#FSrealsuppleride4%' collate utf8mb4_general_ci
     ) as T
+  where
+    T.tyre_width is not null
   group by
     T.id
   order by
