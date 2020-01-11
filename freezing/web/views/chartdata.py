@@ -558,8 +558,17 @@ def team_weekly_points():
     """
 
     q = text("""
-             select WS.team_id, WS.team_name, WS.week_num, (sum(WS.team_distance) + sum(WS.days)*10) as total_score
-             from weekly_stats WS group by WS.team_id, WS.team_name, WS.week_num order by WS.team_id, WS.week_num
+             select
+               DS.team_id as team_id,
+               T.name as team_name,
+               sum(DS.points) as total_score,
+               week(DS.ride_date) as week_num
+             from
+               daily_scores DS inner join
+               teams T on T.id = DS.team_id
+             group by
+               team_id,
+               week_num
              ;
              """)
     cols = [{'id': 'week', 'label': 'Week No.', 'type': 'string'}]
@@ -570,7 +579,7 @@ def team_weekly_points():
     for r in res:
         d[r['week_num']].append((r['team_id'], r['team_name'], r['total_score']))
     for week, datalist in d.items():
-        cells = [{'v': 'Week {0}'.format(week), 'f': 'Week {0}'.format(week)}]
+        cells = [{'v': 'Week {0}'.format(week + 1), 'f': 'Week {0}'.format(week + 1)}]
         for team_id, team_name, total_score in datalist:
             cells.append({'v': total_score, 'f': '{0:.2f}'.format(total_score)})
         rows.append({'c': cells})
