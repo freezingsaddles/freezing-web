@@ -21,13 +21,16 @@
 
 			  // Instantiate and draw our chart, passing in some options.
 			  var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
+			  var rows = jsonData.rows.length;
 
 			  var options = {
 				  'title': "Individual " + label,
 				  'width': 800,
-				  'height': 4000,
+				  'height': 100 + rows * 24,
 				  'legend': {'position': 'none'},
-				  'chartArea': {'left': 200, 'top': 70, 'width': 550, 'height': 4000}
+				  'chartArea': {'left': 200, 'top': 70, 'width': 550, 'height': rows * 24},
+				  'hAxis': {'textStyle': {'fontSize': 16}},
+				  'vAxis': {'textStyle': {'fontSize': 16}},
 			  };
 
 			  chart.draw(data, options);
