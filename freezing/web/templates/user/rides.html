@@ -19,56 +19,58 @@
 
       function drawDailyPointsChart() {
 
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
-	          dataType: "json",
-	          async: false // ... really?
-	          }).responseText;
+	          dataType: "json"
+          }).done(function(jsonData) {
 
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
 
-		  console.log(data);
+              console.log(data);
 
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_daily_points'));
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_daily_points'));
 
-	      var options = {'title':'Daily Points',
-                       'width':1000,
-                       'height':250,
-                       'hAxis': {title: "Day No."},
-                       'vAxis': {title: "Points"},
-                       legend: {position: 'none'},
-                       chartArea: {left:75, top:50}
-                       };
-	      chart.draw(data, options);
+              var options = {
+                  'title': 'Daily Points',
+                  'width': 1000,
+                  'height': 250,
+                  'hAxis': {title: "Day No."},
+                  'vAxis': {title: "Points"},
+                  legend: {position: 'none'},
+                  chartArea: {left: 75, top: 50}
+              };
+              chart.draw(data, options);
+          });
 	  }
 
 	  function drawWeeklyPointsChart() {
 
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
-	          dataType: "json",
-	          async: false // ... really?
-	          }).responseText;
+	          dataType: "json"
+          }).done(function(jsonData) {
 
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
 
-		  console.log(data);
+              console.log(data);
 
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_weekly_points'));
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_weekly_points'));
 
-	      var options = {'title':'Weekly Points',
-                       'width': 1000,
-                       'height':250,
-                       'hAxis': {title: "Day No."},
-                       'vAxis': {title: "Points"},
-                       legend: {position: 'none'},
-                       chartArea: {left:75, top:50}
-                       };
-	      chart.draw(data, options);
+              var options = {
+                  'title': 'Weekly Points',
+                  'width': 1000,
+                  'height': 250,
+                  'hAxis': {title: "Day No."},
+                  'vAxis': {title: "Points"},
+                  legend: {position: 'none'},
+                  chartArea: {left: 75, top: 50}
+              };
+              chart.draw(data, options);
+          });
 	  }
 
 	  </script>

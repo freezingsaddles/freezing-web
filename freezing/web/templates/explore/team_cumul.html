@@ -15,46 +15,48 @@
       
       function drawPointsChart() {
 	      
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/team_cumul_points",
-	          dataType: "json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-		
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_points'));
-	      
-	      var options = {'title':'Team Cumulative Points',
-                       'width':1000,
-                       'height':800};
-                       
-	      chart.draw(data, options);
-	      
+	          dataType: "json"
+          }).done(function(jsonData) {
+
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
+
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_points'));
+
+              var options = {
+                  'title': 'Team Cumulative Points',
+                  'width': 1000,
+                  'height': 800
+              };
+
+              chart.draw(data, options);
+          });
 	  }
 	  
 	  function drawMileageChart() {
 	      
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/team_cumul_mileage",
-	          dataType: "json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-		
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_mileage'));
-	      
-	      var options = {'title':'Team Cumulative Mileage',
-                       'width':1000,
-                       'height':800};
-                       
-	      chart.draw(data, options);
-	      
+	          dataType: "json"
+          }).done(function(jsonData) {
+
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
+
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_mileage'));
+
+              var options = {
+                  'title': 'Team Cumulative Mileage',
+                  'width': 1000,
+                  'height': 800
+              };
+
+              chart.draw(data, options);
+          });
 	  }
 	  
 	  </script>
