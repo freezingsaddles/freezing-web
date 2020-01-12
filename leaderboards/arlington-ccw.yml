@@ -1,0 +1,34 @@
+---
+title: Counter-Clockwise Loopy for Arlington
+description: |
+  Number of counter-clockwise rides of the Arlington loop (ArLoopCCW1 through ArLoopCCW8).
+  Part of <a href="../arlington">Loopy for Arlington</a>.
+url: http://bikearlingtonforum.com/showthread.php?11507-Loopy-For-Arlington-Pointless-Prize
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: segment_name
+    label: Least-Ridden Segment
+    format: "<a href=\"https://www.strava.com/segments/{segment_id}\">{segment_name}</a>"
+  - name: segment_rides
+    label: Loop Rides
+    rank_by: true
+query: |
+  select
+    A.id,
+    A.display_name as athlete_name,
+    E.segment_id,
+    E.segment_name,
+    count(E.id) as segment_rides
+  from
+    lbd_athletes A join
+    rides R on R.athlete_id = A.id join
+    ride_efforts E on E.ride_id = R.id
+  where
+    E.segment_id in (13943476, 22382559, 14143039, 14149112, 13943521, 13943546, 13943556, 22395389)
+  group by
+    A.id,
+    E.segment_id

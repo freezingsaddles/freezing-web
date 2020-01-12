@@ -1,7 +1,7 @@
 ---
 title: Dirty Biker
-description: Number of days with at least 1 off-road ride (#fs2019dirtybiker). In 2019 this pointless prize hasn't been sponsored yet (drevil did it in 2018).
-url: http://bikearlingtonforum.com/showthread.php?13972-Pointless-Prizes-2019
+description: "Number of days with at least 1 off-road ride (#dirtybiker or #DirtyBikerFS20). Dachs6 sponsors this prize."
+url: http://bikearlingtonforum.com/showthread.php?15710-Dirty-Biker-DirtyBikerFS20
 fields:
   - name: id
     visible: false
@@ -16,7 +16,10 @@ query: |
   A.id, A.display_name as athlete_name, DATE(R.start_date)
                   from lbd_athletes A
                   join rides R on R.athlete_id = A.id
-                  where R.name like '%#fs2019dirtybiker%'
+                  where 
+                    R.name like '%#FS20DirtyBiker' collate utf8mb4_general_ci or
+                    R.name like '%#DirtyBikerFS20%' collate utf8mb4_general_ci or
+                    R.name like '%#dirtybiker%' collate utf8mb4_general_ci
                   group by A.id, A.display_name, DATE(R.start_date)
       ) as T
    group  by T.id, T.athlete_name

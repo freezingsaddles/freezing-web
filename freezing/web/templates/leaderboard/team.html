@@ -15,28 +15,29 @@
       
       function drawTeamChart() {
 	      
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/team_leaderboard",
 	          dataType:"json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-	
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
-	      
-	      var options = {'title':'Team Points',
-                       'width':1000,
-                       'height':600,
-                       'legend': {'position': 'none'},
-                       'hAxis': {'minValue': 0},
-                       'chartArea' :{'left':300,'top':70,'width': 550,'height': 500}};
-                       
-	      chart.draw(data, options);
-	      
-	      
+          }).done(function(jsonData) {
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
+
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.BarChart(document.getElementById('chart_team_leaderboard'));
+              var rows = jsonData.rows.length;
+
+              var options = {
+                  'title': 'Team Points',
+                  'width': 1000,
+                  'height': 100 + rows * 24,
+                  'legend': {'position': 'none'},
+                  'chartArea': {'left': 300, 'top': 70, 'width': 550, 'height': rows * 24},
+                  'hAxis': {'minValue': 0, 'textStyle': {'fontSize': 16}},
+                  'vAxis': {'textStyle': {'fontSize': 16}},
+              };
+
+              chart.draw(data, options);
+          });
 	  }
 	  </script>
 {% endblock %}

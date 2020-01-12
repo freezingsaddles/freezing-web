@@ -108,7 +108,7 @@
 {% block foot %}
 <!-- Latest compiled and minified JavaScript -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"></script>
-<script src="/assets/js/moment.js"></script>
+<script src="/js/moment.js"></script>
 <script type="text/javascript">
 
 	function stampFormatter(value, row) {
@@ -120,7 +120,7 @@
 	}
 
 	function rideFormatter(value, row) {
-		return "<a href=\"https://www.strava.com/activities/"+row.id+"\" target=\"_blank\">" + value + "</a>";
+		return "<a href=\"https://www.strava.com/activities/"+row.id+"\">" + value + "</a>";
 	}
 
 	function photosFormatter(value, row) {

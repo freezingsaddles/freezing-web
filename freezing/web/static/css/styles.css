@@ -44,3 +44,7 @@ div.row > div > div.row {
     padding-top: 25px;
     padding-left: 25px;
 }
+
+#credits {
+    margin-top: 25px;
+}

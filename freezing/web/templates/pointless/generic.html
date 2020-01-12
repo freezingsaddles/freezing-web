@@ -20,7 +20,7 @@
 			<tbody>
 			{% for row in data %}
 			<tr>
-				<td>{{loop.index}}</td>
+				<td>{{row.rank}}</td>
 				{% for field in fields %}
 				{% if field.visible %}
 				<td>{{ row[field.name] | safe }}</td>

@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="panel panel-default">
-	<div class="panel-heading">{{data.hashtag}} Ride Miles</div>
+	<div class="panel-heading">{% if meta %}{{meta.name}}{% else %}{{data.hashtag}} Ride Miles{% endif %}</div>
 	<div class="panel-body">
-		<p>Leaderboard for all rides hashtagged {{data.hashtag}}</p>
-    <p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,
-      and it IS case sensitive (so ilovekittens and ILoveKittens will generate <em>different</em> results, but ilovepuppies and i-love-puppies will generate <em>the same</em> results).</p>
-<table class="table table-condensed">
+	{% if meta %}
+		<p>{{meta.description | safe}}</p>
+		{% if meta.url %}<p>See: <a href="{{ meta.url }}">{{ meta.url }}</a></p>{% endif %}
+	{% else %}
+		<p>Leaderboard for all rides hashtagged <code>{{data.hashtag}}</code></p>
+    	<p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,
+    	  and it IS case sensitive (so ilovekittens and ILoveKittens will generate <em>different</em> results, but ilovepuppies and i-love-puppies will generate <em>the same</em> results).</p>
+	{% endif %}
+	<table class="table table-condensed">
 	<tr><th>Rank</th><th>Player</th><th>{{data.hashtag}} Rides</th><th>{{data.hashtag}} Distance</th></tr>
 {% for a, b, c, d in data.tdata %}
 	<tr>
 		<td>{{loop.index}}</td>
-		<td><a href="http://www.strava.com/athletes/{{ a }}" target="_blank">{{b}}</a></td>
+		<td><a href="/people/{{ a }}">{{b}}</a></td>
 		<td>{{c}}</td>
 		<td>{{d | round(1)}}</td>
 		</tr>

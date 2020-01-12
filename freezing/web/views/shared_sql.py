@@ -9,7 +9,7 @@ def team_sleaze_query():
                 from daily_scores D
                 join lbd_athletes A on A.id = D.athlete_id
                 join teams T on T.id = A.team_id
-                where D.points > 10 and D.points < 12
+                where D.distance >= 1 and D.distance < 2
                 group by T.id, T.name
                 order by num_sleaze_days desc
                 ;
@@ -20,7 +20,7 @@ def indiv_sleaze_query():
                 select D.athlete_id, A.display_name as athlete_name, count(*) as num_sleaze_days
                 from daily_scores D
                 join lbd_athletes A on A.id = D.athlete_id
-                where D.points > 10 and D.points < 12
+                where D.distance >= 1 and D.distance < 2
                 group by D.athlete_id, athlete_name
                 order by num_sleaze_days desc
                 ;
@@ -82,3 +82,19 @@ def team_segment_query():
                 order by segment_rides desc
                 ;
             """)
+
+
+def team_leaderboard_query():
+    return text("""
+                select
+                  T.id as team_id,
+                  T.name as team_name,
+                  sum(DS.points) as total_score,
+                  sum(DS.distance) as total_distance
+                from
+                  daily_scores DS join teams T on T.id = DS.team_id
+                where not T.leaderboard_exclude
+                group by T.id, T.name
+                order by total_score desc
+                ;
+                """)

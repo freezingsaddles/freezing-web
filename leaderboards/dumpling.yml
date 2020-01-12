@@ -1,6 +1,6 @@
 ---
 title: Dumpling
-description: "Number of rides to eat dumplings (tagged with #FS2019dumplingride). bikedavid sponsors this prize for 2019."
+description: "Number of rides to eat dumplings (tagged with #dumplingride)."
 url: http://bikearlingtonforum.com/showthread.php?13988-Dumpling-Ride-Pointless-Prize
 fields:
   - name: id
@@ -10,9 +10,11 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: dumpling_rides 
     label: Dumpling Rides
+    rank_by: true
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as dumpling_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id
-  where R.name like '%#FS2019dumplingride%' collate utf8mb4_general_ci
+  where R.name like '%#FS2020dumplingride%' collate utf8mb4_general_ci or
+        R.name like '%#dumplingride%' collate utf8mb4_general_ci
   group by A.id, A.display_name
   order by dumpling_rides desc

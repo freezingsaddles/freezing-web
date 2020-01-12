@@ -6,7 +6,8 @@ from freezing.model import init_model, meta
 
 from .config import config
 
-app = Flask(__name__, static_url_path='/assets')
+# Thanks https://stackoverflow.com/a/17073583
+app = Flask(__name__, static_folder='static', static_url_path='/')
 app.config.from_object(config)
 
 init_model(config.SQLALCHEMY_URL)

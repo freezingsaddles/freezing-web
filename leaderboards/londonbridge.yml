@@ -1,6 +1,6 @@
 ---
 title: London Bridge
-description: "Number of rides where you fell 😨🚲😱 (tagged with #fs2019londonbridge). wheels&wings sponsors this prize for 2019."
+description: "Number of rides where you fell 😨🚲😱 (tagged with #londonbridge)."
 url: http://bikearlingtonforum.com/showthread.php?9868-W-amp-W-London-Bridge-Pointless-Prize-Log 
 fields:
   - name: id
@@ -10,9 +10,12 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: london_bridge_rides 
     label: London Bridge Rides
+    rank_by: true
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as london_bridge_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id
-  where R.name like '%#fs2019londonbridge%' collate utf8mb4_general_ci
+  where 
+    R.name like '%#londonbridge%' collate utf8mb4_general_ci or
+    R.name like '%#fs2020londonbridge%' collate utf8mb4_general_ci
   group by A.id, A.display_name
   order by london_bridge_rides desc
