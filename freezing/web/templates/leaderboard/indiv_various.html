@@ -11,26 +11,30 @@
 
 	  function drawIndivChart(api_method, label) {
 	      
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/"+api_method,
-	          dataType:"json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-	
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
-	      
-	      var options = {'title': "Individual " + label,
-                       'width':800,
-                       'height':4000,
-                       'legend': {'position': 'none'},
-                       'chartArea' :{'left':200,'top':70,'width': 550, 'height': 4000 }};
-                       
-	      chart.draw(data, options);
-	      
+	          dataType:"json"
+		  }).done(function(jsonData) {
+
+			  // Create our data table out of JSON data loaded from server.
+			  var data = new google.visualization.DataTable(jsonData);
+
+			  // Instantiate and draw our chart, passing in some options.
+			  var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
+			  var rows = jsonData.rows.length;
+
+			  var options = {
+				  'title': "Individual " + label,
+				  'width': 800,
+				  'height': 100 + rows * 24,
+				  'legend': {'position': 'none'},
+				  'chartArea': {'left': 200, 'top': 70, 'width': 550, 'height': rows * 24},
+				  'hAxis': {'textStyle': {'fontSize': 16}},
+				  'vAxis': {'textStyle': {'fontSize': 16}},
+			  };
+
+			  chart.draw(data, options);
+		  });
 	  }
 	  
 
@@ -55,7 +59,7 @@
   		<select name="api_method" id="api_method">
   			<option value="indiv_elev_gain" selected="selected">Elevation Gain</option>
   			<option value="indiv_moving_time">Time in the Saddle</option>
-  			<option value="indiv_number_sleaze_days">Number of Sleaze (11-12 point) Days</option>
+  			<option value="indiv_number_sleaze_days">Number of Sleaze (at least 1 mile, less than 2 miles) Days</option>
   			<option value="indiv_avg_speed">Average Speed</option>
   			<option value="indiv_segment/1081507">Hains Point Laps</option>
   			<option value="indiv_freezing">Rides (Miles) Below Freezing</option>
