@@ -135,7 +135,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 * Ensure that someone creates a new Strava main group. Usually the person running the sign-up process does this. [Search for "Freezing"](https://www.strava.com/clubs/search?utf8=%E2%9C%93&text=freezing&location=&%5Bcountry%5D=&%5Bstate%5D=&%5Bcity%5D=&%5Blat_lng%5D=&sport_type=cycling&club_type=all) and you may be surprised to see it has already been created!
 * Get the numeric club ID from the URL of the Strava _Recent Activity_ page for the club.
 * Gain access to the production server via SSH
-* Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means. The 
+* Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means.
 * Make a backup of the 
     mysqldump > "freezing-$(date +'%Y-%m-%d').sql"
 * Make a backup of the `.env` file from `/opt/compose/.env`:
