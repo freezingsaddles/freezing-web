@@ -164,10 +164,10 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
 
- Copyright 2015 Ian Will
- Copyright 2019 Hans Lillelid
- Copyright 2020 Jon Renaut
- Copyright 2020 Merlin Hughes
- Copyright 2020 Richard Bullington-McGuire
+Copyright 2015 Ian Will <br>
+Copyright 2019 Hans Lillelid <br>
+Copyright 2020 Jon Renaut <br>
+Copyright 2020 Merlin Hughes <br>
+Copyright 2020 Richard Bullington-McGuire <br>
 
 This software is licensed under the [Apache 2.0 license](LICENSE), with some marked portions available under compatible licenses (such as the [MIT-licensed `test/wget-spider.sh`].) 
