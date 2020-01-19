@@ -122,11 +122,11 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 
 	    <p class="really-big"><span class="label label-default">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span>
 	    </p>
-
-	    <p class="pretty-big"><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
+		<!-- Commented out until weather API working -->
+	    <!-- <p class="pretty-big"><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
 	        <span class="label label-success">{{rain_hours|groupnum}} hours in the rain.</span>
 	        <span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span>
-		</p>
+		</p> -->
 	</div>
 </div>
 <div id="sect-photos" class="row section">
@@ -169,14 +169,16 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 			        </p>
 			    </div>
 			</div>
-        <div class="row">
+		<!-- Commented out, will replace with Dark Sky once working. -->
+        <!-- <div class="row">
 			<div class="col-md-12">
-			<p>
-            Weather data sourced from <a href="http://wunderground.com">wunderground.com</a>.
-            <br/><a href="http://wunderground.com"><img src="/img/wunderground-sm.jpg"/></a>
-        </p>
-	</div>
-	</div>
+				<p>
+					Weather data sourced from <a href="http://wunderground.com">wunderground.com</a>.
+					<br/>
+					<a href="http://wunderground.com"><img src="/img/wunderground-sm.jpg"/></a>
+				</p>
+			</div>
+		</div> -->
 	</div>
 </div>
 {% endblock %}
