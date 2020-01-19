@@ -169,5 +169,6 @@ Copyright 2019 Hans Lillelid <br>
 Copyright 2020 Jon Renaut <br>
 Copyright 2020 Merlin Hughes <br>
 Copyright 2020 Richard Bullington-McGuire <br>
+Copyright 2020 Adrian Porter <br>
 
 This software is licensed under the [Apache 2.0 license](LICENSE), with some marked portions available under compatible licenses (such as the [MIT-licensed `test/wget-spider.sh`].) 
