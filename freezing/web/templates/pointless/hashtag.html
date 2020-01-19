@@ -9,7 +9,7 @@
 	{% else %}
 		<p>Leaderboard for all rides hashtagged <code>{{data.hashtag}}</code></p>
     	<p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,
-    	  and it IS case sensitive (so ilovekittens and ILoveKittens will generate <em>different</em> results, but ilovepuppies and i-love-puppies will generate <em>the same</em> results).</p>
+    	  and it is not case sensitive (so ilovekittens, ILoveKittens, and i-love-kittens will generate <em>the same</em> results).</p>
 	{% endif %}
 	<table class="table table-condensed">
 	<tr><th>Rank</th><th>Player</th><th>{{data.hashtag}} Rides</th><th>{{data.hashtag}} Distance</th></tr>
