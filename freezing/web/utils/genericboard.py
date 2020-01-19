@@ -39,7 +39,7 @@ class GenericBoardField(BaseMessage):
             if self.format:
                 return self.format.format(v)
             else:
-                return '{0:,.2f}'.format(v)
+                return "{0:,.2f}".format(v)
 
         elif isinstance(v, int):
             # '{number:.{digits}f}'.format(number=p, digits=n)
@@ -47,7 +47,7 @@ class GenericBoardField(BaseMessage):
             if self.format:
                 return self.format.format(v)
             else:
-                return '{0:,}'.format(v)
+                return "{0:,}".format(v)
 
         elif isinstance(v, datetime):
             if self.format:
@@ -106,11 +106,13 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
 
 def load_board(leaderboard) -> GenericBoard:
 
-    path = os.path.join(config.LEADERBOARDS_DIR, '{}.yml'.format(os.path.basename(leaderboard)))
+    path = os.path.join(
+        config.LEADERBOARDS_DIR, "{}.yml".format(os.path.basename(leaderboard))
+    )
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
-    with open(path, 'rt', encoding='utf-8') as fp:
+    with open(path, "rt", encoding="utf-8") as fp:
         doc = yaml.load(fp)
 
     schema = GenericBoardSchema()
@@ -121,7 +123,10 @@ def load_board(leaderboard) -> GenericBoard:
 
 def format_rows(rows, board) -> List[Dict[str, Any]]:
     try:
-        formatted = [{f.name: f.format_value(row[f.name], row) for f in board.fields} for row in rows]
+        formatted = [
+            {f.name: f.format_value(row[f.name], row) for f in board.fields}
+            for row in rows
+        ]
         rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
         return formatted if rank_by is None else rank_rows(formatted, rank_by)
     except KeyError as ke:
@@ -135,4 +140,6 @@ def rank_rows(rows, rank_by, index=1, rank=0, rank_value=None) -> List[Dict[str,
         head, *tail = rows
         head_value = head[rank_by]
         head_rank = rank if index > 1 and head_value == rank_value else index
-        return [{**head, 'rank': head_rank}] + rank_rows(tail, rank_by, 1 + index, head_rank, head_value)
+        return [{**head, "rank": head_rank}] + rank_rows(
+            tail, rank_by, 1 + index, head_rank, head_value
+        )
