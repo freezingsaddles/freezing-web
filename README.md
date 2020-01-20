@@ -111,6 +111,10 @@ Now freezing-model is symlinked in, so you can make changes and add migrations t
 To get `freezing-web` to permanently use the `freezing-model` changes you will have to tag the `freezing-model` repository with a new version number (don't forget to update `setup.py` also) and update the tag in [freezing-web/requirements.txt](requirements.txt) to match the tag number. It's ok to make a pull request in `freezing-model` and bump the version after merging `master` into your branch.
 
 
+### Coding standards
+
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+
 ## Docker Deployment
 
 See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for guide to deploying this in production along

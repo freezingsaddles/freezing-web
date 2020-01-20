@@ -10,42 +10,54 @@ import arrow
 import pytz
 
 
-envfile = os.environ.get('APP_SETTINGS', os.path.join(os.getcwd(), '.env'))
+envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
 if os.path.exists(envfile):
     env.read_envfile(envfile)
 
-_basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+_basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class Config:
 
-    DEBUG: bool = env('DEBUG', cast=bool, default=False)
-    SECRET_KEY = env('SECRET_KEY')
+    DEBUG: bool = env("DEBUG", cast=bool, default=False)
+    SECRET_KEY = env("SECRET_KEY")
 
-    SQLALCHEMY_URL = env('SQLALCHEMY_URL')
-    BEANSTALKD_HOST = env('BEANSTALKD_HOST', default='beanstalkd.container')
-    BEANSTALKD_PORT: int = env('BEANSTALKD_PORT', cast=int, default=11300)
+    SQLALCHEMY_URL = env("SQLALCHEMY_URL")
+    BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="beanstalkd.container")
+    BEANSTALKD_PORT: int = env("BEANSTALKD_PORT", cast=int, default=11300)
 
-    STRAVA_CLIENT_ID = env('STRAVA_CLIENT_ID')
-    STRAVA_CLIENT_SECRET = env('STRAVA_CLIENT_SECRET')
+    STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
+    STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
 
-    COMPETITION_TITLE = env('COMPETITION_TITLE', default='Freezing Saddles')
-    COMPETITION_TEAMS: List[int] = env('TEAMS', cast=list, subcast=int, default=[])
-    OBSERVER_TEAMS: List[int] = env('OBSERVER_TEAMS', cast=list, subcast=int, default=[])
-    MAIN_TEAM: int = env('MAIN_TEAM', cast=int)
+    COMPETITION_TITLE = env("COMPETITION_TITLE", default="Freezing Saddles")
+    COMPETITION_TEAMS: List[int] = env("TEAMS", cast=list, subcast=int, default=[])
+    OBSERVER_TEAMS: List[int] = env(
+        "OBSERVER_TEAMS", cast=list, subcast=int, default=[]
+    )
+    MAIN_TEAM: int = env("MAIN_TEAM", cast=int)
 
-    START_DATE: datetime = env('START_DATE', postprocessor=lambda val: arrow.get(val).datetime)
-    END_DATE: datetime = env('END_DATE', postprocessor=lambda val: arrow.get(val).datetime)
-    TIMEZONE: tzinfo = env('TIMEZONE', default='America/New_York', postprocessor=lambda val: pytz.timezone(val))
+    START_DATE: datetime = env(
+        "START_DATE", postprocessor=lambda val: arrow.get(val).datetime
+    )
+    END_DATE: datetime = env(
+        "END_DATE", postprocessor=lambda val: arrow.get(val).datetime
+    )
+    TIMEZONE: tzinfo = env(
+        "TIMEZONE",
+        default="America/New_York",
+        postprocessor=lambda val: pytz.timezone(val),
+    )
 
-    LEADERBOARDS_DIR = env('LEADERBOARDS_DIR', default=os.path.join(_basedir, 'leaderboards'))
+    LEADERBOARDS_DIR = env(
+        "LEADERBOARDS_DIR", default=os.path.join(_basedir, "leaderboards")
+    )
 
 
 config = Config()
 
 
-def init_logging(loglevel:int = logging.INFO, color: bool = False):
+def init_logging(loglevel: int = logging.INFO, color: bool = False):
     """
     Initialize the logging subsystem and create a logger for this class, using passed in optparse options.
 
@@ -62,20 +74,24 @@ def init_logging(loglevel:int = logging.INFO, color: bool = False):
             datefmt=None,
             reset=True,
             log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red',
-            }
+                "DEBUG": "cyan",
+                "INFO": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red",
+            },
         )
     else:
         formatter = logging.Formatter("%(levelname)-8s [%(name)s] %(message)s")
 
     ch.setFormatter(formatter)
 
-    loggers = [logging.getLogger('freezing'), logging.getLogger('stravalib'),
-               logging.getLogger('requests'), logging.root]
+    loggers = [
+        logging.getLogger("freezing"),
+        logging.getLogger("stravalib"),
+        logging.getLogger("requests"),
+        logging.root,
+    ]
 
     for l in loggers:
         if l is logging.root:

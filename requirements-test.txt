@@ -1,2 +1,5 @@
+black==19.10b0
+flake8==3.7.9
+pur==5.3.0
 pytest==3.3.2
 pytest-mock==1.6.3

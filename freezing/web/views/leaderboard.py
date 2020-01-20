@@ -6,18 +6,19 @@ from freezing.model import meta
 from freezing.web import config
 from freezing.web.views.shared_sql import team_leaderboard_query
 
-blueprint = Blueprint('leaderboard', __name__)
+blueprint = Blueprint("leaderboard", __name__)
 
 
 @blueprint.route("/")
 def leaderboard():
-    return redirect(url_for('.team_leaderboard'))
+    return redirect(url_for(".team_leaderboard"))
 
 
 @blueprint.route("/team")
 def team_leaderboard():
-    return render_template('leaderboard/team.html',
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/team.html", competition_title=config.COMPETITION_TITLE
+    )
 
 
 @blueprint.route("/team_text")
@@ -28,7 +29,8 @@ def team_leaderboard_classic():
     # @UndefinedVariable
     team_rows = meta.scoped_session().execute(q).fetchall()
 
-    q = text("""
+    q = text(
+        """
              select
                A.id as athlete_id,
                A.team_id,
@@ -41,39 +43,46 @@ def team_leaderboard_classic():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """)
+             """
+    )
 
     team_members = {}
     # @UndefinedVariable
     for indiv_row in meta.scoped_session().execute(q).fetchall():
-        team_members.setdefault(indiv_row['team_id'], []).append(indiv_row)
+        team_members.setdefault(indiv_row["team_id"], []).append(indiv_row)
 
     for team_id in team_members:
-        team_members[team_id] = reversed(sorted(
-            team_members[team_id], key=lambda m: m['total_score']))
+        team_members[team_id] = reversed(
+            sorted(team_members[team_id], key=lambda m: m["total_score"])
+        )
 
-    return render_template('leaderboard/team_text.html',
-                           team_rows=team_rows,
-                           team_members=team_members,
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/team_text.html",
+        team_rows=team_rows,
+        team_members=team_members,
+        competition_title=config.COMPETITION_TITLE,
+    )
 
 
 @blueprint.route("/team_various")
 def team_leaderboard_various():
-    return render_template('leaderboard/team_various.html',
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/team_various.html", competition_title=config.COMPETITION_TITLE
+    )
 
 
 @blueprint.route("/individual")
 def indiv_leaderboard():
-    return render_template('leaderboard/indiv.html',
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/indiv.html", competition_title=config.COMPETITION_TITLE
+    )
 
 
 @blueprint.route("/individual_text")
 def individual_leaderboard_text():
 
-    q = text("""
+    q = text(
+        """
              select
                A.id as athlete_id,
                A.team_id,
@@ -90,17 +99,21 @@ def individual_leaderboard_text():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """)
+             """
+    )
 
     # @UndefinedVariable
     indiv_rows = meta.scoped_session().execute(q).fetchall()
 
-    return render_template('leaderboard/indiv_text.html',
-                           indiv_rows=indiv_rows,
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/indiv_text.html",
+        indiv_rows=indiv_rows,
+        competition_title=config.COMPETITION_TITLE,
+    )
 
 
 @blueprint.route("/individual_various")
 def indiv_leaderboard_various():
-    return render_template('leaderboard/indiv_various.html',
-                           competition_title=config.COMPETITION_TITLE)
+    return render_template(
+        "leaderboard/indiv_various.html", competition_title=config.COMPETITION_TITLE
+    )

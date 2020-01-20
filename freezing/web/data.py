@@ -19,11 +19,24 @@ from stravalib import model as strava_model
 from stravalib import unithelper
 
 from freezing.model import meta, orm
-from freezing.model.orm import Athlete, Ride, RideGeo, RideEffort, RidePhoto, RideTrack, Team
+from freezing.model.orm import (
+    Athlete,
+    Ride,
+    RideGeo,
+    RideEffort,
+    RidePhoto,
+    RideTrack,
+    Team,
+)
 
 from freezing.web import app, config
 from freezing.web.autolog import log
-from freezing.web.exc import InvalidAuthorizationToken, NoTeamsError, MultipleTeamsError, DataEntryError
+from freezing.web.exc import (
+    InvalidAuthorizationToken,
+    NoTeamsError,
+    MultipleTeamsError,
+    DataEntryError,
+)
 from freezing.web.utils import insta, wktutils
 
 
@@ -35,7 +48,9 @@ class StravaClientForAthlete(Client):
     def __init__(self, athlete):
         if not isinstance(athlete, Athlete):
             athlete = meta.scoped_session().query(Athlete).get(athlete)
-        super(StravaClientForAthlete, self).__init__(access_token=athlete.access_token, rate_limit_requests=True)
+        super(StravaClientForAthlete, self).__init__(
+            access_token=athlete.access_token, rate_limit_requests=True
+        )
 
 
 def register_athlete(strava_athlete, token_dict):
@@ -49,7 +64,9 @@ def register_athlete(strava_athlete, token_dict):
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
-    athlete.name = '{0} {1}'.format(strava_athlete.firstname, strava_athlete.lastname).strip()
+    athlete.name = "{0} {1}".format(
+        strava_athlete.firstname, strava_athlete.lastname
+    ).strip()
     # Temporary; we will update this in disambiguation phase.  (This isn't optimal; needs to be
     # refactored....
     #
@@ -66,15 +83,14 @@ def register_athlete(strava_athlete, token_dict):
         if strava_athlete.lastname is None:
             athlete.display_name = strava_athlete.firstname
         else:
-            athlete.display_name = '{0} {1}'.format(
-                    strava_athlete.firstname.strip(),
-                    strava_athlete.lastname.strip(),
-                    )
+            athlete.display_name = "{0} {1}".format(
+                strava_athlete.firstname.strip(), strava_athlete.lastname.strip(),
+            )
     athlete.profile_photo = strava_athlete.profile
 
-    athlete.access_token = token_dict['access_token']
-    athlete.refresh_token = token_dict['refresh_token']
-    athlete.expires_at = token_dict['expires_at']
+    athlete.access_token = token_dict["access_token"]
+    athlete.refresh_token = token_dict["refresh_token"]
+    athlete.expires_at = token_dict["expires_at"]
     meta.scoped_session().add(athlete)
     # We really shouldn't be committing here, since we want to disambiguate names after registering
     meta.scoped_session().commit()
@@ -91,9 +107,9 @@ def update_athlete_auth(strava_athlete, token_dict):
     """
     athlete = meta.scoped_session().query(Athlete).get(strava_athlete.id)
     if athlete is not None:
-        athlete.access_token = token_dict['access_token']
-        athlete.refresh_token = token_dict['refresh_token']
-        athlete.expires_at = token_dict['expires_at']
+        athlete.access_token = token_dict["access_token"]
+        athlete.refresh_token = token_dict["refresh_token"]
+        athlete.expires_at = token_dict["expires_at"]
         meta.scoped_session().add(athlete)
         meta.scoped_session().commit()
     return athlete
@@ -110,7 +126,7 @@ def disambiguate_athlete_display_names():
     # to check for differences within the bins?)
 
     def firstlast(name):
-        name_parts = a.name.split(' ')
+        name_parts = a.name.split(" ")
         fname = name_parts[0]
         if len(name_parts) < 2:
             lname = None
@@ -126,7 +142,7 @@ def disambiguate_athlete_display_names():
             # key = fname
             continue
         else:
-            key = '{0} {1}'.format(fname, lname[0])
+            key = "{0} {1}".format(fname, lname[0])
         athletes_bin.setdefault(key, []).append(a)
 
     for (name_key, athletes) in athletes_bin.items():
@@ -135,7 +151,7 @@ def disambiguate_athlete_display_names():
         for i in range(len(shortest_lname)):
             # Calculate fname + lname-of-x-chars for each athlete.
             # If unique, then use this number and update the model objects
-            candidate_short_lasts = [firstlast(a.name)[1][:i + 1] for a in athletes]
+            candidate_short_lasts = [firstlast(a.name)[1][: i + 1] for a in athletes]
             if len(set(candidate_short_lasts)) == len(candidate_short_lasts):
                 required_length = i + 1
                 break
@@ -143,17 +159,18 @@ def disambiguate_athlete_display_names():
         if required_length is not None:
             for a in athletes:
                 fname, lname = firstlast(a.name)
-                log.debug("Converting '{fname} {lname}' -> '{fname} {minlname}".format(fname=fname,
-                                                                                       lname=lname,
-                                                                                       minlname=lname[
-                                                                                                :required_length]))
-                a.display_name = '{0} {1}'.format(fname, lname[:required_length])
+                log.debug(
+                    "Converting '{fname} {lname}' -> '{fname} {minlname}".format(
+                        fname=fname, lname=lname, minlname=lname[:required_length]
+                    )
+                )
+                a.display_name = "{0} {1}".format(fname, lname[:required_length])
         else:
             log.debug("Unable to find a minimum lastname; using full lastname.")
             # Just use full names
             for a in athletes:
                 fname, lname = firstlast(a.name)
-                a.display_name = '{0} {1}'.format(fname, lname[:required_length])
+                a.display_name = "{0} {1}".format(fname, lname[:required_length])
 
     # Update the database with new values
     meta.scoped_session().commit()
@@ -192,7 +209,7 @@ def register_athlete_team(strava_athlete, athlete_model):
                     strava_athlete.firstname,
                     strava_athlete.lastname,
                     "Full Profile Access required",
-                    "Please re-authorize"
+                    "Please re-authorize",
                 )
             )
         matches = [c for c in strava_athlete.clubs if c.id in all_teams]
@@ -200,23 +217,21 @@ def register_athlete_team(strava_athlete, athlete_model):
         if len(matches) > 1:
             # you can be on multiple teams
             # as long as only one is an official team
-            matches = [c for c in matches
-                       if c.id not in config.OBSERVER_TEAMS]
+            matches = [c for c in matches if c.id not in config.OBSERVER_TEAMS]
         if len(matches) > 1:
             raise MultipleTeamsError(matches)
         if len(matches) == 0:
             # Fall back to main team if it is the only team they are in
-            matches = [c for c in strava_athlete.clubs
-                       if c.id == config.MAIN_TEAM]
+            matches = [c for c in strava_athlete.clubs if c.id == config.MAIN_TEAM]
         if len(matches) == 0:
             raise NoTeamsError(
                 "Athlete {0} ({1} {2}): {3} {4}".format(
-                        strava_athlete.id,
-                        strava_athlete.firstname,
-                        strava_athlete.lastname,
-                        "No teams matched ours. Teams defined:",
-                        strava_athlete.clubs,
-                        )
+                    strava_athlete.id,
+                    strava_athlete.firstname,
+                    strava_athlete.lastname,
+                    "No teams matched ours. Teams defined:",
+                    strava_athlete.clubs,
+                )
             )
         else:
             club = matches[0]
@@ -268,32 +283,50 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     end_date = end_date.replace(tzinfo=None)
 
     def is_excluded(activity):
-        activity_end_date = (activity.start_date_local + activity.elapsed_time)
+        activity_end_date = activity.start_date_local + activity.elapsed_time
         if end_date and activity_end_date > end_date:
             log.info(
-                "Skipping ride {0} ({1!r}) because date ({2}) is after competition end date ({3})".format(activity.id,
-                                                                                                          activity.name,
-                                                                                                          activity_end_date,
-                                                                                                          end_date))
+                "Skipping ride {0} ({1!r}) because date ({2}) is after competition end date ({3})".format(
+                    activity.id, activity.name, activity_end_date, end_date
+                )
+            )
             return True
 
         for keyword in exclude_keywords:
             if keyword.lower() in activity.name.lower():
-                log.info("Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(activity.id,
-                                                                                                       activity.name,
-                                                                                                       keyword))
+                log.info(
+                    "Skipping ride {0} ({1!r}) due to presence of exlusion keyword: {2!r}".format(
+                        activity.id, activity.name, keyword
+                    )
+                )
                 return True
         else:
             return False
 
     try:
-        activities = client.get_activities(after=start_date, limit=None)  # type: List[stravalib.orm.Activity]
-        filtered_rides = [a for a in activities if
-                          ((a.type == strava_model.Activity.RIDE or a.type == strava_model.Activity.EBIKERIDE)
-                          and not a.manual and not a.trainer and not is_excluded(a))]
+        activities = client.get_activities(
+            after=start_date, limit=None
+        )  # type: List[stravalib.orm.Activity]
+        filtered_rides = [
+            a
+            for a in activities
+            if (
+                (
+                    a.type == strava_model.Activity.RIDE
+                    or a.type == strava_model.Activity.EBIKERIDE
+                )
+                and not a.manual
+                and not a.trainer
+                and not is_excluded(a)
+            )
+        ]
     except HTTPError as e:
-        if u'access_token' in e.message:  # A bit of a kludge, but don't have a way of hooking into the response processing earlier.
-            raise InvalidAuthorizationToken("Invalid authrization token for {}".format(athlete))
+        if (
+            "access_token" in e.message
+        ):  # A bit of a kludge, but don't have a way of hooking into the response processing earlier.
+            raise InvalidAuthorizationToken(
+                "Invalid authrization token for {}".format(athlete)
+            )
 
         # Otherwise just fall-through and re-raise same exception.
         raise e
@@ -324,14 +357,20 @@ def write_ride(activity):
     """
 
     if activity.start_latlng:
-        start_geo = WKTSpatialElement('POINT({lon} {lat})'.format(lat=activity.start_latlng.lat,
-                                                                  lon=activity.start_latlng.lon))
+        start_geo = WKTSpatialElement(
+            "POINT({lon} {lat})".format(
+                lat=activity.start_latlng.lat, lon=activity.start_latlng.lon
+            )
+        )
     else:
         start_geo = None
 
     if activity.end_latlng:
-        end_geo = WKTSpatialElement('POINT({lon} {lat})'.format(lat=activity.end_latlng.lat,
-                                                                lon=activity.end_latlng.lon))
+        end_geo = WKTSpatialElement(
+            "POINT({lon} {lat})".format(
+                lat=activity.end_latlng.lat, lon=activity.end_latlng.lon
+            )
+        )
     else:
         end_geo = None
 
@@ -346,7 +385,9 @@ def write_ride(activity):
     athlete = meta.scoped_session().query(Athlete).get(athlete_id)
     if not athlete:
         # The athlete has to exist since otherwise we wouldn't be able to query their rides
-        raise ValueError("Somehow you are attempting to write rides for an athlete not found in the database.")
+        raise ValueError(
+            "Somehow you are attempting to write rides for an athlete not found in the database."
+        )
 
     if start_geo is not None or end_geo is not None:
         ride_geo = RideGeo()
@@ -356,7 +397,7 @@ def write_ride(activity):
         meta.scoped_session().merge(ride_geo)
 
     ride = meta.scoped_session().query(Ride).get(activity.id)
-    new_ride = (ride is None)
+    new_ride = ride is None
     if ride is None:
         ride = Ride(activity.id)
 
@@ -374,18 +415,20 @@ def write_ride(activity):
             ride.photos_fetched = None
 
     else:
-        if round(ride.distance, 2) != round(float(unithelper.miles(activity.distance)), 2):
-            log.info("Queing resync of details for activity {0!r}: distance mismatch ({1} != {2})".format(activity,
-                                                                                                          ride.distance,
-                                                                                                          unithelper.miles(activity.distance)))
+        if round(ride.distance, 2) != round(
+            float(unithelper.miles(activity.distance)), 2
+        ):
+            log.info(
+                "Queing resync of details for activity {0!r}: distance mismatch ({1} != {2})".format(
+                    activity, ride.distance, unithelper.miles(activity.distance)
+                )
+            )
             ride.detail_fetched = False
             ride.track_fetched = False
 
     ride.athlete = athlete
 
-
     update_ride_from_activity(strava_activity=activity, ride=ride)
-
 
     meta.scoped_session().add(ride)
 
@@ -401,11 +444,10 @@ def update_ride_from_activity(strava_activity, ride):
     :param ride: The ride model object.
     :type ride: Ride
     """
-     # Should apply to both new and preexisting rides ...
+    # Should apply to both new and preexisting rides ...
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
 
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
-
 
         log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
         ride.photos_fetched = False
@@ -427,7 +469,7 @@ def update_ride_from_activity(strava_activity, ride):
         location_parts.append(strava_activity.location_city)
     if strava_activity.location_state:
         location_parts.append(strava_activity.location_state)
-    location_str = ', '.join(location_parts)
+    location_str = ", ".join(location_parts)
 
     ride.location = location_str
 
@@ -447,9 +489,13 @@ def update_ride_from_activity(strava_activity, ride):
     if ride.distance is None:
         raise DataEntryError("Activities cannot have null distance.")
 
-    log.debug("Writing ride for {athlete!r}: \"{ride!r}\" on {date}".format(athlete=ride.athlete.name,
-                                                                        ride=ride.name,
-                                                                        date=ride.start_date.strftime('%m/%d/%y')))
+    log.debug(
+        'Writing ride for {athlete!r}: "{ride!r}" on {date}'.format(
+            athlete=ride.athlete.name,
+            ride=ride.name,
+            date=ride.start_date.strftime("%m/%d/%y"),
+        )
+    )
 
 
 def write_ride_efforts(strava_activity, ride):
@@ -467,18 +513,27 @@ def write_ride_efforts(strava_activity, ride):
 
     try:
         # Start by removing any existing segments for the ride.
-        meta.engine.execute(RideEffort.__table__.delete().where(RideEffort.ride_id == strava_activity.id))
+        meta.engine.execute(
+            RideEffort.__table__.delete().where(
+                RideEffort.ride_id == strava_activity.id
+            )
+        )
 
         # Then add them back in
         for se in strava_activity.segment_efforts:
-            effort = RideEffort(id=se.id,
-                                ride_id=strava_activity.id,
-                                elapsed_time=timedelta_to_seconds(se.elapsed_time),
-                                segment_name=se.segment.name,
-                                segment_id=se.segment.id)
+            effort = RideEffort(
+                id=se.id,
+                ride_id=strava_activity.id,
+                elapsed_time=timedelta_to_seconds(se.elapsed_time),
+                segment_name=se.segment.name,
+                segment_id=se.segment.id,
+            )
 
-            log.debug("Writing ride effort: {se_id}: {effort!r}".format(se_id=se.id,
-                                                                        effort=effort.segment_name))
+            log.debug(
+                "Writing ride effort: {se_id}: {effort!r}".format(
+                    se_id=se.id, effort=effort.segment_name
+                )
+            )
 
             meta.scoped_session().add(effort)
             meta.scoped_session().flush()
@@ -530,24 +585,29 @@ def write_ride_streams(streams, ride):
     try:
         streams_dict = {s.type: s for s in streams}
         """ :type: dict[str,stravalib.orm.Stream] """
-        lonlat_points = [(lon,lat) for (lat,lon) in streams_dict['latlng'].data]
+        lonlat_points = [(lon, lat) for (lat, lon) in streams_dict["latlng"].data]
 
         if not lonlat_points:
             raise ValueError("No data points in latlng streams.")
     except (KeyError, ValueError) as x:
-        log.info("No GPS track for activity {} (skipping): {}".format(ride, x), exc_info=log.isEnabledFor(logging.DEBUG))
+        log.info(
+            "No GPS track for activity {} (skipping): {}".format(ride, x),
+            exc_info=log.isEnabledFor(logging.DEBUG),
+        )
         ride.track_fetched = None
     else:
         # Start by removing any existing segments for the ride.
-        meta.engine.execute(RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id))
+        meta.engine.execute(
+            RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id)
+        )
 
         gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
 
         ride_track = RideTrack()
         ride_track.gps_track = gps_track
         ride_track.ride_id = ride.id
-        ride_track.elevation_stream = streams_dict['altitude'].data
-        ride_track.time_stream = streams_dict['time'].data
+        ride_track.elevation_stream = streams_dict["altitude"].data
+        ride_track.time_stream = streams_dict["time"].data
         meta.scoped_session().add(ride_track)
 
     ride.track_fetched = True
@@ -582,12 +642,11 @@ def _write_instagram_photo_primary(photo, ride):
     #     u'600': u'https://instagram.com/p/88qaqZvrBI/media?size=l'}},
     #   u'use_prima ry_photo': False},
 
-
     media = None
 
     # This doesn't work any more; Instagram changed their API to use OAuth.
-    #insta_client = insta.configured_instagram_client()
-    #shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
+    # insta_client = insta.configured_instagram_client()
+    # shortcode = re.search(r'/p/([^/]+)/', photo.urls['100']).group(1)
     # try:
     #     #log.debug("Fetching Instagram media for shortcode: {}".format(shortcode))
     #     media = insta_client.media_shortcode(shortcode)
@@ -610,9 +669,9 @@ def _write_instagram_photo_primary(photo, ride):
             p.caption = media.caption.text
     else:
         p.id = photo.id
-        p.ref = re.match(r'(.+/)media\?size=.$', photo.urls['100']).group(1)
-        p.img_l = photo.urls['600']
-        p.img_t = photo.urls['100']
+        p.ref = re.match(r"(.+/)media\?size=.$", photo.urls["100"]).group(1)
+        p.img_l = photo.urls["600"]
+        p.img_t = photo.urls["100"]
 
     p.ride_id = ride.id
     p.primary = True
@@ -624,6 +683,7 @@ def _write_instagram_photo_primary(photo, ride):
     meta.scoped_session().flush()
 
     return p
+
 
 def _write_strava_photo_primary(photo, ride):
     """
@@ -653,8 +713,8 @@ def _write_strava_photo_primary(photo, ride):
     p.primary = True
     p.source = photo.source
     p.ref = None
-    p.img_l = photo.urls['600']
-    p.img_t = photo.urls['100']
+    p.img_l = photo.urls["600"]
+    p.img_t = photo.urls["100"]
     p.ride_id = ride.id
 
     log.debug("Writing (primary) Strava ride photo: {}".format(p))
@@ -680,8 +740,11 @@ def write_ride_photo_primary(strava_activity, ride):
         return
 
     # Start by removing any priamry photos for this ride.
-    meta.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == strava_activity.id,
-                                                              RidePhoto.primary == True)))
+    meta.engine.execute(
+        RidePhoto.__table__.delete().where(
+            and_(RidePhoto.ride_id == strava_activity.id, RidePhoto.primary == True)
+        )
+    )
 
     primary_photo = strava_activity.photos.primary
 
@@ -718,8 +781,11 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     #   u'uploaded_at': u'2015-10-17T17:55:45Z',
     #   u'urls': {u'0': u'https://instagram.com/p/88qaqZvrBI/media?size=t'}}]
 
-    meta.engine.execute(RidePhoto.__table__.delete().where(and_(RidePhoto.ride_id == ride.id,
-                                                              RidePhoto.primary == False)))
+    meta.engine.execute(
+        RidePhoto.__table__.delete().where(
+            and_(RidePhoto.ride_id == ride.id, RidePhoto.primary == False)
+        )
+    )
 
     insta_client = insta.configured_instagram_client()
 
@@ -728,32 +794,53 @@ def write_ride_photos_nonprimary(activity_photos, ride):
         # If it's already in the db, then skip it.
         existing = meta.scoped_session().query(RidePhoto).get(activity_photo.uid)
         if existing:
-            log.info("Skipping photo {} because it's already in database: {}".format(activity_photo, existing))
+            log.info(
+                "Skipping photo {} because it's already in database: {}".format(
+                    activity_photo, existing
+                )
+            )
             continue
 
         try:
             media = insta_client.media(activity_photo.uid)
 
-            photo = RidePhoto(id=activity_photo.uid,
-                              ride_id=ride.id,
-                              ref=activity_photo.ref,
-                              caption=activity_photo.caption)
+            photo = RidePhoto(
+                id=activity_photo.uid,
+                ride_id=ride.id,
+                ref=activity_photo.ref,
+                caption=activity_photo.caption,
+            )
 
             photo.img_l = media.get_standard_resolution_url()
             photo.img_t = media.get_thumbnail_url()
 
             meta.scoped_session().add(photo)
 
-            log.debug("Writing (non-primary) ride photo: {p_id}: {photo!r}".format(p_id=photo.id, photo=photo))
+            log.debug(
+                "Writing (non-primary) ride photo: {p_id}: {photo!r}".format(
+                    p_id=photo.id, photo=photo
+                )
+            )
 
             meta.scoped_session().flush()
         except (InstagramAPIError, InstagramClientError) as e:
             if e.status_code == 400:
-                log.warning("Skipping photo {0} for ride {1}; user is set to private".format(activity_photo, ride))
+                log.warning(
+                    "Skipping photo {0} for ride {1}; user is set to private".format(
+                        activity_photo, ride
+                    )
+                )
             elif e.status_code == 404:
-                log.warning("Skipping photo {0} for ride {1}; not found".format(activity_photo, ride))
+                log.warning(
+                    "Skipping photo {0} for ride {1}; not found".format(
+                        activity_photo, ride
+                    )
+                )
             else:
-                log.exception("Error fetching instagram photo {0} (skipping)".format(activity_photo))
-
+                log.exception(
+                    "Error fetching instagram photo {0} (skipping)".format(
+                        activity_photo
+                    )
+                )
 
     ride.photos_fetched = True
