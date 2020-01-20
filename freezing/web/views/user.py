@@ -14,9 +14,13 @@ def bt_jsonify(data):
     """
     Override eto handle raw lists expected by bootrap table.
     """
-    return current_app.response_class(json.dumps(data, default=json_seralizer), mimetype='application/json')
+    return current_app.response_class(
+        json.dumps(data, default=json_seralizer), mimetype="application/json"
+    )
 
-blueprint = Blueprint('user', __name__)
+
+blueprint = Blueprint("user", __name__)
+
 
 def json_seralizer(obj):
     if isinstance(obj, datetime):
@@ -24,27 +28,41 @@ def json_seralizer(obj):
     else:
         return str(obj)
 
+
 @blueprint.route("/rides")
 @requires_auth
 def rides():
-    return render_template('user/rides.html')
+    return render_template("user/rides.html")
 
-@blueprint.route("/refetch_ride_photos", methods=['POST'])
+
+@blueprint.route("/refetch_ride_photos", methods=["POST"])
 @requires_auth
 def ride_refetch_photos():
-    ride_id = request.form['id']
-    ride = meta.scoped_session().query(Ride).filter(Ride.id == ride_id).filter(Ride.athlete_id == session.get('athlete_id')).one()
+    ride_id = request.form["id"]
+    ride = (
+        meta.scoped_session()
+        .query(Ride)
+        .filter(Ride.id == ride_id)
+        .filter(Ride.athlete_id == session.get("athlete_id"))
+        .one()
+    )
     ride.photos_fetched = False
     logging.info("Marking photos to be refetched for ride {}".format(ride))
     meta.scoped_session().commit()
     return jsonify(success=True)  # I don't really have anything useful to spit back.
 
+
 @blueprint.route("/rides.json")
 @requires_auth
 def rides_data():
-    athlete_id = session.get('athlete_id')
+    athlete_id = session.get("athlete_id")
 
-    rides_q = meta.scoped_session().query(Ride).filter(Ride.athlete_id == athlete_id).order_by(Ride.start_date.desc())
+    rides_q = (
+        meta.scoped_session()
+        .query(Ride)
+        .filter(Ride.athlete_id == athlete_id)
+        .order_by(Ride.start_date.desc())
+    )
     results = []
 
     for r in rides_q:
@@ -54,19 +72,23 @@ def rides_data():
         else:
             avg_temp = None
 
-        results.append(dict(id=r.id,
-                            private=r.private,
-                            name=r.name,
-                            start_date=r.start_date,
-                            elapsed_time=r.elapsed_time,
-                            moving_time=r.moving_time,
-                            distance=r.distance,
-                            photos_fetched=r.photos_fetched,
-                            avg_temp=avg_temp
-                            ))
+        results.append(
+            dict(
+                id=r.id,
+                private=r.private,
+                name=r.name,
+                start_date=r.start_date,
+                elapsed_time=r.elapsed_time,
+                moving_time=r.moving_time,
+                distance=r.distance,
+                photos_fetched=r.photos_fetched,
+                avg_temp=avg_temp,
+            )
+        )
 
-    #rides = meta.session_factory().query(Ride).all()
+    # rides = meta.session_factory().query(Ride).all()
     return bt_jsonify(results)
+
 
 #     athlete_id = sa.Column(sa.BigInteger, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
 #     elapsed_time = sa.Column(sa.Integer, nullable=False) # Seconds
