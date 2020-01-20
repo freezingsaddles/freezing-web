@@ -83,8 +83,7 @@
                             <li><a href="/leaderboard/individual_text">Individual Points (Text)</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/alt_scoring/indiv_hains">Individual Hains Point Laps</a></li>
-                            <!-- Commented out until weather API working -->
-                            <!-- <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li> -->
+                            <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
                             <li><a href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
                             <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
 
@@ -99,8 +98,8 @@
                             Data Exploration <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <!-- Commented out until weather API working -->
-                            <!-- <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li> -->
+
+                            <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
                             <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
                             <li class="disabled"><a class="disabled" {# href="/explore/team_cumul" #} data-toggle="tooltip" data-placement="top" title="This leaderboard is returning soon!">Team Cumulative</a></li>
                             <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
@@ -135,8 +134,7 @@
                             <li><a href="/pointless/arlington">Loopy for Arlington</a></li>
                             <li><a href="/pointless/generic/lostdog">Lost Dog Rides</a></li>
                             <li><a href="/pointless/hashtag/bafsmetro">METRO PEAK PIONEER Rides</a></li>
-                            <!-- Commented out until weather API working -->
-                            <!-- <li><a href="/pointless/opmdays">Michigander Snow Day Rides</a></li> -->
+                            <li><a href="/pointless/opmdays">Michigander Snow Day Rides</a></li>
                             <li><a href="/pointless/hashtag/FS2020ParkFinder">Park Finder</a></li>
                             <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
                             <li><a href="/pointless/generic/poggio-indiv">POGGIO (Indiv)</a></li>
@@ -233,14 +231,24 @@
 {% endblock %}
 
 <div id="credits" class="container-fluid">
-  <div class="col-md-12">
+  <div class="container">
+  <div class="col-md-4">
     <p>
-      Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">original scoreboard by ronwalf</a>.
-      BikeArlington Freezing Saddles software is open-source and <a href="https://github.com/freezingsaddles/">
-      available on Github</a>.
+      The Freezing Saddles software is open-source (Apache 2.0 Licensed) and <a href="https://github.com/freezingsaddles/">
+          available on Github</a>.
+      <br>Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">the original scoreboard by ronwalf</a>.
     </p>
   </div>
+  <div class="col-md-4">
+    <p>Rides tracked using <a href="http://strava.com">strava.com</a>.
+      <br/><a href="http://strava.com"><img src="/img/strava-sm.png"/></a></p>
+  </div>
+  <div class="col-md-4">
+      <a href="https://darksky.net/poweredby/"><img alt="Powered by Dark Sky" src="/img/poweredbydarksky-sm.png"/></a>
+  </div>
 </div>
+</div>
+
 
 </body>
 </html>
