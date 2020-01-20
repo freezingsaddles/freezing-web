@@ -34,7 +34,7 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
         </div>
         <div class="modal-body">
         <img src="{{photo.img_l}}" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
-        Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
+        Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
 		</div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -132,18 +132,21 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 <div id="sect-photos" class="row section">
 	<div class="col-md-12">
 		<div class="row">
-		{% for photo in photos %}
-	    <div class="col-lg-2 col-md-3 col-xs-4">
-	<a href="#" data-toggle="modal" data-target=".pop-up-{{photo.id}}">
-<img src="{{ photo.img_l }}" width="150" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
-</a>
-  </div>
-	    {% endfor %}
-	    <!-- <a href="{{ url_for('photos.index') }}" class="glyphicon glyphicon-chevron-right more-images-link pull-right"></a> -->
-		<div class="row" >
-			<div class="col-md-12" style="padding-top:2em;">
-				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg pull-right clearfix">More Photos<span class="glyphicon glyphicon-chevron-right"></span></a>
-</div></div></div>
+			{% for photo in photos %}
+				<div class="col-lg-2 col-md-3 col-xs-4">
+					<a href="#" data-toggle="modal" data-target=".pop-up-{{photo.id}}">
+						<img src="{{ photo.img_l }}" width="150" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
+					</a>
+					<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p>
+				</div>
+	    	{% endfor %}
+			<!-- <a href="{{ url_for('photos.index') }}" class="glyphicon glyphicon-chevron-right more-images-link pull-right"></a> -->
+			<div class="row" >
+				<div class="col-md-12" style="padding-top:2em;">
+					<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg pull-right clearfix">More Photos<span class="glyphicon glyphicon-chevron-right"></span></a>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
