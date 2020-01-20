@@ -34,7 +34,7 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
         </div>
         <div class="modal-body">
         <img src="{{photo.img_l}}" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
-        Taken by {{ photo.ride.athlete.display_name }}.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
+        Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
 		</div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -137,7 +137,7 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 					<a href="#" data-toggle="modal" data-target=".pop-up-{{photo.id}}">
 						<img src="{{ photo.img_l }}" width="150" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
 					</a>
-					<p>Taken by <a href="/people/{{ photo.ride.athlete.athlete_id }}">{{ photo.ride.athlete.display_name }}</a></p>
+					<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p>
 				</div>
 	    	{% endfor %}
 			<!-- <a href="{{ url_for('photos.index') }}" class="glyphicon glyphicon-chevron-right more-images-link pull-right"></a> -->
