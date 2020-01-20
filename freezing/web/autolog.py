@@ -40,7 +40,7 @@ class EagerFormattingAdapter(logging.LoggerAdapter):
             # Otherwise, just drop the message completely to avoid anything going
             # wrong in the future.  This text shoudl clue one in to what's going
             # on in the bizarre edge case where this ever does show up.
-            return '(log message suppressed due to insufficient log level)'
+            return "(log message suppressed due to insufficient log level)"
 
     def _getUnterpolatedMessage(self, msg, args):
         """
@@ -81,7 +81,7 @@ class EagerFormattingAdapter(logging.LoggerAdapter):
             # From PEP-3101, value errors are of the type raised by the format
             # method itself, so see if we should fall back to original
             # formatting since there was an issue
-            if '%' in msg:
+            if "%" in msg:
                 msg = msg % args
             else:
                 # we should NOT fall back, since there's no possible string
@@ -89,7 +89,7 @@ class EagerFormattingAdapter(logging.LoggerAdapter):
                 # message
                 raise
 
-        if msg == original_msg and '%' in msg:
+        if msg == original_msg and "%" in msg:
             # there must have been no string formatting methods
             # used, given the presence of args without a change in the msg
             # fall back to original formatting, including the special case
@@ -191,15 +191,20 @@ class AutoLogger(object):
         self.adapter_kwargs = adapter_kwargs
 
     def __getattr__(self, name):
-        if 'self' in inspect.currentframe().f_locals:
-            other = inspect.currentframe().f_locals['self']
-            caller_name = '%s.%s' % (other.__class__.__module__, other.__class__.__name__)
+        if "self" in inspect.currentframe().f_locals:
+            other = inspect.currentframe().f_locals["self"]
+            caller_name = "%s.%s" % (
+                other.__class__.__module__,
+                other.__class__.__name__,
+            )
         else:
-            caller_name = inspect.currentframe(1).f_globals['__name__']
+            caller_name = inspect.currentframe(1).f_globals["__name__"]
         logger = logging.getLogger(caller_name)
 
         if self.adapter_class:
-            logger = self.adapter_class(logger, *self.adapter_args, **self.adapter_kwargs)
+            logger = self.adapter_class(
+                logger, *self.adapter_args, **self.adapter_kwargs
+            )
 
         return getattr(logger, name)
 
@@ -224,7 +229,7 @@ def log_exceptions(fn):
             a = [str(x)[:255] for x in a]
             kw = kwargs or {}
             kw = dict([(str(k)[:255], str(v)[:255]) for k, v in kw.items()])
-            log.debug('Calling %s.%s %r %r' % (fn.__module__, fn.__name__, a, kw))
+            log.debug("Calling %s.%s %r %r" % (fn.__module__, fn.__name__, a, kw))
             return fn(*args, **kwargs)
         except Exception as e:
             log.error("Error calling function %s: %s" % (fn.__name__, e))
