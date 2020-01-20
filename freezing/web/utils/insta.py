@@ -9,15 +9,15 @@ from instagram.client import InstagramAPI
 from freezing.web import app, exc
 from freezing.web.config import config
 
-THUMBNAIL_DIMS = (150,150)
+THUMBNAIL_DIMS = (150, 150)
 STANDARD_DIMS = (640, 640)
 LOW_DIMS = (306, 306)
 
-IMG_FNAME_TPL = '{uid}.jpg'
+IMG_FNAME_TPL = "{uid}.jpg"
 
-STANDARD = 'standard_resolution'
-THUMBNAIL = 'thumbnail'
-LOW = 'low_resolution'
+STANDARD = "standard_resolution"
+THUMBNAIL = "thumbnail"
+LOW = "low_resolution"
 
 
 def configured_instagram_client():
@@ -51,10 +51,11 @@ def cache_photos(uid, base_dir):
 
     mediaobj = api.media(uid)
 
-    for res in ('standard_resolution', 'low_resolution', 'thumbnail'):
+    for res in ("standard_resolution", "low_resolution", "thumbnail"):
         photo = mediaobj.images[res]
-        _write_instagram_photo(uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res))
-
+        _write_instagram_photo(
+            uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res)
+        )
 
 
 def cache_photos(uid, base_dir):
@@ -63,9 +64,11 @@ def cache_photos(uid, base_dir):
 
     mediaobj = api.media(uid)
 
-    for res in ('standard_resolution', 'low_resolution', 'thumbnail'):
+    for res in ("standard_resolution", "low_resolution", "thumbnail"):
         photo = mediaobj.images[res]
-        _write_instagram_photo(uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res))
+        _write_instagram_photo(
+            uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res)
+        )
 
 
 def _write_instagram_photo(uid, photo, dest_dir):
