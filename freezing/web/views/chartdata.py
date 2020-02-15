@@ -47,7 +47,7 @@ def team_leaderboard_data():
         place = i + 1
         cells = [
             {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
-            {"v": res["total_score"], "f": str(int(res["total_score"]))},
+            {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
         ]
         rows.append({"c": cells})
 
@@ -86,7 +86,7 @@ def indiv_leaderboard_data():
                 "v": res["athlete_name"],
                 "f": "{0} [{1}]".format(res["athlete_name"], place),
             },
-            {"v": res["total_score"], "f": str(int(res["total_score"]))},
+            {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
         ]
         rows.append({"c": cells})
 
@@ -1007,7 +1007,7 @@ def exec_and_jsonify_query(
     q,
     display_label,
     query_label,
-    hover_lambda=lambda res, query_label: str(int(res[query_label])),
+    hover_lambda=lambda res, query_label: str(int(round(res[query_label]))),
 ):
     cols = [
         {"id": "name", "label": "Athlete", "type": "string"},
