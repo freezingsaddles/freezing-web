@@ -15,17 +15,17 @@ from pytz import utc, timezone
 blueprint = Blueprint("people", __name__)
 
 
-def get_local_datetime():
+def get_local_datetime() -> datetime:
     # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
     return utc.localize(datetime.now(), is_dst=None).astimezone(config.TIMEZONE)
 
 
-def get_today():
+def get_today() -> datetime:
     """
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
     if False:
-        return date(2013, 2, 10)
+        return datetime(2019, 3, 20)
     return get_local_datetime()
 
 
@@ -118,20 +118,28 @@ def ridedays():
                     a.display_name,
                     count(b.ride_date) as rides,
                     sum(b.distance) as miles,
-                    max(b.ride_date) as lastride
+                    max(b.ride_date) as lastride,
+                    max(b.ride_date) < :today as contender
                 FROM
                     lbd_athletes a,
                     daily_scores b where a.id = b.athlete_id
                 group by b.athlete_id
                 order by
                     rides desc,
+                    contender desc,
                     miles desc,
                     display_name
                 ;
                 """
     )
     loc_time = get_today()
-    loc_total_days = loc_time.timetuple().tm_yday
+    start_yday = config.START_DATE.timetuple().tm_yday
+    end_yday = config.END_DATE.timetuple().tm_yday
+    current_yday = loc_time.timetuple().tm_yday
+    loc_total_days = min(current_yday, end_yday) - start_yday + 1
+    all_done = current_yday > end_yday
+    # once the competition is over, even if you're a day short you are no longer a contender
+    contender_date = config.START_DATE.date() if all_done else loc_time.date()
     ride_days = [
         (
             x["id"],
@@ -140,10 +148,10 @@ def ridedays():
             x["miles"],
             x["lastride"] >= loc_time.date(),
         )
-        for x in meta.scoped_session().execute(q).fetchall()
+        for x in meta.engine.execute(q, today=contender_date).fetchall()
     ]
     return render_template(
-        "people/ridedays.html", ride_days=ride_days, num_days=loc_total_days
+        "people/ridedays.html", ride_days=ride_days, num_days=loc_total_days, all_done=all_done
     )
 
 
