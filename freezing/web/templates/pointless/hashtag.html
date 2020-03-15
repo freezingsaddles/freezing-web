@@ -6,6 +6,7 @@
 	{% if meta %}
 		<p>{{meta.description | safe}}</p>
 		{% if meta.url %}<p>See: <a href="{{ meta.url }}">{{ meta.url }}</a></p>{% endif %}
+		{% if meta.sponsor %}<p>Sponsored by <em>{{ meta.sponsor }}</em>.</p>{% endif %}
 	{% else %}
 		<p>Leaderboard for all rides hashtagged <code>{{data.hashtag}}</code></p>
     	<p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,

@@ -1,6 +1,6 @@
-FROM alpine:20191114
+FROM python:3.7-alpine
 RUN apk update
-RUN apk add python3 py3-mysqlclient git
+RUN apk add py3-mysqlclient git
 RUN pip3 install --upgrade pip
 ADD requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
