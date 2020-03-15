@@ -11,7 +11,7 @@
 {% for a, b, c, d, e in data.tdata %}
 	<tr {% if a==1873089 %} class="danger" {% endif %}>
 		<td>{{loop.index}}</td>
-		<td><a href="/people/{{a}}">{% if a==1873089 %}Ineligible Defending Champion {% endif %}{{b}}</a></td>
+		<td><a href="/people/{{a}}">{% if a==1873089 %}Ineligible Former Champion {% endif %}{{b}}</a></td>
 		<td>{{c| round(1)}}</td>
       <td>{{d| round(1)}}</td>
       <td>{{e| round(1)}}</td>
