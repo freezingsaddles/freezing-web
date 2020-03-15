@@ -999,7 +999,7 @@ def gviz_api_jsonify(*args, **kwargs):
     return current_app.response_class(
         json.dumps(
             dict(*args, **kwargs),
-            indent=None if request.is_xhr else 2,
+            indent=None,
             cls=gviz_api.DataTableJSONEncoder,
         ),
         mimetype="application/json",
