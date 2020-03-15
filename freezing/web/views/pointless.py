@@ -165,7 +165,7 @@ def hashtag_leaderboard(hashtag):
     tdata = _get_hashtag_tdata(
         hashtag=ht,
         alttag=meta.alt if meta else None,
-        orderby=1 if meta is None or not meta.rank_by_rides else 2
+        orderby=1 if meta is None or not meta.rank_by_rides else 2,
     )
     return render_template(
         "pointless/hashtag.html",

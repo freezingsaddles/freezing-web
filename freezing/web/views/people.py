@@ -151,7 +151,10 @@ def ridedays():
         for x in meta.engine.execute(q, today=contender_date).fetchall()
     ]
     return render_template(
-        "people/ridedays.html", ride_days=ride_days, num_days=loc_total_days, all_done=all_done
+        "people/ridedays.html",
+        ride_days=ride_days,
+        num_days=loc_total_days,
+        all_done=all_done,
     )
 
 

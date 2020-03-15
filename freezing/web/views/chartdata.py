@@ -714,7 +714,9 @@ def team_weekly_points():
     teams = sorted({(r["team_id"], r["team_name"]) for r in res}, key=lambda t: t[1])
     scores = {(r["week_num"], r["team_id"]): r["total_score"] for r in res}
 
-    team_cols = [{"id": f"team_{id}", "label": name, "type": "number"} for id, name in teams]
+    team_cols = [
+        {"id": f"team_{id}", "label": name, "type": "number"} for id, name in teams
+    ]
     cols = [{"id": "week", "label": "Week No.", "type": "string"}, *team_cols]
 
     def week_cells(week: int) -> [dict]:
@@ -998,9 +1000,7 @@ def gviz_api_jsonify(*args, **kwargs):
     """
     return current_app.response_class(
         json.dumps(
-            dict(*args, **kwargs),
-            indent=None,
-            cls=gviz_api.DataTableJSONEncoder,
+            dict(*args, **kwargs), indent=None, cls=gviz_api.DataTableJSONEncoder,
         ),
         mimetype="application/json",
     )
