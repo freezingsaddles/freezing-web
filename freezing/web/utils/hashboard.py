@@ -14,8 +14,10 @@ from freezing.web.exc import ObjectNotFound
 
 class HashtagBoardTag(BaseMessage):
     tag = None
+    alt = None
     name = None
     description = None
+    sponsor = None
     url = None
     rank_by_rides = False
 
@@ -24,8 +26,10 @@ class HashtagBoardTagSchema(BaseSchema):
     _model_class = HashtagBoardTag
 
     tag = fields.Str(required=True)
+    alt = fields.Str()
     name = fields.Str(required=True)
     description = fields.Str(required=True)
+    sponsor = fields.Str()
     url = fields.Str()
     rank_by_rides = fields.Bool()
 
@@ -52,6 +56,6 @@ def load_hashtag(hashtag) -> HashtagBoardTag:
     schema = HashtagBoardSchema()
     board: HashtagBoard = schema.load(doc)
 
-    matches = [tag for tag in board.tags if tag.tag == hashtag]
+    matches = [tag for tag in board.tags if tag.tag == hashtag or tag.alt == hashtag]
 
     return None if len(matches) == 0 else matches[0]

@@ -124,7 +124,7 @@ def points_per_mile():
     )
 
 
-def _get_hashtag_tdata(hashtag, orderby=1):
+def _get_hashtag_tdata(hashtag, alttag, orderby=1):
     """
     if orderby = 1 then order by mileage. Else by #rides
     """
@@ -135,15 +135,22 @@ def _get_hashtag_tdata(hashtag, orderby=1):
         sortkeyidx = (2, 3)
     q = text(
         """
-        select A.id, A.display_name as athlete_name, count(R.id) as hashtag_rides,
-        sum(R.distance) as hashtag_miles
-        from athletes A
-        join rides R on R.athlete_id = A.id
-        where R.name like concat('%', '#', :hashtag, '%')
-        group by A.id, A.display_name;
+        select
+            A.id,
+            A.display_name as athlete_name,
+            count(R.id) as hashtag_rides,
+            sum(R.distance) as hashtag_miles
+        from
+            athletes A join
+            rides R on R.athlete_id = A.id
+        where
+            R.name like concat('%', '#', :hashtag, '%') or
+            R.name like concat('%', '#', :alttag, '%')
+        group by
+            A.id, A.display_name;
         """
     )
-    rs = sess.execute(q, params=dict(hashtag=hashtag))
+    rs = sess.execute(q, params=dict(hashtag=hashtag, alttag=alttag or hashtag))
     retval = [
         (x["id"], x["athlete_name"], x["hashtag_rides"], x["hashtag_miles"])
         for x in rs.fetchall()
@@ -154,8 +161,12 @@ def _get_hashtag_tdata(hashtag, orderby=1):
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
-    ht = "".join(ch for ch in hashtag if ch.isalnum())
-    tdata = _get_hashtag_tdata(ht, 1 if meta is None or not meta.rank_by_rides else 2)
+    ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
+    tdata = _get_hashtag_tdata(
+        hashtag=ht,
+        alttag=meta.alt if meta else None,
+        orderby=1 if meta is None or not meta.rank_by_rides else 2
+    )
     return render_template(
         "pointless/hashtag.html",
         data={"tdata": tdata, "hashtag": "#" + ht, "hashtag_notag": ht},
@@ -166,7 +177,7 @@ def hashtag_leaderboard(hashtag):
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
-    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), 2)
+    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )

@@ -6,18 +6,17 @@ Created on Feb 10, 2013
 import json
 import copy
 from collections import defaultdict
-from datetime import datetime, timedelta, date
-import logging
+from datetime import datetime, timedelta
 
-from flask import redirect, url_for, current_app, request, Blueprint, jsonify
+from flask import current_app, request, Blueprint, jsonify
 
 from sqlalchemy import text
 from dateutil import rrule
 
 from freezing.model import meta
-from freezing.model.orm import Team, RideEffort
+from freezing.model.orm import Team
 
-from freezing.web import app, config
+from freezing.web import config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
 from freezing.web.views.shared_sql import *
@@ -700,29 +699,33 @@ def team_weekly_points():
              from
                daily_scores DS inner join
                teams T on T.id = DS.team_id
+             where
+               not T.leaderboard_exclude
              group by
                team_id,
                week_num
              ;
              """
     )
-    cols = [{"id": "week", "label": "Week No.", "type": "string"}]
-    rows = []
+
     res = meta.scoped_session().execute(q).fetchall()
 
-    d = defaultdict(list)
-    for r in res:
-        d[r["week_num"]].append((r["team_id"], r["team_name"], r["total_score"]))
-    for week, datalist in d.items():
-        cells = [{"v": "Week {0}".format(week + 1), "f": "Week {0}".format(week + 1)}]
-        for team_id, team_name, total_score in datalist:
-            cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
-        rows.append({"c": cells})
-    teams = {
-        (r["team_id"], r["team_name"]) for r in res
-    }  # first time using a set comprehension, pretty sweet
-    for id, name in teams:
-        cols.append({"id": "team_{0}".format(id), "label": name, "type": "number"})
+    weeks = sorted({r["week_num"] for r in res})
+    teams = sorted({(r["team_id"], r["team_name"]) for r in res}, key=lambda t: t[1])
+    scores = {(r["week_num"], r["team_id"]): r["total_score"] for r in res}
+
+    team_cols = [{"id": f"team_{id}", "label": name, "type": "number"} for id, name in teams]
+    cols = [{"id": "week", "label": "Week No.", "type": "string"}, *team_cols]
+
+    def week_cells(week: int) -> [dict]:
+        def team_cell(id: int) -> dict:
+            total_score = scores.get((week, id), 0.0)
+            return {"v": total_score, "f": "{0:.2f}".format(total_score)}
+
+        team_cells = [team_cell(id) for id, _ in teams]
+        return [{"v": f"Week {week + 1}", "f": f"Week {week + 1}"}, *team_cells]
+
+    rows = [{"c": week_cells(week)} for week in weeks]
 
     return gviz_api_jsonify({"cols": cols, "rows": rows})
 

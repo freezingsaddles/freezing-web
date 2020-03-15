@@ -1,18 +1,37 @@
 ---
 tags:
-  - tag: FS2020tacoloco
+  - tag: tacoloco
+    alt: FS2020tacoloco
     name: Tacos Tacos Tacos
-    description: The object is to visit as many DIFFERENT, taco places as possible (on your bike, of course!) and <code>#FS2020tacoloco</code> one up.
+    description: |
+      The object is to visit as many DIFFERENT, taco places as possible (on your bike, of course!) and
+      <code>#tacoloco</code> (or <code>#FS2020tacoloco</code>) one up.
     url: http://bikearlingtonforum.com/showthread.php?15707-TACOS-TACOS-TACOS-This-ain%92t-no-burrito-pointless-prize-ride
+    sponsor: Felipe
     rank_by_rides: True
 
   - tag: donut
     name: Doughnut Rides
     description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
+    url: http://bikearlingtonforum.com/showthread.php?15787-Donut-Ride-(Sat-1-18-2020)-and-donut-pointless-prize-for-Freezing-Saddles-2020
+    sponsor: ObscureRichard
     rank_by_rides: True
 
   - tag: Deflated
     name: Don’t be deflated this prize is for you!
-    description: Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code> (case-sensitive!), the person with the most flats wins! Well loses.
+    description: |
+      Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code>, the person with
+      the most flats wins! Well loses.
     url: http://bikearlingtonforum.com/showthread.php?15757-Don%92t-be-deflated-this-prize-is-for-you!
+    sponsor: Felipe
+    rank_by_rides: True
+
+  - tag: chocolateuring
+    alt: FS2020chocolateuring
+    name: Chocolateuring
+    description: |
+      Do you like chocolate? While out on a bike ride? If so, then this side bet is for you.
+      The objective is to visit the most number of chocolatiers while riding a bicycle.
+    sponsor: Boomer
+    url: http://bikearlingtonforum.com/showthread.php?15726-Pointless-Prize-FS2020Chocolateuring
     rank_by_rides: True
