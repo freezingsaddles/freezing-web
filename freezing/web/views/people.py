@@ -24,8 +24,7 @@ def get_today() -> datetime:
     """
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
-    #if False:
-    if True:
+    if False:
         return datetime(2019, 3, 20, tzinfo=config.TIMEZONE)
     return get_local_datetime()
 
@@ -141,7 +140,7 @@ def ridedays():
     start_yday = config.START_DATE.timetuple().tm_yday
     end_yday = config.END_DATE.timetuple().tm_yday
     current_yday = loc_time.timetuple().tm_yday
-    loc_total_days = min(current_yday, end_yday) - start_yday
+    loc_total_days = min(current_yday, end_yday) - start_yday + 1
     all_done = competition_done(loc_time)
     # once the competition is over, even if you're a day short you are no longer a contender
     contender_date = config.END_DATE.date() if all_done else loc_time.date()
