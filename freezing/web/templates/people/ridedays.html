@@ -1,22 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="panel panel-default">
-	<div class="panel-heading">Every Day Riders</div>
+    <div class="panel-heading">Every Day Riders - Day {{num_days}}</div>
 	<div class="panel-body">
+        {% if all_done %}<p><strong>The competiton for this year is complete after {{num_days}} of riding!</strong>{% endif %}
         <p>If your name is green, you've ridden every day. <em>Congratulations!</em>&nbsp;&nbsp;🏆 for you!</em></p>
         <p>If your name is yellow or red, either you haven't ridden (see <a href="http://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.</p>
         <p>Yellow means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong></p>
         <p>Red means you have missed a day, alas. 😭 Maybe next year you will be in the elite group of every day riders.</p>
 <table class="table table-condensed">
     <tr><th>Rider</th><th>Days</th><th>Miles</th><th>Every Day Rider?</th></tr>
-{% for a, b, c, d, e in ride_days %}
+{% for a, b, c, d in ride_days %}
 	{% if c >= num_days %}<tr class="success">
-	{% elif c == (num_days - 1) and not e and not all_done %}<tr class="warning">
+	{% elif c == (num_days - 1) and not all_done %}<tr class="warning">
 	{% elif c < num_days %}<tr class="danger">
 	{% endif %}
     <td><a href="/people/{{a}}">{{b}}</a></td><td>{{c}}</td><td>{{d | round(1)}}</td><td>
     {% if c >= num_days %}🏆
-	{% elif c == (num_days - 1) and not e and not all_done %}
+	{% elif c == (num_days - 1) and not all_done %}
     ⚠️
 	{% elif c < num_days %}
     😭

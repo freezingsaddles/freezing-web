@@ -24,7 +24,8 @@ def get_today() -> datetime:
     """
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
-    if False:
+    #if False:
+    if True:
         return datetime(2019, 3, 20, tzinfo=config.TIMEZONE)
     return get_local_datetime()
 
@@ -123,7 +124,6 @@ def ridedays():
                     a.display_name,
                     count(b.ride_date) as rides,
                     sum(b.distance) as miles,
-                    max(b.ride_date) as lastride,
                     max(b.ride_date) < :today as contender
                 FROM
                     lbd_athletes a,
@@ -141,7 +141,7 @@ def ridedays():
     start_yday = config.START_DATE.timetuple().tm_yday
     end_yday = config.END_DATE.timetuple().tm_yday
     current_yday = loc_time.timetuple().tm_yday
-    loc_total_days = min(current_yday, end_yday) - start_yday + 1
+    loc_total_days = min(current_yday, end_yday) - start_yday
     all_done = competition_done(loc_time)
     # once the competition is over, even if you're a day short you are no longer a contender
     contender_date = config.END_DATE.date() if all_done else loc_time.date()
@@ -151,7 +151,6 @@ def ridedays():
             x["display_name"],
             x["rides"],
             x["miles"],
-            x["lastride"] >= loc_time.date(),
         )
         for x in meta.engine.execute(q, today=contender_date).fetchall()
     ]
