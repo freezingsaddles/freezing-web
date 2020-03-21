@@ -7,7 +7,7 @@
         <p>If your name is green, you've ridden every day. <em>Congratulations!</em>&nbsp;&nbsp;🏆 for you!</em></p>
         <p>If your name is yellow or red, either you haven't ridden (see <a href="http://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.</p>
         <p>Yellow means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong></p>
-        <p>Red means you have missed a day, alas. 😭 Maybe next year you will be in the elite group of every day riders.</p>
+        <p>Red means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.</p>
 <table class="table table-condensed">
     <tr><th>Rider</th><th>Days</th><th>Miles</th><th>Every Day Rider?</th></tr>
 {% for a, b, c, d in ride_days %}
@@ -19,8 +19,6 @@
     {% if c >= num_days %}🏆
 	{% elif c == (num_days - 1) and not all_done %}
     ⚠️
-	{% elif c < num_days %}
-    😭
 	{% endif %}
     <td></tr>
 {% endfor %}
