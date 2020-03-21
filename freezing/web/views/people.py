@@ -25,7 +25,7 @@ def get_today() -> datetime:
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
     if False:
-        return datetime(2019, 3, 20)
+        return datetime(2019, 3, 20, tzinfo=config.TIMEZONE)
     return get_local_datetime()
 
 
@@ -109,6 +109,11 @@ def people_show_person(user_id):
     )
 
 
+def competition_done(loc_time):
+    end_time = config.END_DATE
+    return loc_time > end_time
+
+
 @blueprint.route("/ridedays")
 def ridedays():
     q = text(
@@ -137,9 +142,9 @@ def ridedays():
     end_yday = config.END_DATE.timetuple().tm_yday
     current_yday = loc_time.timetuple().tm_yday
     loc_total_days = min(current_yday, end_yday) - start_yday + 1
-    all_done = current_yday > end_yday
+    all_done = competition_done(loc_time)
     # once the competition is over, even if you're a day short you are no longer a contender
-    contender_date = config.START_DATE.date() if all_done else loc_time.date()
+    contender_date = config.END_DATE.date() if all_done else loc_time.date()
     ride_days = [
         (
             x["id"],
