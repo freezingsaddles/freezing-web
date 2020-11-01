@@ -15,7 +15,6 @@ query: |
   select A.id, A.display_name as athlete_name, count(R.id) as london_bridge_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id
   where 
-    R.name like '%#londonbridge%' collate utf8mb4_general_ci or
-    R.name like '%#fs2020londonbridge%' collate utf8mb4_general_ci
+    R.name like '%#londonbridge%' collate utf8mb4_general_ci
   group by A.id, A.display_name
   order by london_bridge_rides desc
