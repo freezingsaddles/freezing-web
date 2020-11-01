@@ -11,3 +11,4 @@
 /resources/docker/db/sql-scripts
 /resources/docker/settings.cfg
 /src
+/venv
