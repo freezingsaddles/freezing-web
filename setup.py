@@ -12,10 +12,17 @@ except ImportError: # for pip <= 9.0.3
     from pip.req import parse_requirements
 from setuptools import setup, find_packages
 
-__authors__ = ['"Hans Lellelid" <hans@xmpl.org>']
-__copyright__ = "Copyright 2018 Hans Lellelid"
+__authors__ = ['"Hans Lellelid" <hans@xmpl.org>',
+    'Ian Will',
+    'Jon Renaut',
+    'Merlin Hughes',
+    'Richard Bullington-McGuire <richard.bullington.mcguire@gmail.com>',
+    'Adrian Porter',
+    'Joe Tatsuko']
 
-version = '1.1.9'
+__copyright__ = "Copyright 2015 Hans Lellelid"
+
+version = '1.1.10'
 
 long_description="""
 The freezing saddles cycling competition website/scoreboard.
