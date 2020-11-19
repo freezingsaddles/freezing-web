@@ -16,6 +16,7 @@ class AthleteSchema(Schema):
 
     # rides = orm.relationship("Ride", backref="athlete", lazy="dynamic", cascade="all, delete, delete-orphan")
 
+
 class TeamSchema(Schema):
     id = fields.Integer()
     name = fields.String()

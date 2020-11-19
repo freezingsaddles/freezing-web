@@ -14,8 +14,10 @@ from freezing.web.exc import ObjectNotFound
 
 class HashtagBoardTag(BaseMessage):
     tag = None
+    alt = None
     name = None
     description = None
+    sponsor = None
     url = None
     rank_by_rides = False
 
@@ -24,8 +26,10 @@ class HashtagBoardTagSchema(BaseSchema):
     _model_class = HashtagBoardTag
 
     tag = fields.Str(required=True)
+    alt = fields.Str()
     name = fields.Str(required=True)
     description = fields.Str(required=True)
+    sponsor = fields.Str()
     url = fields.Str()
     rank_by_rides = fields.Bool()
 
@@ -42,17 +46,16 @@ class HashtagBoardSchema(BaseSchema):
 
 def load_hashtag(hashtag) -> HashtagBoardTag:
 
-    path = os.path.join(config.LEADERBOARDS_DIR, 'hashtag.yml')
+    path = os.path.join(config.LEADERBOARDS_DIR, "hashtag.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
-    with open(path, 'rt', encoding='utf-8') as fp:
+    with open(path, "rt", encoding="utf-8") as fp:
         doc = yaml.load(fp)
 
     schema = HashtagBoardSchema()
     board: HashtagBoard = schema.load(doc)
 
-    matches = [tag for tag in board.tags if tag.tag == hashtag]
+    matches = [tag for tag in board.tags if tag.tag == hashtag or tag.alt == hashtag]
 
     return None if len(matches) == 0 else matches[0]
-

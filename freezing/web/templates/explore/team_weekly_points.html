@@ -15,37 +15,38 @@
       
       function drawPointsChart() {
 	      
-	      var jsonData = $.ajax({
+	      $.ajax({
 	          url: "/chartdata/team_weekly_points",
-	          dataType: "json",
-	          async: false // ... really?
-	          }).responseText;
-	          
-	      // Create our data table out of JSON data loaded from server.
-	      var data = new google.visualization.DataTable(jsonData);
-/*		      
+	          dataType: "json"
+          }).done(function(jsonData) {
+
+              // Create our data table out of JSON data loaded from server.
+              var data = new google.visualization.DataTable(jsonData);
+              /*
         var data = google.visualization.arrayToDataTable([
           ['Week No.', 'Team 1', 'Team 2'],
           ['Week 9',  750.2168827056885,      992.3467163443565],
           ['Week 10',  502.17876356840134,      511.0094782114029],
         ]);
 */
-		  console.log(data);
-		  
-	      // Instantiate and draw our chart, passing in some options.
-	      var chart = new google.visualization.ColumnChart(document.getElementById('chart_team_weekly_points'));
-	      
-	      var options = {'title':'Team Weekly Points',
-                       'width':1200,
-                       'height':800,
-                       'hAxis': {title: "Week No."},
-                       'vAxis': {title: "Points"},
-                       legend: {position: 'none'},
-                       chartArea :{left:200, top:50, width: 1000, height: 700}
-                       };
-            
-                     
-	      chart.draw(data, options);
+              console.log(data);
+
+              // Instantiate and draw our chart, passing in some options.
+              var chart = new google.visualization.ColumnChart(document.getElementById('chart_team_weekly_points'));
+
+              var options = {
+                  'title': 'Team Weekly Points',
+                  'width': 1200,
+                  'height': 800,
+                  'hAxis': {title: "Week No."},
+                  'vAxis': {title: "Points"},
+                  legend: {position: 'none'},
+                  chartArea: {left: 200, top: 50, width: 1000, height: 700}
+              };
+
+
+              chart.draw(data, options);
+          });
 	      
 	  }
 	  	  
