@@ -31,7 +31,9 @@ def leaderboard():
     tribal_groups = load_tribes()
     my_tribes = query_tribes()
 
-    query = text(
+    tribe_stats = defaultdict(lambda: dict(distance=0, points=0, ride_days=0, riders=0))
+
+    stats_query = text(
         """
         SELECT
             T.tribal_group,
@@ -40,40 +42,35 @@ def leaderboard():
             sum(B.points) AS points,
             count(B.athlete_id) AS ride_days
         FROM tribes T JOIN daily_scores B ON T.athlete_id = B.athlete_id GROUP BY tribal_group, tribe_name;
-    """
+        """
     )
-
-    tribe_stats = defaultdict(lambda: dict(distance=0, points=0, ride_days=0))
-    for t in meta.scoped_session().execute(query).fetchall():
-        tribe_stats[(t.tribal_group, t.tribe_name)] = dict(
+    for t in meta.scoped_session().execute(stats_query).fetchall():
+        tribe_stats[(t.tribal_group, t.tribe_name)].update(
             distance=round(t.distance), points=round(t.points), ride_days=t.ride_days
         )
 
-    maxima = {}
+    riders_query = text(
+        """
+        SELECT
+            T.tribal_group,
+            T.tribe_name,
+            count(T.athlete_id) AS riders
+        FROM tribes T GROUP BY tribal_group, tribe_name;
+        """
+    )
+    for t in meta.scoped_session().execute(riders_query).fetchall():
+        tribe_stats[(t.tribal_group, t.tribe_name)].update(riders=t.riders)
+
+    maxima = defaultdict(dict)
     for tribal_group in tribal_groups:
-        maxima[tribal_group.name] = dict(
-            distance=max(
+        for metric in ["distance", "points", "ride_days"]:
+            maxima[tribal_group.name][metric] = max(
                 1,
                 max(
-                    tribe_stats[(tribal_group.name, tribe)]["distance"]
+                    tribe_stats[(tribal_group.name, tribe)][metric]
                     for tribe in tribal_group.tribes
                 ),
-            ),
-            points=max(
-                1,
-                max(
-                    tribe_stats[(tribal_group.name, tribe)]["points"]
-                    for tribe in tribal_group.tribes
-                ),
-            ),
-            ride_days=max(
-                1,
-                max(
-                    tribe_stats[(tribal_group.name, tribe)]["ride_days"]
-                    for tribe in tribal_group.tribes
-                ),
-            ),
-        )
+            )
 
     return render_template(
         "tribes/leaderboard.html",

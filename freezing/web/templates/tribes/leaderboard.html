@@ -21,7 +21,12 @@
                 {% if stats[(group.name, tribe)]["points"] >= maxima[group.name]["points"] %}&#128513;{% else %}&#128148;{% endif %}
                 {% endif %}
                 {{tribe}}
-                <span style="font-weight: normal">({{stats[(group.name, tribe)]["points"]}} points, {{stats[(group.name, tribe)]["distance"]}} miles, {{stats[(group.name, tribe)]["ride_days"]}} ride days)</span>
+                <span style="font-weight: normal">
+                    ({{stats[(group.name, tribe)]["points"]}} points,
+                    {{stats[(group.name, tribe)]["distance"]}} miles,
+                    {{stats[(group.name, tribe)]["ride_days"]}} ride days,
+                    {{stats[(group.name, tribe)]["riders"]}} riders)
+                </span>
             </h5>
             <div class="progress" style="margin-bottom: 5px">
                 <div
