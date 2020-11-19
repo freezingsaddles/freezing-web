@@ -150,7 +150,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
   * Remove all the teams in `TEAMS` and `OBSERVER_TEAMS`
   * Update the competition title `COMPETITION_TITLE` to reflect the new year
   * Revise any comments to reflect the new year
-* Delete all the data in the following MySQL tables: (see `freezing/sql/year-start.sql`)
+* Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
   * teams
   * athletes
   * rides
@@ -158,7 +158,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
   * ride_weather
 * Insert a new record into the `teams` table matching the MAIN_TEAM id:
 
-    mysql -c "insert into teams values (567288, 'Freezing Saddles 2020', 1);"
+    insert into teams values (567288, 'Freezing Saddles 2020', 1);
 
 * Restart the services: 
 
