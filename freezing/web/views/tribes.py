@@ -38,28 +38,17 @@ def leaderboard():
         SELECT
             T.tribal_group,
             T.tribe_name,
-            sum(B.distance) AS distance,
-            sum(B.points) AS points,
-            count(B.athlete_id) AS ride_days
-        FROM tribes T JOIN daily_scores B ON T.athlete_id = B.athlete_id GROUP BY tribal_group, tribe_name;
+            COALESCE(SUM(B.distance), 0) AS distance,
+            COALESCE(SUM(B.points), 0) AS points,
+            COUNT(B.athlete_id) AS ride_days,
+            COUNT(DISTINCT T.athlete_id) AS riders
+        FROM tribes T LEFT OUTER JOIN daily_scores B ON T.athlete_id = B.athlete_id GROUP BY tribal_group, tribe_name;
         """
     )
     for t in meta.scoped_session().execute(stats_query).fetchall():
         tribe_stats[(t.tribal_group, t.tribe_name)].update(
-            distance=round(t.distance), points=round(t.points), ride_days=t.ride_days
+            distance=round(t.distance), points=round(t.points), ride_days=t.ride_days, riders=t.riders
         )
-
-    riders_query = text(
-        """
-        SELECT
-            T.tribal_group,
-            T.tribe_name,
-            count(T.athlete_id) AS riders
-        FROM tribes T GROUP BY tribal_group, tribe_name;
-        """
-    )
-    for t in meta.scoped_session().execute(riders_query).fetchall():
-        tribe_stats[(t.tribal_group, t.tribe_name)].update(riders=t.riders)
 
     maxima = defaultdict(dict)
     for tribal_group in tribal_groups:
