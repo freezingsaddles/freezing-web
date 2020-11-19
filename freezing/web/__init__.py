@@ -23,6 +23,7 @@ from freezing.web.views import (
     photos,
     api,
     alt_scoring,
+    tribes,
 )
 from freezing.web.utils import auth
 
@@ -37,6 +38,7 @@ app.register_blueprint(pointless.blueprint, url_prefix="/pointless")
 app.register_blueprint(photos.blueprint, url_prefix="/photos")
 app.register_blueprint(user.blueprint, url_prefix="/my")
 app.register_blueprint(api.blueprint, url_prefix="/api")
+app.register_blueprint(tribes.blueprint, url_prefix="/tribes")
 
 
 @app.before_request
