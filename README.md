@@ -140,29 +140,41 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 * Get the numeric club ID from the URL of the Strava _Recent Activity_ page for the club.
 * Gain access to the production server via SSH
 * Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means.
-* Make a backup of the 
+* Make a backup of the database: 
+
     mysqldump > "freezing-$(date +'%Y-%m-%d').sql"
+
 * Make a backup of the `.env` file from `/opt/compose/.env`:
+ 
     cp /opt/compose/.env "/opt/compose/.env-$(date +'%Y-%m-%d')"
+
 * Edit the `.env` file for the production server (look in `/opt/compose/.env`) as follows:
   * Update the start and end dates
   * Update the main Strava team id `MAIN_TEAM`
   * Remove all the teams in `TEAMS` and `OBSERVER_TEAMS`
   * Update the competition title `COMPETITION_TITLE` to reflect the new year
   * Revise any comments to reflect the new year
-* Delete all the data in the following MySQL tables: (see freezing/sql/year-start.sql)
+* Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
   * teams
   * athletes
   * rides
   * ride_geo
   * ride_weather
 * Insert a new record into the `teams` table matching the MAIN_TEAM id:
-     insert into teams values (567288, 'Freezing Saddles 2020', 1);
-* Restart the services: `cd /opt/compose && docker-compose up -d`
+
+    insert into teams values (567288, 'Freezing Saddles 2020', 1);
+
+* Restart the services: 
+
+    cd /opt/compose && docker-compose up -d
+
 * Once the teams are announced (for the original Freezing Saddles competition, typically at the Happy Hour in early January):
   * Add the team IDs for the competition teams and any observer teams (ringer teams) into the production `.env` file
-  * Restart the services: `cd /opt/compose && docker-compose up -d`
-  * Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competiton teams.
+  * Restart the services:
+
+    cd /opt/compose && docker-compose up -d
+
+Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competiton teams.
 
 # Legal
 
