@@ -1,6 +1,6 @@
 ---
 title: Adulting
-description: "Pointless prize for doing stuff on your bike you might be tempted to do in your car. Groery store, post office, pharmacy dentist, manicurist, gym, farmers market, dry cleaning, bike shop, library, etc. Commutes, coffee rides, kid pick up / drop off do not count. Tag rides with #adulting or #FS2020Adulting."
+description: "Pointless prize for doing stuff on your bike you might be tempted to do in your car. Groery store, post office, pharmacy dentist, manicurist, gym, farmers market, dry cleaning, bike shop, library, etc. Commutes, coffee rides, kid pick up / drop off do not count. Tag rides with #adulting."
 url: http://bikearlingtonforum.com/showthread.php?15602-Pointless-Prize-Adulting-(aka-errandaneuring-if-you-so-fancy)-FS2020Adulting
 fields:
   - name: id
@@ -14,8 +14,6 @@ fields:
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as adulting_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id
-  where R.name like '%#adulting%' collate utf8mb4_general_ci or
-        R.name like '%#BAFSAdulting%' collate utf8mb4_general_ci or
-        R.name like '%#FS2020Adulting%' collate utf8mb4_general_ci
+  where R.name like '%#adulting%' collate utf8mb4_general_ci
   group by A.id, A.display_name
   order by adulting_rides desc
