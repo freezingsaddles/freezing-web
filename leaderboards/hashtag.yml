@@ -1,11 +1,10 @@
 ---
 tags:
   - tag: tacoloco
-    alt: FS2020tacoloco
     name: Tacos Tacos Tacos
     description: |
       The object is to visit as many DIFFERENT, taco places as possible (on your bike, of course!) and
-      <code>#tacoloco</code> (or <code>#FS2020tacoloco</code>) one up.
+      <code>#tacoloco</code> one up.
     url: http://bikearlingtonforum.com/showthread.php?15707-TACOS-TACOS-TACOS-This-ain%92t-no-burrito-pointless-prize-ride
     sponsor: Felipe
     rank_by_rides: True
@@ -27,7 +26,6 @@ tags:
     rank_by_rides: True
 
   - tag: chocolateuring
-    alt: FS2020chocolateuring
     name: Chocolateuring
     description: |
       Do you like chocolate? While out on a bike ride? If so, then this side bet is for you.

@@ -22,5 +22,5 @@ delete from ride_weather;
 /* don't forget to add the new competion's team back in after
    deleting last year's data, for example:
 
-   insert into teams values (23456, 'Freezing Saddles 2020', 1);
+   insert into teams values (23456, 'Freezing Saddles 2021', 1);
 */
