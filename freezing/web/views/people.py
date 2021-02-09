@@ -150,6 +150,7 @@ def ridedays():
             x["display_name"],
             x["rides"],
             x["miles"],
+            x["contender"],
         )
         for x in meta.engine.execute(q, today=contender_date).fetchall()
     ]

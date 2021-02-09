@@ -10,14 +10,14 @@
         <p>Red means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.</p>
 <table class="table table-condensed">
     <tr><th>Rider</th><th>Days</th><th>Miles</th><th>Every Day Rider?</th></tr>
-{% for a, b, c, d in ride_days %}
-	{% if c >= num_days %}<tr class="success">
-	{% elif c == (num_days - 1) and not all_done %}<tr class="warning">
-	{% elif c < num_days %}<tr class="danger">
+{% for id, name, days, miles, contender in ride_days %}
+	{% if days >= num_days %}<tr class="success">
+	{% elif days == (num_days - 1) and contender and not all_done %}<tr class="warning">
+	{% else %}<tr class="danger">
 	{% endif %}
-    <td><a href="/people/{{a}}">{{b}}</a></td><td>{{c}}</td><td>{{d | round(1)}}</td><td>
-    {% if c >= num_days %}🏆
-	{% elif c == (num_days - 1) and not all_done %}
+    <td><a href="/people/{{id}}">{{name}}</a></td><td>{{days}}</td><td>{{miles | round(1)}}</td><td>
+    {% if days >= num_days %}🏆
+	{% elif days == (num_days - 1) and contender and not all_done %}
     ⚠️
 	{% endif %}
     <td></tr>
