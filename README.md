@@ -174,7 +174,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
     cd /opt/compose && docker-compose up -d
 
-Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competiton teams.
+Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competition teams.
 
 # Legal
 
