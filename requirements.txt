@@ -2,7 +2,7 @@
 -e git+https://github.com/hozn/GeoAlchemy@0.7.3dev1#egg=GeoAlchemy
 Flask==1.1.1
 PyMySQL==0.9.3
-PyYAML==5.3.1
+PyYAML==5.4
 arrow==0.15.5
 beautifulsoup4==4.8.2
 colorlog==4.1.0
