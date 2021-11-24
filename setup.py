@@ -22,7 +22,7 @@ __authors__ = ['"Hans Lellelid" <hans@xmpl.org>',
 
 __copyright__ = "Copyright 2015 Hans Lellelid"
 
-version = '1.1.11'
+version = '1.1.13'
 
 long_description="""
 The freezing saddles cycling competition website/scoreboard.

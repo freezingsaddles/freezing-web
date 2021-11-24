@@ -374,3 +374,31 @@ def daily_variance():
     return render_template(
         "pointless/daily_variance.html", data={"tdata": data, "min_days": min_days}
     )
+
+
+@blueprint.route("/civilwarhistory")
+def civilwarhistory():
+    q = text(
+        """
+        select
+        A.id as athlete_id,
+        A.display_name as athlete_name,
+        sum(case when (upper(R.name) like '%#CIVILWARMARKER%') then 1 else 0 end) as markers,
+        sum(case when (upper(R.name) like '%#CIVILWARSTREET%') then 1 else 0 end) as streets
+        from lbd_athletes A
+        join rides R on R.athlete_id = A.id
+        where (upper(R.name) like '%#CIVILWARMARKER%' or upper(R.name) like '%#CIVILWARSTREET%')
+        group by A.id, A.display_name
+    """
+    )
+
+    data = []
+    for x in meta.scoped_session().execute(q).fetchall():
+        markers = x['markers']
+        streets = x['streets']
+        total = (markers * 5) + (streets * 2)
+        data.append((x["athlete_id"], x["athlete_name"], markers, markers * 5, streets, streets * 2, total))
+    return render_template(
+        "pointless/civilwarhistory.html",
+        data={"tdata": sorted(data, key=lambda v: v[6], reverse=True)},
+    )
