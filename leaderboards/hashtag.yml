@@ -27,6 +27,13 @@ tags:
     sponsor: Felipe
     rank_by_rides: True
 
+  - tag: donut
+    name: Doughnut Rides
+    description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
+    url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021
+    sponsor: Currently Unsponsored
+    rank_by_rides: True
+
   - tag: freezingerrands2021
     name: Errandeering
     description: |
