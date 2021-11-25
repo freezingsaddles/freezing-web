@@ -220,7 +220,7 @@ def authorization():
             multiple_teams=multiple_teams,
             no_teams=no_teams,
             message=message,
-            rides_url=url_for("user.rides")
+            rides_url=url_for("user.rides"),
             competition_title=config.COMPETITION_TITLE,
         )
 
