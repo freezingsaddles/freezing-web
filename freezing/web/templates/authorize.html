@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="jumbotron">
-    <h1>Join the Competition!</h1>
-    <p class="lead">
-    	In order to count your ride statistics, we need you to authorize the Freezing Saddles application
-    	to access (read) your Strava data. 
+	<h1>Join the Competition!</h1>
+	<p class="lead">
+		In order to count your ride statistics, we need you to authorize the Freezing Saddles application
+		to access (read) your Strava data.
+	</p>
+	<p>
+		Login via _Connect with Strava_ and you can also view personalized competition information.
 	</p>
 	<div class="radio">
 		<label>
@@ -28,7 +31,7 @@
 {% block foot %}
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#connect-strava').click(function() {
+	$('#connect-strava').click(function() {
    		if ($('#private-scope').is(':checked')) {
    			// console.log('private', $('#private-scope').val());
    			window.location.href=$('#private-scope').val();
@@ -36,7 +39,7 @@ $(document).ready(function() {
    			// console.log('public', $('#public-scope').val());
    			window.location.href=$('#public-scope').val();
    		}
-    });
+	});
 });
 </script>
 {% endblock %}

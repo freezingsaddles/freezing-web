@@ -135,89 +135,14 @@ def index():
     )
 
 
-@blueprint.route("/login")
-def login():
-    c = Client()
-    url = c.authorization_url(
-        client_id=config.STRAVA_CLIENT_ID,
-        redirect_uri=url_for(".logged_in", _external=True),
-        approval_prompt="auto",
-        scope=["read_all", "activity:read_all", "profile:read_all"],
-    )
-    return render_template(
-        "login.html", authorize_url=url, competition_title=config.COMPETITION_TITLE
-    )
-
-
 @blueprint.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for(".index"))
 
 
-@blueprint.route("/strava-oauth")
-def logged_in():
-    """
-    Method called by Strava (redirect) that includes parameters.
-    - state
-    - code
-    - error
-    """
-    error = request.args.get("error")
-    state = request.args.get("state")
-    if error:
-        return render_template(
-            "login_error.html", error=error, competition_title=config.COMPETITION_TITLE
-        )
-    else:
-        code = request.args.get("code")
-        client = Client()
-        token_dict = client.exchange_code_for_token(
-            client_id=config.STRAVA_CLIENT_ID,
-            client_secret=config.STRAVA_CLIENT_SECRET,
-            code=code,
-        )
-        # Use the now-authenticated client to get the current athlete
-        strava_athlete = client.get_athlete()
-
-        athlete_model = data.update_athlete_auth(strava_athlete, token_dict)
-        if not athlete_model:
-            return render_template(
-                "login_error.html",
-                error="ATHLETE_NOT_FOUND",
-                competition_title=config.COMPETITION_TITLE,
-            )
-
-        multiple_teams = None
-        no_teams = False
-        team = None
-        message = None
-        try:
-            team = data.register_athlete_team(
-                strava_athlete=strava_athlete, athlete_model=athlete_model,
-            )
-        except MultipleTeamsError as multx:
-            multiple_teams = multx.teams
-            message = multx
-        except NoTeamsError as noteamsx:
-            no_teams = True
-            message = noteamsx
-        if not no_teams:
-            auth.login_athlete(strava_athlete)
-            return redirect(url_for("user.rides"))
-        else:
-            return render_template(
-                "login_results.html",
-                athlete=strava_athlete,
-                team=team,
-                multiple_teams=multiple_teams,
-                no_teams=no_teams,
-                message=message,
-                competition_title=config.COMPETITION_TITLE,
-            )
-
-
 @blueprint.route("/authorize")
+@blueprint.route("/login")
 def join():
     c = Client()
     public_url = c.authorization_url(
@@ -266,6 +191,12 @@ def authorization():
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
         athlete_model = data.register_athlete(strava_athlete, token_dict)
+        if not athlete_model:
+            return render_template(
+                "authorization_error.html",
+                error="ATHLETE_NOT_FOUND",
+                competition_title=config.COMPETITION_TITLE,
+            )
         multiple_teams = None
         no_teams = False
         team = None
@@ -280,7 +211,8 @@ def authorization():
         except NoTeamsError as noteamx:
             no_teams = True
             message = noteamx
-
+        if not no_teams:
+            auth.login_athlete(strava_athlete)
         return render_template(
             "authorization_success.html",
             athlete=strava_athlete,
@@ -288,6 +220,7 @@ def authorization():
             multiple_teams=multiple_teams,
             no_teams=no_teams,
             message=message,
+            rides_url=url_for("user.rides")
             competition_title=config.COMPETITION_TITLE,
         )
 
