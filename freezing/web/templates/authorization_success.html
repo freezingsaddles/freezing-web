@@ -5,22 +5,29 @@
 	Welcome, {{ athlete.firstname }}.
 </p>
 <p>
-  	You have successfully authorized the Freezing Saddles application to read your Strava rides.
+  	You have successfully logged in to Strava and authorized the Freezing Saddles application to read your rides.
 </p>
 <ul>
 	<li>Make sure you have registered on the <a href="http://register.freezingsaddles.com/">signup sheet</a>.
 	Note: for the purposes of the registration form, your Strava user ID is <strong>{{ athlete.id }}</strong>.
 	</li>
 {% if no_teams %}
-	<li><strong>You need to join a competition team Strava club.</strong> Or maybe the app just needs to be updated to
-		know about the Strava teams.  Don't worry,
-	your rides will count but they won't be on any leaderboards until you have joined one of the competition
-	teams. 
+    <li><strong>Uh-oh, something went wrong</strong>. 
+    So you are a Strava athlete, we get that. Unfortunately, one of these two things is true:
+    <ol>
+        <li>you did not give Strava permission for us to "View your complete Strava profile".
+            Without that, we can't see what clubs you belong to.</li>
+        <li>you are not registered with any of the configured Freezing Saddles team clubs; 
+            if that is the case, <strong>You need to join a competition team Strava club.</strong> 
+            Or maybe the app just needs to be updated to know about the Strava teams. 
+            Don't worry, your rides will count but they won't be on any leaderboards until you have joined one of the
+            competition teams. 
+    </ol>
 	</li>
 {% elif multiple_teams %}
-	<li><strong>Houston we have a problem.</strong>  It looks like you joined multiple 
-Strava clubs that are  registered as competition teams.  Here are the problematic teams
-(please ensure you are only a member of one of them):
+	<li><strong>Houston we have a problem</strong>.
+    It looks like you joined _multiple_ Strava clubs that are registered as competition teams.  
+    Here are the problematic teams (please ensure you are only a member of one of them):
 		<ul>
 			{% for team in multiple_teams %} 
 			<li>{{ team.name }}</li>
@@ -29,9 +36,13 @@ Strava clubs that are  registered as competition teams.  Here are the problemati
 	</li>
 {% else %}
 	<li>
-		<strong>You are registered with a team!</strong>  You are a member of 
+		<strong>You are registered with a team!</strong>
+        You are a member of the
 		<strong>{{ team.name }}</strong> Strava club.
 	</li>
+    <li>
+        View your <a href={{ rides_url }}>personal rides page.</a>
+    </li>
 {% endif %}
 {% endblock %}
 </ul>
