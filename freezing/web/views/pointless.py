@@ -71,7 +71,7 @@ def weekendwarrior():
 
 @blueprint.route("/avgtemp")
 def avgtemp():
-    """ sum of ride distance * ride avg temp divided by total distance """
+    """sum of ride distance * ride avg temp divided by total distance"""
     return generic("/avgtemp")
 
 
@@ -394,10 +394,20 @@ def civilwarhistory():
 
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
-        markers = x['markers']
-        streets = x['streets']
+        markers = x["markers"]
+        streets = x["streets"]
         total = (markers * 5) + (streets * 2)
-        data.append((x["athlete_id"], x["athlete_name"], markers, markers * 5, streets, streets * 2, total))
+        data.append(
+            (
+                x["athlete_id"],
+                x["athlete_name"],
+                markers,
+                markers * 5,
+                streets,
+                streets * 2,
+                total,
+            )
+        )
     return render_template(
         "pointless/civilwarhistory.html",
         data={"tdata": sorted(data, key=lambda v: v[6], reverse=True)},
