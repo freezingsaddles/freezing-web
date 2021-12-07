@@ -203,7 +203,8 @@ def authorization():
         message = None
         try:
             team = data.register_athlete_team(
-                strava_athlete=strava_athlete, athlete_model=athlete_model,
+                strava_athlete=strava_athlete,
+                athlete_model=athlete_model,
             )
         except MultipleTeamsError as multx:
             multiple_teams = multx.teams

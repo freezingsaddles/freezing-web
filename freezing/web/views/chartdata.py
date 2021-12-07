@@ -591,8 +591,7 @@ def indiv_after_sunset():
 
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
-    """
-    """
+    """ """
     teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     day_q = text(
         """
@@ -615,7 +614,10 @@ def user_daily_points(athlete_id):
     for i, dt in enumerate(day_r):
         # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
         day_no = (
-            utc.localize(dt, is_dst=None,)
+            utc.localize(
+                dt,
+                is_dst=None,
+            )
             .astimezone(config.TIMEZONE)
             .timetuple()
             .tm_yday
@@ -643,8 +645,7 @@ def user_daily_points(athlete_id):
 
 @blueprint.route("/user_weekly_points/<athlete_id>")
 def user_weekly_points(athlete_id):
-    """
-    """
+    """ """
     teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     week_q = text(
         """
@@ -686,8 +687,7 @@ def user_weekly_points(athlete_id):
 
 @blueprint.route("/team_weekly_points")
 def team_weekly_points():
-    """
-    """
+    """ """
 
     q = text(
         """
@@ -734,8 +734,7 @@ def team_weekly_points():
 
 @blueprint.route("/team_cumul_points")
 def team_cumul_points():
-    """
-    """
+    """ """
     teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
 
     q = text(
@@ -799,8 +798,7 @@ def team_cumul_points():
 
 @blueprint.route("/team_cumul_mileage")
 def team_cumul_mileage():
-    """
-    """
+    """ """
     teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
 
     q = text(
@@ -921,8 +919,7 @@ def indiv_elev_dist():
 
 @blueprint.route("/riders_by_lowtemp")
 def riders_by_lowtemp():
-    """
-    """
+    """ """
     q = text(
         """
             select date(start_date) as start_date,
@@ -957,8 +954,7 @@ def riders_by_lowtemp():
 
 @blueprint.route("/distance_by_lowtemp")
 def distance_by_lowtemp():
-    """
-    """
+    """ """
     q = text(
         """
             select date(start_date) as start_date,
@@ -1000,7 +996,9 @@ def gviz_api_jsonify(*args, **kwargs):
     """
     return current_app.response_class(
         json.dumps(
-            dict(*args, **kwargs), indent=None, cls=gviz_api.DataTableJSONEncoder,
+            dict(*args, **kwargs),
+            indent=None,
+            cls=gviz_api.DataTableJSONEncoder,
         ),
         mimetype="application/json",
     )
