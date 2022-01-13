@@ -177,7 +177,7 @@ def hashtag_leaderboard(hashtag):
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
-    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), "coffeeride", 2)
+    tdata = _get_hashtag_tdata("coffeeride".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )
