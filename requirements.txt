@@ -1,4 +1,4 @@
-Flask==1.1.1
+Flask==2.0.1
 GeoAlchemy @ https://github.com/hozn/GeoAlchemy/archive/0.7.3dev1.tar.gz
 PyMySQL==0.9.3
 PyYAML==5.4
@@ -10,6 +10,9 @@ envparse==0.2.0
 freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.5.19.tar.gz
 geojson==2.5.0
 gunicorn==20.0.4
+# TODO: upgrade Flask to 2.0+ instead of fixing the itsdangerous version
+# Fix for itsdangerous suggested by https://exerror.com/importerror-cannot-import-name-json-from-itsdangerous/
+itsdangerous==2.0.1
 marshmallow==3.14.1
 marshmallow-enum @ https://github.com/lyft/marshmallow_enum/archive/support-for-marshamallow-3.tar.gz
 polyline==1.4.0
