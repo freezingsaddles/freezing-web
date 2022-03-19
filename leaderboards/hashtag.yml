@@ -1,15 +1,6 @@
 ---
 tags:
 
-  - tag: bafs2021smallbiz
-    name: Quaxapalooza
-    description: |
-      Support a local small business by buying something and picking it up via bike. Be sure to tag your ride with
-       <code>#BAFS2021SmallBiz</code> and the name of the business you visited.
-    url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
-    sponsor: rumipumi
-    rank_by_rides: True
-
   - tag: bikeinfrastructure
     name: Bike Infrastructure
     description: |
@@ -25,24 +16,6 @@ tags:
       the most flats wins! Well loses.
     url: http://bikearlingtonforum.com/showthread.php?18130-Deflated-Pointless-Prize
     sponsor: Felipe
-    rank_by_rides: True
-
-  - tag: freezingerrands2021
-    name: Errandeering
-    description: |
-       Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
-       Tag with <code>#FreezingErrands2021</code>.
-    url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021&p=203703#post203703
-    sponsor: BeeTinDC
-    rank_by_rides: True
-
-  - tag: fs2021coffeesnobride
-    name: Coffee Snob
-    description: |
-      Ride your bike to drink coffee (a certain Seattle chain is verboten). Be sure to post
-      photographic evidence on Strava and to tag your ride with <code>#FS2021coffeesnobride</code>.
-    url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021&p=203471#post203471
-    sponsor: chuxtr
     rank_by_rides: True
 
   - tag: fswormhole
@@ -99,11 +72,3 @@ tags:
     url: http://bikearlingtonforum.com/showthread.php?18148-FS2021-Pointless-Prize-STEM
     rank_by_rides: True
 
-  - tag: tandemstyle
-    name: Tandem Style
-    description: |
-      If you see a tandem, snap a picture, put it in your Strava, and tag with <code>#tandemstyle</code>.
-      If you see Russ @DCA & Elizabeth I Like Wheels on Miss MoneyPenny, snap that picture for 5 points extra!
-    sponsor: elizsnyder
-    url: http://bikearlingtonforum.com/showthread.php?18114-tandemstyle-Pointless-Prize
-    rank_by_rides: True
