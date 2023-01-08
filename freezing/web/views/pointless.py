@@ -173,6 +173,45 @@ def hashtag_leaderboard(hashtag):
         meta=meta,
     )
 
+def _get_segment_tdata(segment):
+    sess = meta.scoped_session()
+    q = text(
+        """
+        select
+            A.id,
+            A.display_name      as athlete_name,
+            E.segment_name      as segment_name,
+            count(E.id)         as segment_rides,
+            avg(E.elapsed_time) as average_time
+        from
+            athletes A join
+            rides R on R.athlete_id = A.id join
+            ride_efforts E on E.ride_id = R.id
+        where
+            E.segment_id = :segment
+        group by
+            A.id, A.display_name, E.segment_name;
+        """
+    )
+    rs = sess.execute(q, params=dict(segment=segment))
+    retval = [
+        (x["id"], x["athlete_name"], x["segment_name"], x["segment_rides"], x["average_time"])
+        for x in rs.fetchall()
+    ]
+    return sorted(retval, key=operator.itemgetter(3), reverse=True)
+
+
+@blueprint.route("/segment/<int:segment>")
+def segment_leaderboard(segment):
+    tdata = _get_segment_tdata(
+        segment=segment,
+    )
+    return render_template(
+        "pointless/segment.html",
+        data={"tdata": tdata, "segment_id": segment, "segment_name": tdata[0][2] if tdata else "Unknown Segment"},
+        meta=meta,
+    )
+
 
 @blueprint.route("/coffeeride")
 def coffeeride():
