@@ -1,0 +1,29 @@
+---
+title: Ross Hill Loop
+description: |
+  Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> rides.<br/>Prize sponsored by randomduck.
+url: http://bikearlingtonforum.com/showthread.php?21003-Pointless-Prize-Ross-Hill-Loop
+fields:
+  - name: id
+    visible: false
+  - name: athlete_name
+    label: Athlete
+    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+  - name: segment_rides
+    label: Loop Rides
+    rank_by: true
+query: |
+  select
+    A.id,
+    A.display_name as athlete_name,
+    E.segment_id,
+    count(E.id) as segment_rides
+  from
+    lbd_athletes A join
+    rides R on R.athlete_id = A.id join
+    ride_efforts E on E.ride_id = R.id
+  where
+    E.segment_id in (1072528)
+  group by
+    A.id,
+    E.segment_id
