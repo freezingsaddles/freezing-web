@@ -4,10 +4,18 @@ tags:
   - tag: '420'
     name: Expand Your Horizons
     description: |
-      Ride to a cannabis dispensary and take a picture of it. Tag rides with #420 (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
+      Ride to a cannabis dispensary and take a picture of it. Tag rides with <code>#420</code> (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
     url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
     sponsor: AlanA
     rank_by_rides: False
+
+  - tag: abc
+    name: Vehicle ABCs
+    description: |
+       find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
+    url: http://bikearlingtonforum.com/showthread.php?21015-POINTLESS-PRIZE-2023-VEHICLE-ABCs-abc
+    sponsor: bikingjenn
+    rank_by_rides: True
 
   - tag: bafs2021smallbiz
     name: Quaxapalooza
@@ -17,6 +25,15 @@ tags:
     url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
     sponsor: rumipumi
     rank_by_rides: True
+
+  - tag: 'biathlon'
+    name: Biathlon
+    description: |
+      No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see. 
+    url: http://bikearlingtonforum.com/showthread.php?21007-Pointless-Prize-Biathalon
+    sponsor: lordofthemark
+    rank_by_rides: False
+
 
   - tag: bikeinfrastructure
     name: Bike Infrastructure
