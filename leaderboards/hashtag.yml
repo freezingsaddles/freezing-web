@@ -106,6 +106,14 @@ tags:
     url: http://bikearlingtonforum.com/showthread.php?18069-FS2021-LakeFinder
     rank_by_rides: True
 
+  - tag: oldGeorge
+    name: Old Georgetown Bike Lane
+    description: |
+       Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
+    sponsor: Jessica Hirschhorn
+    url: http://bikearlingtonforum.com/showthread.php?21013-Pointless-Prize!-Old-Georgetown-Bike-Lane
+    rank_by_rides: True
+
   - tag: parkfinder
     name: Park Finder
     description: |
