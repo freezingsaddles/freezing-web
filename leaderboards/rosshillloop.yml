@@ -1,7 +1,9 @@
 ---
 title: Ross Hill Loop
 description: |
-  Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> rides.<br/>Prize sponsored by randomduck.
+  Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
+  <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
+  double dips.<br/>Prize sponsored by randomduck.
 url: http://bikearlingtonforum.com/showthread.php?21003-Pointless-Prize-Ross-Hill-Loop
 fields:
   - name: id
@@ -14,16 +16,26 @@ fields:
     rank_by: true
 query: |
   select
-    A.id,
-    A.display_name as athlete_name,
-    E.segment_id,
-    count(E.id) as segment_rides
-  from
-    lbd_athletes A join
-    rides R on R.athlete_id = A.id join
-    ride_efforts E on E.ride_id = R.id
-  where
-    E.segment_id in (1072528)
+    Q.id,
+    Q.display_name as athlete_name,
+    sum(greatest(righteous, wrongeous)) as segment_rides
+  from (
+    select
+      A.id,
+      A.display_name,
+      R.id as ride_id,
+      sum(case when E.segment_id = 1072528 then 1 else 0 end) as righteous,
+      sum(case when E.segment_id = 4934241 then 1 else 0 end) as wrongeous
+    from
+      athletes A
+    inner join
+      rides R on R.athlete_id = A.id
+    inner join
+      ride_efforts E on E.ride_id = R.id
+    group by
+      A.id, A.display_name, R.id
+  ) as Q
   group by
-    A.id,
-    E.segment_id
+    Q.id, Q.display_name
+  having
+    segment_rides > 0
