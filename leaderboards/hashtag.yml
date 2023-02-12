@@ -54,7 +54,7 @@ tags:
 
   # This is a first cut of an implementation for this, to really hew to the rules would be much more
   # complicated - involving excluding rides that are < 5 miles (per day maybe?) and geofencing rides to the DMV.
-  - tag: firsttimefs
+  - tag: FirstTimeFS
     name: First Time Freezing Saddles
     description: |
        Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
