@@ -18,8 +18,6 @@ query: |
   select
     Q.id,
     Q.display_name as athlete_name,
-    Q.segment_id,
-    Q.segment_name,
     sum(greatest(righteous, wrongeous)) as segment_rides
   from (
     select
@@ -40,6 +38,6 @@ query: |
       A.id, A.display_name, E.segment_id, R.id
   ) as Q
   group by
-    Q.id, Q.display_name, Q.segment_id
+    Q.id, Q.display_name
   having
     segment_rides > 0
