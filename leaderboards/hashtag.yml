@@ -52,6 +52,14 @@ tags:
     sponsor: Felipe
     rank_by_rides: True
 
+  - tag: firsttimefs
+    name: First Time Freezing Saddles
+    description: |
+       Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
+    url: http://bikearlingtonforum.com/showthread.php?21057-FS-First-Time-Riders-A-PP-just-for-you!
+    sponsor: Kbikeva
+    rank_by_rides: True
+
   - tag: freezingerrands
     name: Errandeering
     description: |
