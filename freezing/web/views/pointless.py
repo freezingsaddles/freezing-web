@@ -253,7 +253,7 @@ def _get_ross_hill_loop_tdata():
         (x["id"], x["athlete_name"], x["segment_rides"], x["total_time"])
         for x in rs.fetchall()
     ]
-    return sorted(retval, key=operator.itemgetter(3), reverse=True)
+    return sorted(retval, key=operator.itemgetter(2), reverse=True)
 
 
 @blueprint.route("/rosshillloop")
