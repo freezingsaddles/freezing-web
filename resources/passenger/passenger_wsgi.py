@@ -10,23 +10,27 @@ import sys, os
 import logging
 
 BASE_DIR = os.path.join(os.path.dirname(__file__))
-INTERP = os.path.join(BASE_DIR, 'env', 'bin', 'python')
+INTERP = os.path.join(BASE_DIR, "env", "bin", "python")
 # This trick causes a reload using our correct python environment
 if sys.executable != INTERP:
     os.execl(INTERP, INTERP, *sys.argv)
-sys.path.append(os.path.join(BASE_DIR, 'bafs'))
+sys.path.append(os.path.join(BASE_DIR, "bafs"))
 
-os.environ['APP_SETTINGS'] = os.path.join(BASE_DIR, 'settings.cfg')
+os.environ["APP_SETTINGS"] = os.path.join(BASE_DIR, "settings.cfg")
 
 from freezing.web import app as application
 
-ch = logging.FileHandler(os.path.join(BASE_DIR, 'application.log'))
+ch = logging.FileHandler(os.path.join(BASE_DIR, "application.log"))
 ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s %(levelname)-8s [%(name)s] %(message)s')
+formatter = logging.Formatter("%(asctime)s %(levelname)-8s [%(name)s] %(message)s")
 ch.setFormatter(formatter)
 
-loggers = [application.logger, logging.getLogger('stravalib'),
-           logging.getLogger('requests'), logging.root]
+loggers = [
+    application.logger,
+    logging.getLogger("stravalib"),
+    logging.getLogger("requests"),
+    logging.root,
+]
 
 for l in loggers:
     l.setLevel(logging.INFO)

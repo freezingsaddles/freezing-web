@@ -71,7 +71,7 @@ def weekendwarrior():
 
 @blueprint.route("/avgtemp")
 def avgtemp():
-    """ sum of ride distance * ride avg temp divided by total distance """
+    """sum of ride distance * ride avg temp divided by total distance"""
     return generic("/avgtemp")
 
 
@@ -173,11 +173,103 @@ def hashtag_leaderboard(hashtag):
         meta=meta,
     )
 
+def _get_segment_tdata(segment):
+    sess = meta.scoped_session()
+    q = text(
+        """
+        select
+            A.id,
+            A.display_name      as athlete_name,
+            E.segment_name      as segment_name,
+            count(E.id)         as segment_rides,
+            sum(E.elapsed_time) as total_time
+        from
+            athletes A join
+            rides R on R.athlete_id = A.id join
+            ride_efforts E on E.ride_id = R.id
+        where
+            E.segment_id = :segment
+        group by
+            A.id, A.display_name, E.segment_name;
+        """
+    )
+    rs = sess.execute(q, params=dict(segment=segment))
+    retval = [
+        (x["id"], x["athlete_name"], x["segment_name"], x["segment_rides"], x["total_time"])
+        for x in rs.fetchall()
+    ]
+    return sorted(retval, key=operator.itemgetter(3), reverse=True)
+
+
+@blueprint.route("/segment/<int:segment>")
+def segment_leaderboard(segment):
+    tdata = _get_segment_tdata(
+        segment=segment,
+    )
+    return render_template(
+        "pointless/segment.html",
+        data={"tdata": tdata, "segment_id": segment, "segment_name": tdata[0][2] if tdata else "Unknown Segment"},
+        meta=meta,
+    )
+
+
+def _get_ross_hill_loop_tdata():
+    sess = meta.scoped_session()
+    # counts whichever loop you have done more efforts on for a given ride, because the loops
+    # overlap so two loops on 1072528 means one on 4934241 and vice versa.
+    q = text(
+        """
+         select
+            Q.id,
+            Q.display_name as athlete_name,
+            sum(greatest(righteous, wrongeous)) as segment_rides,
+            sum(case when righteous > wrongeous THEN righttime ELSE wrongtime end) AS total_time
+         from (
+            select
+              A.id,
+              A.display_name,
+              R.id as ride_id,
+              sum(case when E.segment_id = 1072528 then 1 else 0 end) as righteous,
+              sum(case when E.segment_id = 1072528 then E.elapsed_time else 0 end) as righttime,
+              sum(case when E.segment_id = 4934241 then 1 else 0 end) as wrongeous,
+              sum(case when E.segment_id = 4934241 then E.elapsed_time else 0 end) as wrongtime
+            from
+              athletes A
+            inner join
+              rides R on R.athlete_id = A.id
+            inner join
+              ride_efforts E on E.ride_id = R.id
+            group by
+              A.id, A.display_name, R.id
+         ) as Q
+         group by
+            Q.id, Q.display_name
+         having
+            segment_rides > 0
+        """
+    )
+    rs = sess.execute(q)
+    retval = [
+        (x["id"], x["athlete_name"], x["segment_rides"], x["total_time"])
+        for x in rs.fetchall()
+    ]
+    return sorted(retval, key=operator.itemgetter(2), reverse=True)
+
+
+@blueprint.route("/rosshillloop")
+def ross_hill_loop():
+    tdata = _get_ross_hill_loop_tdata()
+    return render_template(
+        "pointless/rosshillloop.html",
+        data={"tdata": tdata},
+        meta=meta,
+    )
+
 
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
-    tdata = _get_hashtag_tdata("FS{0}coffeeride".format(year), "coffeeride", 2)
+    tdata = _get_hashtag_tdata("coffeeride".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )
@@ -394,10 +486,20 @@ def civilwarhistory():
 
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
-        markers = x['markers']
-        streets = x['streets']
+        markers = x["markers"]
+        streets = x["streets"]
         total = (markers * 5) + (streets * 2)
-        data.append((x["athlete_id"], x["athlete_name"], markers, markers * 5, streets, streets * 2, total))
+        data.append(
+            (
+                x["athlete_id"],
+                x["athlete_name"],
+                markers,
+                markers * 5,
+                streets,
+                streets * 2,
+                total,
+            )
+        )
     return render_template(
         "pointless/civilwarhistory.html",
         data={"tdata": sorted(data, key=lambda v: v[6], reverse=True)},
