@@ -84,7 +84,8 @@ def register_athlete(strava_athlete, token_dict):
             athlete.display_name = strava_athlete.firstname
         else:
             athlete.display_name = "{0} {1}".format(
-                strava_athlete.firstname.strip(), strava_athlete.lastname.strip(),
+                strava_athlete.firstname.strip(),
+                strava_athlete.lastname.strip(),
             )
     athlete.profile_photo = strava_athlete.profile
 
