@@ -1,0 +1,16 @@
+---
+tribal_groups:
+  - name: Which side of the river?
+    tribes:
+      - The right side
+      - The wrong side
+  - name: Your handlebars...
+    tribes:
+      - Dropped
+      - Flat
+  - name: Foot down...
+    tribes:
+      - Lefty
+      - Righty
+      - Track stand
+

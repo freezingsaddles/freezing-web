@@ -1,6 +1,22 @@
 ---
 tags:
 
+  - tag: '420'
+    name: Expand Your Horizons
+    description: |
+      Ride to a cannabis dispensary and take a picture of it. Tag rides with <code>#420</code> (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
+    url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
+    sponsor: AlanA
+    rank_by_rides: False
+
+  - tag: abc
+    name: Vehicle ABCs
+    description: |
+       find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
+    url: http://bikearlingtonforum.com/showthread.php?21015-POINTLESS-PRIZE-2023-VEHICLE-ABCs-abc
+    sponsor: bikingjenn
+    rank_by_rides: True
+
   - tag: bafs2021smallbiz
     name: Quaxapalooza
     description: |
@@ -9,6 +25,15 @@ tags:
     url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
     sponsor: rumipumi
     rank_by_rides: True
+
+  - tag: 'biathlon'
+    name: Biathlon
+    description: |
+      No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see. 
+    url: http://bikearlingtonforum.com/showthread.php?21007-Pointless-Prize-Biathalon
+    sponsor: lordofthemark
+    rank_by_rides: False
+
 
   - tag: bikeinfrastructure
     name: Bike Infrastructure
@@ -34,11 +59,21 @@ tags:
     sponsor: Currently Unsponsored
     rank_by_rides: True
 
-  - tag: freezingerrands2021
+  # This is a first cut of an implementation for this, to really hew to the rules would be much more
+  # complicated - involving excluding rides that are < 5 miles (per day maybe?) and geofencing rides to the DMV.
+  - tag: FirstTimeFS
+    name: First Time Riders
+    description: |
+       Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
+    url: http://bikearlingtonforum.com/showthread.php?21057-FS-First-Time-Riders-A-PP-just-for-you!
+    sponsor: Kbikeva
+    rank_by_rides: True
+
+  - tag: freezingerrands
     name: Errandeering
     description: |
        Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
-       Tag with <code>#FreezingErrands2021</code>.
+       Tag with <code>#FreezingErrands</code>.
     url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021&p=203703#post203703
     sponsor: BeeTinDC
     rank_by_rides: True
@@ -74,8 +109,16 @@ tags:
     description: |
       Ride your bike a least a mile to any lake, pond or massive impounded body of water (loosely defined) that is freely accessible
       to the public. Tag with <code>#LakeFinder</code>.
-    sponsor: Boomer
+    sponsor: Boomer2U
     url: http://bikearlingtonforum.com/showthread.php?18069-FS2021-LakeFinder
+    rank_by_rides: True
+
+  - tag: oldGeorge
+    name: Old Georgetown Bike Lane
+    description: |
+       Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
+    sponsor: Jessica Hirschhorn
+    url: http://bikearlingtonforum.com/showthread.php?21013-Pointless-Prize!-Old-Georgetown-Bike-Lane
     rank_by_rides: True
 
   - tag: parkfinder
@@ -90,10 +133,10 @@ tags:
   - tag: publicartfinder
     name: Public Art Finder
     description: |
-      Ride your bike at least a mile to any art form (loosely defined) that is freely accessible to the public. Take a picture and
-      upload your ride with hashtag <code>#publicartfinder</code>.
-    sponsor: Boomer
-    url: http://bikearlingtonforum.com/showthread.php?18070-FS2021-PublicArtFinder-pointless-prize
+      Ride your bike at least 10 miles to any art form (loosely defined) that is readily accessible to the general public. Only 1 art installation counts per ride! Take a picture and
+      upload your ride with hashtag <code>#publicartfinder</code>. Post to the forum on the linked thread.
+    sponsor: Boomer2U
+    url: http://bikearlingtonforum.com/showthread.php?21006-PublicArtFinder-FS2023-Pointless-Prize
     rank_by_rides: True
 
   - tag: stem
@@ -104,6 +147,31 @@ tags:
       Tag with <code>#STEM</code>.
     sponsor: bikesnick
     url: http://bikearlingtonforum.com/showthread.php?18148-FS2021-Pointless-Prize-STEM
+    rank_by_rides: False
+
+  - tag: singlespeed
+    name: Singlespeed
+    description: |
+      Riding singlespeed fell out of fashion years ago, but I still enjoy it. Does anyone else? Let's find out with a singlespeed pointless prize. See the linked forum post for complete rules and details.
+    sponsor: jlamb
+    url: http://bikearlingtonforum.com/showthread.php?20995-Pointless-Prize-Singlespeed
+    rank_by_rides: True
+
+
+  - tag: socks
+    name: Socks
+    description: |
+      Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
+    sponsor: Jessica Hirschhorn
+    url: http://bikearlingtonforum.com/showthread.php?20569-Socks-fs-2023
+    rank_by_rides: False
+
+  - tag: thetacoride
+    name: The Taco Ride
+    description: |
+      Leon and Robbie Rob are co-sponsoring The Taco Ride pointless prize. Of course, you know there are lots of taco places in the DMV area. And there is no better way re-energize during a ride or end a long ride with some tacos! For this pointless prize, simply ride your bike at least 5 miles round trip and snap a pic of your bike in front of the establishment, along with a pic of your meal. <strong>A BONUS POINT WILL BE GIVEN FOR A VEGAN OR VEGGIE TACO!</strong>
+    sponsor: Robbie Rob
+    url: http://bikearlingtonforum.com/showthread.php?21011-The-Taco-Ride
     rank_by_rides: True
 
   - tag: tandemstyle
@@ -113,4 +181,28 @@ tags:
       If you see Russ @DCA & Elizabeth I Like Wheels on Miss MoneyPenny, snap that picture for 5 points extra!
     sponsor: elizsnyder
     url: http://bikearlingtonforum.com/showthread.php?18114-tandemstyle-Pointless-Prize
+    rank_by_rides: True
+
+  - tag: tandem
+    name: Tandem
+    description: |
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
+    sponsor: NoVaNoobGA
+    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
+    rank_by_rides: True
+    
+  - tag: tandemvi
+    name: Tandem - Visually Impaired
+    description: |
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
+    sponsor: NoVaNoobGA
+    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
+    rank_by_rides: True
+    
+  - tag: tandemchild
+    name: Tandem Child
+    description: |
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
+    sponsor: NoVaNoobGA
+    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
     rank_by_rides: True
