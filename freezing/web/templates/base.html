@@ -67,7 +67,7 @@
                     <li>
                             <a href="http://bikearlingtonforum.com/forumdisplay.php?41-Freezing-Saddles-Winter-Riding-Competition">Forum</a>
                     </li>
-                    <li class="dropdown{% if request.path.startswith('/leaderboard') %} active{% endif %}">
+                    <li class="dropdown{% if request.path.startswith('/leaderboard') or request.path.startswith('/tribes') %} active{% endif %}">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Leaderboards <span class="caret"></span>
                         </a>
@@ -86,7 +86,8 @@
                             <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
                             <li><a href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
                             <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
-
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/tribes/leaderboard">Bike Tribes</a></li>
                         </ul>
                     </li>
                     <li class="{% if request.path.startswith('/photos') %} active{% endif %}">
