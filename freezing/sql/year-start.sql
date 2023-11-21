@@ -10,8 +10,9 @@ select count(*) from ride_weather as ride_weather_count;
 /* Trying to truncate here was timing out, weirdly. That should be super fast, but it wasn't. Delete instead. */
 select 'cleaning out rides';
 delete from rides;
-select 'cleaning out athletes';
-delete from athletes;
+/* In past years we also cleaned out the athletes table, but in 2024 we announced
+   the registration to be live before this happened. So let's keep the athletes,
+   that way people won't absolutely have to register again. */
 select 'cleaning out teams';
 delete from teams;
 select 'cleaning out ride_geo';
