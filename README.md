@@ -156,7 +156,6 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
   * Revise any comments to reflect the new year
 * Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
   * teams
-  * athletes
   * rides
   * ride_geo
   * ride_weather
