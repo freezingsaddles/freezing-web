@@ -16,7 +16,7 @@
 # MIT Licensed
 #
 # Copyright 2020 Richard Bullington-McGuire
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -24,10 +24,10 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,8 +40,14 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# Set DEBUG to true for enhanced debugging: run prefixed with "DEBUG=true"
+${DEBUG:-false} && set -vx
+# Credit to https://stackoverflow.com/a/17805088
+# and http://wiki.bash-hackers.org/scripting/debuggingtips
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+
 TMPFILE=$(mktemp -t wget-spider.XXXXXX)
-# http://redsymbol.net/articles/bash-exit-traps/ 
+# http://redsymbol.net/articles/bash-exit-traps/
 function finish {
   rm -f "$TMPFILE"
 }

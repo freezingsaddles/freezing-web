@@ -31,4 +31,5 @@ query: |
     E.segment_id in (22395425, 13943716, 13943733, 13943744, 13943752, 13943762, 22382566, 13943773)
   group by
     A.id,
-    E.segment_id
+    E.segment_id,
+    E.segment_name

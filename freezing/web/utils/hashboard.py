@@ -51,7 +51,7 @@ def load_hashtag(hashtag) -> HashtagBoardTag:
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
     with open(path, "rt", encoding="utf-8") as fp:
-        doc = yaml.load(fp)
+        doc = yaml.safe_load(fp)
 
     schema = HashtagBoardSchema()
     board: HashtagBoard = schema.load(doc)
