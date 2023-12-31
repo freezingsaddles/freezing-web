@@ -1,9 +1,9 @@
-Flask==2.2.2
+Flask==2.3.3
 GeoAlchemy @ https://github.com/hozn/GeoAlchemy/archive/0.7.3dev1.tar.gz
 PyMySQL==0.9.3
 PyYAML==6.0.1
 # Thanks https://stackoverflow.com/a/77214086/424301 - Flask did not pin Werkzeug dep
-Werkzeug==2.3.8
+Werkzeug==3.0.1
 alembic==0.9.7
 arrow==0.15.5
 beautifulsoup4==4.8.2

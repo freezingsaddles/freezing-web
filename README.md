@@ -1,7 +1,6 @@
 # Freezing Saddles Web
 
-This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based
-winter cycling competition software.
+This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based winter cycling competition software.
 
 **NOTE:** This application conists of multiple components that work together (designed to run as Docker containers).
 1. [freezing-web](https://github.com/freezingsaddles/freezing-web) - The website for viewing leaderboards   
@@ -13,12 +12,12 @@ winter cycling competition software.
 
 ## Dependencies
 
-* Python 3.6+ (will not work with python 2.x)
+* Python 3.9+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
-* MySQL 5.6+ (Sadly.)
+* MySQL 5.7
 
-We recommend that for ease of development and debugging, that you install Python 3.6 and pip directly on your workstation. This is tested to work on macOS 13.x (High Sierra), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
+We recommend that for ease of development and debugging, that you install Python 3.9 and pip directly on your workstation. This is tested to work on macOS 14.1.2 (23B92) (Sonoma), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
 
 ## Installation
 
@@ -32,25 +31,28 @@ shell$ for part in sync web compose nq model; do git clone https://github.com/fr
 
 # Create and activate a virtual environment for freezing-web
 shell$ cd freezing-web
-shell$ python3.6 -m venv env
+shell$ python3 -m venv env
 shell$ source env/bin/activate
 (env) shell$ pip install -r requirements.txt
 (env) shell$ python setup.py develop
 ```
 
 We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using
-the "(env) shell$" prefix before shell commands.)    
+the "(env) shell$" prefix before shell commands.)
 
 ### Database Setup
 
-This application requires MySQL.  I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting
-provider only supports MySQL), it's what we're doing.
+This application requires MySQL, for historical reasons. @hozn wrote:
 
-#### DB Setup using Docker
+> I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting provider only supports MySQL), it's what we're doing.
+
+These days, @obscurerichard hosts the production site on AWS, where we have a choice of many more databases, but since it started as MySQL it will probably stay as MySQL unless there's a really good reason to move. Perhaps PostgreSQL and its geospacial integration would be a better choice in the long run. Also, [Amazon Aurora](https://aws.amazon.com/rds/aurora/) is really slick for MySQL-compatible datbase engines, so we are sticking with MySQL for now.
+
+#### Database Setup using Docker
 
 We have some development support Docker Compose files that can help make database setup simpler, head over to the [freezing-compose](https://github.com/freezingsaddles/freezing-compose) repo for those instructions.
 
-#### Manual DB Setup
+#### Manual Database Setup
 
 Install MySQL, version 5.6 or newer. The current production server for https://freezingsaddles.org/ runs MySQL 5.6.
 
@@ -59,6 +61,7 @@ You should create a database and create a user that can access the database.  So
 ```bash
 shell$ mysql -uroot
 mysql> create database freezing;
+mysql> create user freezing@localhost identified by 'REDACTED';
 mysql> grant all on freezing.* to freezing@localhost;
 ```
 
