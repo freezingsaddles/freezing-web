@@ -173,7 +173,6 @@ def hashtag_leaderboard(hashtag):
         meta=meta,
     )
 
-
 def _get_segment_tdata(segment):
     sess = meta.scoped_session()
     q = text(
@@ -196,13 +195,7 @@ def _get_segment_tdata(segment):
     )
     rs = sess.execute(q, params=dict(segment=segment))
     retval = [
-        (
-            x["id"],
-            x["athlete_name"],
-            x["segment_name"],
-            x["segment_rides"],
-            x["total_time"],
-        )
+        (x["id"], x["athlete_name"], x["segment_name"], x["segment_rides"], x["total_time"])
         for x in rs.fetchall()
     ]
     return sorted(retval, key=operator.itemgetter(3), reverse=True)
@@ -215,11 +208,7 @@ def segment_leaderboard(segment):
     )
     return render_template(
         "pointless/segment.html",
-        data={
-            "tdata": tdata,
-            "segment_id": segment,
-            "segment_name": tdata[0][2] if tdata else "Unknown Segment",
-        },
+        data={"tdata": tdata, "segment_id": segment, "segment_name": tdata[0][2] if tdata else "Unknown Segment"},
         meta=meta,
     )
 

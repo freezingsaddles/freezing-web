@@ -17,6 +17,7 @@ from freezing.web.exc import ObjectNotFound
 
 
 class GenericBoardField(BaseMessage):
+
     name = None
     label = None
     type = None  # Do we need this ...?
@@ -25,6 +26,7 @@ class GenericBoardField(BaseMessage):
     rank_by: bool = False
 
     def format_value(self, v, row):
+
         if isinstance(v, str):
             if self.format:
                 return self.format.format(**dict(row))
@@ -87,9 +89,11 @@ class GenericBoardSchema(BaseSchema):
 
 
 def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]]:
+
     board = load_board(leaderboard)
 
     with meta.transaction_context(read_only=True) as session:
+
         rs = session.execute(board.query)
 
         if not board.fields:
@@ -101,6 +105,7 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
 
 
 def load_board(leaderboard) -> GenericBoard:
+
     path = os.path.join(
         config.LEADERBOARDS_DIR, "{}.yml".format(os.path.basename(leaderboard))
     )

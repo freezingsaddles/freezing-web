@@ -47,10 +47,7 @@ def leaderboard():
     )
     for t in meta.scoped_session().execute(stats_query).fetchall():
         tribe_stats[(t.tribal_group, t.tribe_name)].update(
-            distance=round(t.distance),
-            points=round(t.points),
-            ride_days=t.ride_days,
-            riders=t.riders,
+            distance=round(t.distance), points=round(t.points), ride_days=t.ride_days, riders=t.riders
         )
 
     maxima = defaultdict(dict)

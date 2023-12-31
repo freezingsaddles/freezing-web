@@ -80,6 +80,7 @@ def indiv_leaderboard():
 
 @blueprint.route("/individual_text")
 def individual_leaderboard_text():
+
     q = text(
         """
              select

@@ -146,7 +146,7 @@ def disambiguate_athlete_display_names():
             key = "{0} {1}".format(fname, lname[0])
         athletes_bin.setdefault(key, []).append(a)
 
-    for name_key, athletes in athletes_bin.items():
+    for (name_key, athletes) in athletes_bin.items():
         shortest_lname = min([firstlast(a.name)[1] for a in athletes], key=len)
         required_length = None
         for i in range(len(shortest_lname)):
@@ -449,6 +449,7 @@ def update_ride_from_activity(strava_activity, ride):
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
 
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
+
         log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
         ride.photos_fetched = False
 
@@ -790,6 +791,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
     insta_client = insta.configured_instagram_client()
 
     for activity_photo in activity_photos:
+
         # If it's already in the db, then skip it.
         existing = meta.scoped_session().query(RidePhoto).get(activity_photo.uid)
         if existing:
