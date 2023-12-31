@@ -19,7 +19,6 @@ _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class Config:
-
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
     SECRET_KEY = env("SECRET_KEY")
 

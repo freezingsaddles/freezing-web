@@ -46,7 +46,6 @@ def photo_cache_path(uid, resolution=STANDARD):
 
 
 def cache_photos(uid, base_dir):
-
     api = configured_instagram_client()
 
     mediaobj = api.media(uid)
@@ -59,7 +58,6 @@ def cache_photos(uid, base_dir):
 
 
 def cache_photos(uid, base_dir):
-
     api = configured_instagram_client()
 
     mediaobj = api.media(uid)

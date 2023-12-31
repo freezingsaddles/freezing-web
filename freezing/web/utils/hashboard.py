@@ -45,7 +45,6 @@ class HashtagBoardSchema(BaseSchema):
 
 
 def load_hashtag(hashtag) -> HashtagBoardTag:
-
     path = os.path.join(config.LEADERBOARDS_DIR, "hashtag.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
