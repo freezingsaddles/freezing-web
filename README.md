@@ -176,6 +176,75 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
 Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competition teams.
 
+## On dumping and restoring the database
+
+It is convenient to dump and restore the database onto a local development environment, and it may be necessary from time to time to restore a database dump in production.
+
+When restoring the database, you should do so as the MySQL root user, or if you don't have access to the real MySQL root user, as the highest privilege user you have access to. Some systems, such as AWS RDS, do not give full MySQL root access but they _do_ have an administrative user.
+
+It would be a good idea to first drop the database, then recreate it along with the freezing user, before restoring the backup.
+
+
+You may have to edit the resulting SQL dump to redo the SQL SECURITY DEFINER clauses. The examples below do not have the real production root user name in them, observe the error messages from the production dump restoration to get the user name you will need (or ask @obscurerichard in Slack).
+
+```
+/*!50013 DEFINER=`mysql-admin-user`@`%` SQL SECURITY DEFINER */
+```
+
+In this case you could edit the SQL dump to fix up the root user expressions:
+
+```
+# Thanks https://stackoverflow.com/a/23584470/424301
+LC_ALL=C sed -i.bak 's/mysql-admin-user/root/g' freezing-2023-11-20.sql
+```
+
+Here is a lightly redacted transcript of a MySQL interactive session, run on a local dev environment, demonstrating how to prepare for restoring a dump:
+
+```
+$ docker run -it --rm --network=host mysql:5.7 mysql --host=127.0.0.1 --port=3306 --user=root --password=REDACTED
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33
+Server version: 5.7.44 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> drop database if exists freezing;
+Query OK, 33 rows affected (0.29 sec)
+
+mysql> create database freezing;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use freezing;
+Database changed
+
+mysql> drop user if exists freezing@localhost;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create user freezing@localhost identified by 'REDACTED';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>  grant all on freezing.* to freezing@localhost;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> quit
+Bye
+$ LC_ALL=C sed -i.bak 's/mysql-admin-user/root/g' freezing-2023-11-20.sql
+$ time docker run -i --rm --network=host mysql:5.7 mysql --host=127.0.0.1 --port=3306 --user=root --password=REDACTED --database=freezing --default-character-set=utf8mb4 < freezing-2023-11-20.sql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+
+real	0m43.612s
+user	0m0.510s
+sys	0m0.994s
+$
+```
+
 # Legal
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
