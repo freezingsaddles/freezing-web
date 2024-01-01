@@ -9,7 +9,7 @@ arrow==0.15.5
 beautifulsoup4==4.8.2
 colorlog==4.1.0
 envparse==0.2.0
-freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.6.2.tar.gz
+freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.6.3.tar.gz
 geojson==2.5.0
 gunicorn==20.0.4
 marshmallow==3.5.1
