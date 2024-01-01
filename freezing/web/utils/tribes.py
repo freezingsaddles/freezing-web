@@ -40,7 +40,7 @@ def load_tribes() -> List[TribalGroup]:
         raise ObjectNotFound("Could not find tribes definition {}".format(path))
 
     with open(path, "rt", encoding="utf-8") as fp:
-        doc = yaml.load(fp)
+        doc = yaml.safe_load(fp)
 
     schema = TribalGroupsSchema()
     groups = schema.load(doc)
