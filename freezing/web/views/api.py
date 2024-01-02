@@ -41,7 +41,7 @@ def stats_general():
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     total_miles = int(all_res["distance"])
     total_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(all_res["moving_time"]))) / 3600
+        timedelta(seconds=int(all_res["moving_time"])).seconds / 3600
     )
     total_rides = all_res["num_rides"]
 
@@ -57,7 +57,7 @@ def stats_general():
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     sub_freezing_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res["moving_time"]))) / 3600
+        timedelta(seconds=int(sub32_res["moving_time"])).seconds / 3600
     )
 
     q = text(
@@ -72,7 +72,7 @@ def stats_general():
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     rain_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(rain_res["moving_time"]))) / 3600
+        timedelta(seconds=int(rain_res["moving_time"])).seconds / 3600
     )
 
     q = text(
@@ -87,7 +87,7 @@ def stats_general():
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     snow_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(snow_res["moving_time"]))) / 3600
+        timedelta(seconds=int(snow_res["moving_time"])).seconds / 3600
     )
 
     return jsonify(

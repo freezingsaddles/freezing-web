@@ -12,12 +12,12 @@ This is the web component for the Freezing Saddles (aka BikeArlington Freezing S
 
 ## Dependencies
 
-* Python 3.9+ (will not work with python 2.x)
+* Python 3.10+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
 * MySQL 5.7
 
-We recommend that for ease of development and debugging, that you install Python 3.9 and pip directly on your workstation. This is tested to work on macOS 14.1.2 (23B92) (Sonoma), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
+We recommend that for ease of development and debugging, that you install Python 3.10 and pip directly on your workstation. This is tested to work on macOS 14.1.2 (23B92) (Sonoma), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
 
 ## Installation
 
