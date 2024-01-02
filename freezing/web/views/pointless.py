@@ -113,7 +113,7 @@ def points_per_mile():
             x["athlete_name"],
             x["pnts"],
             x["dist"],
-            (x["pnts"] / x["dist"]),
+            (x["pnts"] / x["dist"]) if x["dist"] > 0 else 0,
             x["ridedays"],
         )
         for x in meta.scoped_session().execute(query).fetchall()
@@ -447,7 +447,7 @@ def daily_variance():
         qualified = (
             x["ride_days"] + days_left >= min_days
         )  # Either you've ridden enough days or you still can ride enough days
-        if qualified:
+        if qualified and float(x["ride_days"]) > 0:
             qualified = float(x["total_miles"]) / float(x["ride_days"]) > float(
                 2.00
             )  # you're averaging more than 2 miles per day you ride
