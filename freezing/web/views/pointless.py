@@ -293,15 +293,6 @@ def pointlesskids():
     )
 
 
-@blueprint.route("/tandem")
-def tandem():
-    """
-    Really this should not have been defined as a specific endpoint, since it is
-    available as a generic. Redirect to the generic leaderboard instead.
-    """
-    return redirect("/pointless/generic/tandem")
-
-
 @blueprint.route("/kidsathlon")
 def kidsathlon():
     q = text(
