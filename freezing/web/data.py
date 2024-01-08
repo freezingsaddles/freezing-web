@@ -335,17 +335,6 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     return filtered_rides
 
 
-def timedelta_to_seconds(td):
-    """
-    Converts a timedelta to total seconds.
-    (This is built-in in Python 2.7)
-    """
-    # we ignore microseconds for this
-    if not td:
-        return None
-    return td.seconds + td.days * 24 * 3600
-
-
 def write_ride(activity):
     """
     Takes the specified activity and writes it to the database.
@@ -462,8 +451,8 @@ def update_ride_from_activity(strava_activity, ride):
 
     ride.average_speed = float(unithelper.mph(strava_activity.average_speed))
     ride.maximum_speed = float(unithelper.mph(strava_activity.max_speed))
-    ride.elapsed_time = timedelta_to_seconds(strava_activity.elapsed_time)
-    ride.moving_time = timedelta_to_seconds(strava_activity.moving_time)
+    ride.elapsed_time = strava_activity.elapsed_time.seconds
+    ride.moving_time = strava_activity.moving_time.seconds
 
     location_parts = []
     if strava_activity.location_city:
@@ -525,7 +514,7 @@ def write_ride_efforts(strava_activity, ride):
             effort = RideEffort(
                 id=se.id,
                 ride_id=strava_activity.id,
-                elapsed_time=timedelta_to_seconds(se.elapsed_time),
+                elapsed_time=se.elapsed_time.seconds,
                 segment_name=se.segment.name,
                 segment_id=se.segment.id,
             )

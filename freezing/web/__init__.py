@@ -2,8 +2,8 @@ import os
 import os.path
 
 from flask import Flask, session, g
-from freezing.model import init_model, meta
 
+from freezing.model import init_model, meta
 from .config import config
 
 # Thanks https://stackoverflow.com/a/17073583

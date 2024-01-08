@@ -75,10 +75,10 @@ def people_list_users():
 @blueprint.route("/<user_id>")
 def people_show_person(user_id):
     our_user = meta.scoped_session().query(Athlete).filter_by(id=user_id).first()
-    if our_user.profile_photo and not str.startswith(our_user.profile_photo, "http"):
-        our_user.profile_photo = "https://www.strava.com/" + our_user.profile_photo
     if not our_user:
         abort(404)
+    if our_user.profile_photo and not str.startswith(our_user.profile_photo, "http"):
+        our_user.profile_photo = "https://www.strava.com/" + our_user.profile_photo
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
     today = get_today()
