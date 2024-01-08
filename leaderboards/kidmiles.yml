@@ -1,6 +1,6 @@
 ---
 title: Kidical Rides & Miles
-description: Rides with kids (tagged #kidical)
+description: 'Rides with kids (tagged #kidical)'
 fields:
   - name: athlete_id
     visible: false

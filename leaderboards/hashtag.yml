@@ -26,14 +26,13 @@ tags:
     sponsor: rumipumi
     rank_by_rides: True
 
-  - tag: 'biathlon'
+  - tag: biathlon
     name: Biathlon
     description: |
       No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see. 
     url: http://bikearlingtonforum.com/showthread.php?21007-Pointless-Prize-Biathalon
     sponsor: lordofthemark
     rank_by_rides: False
-
 
   - tag: bikeinfrastructure
     name: Bike Infrastructure
@@ -48,8 +47,16 @@ tags:
     description: |
       Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code>, the person with
       the most flats wins! Well loses.
-    url: http://bikearlingtonforum.com/showthread.php?18130-Deflated-Pointless-Prize
-    sponsor: Felipe
+    url: https://www.bikearlingtonforum.com/forums/topic/deflated-pointless-prize/
+    sponsor: unsponsored
+    rank_by_rides: True
+
+  - tag: fire
+    name: Fire bad!
+    description: |
+      Ride your bike and take photo of the fire stations.
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-fire-bad/
+    sponsor: alana
     rank_by_rides: True
 
   # This is a first cut of an implementation for this, to really hew to the rules would be much more
@@ -60,6 +67,14 @@ tags:
        Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
     url: http://bikearlingtonforum.com/showthread.php?21057-FS-First-Time-Riders-A-PP-just-for-you!
     sponsor: Kbikeva
+    rank_by_rides: True
+
+  - tag: flag
+    name: Flag
+    description: |
+      Take a photo of a flag on your ride.
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2024-flag/
+    sponsor: bigredboiler
     rank_by_rides: True
 
   - tag: freezingerrands
@@ -86,6 +101,14 @@ tags:
       Find clever connections between places or tears in spacetime (tagged with <code>#FSWormhole</code>).
     sponsor: Felipe
     url: http://bikearlingtonforum.com/showthread.php?18080-FSWormhole/
+    rank_by_rides: True
+
+  - tag: goldenspike
+    name: Golden Spike
+    description: |
+      Ride your bike to a metro or train station and post a photo.
+    sponsor: arlcxrider
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-golden-spike-award/
     rank_by_rides: True
 
   - tag: heroesworkhere
@@ -123,14 +146,46 @@ tags:
     url: http://bikearlingtonforum.com/showthread.php?15839-Pointless-Prize-ParkFinder
     rank_by_rides: True
 
+  - tag: pizza
+    name: Pizzaneuring
+    description: |
+      Ride for pizza, eat pizza, and post a photo.
+    sponsor: lordofthemark
+    url: https://www.bikearlingtonforum.com/forums/topic/pizzaneuring/
+    rank_by_rides: True
+
   - tag: publicartfinder
     name: Public Art Finder
     description: |
       Ride your bike at least 10 miles to any art form (loosely defined) that is readily accessible to the general public. Only 1 art installation counts per ride! Take a picture and
       upload your ride with hashtag <code>#publicartfinder</code>. Post to the forum on the linked thread.
     sponsor: Boomer2U
-    url: http://bikearlingtonforum.com/showthread.php?21006-PublicArtFinder-FS2023-Pointless-Prize
+    url: https://www.bikearlingtonforum.com/forums/topic/publicartfinder-fs2024-pointless-prize/
     rank_by_rides: True
+
+  - tag: singlespeed
+    name: Singlespeed
+    description: |
+      Riding singlespeed fell out of fashion years ago, but I still enjoy it. Does anyone else? Let's find out with a singlespeed pointless prize. See the linked forum post for complete rules and details.
+    sponsor: jlamb
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-singlespeed-2/
+    rank_by_rides: True
+
+  - tag: scavhunt
+    name: Photo Scavenger Hunt
+    description: |
+      Ride your bike to find the word of the day and post its photo on the forum.
+    sponsor: Kelley and Serdar
+    url: https://www.bikearlingtonforum.com/forums/topic/2024-photo-scavenger-hunt-rules-and-alternate-words/
+    rank_by_rides: True
+
+  - tag: socks
+    name: Socks
+    description: |
+      Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
+    sponsor: Jessica Hirschhorn
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-socks/
+    rank_by_rides: False
 
   - tag: stem
     name: STEM
@@ -140,23 +195,6 @@ tags:
       Tag with <code>#STEM</code>.
     sponsor: bikesnick
     url: http://bikearlingtonforum.com/showthread.php?18148-FS2021-Pointless-Prize-STEM
-    rank_by_rides: False
-
-  - tag: singlespeed
-    name: Singlespeed
-    description: |
-      Riding singlespeed fell out of fashion years ago, but I still enjoy it. Does anyone else? Let's find out with a singlespeed pointless prize. See the linked forum post for complete rules and details.
-    sponsor: jlamb
-    url: http://bikearlingtonforum.com/showthread.php?20995-Pointless-Prize-Singlespeed
-    rank_by_rides: True
-
-
-  - tag: socks
-    name: Socks
-    description: |
-      Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
-    sponsor: Jessica Hirschhorn
-    url: http://bikearlingtonforum.com/showthread.php?20569-Socks-fs-2023
     rank_by_rides: False
 
   - tag: thetacoride
@@ -181,7 +219,7 @@ tags:
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
     sponsor: NoVaNoobGA
-    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-tandem-rides-2/
     rank_by_rides: True
     
   - tag: tandemvi
@@ -198,4 +236,12 @@ tags:
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
     sponsor: NoVaNoobGA
     url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
+    rank_by_rides: True
+
+  - tag: treats
+    name: Street Treats
+    description: |
+      Find a street treat out in the wild while riding your bike.
+    sponsor: Boomer2U
+    url: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
     rank_by_rides: True
