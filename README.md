@@ -126,9 +126,6 @@ with the related containers.
 This component is designed to run as a container and should be configured with environment variables for:
 - `DEBUG`: Whether to display exception stack traces, etc.
 - `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
-- `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
-shell$ git clone https://github.com/freezingsaddles/freezing-web.git
-- `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
 - `SQLALCHEMY_URL`: The URL to the database.
 - `STRAVA_CLIENT_ID`: The ID of the Strava application.
 - `STRAVA_CLIENT_SECRET`: Secret key for the app (available from App settings page in Strava)

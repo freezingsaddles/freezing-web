@@ -24,8 +24,6 @@ class Config:
     SECRET_KEY = env("SECRET_KEY")
 
     SQLALCHEMY_URL = env("SQLALCHEMY_URL")
-    BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="beanstalkd.container")
-    BEANSTALKD_PORT: int = env("BEANSTALKD_PORT", cast=int, default=11300)
 
     STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
