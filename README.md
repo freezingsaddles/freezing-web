@@ -245,6 +245,77 @@ sys	0m0.994s
 $
 ```
 
+# Scoring system
+
+The Freezing Saddles o
+The scoring system heavily weights the early miles of each ride.
+
+• 10 points for each day of 1 mile+
+• Additional mileage points as follows: Mile 1=10 points; Mile 2=9 pts; Mile 3=8 pts, etc. Miles 10 and over = 1 pt each.
+• There is no weekly point cap or distinction between individual and team points. Ride your hearts out!
+
+
+## Scoring Cheat Sheet for the Mathematically Challenged
+
+```
+Miles = Points
+1 = 20
+2 = 29
+3 = 37
+4 = 44
+5 = 50
+6 = 55
+7 = 59
+8 = 62
+9 = 64
+10 = 65
+11 = 66
+12 = 67
+13 = 68
+14 = 69
+15 = 70
+16 = 71
+17 = 72
+18 = 73
+19 = 74
+20 = 75
+```
+
+The scores are rounded to the nearest integer point for display, but the system uses precise floating point calculations of points to determine rank. This can lead to some counterintuitive results at first glance, such as a whole-number points tie with the person in the lead having fewer miles recorded.
+
+In 2024, this happened as of Jan 7 between Paul Wilson and Steve Szibler. Check out this detail 
+ 
+```
+mysql> select a.name, ds.distance, ds.points, ds.ride_date from daily_scores ds inner join athletes a on (ds.athlete_id = a.id) where a.name  like 'Steve S%' or name like 'Paul Wilson' order by name, ride_date;
++-------------------+--------------------+--------------------+------------+
+| name              | distance           | points             | ride_date  |
++-------------------+--------------------+--------------------+------------+
+| Paul Wilson       | 30.233999252319336 |  85.23399925231934 | 2024-01-01 |
+| Paul Wilson       | 32.055999755859375 |  87.05599975585938 | 2024-01-02 |
+| Paul Wilson       | 35.689998626708984 |  90.68999862670898 | 2024-01-03 |
+| Paul Wilson       | 33.128000259399414 |  88.12800025939941 | 2024-01-04 |
+| Paul Wilson       |  36.27000045776367 |  91.27000045776367 | 2024-01-05 |
+| Paul Wilson       |   35.4640007019043 |   90.4640007019043 | 2024-01-06 |
+| Paul Wilson       |  40.28300094604492 |  95.28300094604492 | 2024-01-07 |
+| Steve Szibler🕊     |  85.37000274658203 | 140.37000274658203 | 2024-01-01 |
+| Steve Szibler🕊     |  31.36400079727173 |  86.36400079727173 | 2024-01-02 |
+| Steve Szibler🕊     | 21.209999084472656 |  76.20999908447266 | 2024-01-03 |
+| Steve Szibler🕊     |  40.33599853515625 |  95.33599853515625 | 2024-01-04 |
+| Steve Szibler🕊     | 20.131000638008118 |  75.13100063800812 | 2024-01-05 |
+| Steve Szibler🕊     |  40.17300033569336 |  95.17300033569336 | 2024-01-06 |
+| Steve Szibler🕊     |  7.122000217437744 | 59.419558734504676 | 2024-01-07 |
++-------------------+--------------------+--------------------+------------+
+14 rows in set (0.01 sec)
+
+mysql> select a.name, sum(ds.distance), sum(ds.points) from daily_scores ds inner join athletes a on (ds.athlete_id = a.id) where a.name  like 'Steve S%' or name like 'Paul Wilson' group by name order by sum(ds.points) desc;
++-------------------+-------------------+-------------------+
+| name              | sum(ds.distance)  | sum(ds.points)    |
++-------------------+-------------------+-------------------+
+| Paul Wilson       |           243.125 |           628.125 |
+| Steve Szibler🕊     | 245.7060023546219 | 628.0035608716888 |
++-------------------+-------------------+-------------------+
+2 rows in set (0.02 sec)
+```
 # Legal
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
