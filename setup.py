@@ -18,7 +18,7 @@ __authors__ = [
 
 __copyright__ = "Copyright 2015 Hans Lellelid"
 
-version = "1.1.14"
+version = "1.1.15"
 
 long_description = """
 The freezing saddles cycling competition website/scoreboard.
