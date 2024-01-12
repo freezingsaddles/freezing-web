@@ -42,6 +42,14 @@ tags:
     sponsor: smb9600
     rank_by_rides: True
 
+  - tag: bingo
+    name: Bicycle Bingo
+    description: |
+      Ride your bike and play Bingo!
+    url: https://www.bikearlingtonforum.com/forums/topic/bicycle-bingo-sign-up-now/
+    sponsor: cvcalhoun
+    rank_by_rides: True
+
   - tag: Deflated
     name: Don’t be deflated this prize is for you!
     description: |
@@ -169,7 +177,7 @@ tags:
       Riding singlespeed fell out of fashion years ago, but I still enjoy it. Does anyone else? Let's find out with a singlespeed pointless prize. See the linked forum post for complete rules and details.
     sponsor: jlamb
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-singlespeed-2/
-    rank_by_rides: True
+    rank_by_rides: False
 
   - tag: scavhunt
     name: Photo Scavenger Hunt
