@@ -34,7 +34,6 @@ class TribalGroupsSchema(BaseSchema):
 
 
 def load_tribes() -> List[TribalGroup]:
-
     path = os.path.join(config.LEADERBOARDS_DIR, "tribes.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find tribes definition {}".format(path))
