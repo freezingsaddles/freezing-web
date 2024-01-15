@@ -40,9 +40,7 @@ def stats_general():
 
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     total_miles = int(all_res["distance"])
-    total_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(all_res["moving_time"]))) / 3600
-    )
+    total_hours = int(all_res["moving_time"]) / 3600
     total_rides = all_res["num_rides"]
 
     q = text(
@@ -56,9 +54,7 @@ def stats_general():
     )
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    sub_freezing_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res["moving_time"]))) / 3600
-    )
+    sub_freezing_hours = int(sub32_res["moving_time"]) / 3600
 
     q = text(
         """
@@ -71,9 +67,7 @@ def stats_general():
     )
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    rain_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(rain_res["moving_time"]))) / 3600
-    )
+    rain_hours = int(rain_res["moving_time"]) / 3600
 
     q = text(
         """
@@ -86,9 +80,7 @@ def stats_general():
     )
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    snow_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(snow_res["moving_time"]))) / 3600
-    )
+    snow_hours = int(snow_res["moving_time"]) / 3600
 
     return jsonify(
         team_count=len(config.COMPETITION_TEAMS),
@@ -193,7 +185,6 @@ def team_leaderboard():
 
 
 def _geo_tracks(start_date=None, end_date=None, team_id=None):
-
     # These dates  must be made naive, since we don't have TZ info stored in our ride columns.
     if start_date:
         start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
@@ -224,7 +215,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
         wkt = sess.scalar(ride_track.gps_track.wkt)
 
         coordinates = []
-        for (i, (lon, lat)) in enumerate(parse_linestring(wkt)):
+        for i, (lon, lat) in enumerate(parse_linestring(wkt)):
             elapsed_time = ride_track.ride.start_date + timedelta(
                 seconds=ride_track.time_stream[i]
             )
@@ -249,7 +240,6 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 @blueprint.route("/all/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_all():
-
     # log.info("Fetching gps tracks for team {}".format(team_id))
 
     start_date = request.args.get("start_date")
@@ -261,7 +251,6 @@ def geo_tracks_all():
 @blueprint.route("/teams/<int:team_id>/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_team(team_id):
-
     # log.info("Fetching gps tracks for team {}".format(team_id))
 
     start_date = request.args.get("start_date")

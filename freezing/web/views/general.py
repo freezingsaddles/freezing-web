@@ -16,10 +16,9 @@ from flask import (
 )
 from sqlalchemy import text
 from stravalib import Client
-from stravalib import unithelper as uh
 
 from freezing.model import meta
-from freezing.model.orm import Athlete, RidePhoto, Ride
+from freezing.model.orm import RidePhoto, Ride
 
 from freezing.web import app, data, config
 from freezing.web.utils import auth
@@ -61,9 +60,7 @@ def index():
 
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     total_miles = int(all_res["distance"])
-    total_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(all_res["moving_time"]))) / 3600
-    )
+    total_hours = int(all_res["moving_time"]) / 3600
     total_rides = all_res["num_rides"]
 
     q = text(
@@ -77,9 +74,7 @@ def index():
     )
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    sub_freezing_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(sub32_res["moving_time"]))) / 3600
-    )
+    sub_freezing_hours = int(sub32_res["moving_time"]) / 3600
 
     q = text(
         """
@@ -92,9 +87,7 @@ def index():
     )
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    rain_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(rain_res["moving_time"]))) / 3600
-    )
+    rain_hours = int(rain_res["moving_time"]) / 3600
 
     q = text(
         """
@@ -107,9 +100,7 @@ def index():
     )
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    snow_hours = (
-        uh.timedelta_to_seconds(timedelta(seconds=int(snow_res["moving_time"]))) / 3600
-    )
+    snow_hours = int(snow_res["moving_time"]) / 3600
 
     # Grab some recent photos
     photos = (

@@ -34,13 +34,12 @@ class TribalGroupsSchema(BaseSchema):
 
 
 def load_tribes() -> List[TribalGroup]:
-
     path = os.path.join(config.LEADERBOARDS_DIR, "tribes.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find tribes definition {}".format(path))
 
     with open(path, "rt", encoding="utf-8") as fp:
-        doc = yaml.load(fp)
+        doc = yaml.safe_load(fp)
 
     schema = TribalGroupsSchema()
     groups = schema.load(doc)

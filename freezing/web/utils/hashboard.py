@@ -45,13 +45,12 @@ class HashtagBoardSchema(BaseSchema):
 
 
 def load_hashtag(hashtag) -> HashtagBoardTag:
-
     path = os.path.join(config.LEADERBOARDS_DIR, "hashtag.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
     with open(path, "rt", encoding="utf-8") as fp:
-        doc = yaml.load(fp)
+        doc = yaml.safe_load(fp)
 
     schema = HashtagBoardSchema()
     board: HashtagBoard = schema.load(doc)

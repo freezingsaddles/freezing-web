@@ -3,7 +3,7 @@ title: Clockwise Loopy for Arlington
 description: |
   Number of clockwise rides of the Arlington loop (ArLoopCW1 through ArLoopCW8).
   Part of <a href="../arlington">Loopy for Arlington</a>.
-url: http://bikearlingtonforum.com/showthread.php?11507-Loopy-For-Arlington-Pointless-Prize
+url: https://www.bikearlingtonforum.com/forums/topic/bafs-2020-pointless-prizes-loopy-for-arlington/
 fields:
   - name: id
     visible: false
@@ -31,4 +31,5 @@ query: |
     E.segment_id in (22395425, 13943716, 13943733, 13943744, 13943752, 13943762, 22382566, 13943773)
   group by
     A.id,
-    E.segment_id
+    E.segment_id,
+    E.segment_name

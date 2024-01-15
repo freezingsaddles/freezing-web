@@ -1,10 +1,4 @@
-import sys
-import os.path
-import re
-import warnings
-import uuid
-
-from setuptools import setup, find_packages
+from setuptools import setup
 
 __authors__ = [
     '"Hans Lellelid" <hans@xmpl.org>',
@@ -18,7 +12,7 @@ __authors__ = [
 
 __copyright__ = "Copyright 2015 Hans Lellelid"
 
-version = "1.1.14"
+version = "1.2.1"
 
 long_description = """
 The freezing saddles cycling competition website/scoreboard.

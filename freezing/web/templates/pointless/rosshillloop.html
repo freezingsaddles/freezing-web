@@ -8,14 +8,14 @@
             double dips.
         </p>
         <p>
-            <a href="http://bikearlingtonforum.com/showthread.php?21003-Pointless-Prize-Ross-Hill-Loop">Prize sponsored by randomduck.</a>
+            <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024/">Prize sponsored by randomduck.</a>
         </p>
         <table class="table table-condensed">
-            <tr><th>Rank</th><th>Player</th><th>Rides</th><th>Average Time</th></tr>
+            <tr><th>Rank</th><th>Player</th><th>Loops</th><th>Average Time</th></tr>
             {% for a, b, d, e in data.tdata %}
-            <tr>
+            <tr {% if a==48773683 %} class="danger" {% endif %}>
                 <td>{{loop.index}}</td>
-                <td><a href="/people/{{ a }}">{{b}}</a></td>
+                <td><a href="/people/{{ a }}">{{b}}{% if a==48773683 %} (banned){% endif %}</a></td>
                 <td>{{d}}</td>
                 <td>{{(e / d / 60) | int}}m {{((e / d) % 60) | int}}s</td>
             </tr>

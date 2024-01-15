@@ -26,7 +26,7 @@
 		<td>{{c|round(1)}}</td>
 		<td>{{d|round(1)}}</td>
 		<td>{{e|round(1)}}</td>
-		<td>{{(100*(e-d)/d)|round(1)}}%</td>
+        <td>{{(100*(e-d)/d)|round(1) if d > 0 else 0}}%</td>
 		<td>{{f}}</td>
 		</tr>
 {% endfor %}

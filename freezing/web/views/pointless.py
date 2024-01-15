@@ -113,7 +113,7 @@ def points_per_mile():
             x["athlete_name"],
             x["pnts"],
             x["dist"],
-            (x["pnts"] / x["dist"]),
+            (x["pnts"] / x["dist"]) if x["dist"] > 0 else 0,
             x["ridedays"],
         )
         for x in meta.scoped_session().execute(query).fetchall()
@@ -173,6 +173,7 @@ def hashtag_leaderboard(hashtag):
         meta=meta,
     )
 
+
 def _get_segment_tdata(segment):
     sess = meta.scoped_session()
     q = text(
@@ -195,7 +196,13 @@ def _get_segment_tdata(segment):
     )
     rs = sess.execute(q, params=dict(segment=segment))
     retval = [
-        (x["id"], x["athlete_name"], x["segment_name"], x["segment_rides"], x["total_time"])
+        (
+            x["id"],
+            x["athlete_name"],
+            x["segment_name"],
+            x["segment_rides"],
+            x["total_time"],
+        )
         for x in rs.fetchall()
     ]
     return sorted(retval, key=operator.itemgetter(3), reverse=True)
@@ -208,7 +215,11 @@ def segment_leaderboard(segment):
     )
     return render_template(
         "pointless/segment.html",
-        data={"tdata": tdata, "segment_id": segment, "segment_name": tdata[0][2] if tdata else "Unknown Segment"},
+        data={
+            "tdata": tdata,
+            "segment_id": segment,
+            "segment_name": tdata[0][2] if tdata else "Unknown Segment",
+        },
         meta=meta,
     )
 
@@ -291,15 +302,6 @@ def pointlesskids():
         "pointless/pointlesskids.html",
         data={"tdata": sorted(d.items(), key=lambda v: v[1], reverse=True)},
     )
-
-
-@blueprint.route("/tandem")
-def tandem():
-    """
-    Really this should not have been defined as a specific endpoint, since it is
-    available as a generic. Redirect to the generic leaderboard instead.
-    """
-    return redirect("/pointless/generic/tandem")
 
 
 @blueprint.route("/kidsathlon")
@@ -447,7 +449,7 @@ def daily_variance():
         qualified = (
             x["ride_days"] + days_left >= min_days
         )  # Either you've ridden enough days or you still can ride enough days
-        if qualified:
+        if qualified and float(x["ride_days"]) > 0:
             qualified = float(x["total_miles"]) / float(x["ride_days"]) > float(
                 2.00
             )  # you're averaging more than 2 miles per day you ride

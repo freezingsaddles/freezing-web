@@ -4,7 +4,7 @@ description: |
   Number of rides of the Arlington loop in either direction.
   Combines <a href="multisegment/arlington-cw">Clockwise Loopy for Arlington</a>
   and <a href="multisegment/arlington-ccw">Counter-Clockwise Loopy for Arlington</a>.
-url: http://bikearlingtonforum.com/showthread.php?11507-Loopy-For-Arlington-Pointless-Prize
+url: https://www.bikearlingtonforum.com/forums/topic/bafs-2020-pointless-prizes-loopy-for-arlington/
 fields:
   - name: id
     visible: false
