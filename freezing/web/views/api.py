@@ -1,14 +1,13 @@
+import json
 from datetime import timedelta
 from decimal import Decimal
-import json
 
 import arrow
-from flask import Blueprint, jsonify, request
 import pytz
-from sqlalchemy import text
-
+from flask import Blueprint, jsonify, request
 from freezing.model import meta
-from freezing.model.orm import RidePhoto, Ride, RideTrack, Athlete
+from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
+from sqlalchemy import text
 
 from freezing.web import config
 from freezing.web.autolog import log

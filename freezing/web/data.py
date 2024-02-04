@@ -3,39 +3,35 @@ Functions for interacting with the datastore and the strava apis.
 """
 
 from __future__ import division, unicode_literals
-import re
+
 import logging
-
-from instagram import InstagramAPIError, InstagramClientError
-
-
-from sqlalchemy import and_
-from geoalchemy import WKTSpatialElement
-
-from requests.exceptions import HTTPError
-
-from stravalib import Client
-from stravalib import model as strava_model
-from stravalib import unithelper
+import re
 
 from freezing.model import meta, orm
 from freezing.model.orm import (
     Athlete,
     Ride,
-    RideGeo,
     RideEffort,
+    RideGeo,
     RidePhoto,
     RideTrack,
     Team,
 )
+from geoalchemy import WKTSpatialElement
+from instagram import InstagramAPIError, InstagramClientError
+from requests.exceptions import HTTPError
+from sqlalchemy import and_
+from stravalib import Client
+from stravalib import model as strava_model
+from stravalib import unithelper
 
 from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.exc import (
-    InvalidAuthorizationToken,
-    NoTeamsError,
-    MultipleTeamsError,
     DataEntryError,
+    InvalidAuthorizationToken,
+    MultipleTeamsError,
+    NoTeamsError,
 )
 from freezing.web.utils import insta, wktutils
 

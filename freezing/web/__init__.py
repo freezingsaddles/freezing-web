@@ -1,6 +1,6 @@
-from flask import Flask, session, g
-
+from flask import Flask, g, session
 from freezing.model import init_model, meta
+
 from .config import config
 
 # Thanks https://stackoverflow.com/a/17073583
@@ -11,16 +11,16 @@ init_model(config.SQLALCHEMY_URL)
 
 # This needs to be after the app is created, unfortunately.
 from freezing.web.views import (  # noqa
+    alt_scoring,
+    api,
+    chartdata,
     general,
     leaderboard,
-    chartdata,
     people,
-    user,
-    pointless,
     photos,
-    api,
-    alt_scoring,
+    pointless,
     tribes,
+    user,
 )
 
 # Register our blueprints

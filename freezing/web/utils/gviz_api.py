@@ -34,8 +34,9 @@ try:
     import html  # Python version 3.2 or higher
 except ImportError:
     import cgi as html  # Only used for .escape()
-import numbers
+
 import json
+import numbers
 
 import six
 

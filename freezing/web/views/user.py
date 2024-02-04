@@ -2,8 +2,7 @@ import json
 import logging
 from datetime import datetime
 
-from flask import render_template, current_app, request, Blueprint, session, jsonify
-
+from flask import Blueprint, current_app, jsonify, render_template, request, session
 from freezing.model import meta
 from freezing.model.orm import Ride
 

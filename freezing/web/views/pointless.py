@@ -1,15 +1,15 @@
 import operator
-from datetime import datetime, timezone
-from collections import defaultdict
 import re
+from collections import defaultdict
+from datetime import datetime, timezone
 
-from flask import render_template, Blueprint, abort
+from flask import Blueprint, abort, render_template
+from freezing.model import meta
 from sqlalchemy import text
 
-from freezing.model import meta
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
-from freezing.web.utils.genericboard import load_board_and_data, load_board, format_rows
+from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data
 from freezing.web.utils.hashboard import load_hashtag
 
 blueprint = Blueprint("pointless", __name__)

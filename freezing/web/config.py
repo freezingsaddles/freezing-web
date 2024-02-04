@@ -1,14 +1,12 @@
 import logging
 import os
-from typing import List
 from datetime import datetime, tzinfo
-
-from colorlog import ColoredFormatter
-from envparse import env
+from typing import List
 
 import arrow
 import pytz
-
+from colorlog import ColoredFormatter
+from envparse import env
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 

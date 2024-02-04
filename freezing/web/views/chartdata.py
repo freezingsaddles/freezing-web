@@ -4,32 +4,29 @@ Created on Feb 10, 2013
 @author: hans
 """
 
-import json
 import copy
+import json
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from flask import current_app, Blueprint, jsonify
-
-from sqlalchemy import text
 from dateutil import rrule
-
+from flask import Blueprint, current_app, jsonify
 from freezing.model import meta
 from freezing.model.orm import Team
+from pytz import utc
+from sqlalchemy import text
 
 from freezing.web import config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
 from freezing.web.views.shared_sql import (
-    team_leaderboard_query,
-    indiv_sleaze_query,
-    team_sleaze_query,
     indiv_freeze_query,
     indiv_segment_query,
+    indiv_sleaze_query,
+    team_leaderboard_query,
     team_segment_query,
+    team_sleaze_query,
 )
-
-from pytz import utc
 
 blueprint = Blueprint("chartdata", __name__)
 

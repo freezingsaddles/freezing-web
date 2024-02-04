@@ -5,24 +5,23 @@ Created on Feb 10, 2013
 """
 
 from flask import (
-    render_template,
-    redirect,
-    url_for,
-    request,
     Blueprint,
-    session,
     jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
 )
+from freezing.model import meta
+from freezing.model.orm import Ride, RidePhoto
 from sqlalchemy import text
 from stravalib import Client
 
-from freezing.model import meta
-from freezing.model.orm import RidePhoto, Ride
-
-from freezing.web import app, data, config
-from freezing.web.utils import auth
+from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
+from freezing.web.utils import auth
 
 blueprint = Blueprint("general", __name__)
 

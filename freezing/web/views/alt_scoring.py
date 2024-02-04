@@ -1,11 +1,10 @@
 from collections import defaultdict
 from itertools import groupby
-
-from flask import render_template, Blueprint
-from sqlalchemy import text
 from statistics import median
 
+from flask import Blueprint, render_template
 from freezing.model import meta
+from sqlalchemy import text
 
 from freezing.web import config
 from freezing.web.views.shared_sql import (
@@ -15,7 +14,6 @@ from freezing.web.views.shared_sql import (
     team_segment_query,
     team_sleaze_query,
 )
-
 
 blueprint = Blueprint("alt_scoring", __name__)
 

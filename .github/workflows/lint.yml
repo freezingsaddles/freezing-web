@@ -1,15 +1,24 @@
 ---
-# Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
 name: Lint
 
 on: [push, pull_request]
 
 jobs:
+  
+  # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
   black-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@24.1.1
+
+  isort-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: isort/isort-action@v1
+        with:
+            requirements-files: "requirements.txt requirements-test.txt"
 
   flake8-lint:
     runs-on: ubuntu-latest

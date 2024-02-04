@@ -1,10 +1,9 @@
-from flask import render_template, Blueprint, session, redirect, request
-
 from collections import defaultdict
-from sqlalchemy import text
 
+from flask import Blueprint, redirect, render_template, request, session
 from freezing.model import meta
 from freezing.model.orm import Tribe
+from sqlalchemy import text
 
 from freezing.web.utils.auth import requires_auth
 from freezing.web.utils.tribes import load_tribes

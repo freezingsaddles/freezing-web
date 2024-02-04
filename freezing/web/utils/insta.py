@@ -3,10 +3,11 @@ Utility functions for working with images.
 """
 
 import os
-import urllib
 import shutil
+import urllib
 
 from instagram.client import InstagramAPI
+
 from freezing.web import exc
 from freezing.web.config import config
 

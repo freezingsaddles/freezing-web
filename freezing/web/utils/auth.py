@@ -3,11 +3,10 @@ Some authentication-related utility functions/classes.
 """
 
 import logging
-from functools import wraps, update_wrapper
 from datetime import timedelta
+from functools import update_wrapper, wraps
 
-from flask import session, g
-from flask import make_response, request, current_app
+from flask import current_app, g, make_response, request, session
 from werkzeug.exceptions import Forbidden
 
 

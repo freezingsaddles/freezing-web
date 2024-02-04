@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import sys
-import os
 import logging
+import os
+import sys
 
 """
 This is a file designed to be used with Phusion Passenger.
