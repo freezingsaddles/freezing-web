@@ -6,23 +6,8 @@ on: [push, pull_request]
 jobs:
   
   # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
-  black:
+  lint:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: psf/black@24.1.1
-
-  isort:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: isort/isort-action@v1
-        with:
-            requirements-files: "requirements.txt requirements-test.txt"
-
-  flake8:
-    runs-on: ubuntu-latest
-    name: Lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -30,5 +15,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+      - name: black Lint
+        uses: psf/black@24.1.1
+      - name: isort Lint
+        uses: isort/isort-action@v1
+        with:
+            requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
