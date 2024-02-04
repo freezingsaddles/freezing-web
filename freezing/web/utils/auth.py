@@ -1,6 +1,7 @@
 """
 Some authentication-related utility functions/classes.
 """
+
 import logging
 from functools import wraps, update_wrapper
 from datetime import timedelta

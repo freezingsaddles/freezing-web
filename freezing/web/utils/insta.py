@@ -1,6 +1,7 @@
 """
 Utility functions for working with images.
 """
+
 import os
 import urllib
 import shutil

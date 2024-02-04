@@ -3,6 +3,7 @@ Created on Feb 10, 2013
 
 @author: hans
 """
+
 import json
 import copy
 from collections import defaultdict
