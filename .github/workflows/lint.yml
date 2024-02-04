@@ -6,13 +6,13 @@ on: [push, pull_request]
 jobs:
   
   # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
-  black-lint:
+  black:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@24.1.1
 
-  isort-lint:
+  isort:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         with:
             requirements-files: "requirements.txt requirements-test.txt"
 
-  flake8-lint:
+  flake8:
     runs-on: ubuntu-latest
     name: Lint
     steps:
