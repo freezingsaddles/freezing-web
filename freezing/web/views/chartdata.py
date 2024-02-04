@@ -20,7 +20,14 @@ from freezing.model.orm import Team
 from freezing.web import config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
-from freezing.web.views.shared_sql import *
+from freezing.web.views.shared_sql import (
+    team_leaderboard_query,
+    indiv_sleaze_query,
+    team_sleaze_query,
+    indiv_freeze_query,
+    indiv_segment_query,
+    team_segment_query,
+)
 
 from pytz import utc
 

@@ -10,7 +10,7 @@ app.config.from_object(config)
 init_model(config.SQLALCHEMY_URL)
 
 # This needs to be after the app is created, unfortunately.
-from freezing.web.views import (
+from freezing.web.views import (  # noqa
     general,
     leaderboard,
     chartdata,

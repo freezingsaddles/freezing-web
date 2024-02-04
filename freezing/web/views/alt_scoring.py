@@ -9,9 +9,11 @@ from freezing.model import meta
 
 from freezing.web import config
 from freezing.web.views.shared_sql import (
-    team_sleaze_query,
-    team_segment_query,
     indiv_freeze_query,
+    indiv_segment_query,
+    indiv_sleaze_query,
+    team_segment_query,
+    team_sleaze_query,
 )
 
 

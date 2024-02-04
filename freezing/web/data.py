@@ -118,7 +118,7 @@ def update_athlete_auth(strava_athlete, token_dict):
 
 def disambiguate_athlete_display_names():
     q = meta.scoped_session().query(orm.Athlete)
-    q = q.filter(orm.Athlete.access_token != None)
+    q = q.filter(orm.Athlete.access_token is not None)
     athletes = q.all()
 
     # Ok, here is the plan; bin these things together based on firstname and last initial.
@@ -529,7 +529,7 @@ def write_ride_efforts(strava_activity, ride):
 
         ride.efforts_fetched = True
 
-    except:
+    except Exception:
         log.exception("Error adding effort for ride: {0}".format(ride))
         raise
 
@@ -731,7 +731,7 @@ def write_ride_photo_primary(strava_activity, ride):
     # Start by removing any priamry photos for this ride.
     meta.engine.execute(
         RidePhoto.__table__.delete().where(
-            and_(RidePhoto.ride_id == strava_activity.id, RidePhoto.primary == True)
+            and_(RidePhoto.ride_id == strava_activity.id, RidePhoto.primary is True)
         )
     )
 
@@ -772,7 +772,7 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
     meta.engine.execute(
         RidePhoto.__table__.delete().where(
-            and_(RidePhoto.ride_id == ride.id, RidePhoto.primary == False)
+            and_(RidePhoto.ride_id == ride.id, RidePhoto.primary is False)
         )
     )
 
