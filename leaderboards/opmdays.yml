@@ -2,7 +2,8 @@
 title: Michigander - You call THAT a snow day?! - Prize
 description: |
   <p>Riders who have ridden on the most offcial OPM snow days, or if no snow days are declared, on Michigan Day (Monday, January 18th). Ties to be broken by total mileage.</p>
-  <p>Current official snow days: None</p>
+  <!-- <p>Current official snow days: None</p> -->
+  <p>Current official snow days: Jan 16</p>
 fields:
   - name: athlete_id
     visible: false
@@ -21,6 +22,11 @@ query: |
     sum(R.distance) as distance
   from lbd_athletes A
     join rides R on R.athlete_id=A.id
+  /* 
+  2024 had an OPM snow day on Jan 16, so disable this for now.
+
   where date(R.start_date) in (makedate(year(now()), 18))
+  /*
+  where date(R.start_date) in ('2024-01-16')
   group by athlete_id, athlete_name
   order by days desc, distance desc;
