@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+import sys
+import os
+import logging
+
 """
 This is a file designed to be used with Phusion Passenger.
 
@@ -6,8 +11,7 @@ Move this file into the directory above your 'public' directory.
 We assume this repository is part of the
 (This file is not intended for use when using freezing-web in Docker container.)
 """
-import sys, os
-import logging
+
 
 BASE_DIR = os.path.join(os.path.dirname(__file__))
 INTERP = os.path.join(BASE_DIR, "env", "bin", "python")
@@ -18,7 +22,7 @@ sys.path.append(os.path.join(BASE_DIR, "bafs"))
 
 os.environ["APP_SETTINGS"] = os.path.join(BASE_DIR, "settings.cfg")
 
-from freezing.web import app as application
+from freezing.web import app as application  # noqa
 
 ch = logging.FileHandler(os.path.join(BASE_DIR, "application.log"))
 ch.setLevel(logging.INFO)
@@ -32,9 +36,9 @@ loggers = [
     logging.root,
 ]
 
-for l in loggers:
-    l.setLevel(logging.INFO)
-    l.addHandler(ch)
+for logger in loggers:
+    logger.setLevel(logging.INFO)
+    logger.addHandler(ch)
 
 # Uncomment next two lines to enable debugging
 # from werkzeug.debug import DebuggedApplication

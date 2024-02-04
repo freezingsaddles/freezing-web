@@ -8,7 +8,11 @@ from statistics import median
 from freezing.model import meta
 
 from freezing.web import config
-from freezing.web.views.shared_sql import *
+from freezing.web.views.shared_sql import (
+    team_sleaze_query,
+    team_segment_query,
+    indiv_freeze_query,
+)
 
 
 blueprint = Blueprint("alt_scoring", __name__)
@@ -18,9 +22,9 @@ blueprint = Blueprint("alt_scoring", __name__)
 def team_riders():
     q = text(
         """
-		select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
-		on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
-		"""
+        select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
+        on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
+        """
     )
     team_riders = [
         (x["name"], x["ride_days"]) for x in meta.scoped_session().execute(q).fetchall()
