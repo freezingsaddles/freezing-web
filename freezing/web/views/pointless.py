@@ -294,7 +294,7 @@ def pointlesskids():
     rs = meta.scoped_session().execute(q)
     d = defaultdict(int)
     for x in rs.fetchall():
-        for match in re.findall("(#withkid\w+)", x["name"]):
+        for match in re.findall(r"(#withkid\w+)", x["name"]):
             d[match.replace("#withkid", "")] += x["distance"]
     return render_template(
         "pointless/pointlesskids.html",

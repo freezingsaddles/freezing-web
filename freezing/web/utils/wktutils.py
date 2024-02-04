@@ -1,8 +1,8 @@
 import re
 from collections import namedtuple
 
-_point_rx = re.compile("^POINT\((.+)\)$")
-_linestring_rx = re.compile("^LINESTRING\((.+)\)$")
+_point_rx = re.compile(r"^POINT\((.+)\)$")
+_linestring_rx = re.compile(r"^LINESTRING\((.+)\)$")
 
 LonLat = namedtuple("LonLat", ["lon", "lat"])
 

@@ -600,7 +600,6 @@ def indiv_after_sunset():
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     day_q = text(
         """
              select DS.points
@@ -898,7 +897,6 @@ def indiv_elev_dist():
 
     rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
         name_parts = res["athlete_name"].split(" ")
         if len(name_parts) > 1:
             short_name = " ".join([name_parts[0], name_parts[-1]])
@@ -973,12 +971,6 @@ def distance_by_lowtemp():
             order by date(start_date);
             """
     )
-
-    cols = [
-        {"id": "date", "label": "Date", "type": "date"},
-        {"id": "distance", "label": "Distance", "type": "number"},
-        {"id": "day_temp_min", "label": "Low Temp", "type": "number"},
-    ]
 
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
@@ -1088,12 +1080,15 @@ def parameterized_suffering_query(
 @blueprint.route("/indiv_coldest")
 def indiv_coldest():
     q = text(parameterized_suffering_query("ride_temp_start", "temp_start", func="min"))
-    hl = lambda res, ql: "%.2f F for %s on %s in %s" % (
-        res["temp_start"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f F for %s on %s in %s" % (
+            res["temp_start"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Temperature", "temp_start", hover_lambda=hl)
 
 
@@ -1108,12 +1103,15 @@ def indiv_snowiest():
             superlative_restriction="W2.ride_snow=1",
         )
     )
-    hl = lambda res, ql: "%.2f in for %s on %s in %s" % (
-        res["snow"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f in for %s on %s in %s" % (
+            res["snow"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Snowfall", "snow", hover_lambda=hl)
 
 
@@ -1128,10 +1126,13 @@ def indiv_rainiest():
             superlative_restriction="W2.ride_rain=1",
         )
     )
-    hl = lambda res, ql: "%.2f in for %s on %s in %s" % (
-        res["rain"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f in for %s on %s in %s" % (
+            res["rain"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Rainfall", "rain", hover_lambda=hl)
