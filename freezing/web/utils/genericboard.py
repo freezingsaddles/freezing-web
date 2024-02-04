@@ -1,13 +1,11 @@
 import decimal
 import os
-import enum
 from datetime import datetime
 from typing import List, Dict, Any, Tuple
 
 import yaml
 
 from marshmallow import fields
-from marshmallow_enum import EnumField
 
 from freezing.model import meta
 from freezing.model.msg import BaseSchema, BaseMessage

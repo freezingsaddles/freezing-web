@@ -7,7 +7,7 @@ import urllib
 import shutil
 
 from instagram.client import InstagramAPI
-from freezing.web import app, exc
+from freezing.web import exc
 from freezing.web.config import config
 
 THUMBNAIL_DIMS = (150, 150)

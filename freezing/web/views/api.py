@@ -3,19 +3,17 @@ from decimal import Decimal
 import json
 
 import arrow
-import geojson
 from flask import Blueprint, jsonify, request
 import pytz
 from sqlalchemy import text
-from stravalib import unithelper as uh
 
 from freezing.model import meta
 from freezing.model.orm import RidePhoto, Ride, RideTrack, Athlete
 
-from freezing.web import app, config
+from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.serialize import RidePhotoSchema
-from freezing.web.utils import auth, dates
+from freezing.web.utils import auth
 from freezing.web.utils.wktutils import parse_linestring
 
 blueprint = Blueprint("api", __name__)

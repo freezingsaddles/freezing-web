@@ -1,12 +1,9 @@
 import math
-from datetime import date, timedelta
-from datetime import datetime
 
-from flask import render_template, Blueprint, app, send_file, request
-from sqlalchemy import text
+from flask import render_template, Blueprint, send_file, request
 
 from freezing.model import meta
-from freezing.model.orm import Team, Athlete, RidePhoto, Ride
+from freezing.model.orm import RidePhoto, Ride
 
 from freezing.web import config
 from freezing.web.utils import insta

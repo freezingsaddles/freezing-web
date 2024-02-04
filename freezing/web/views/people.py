@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import timedelta
 from datetime import datetime
 
 from flask import render_template, Blueprint, abort

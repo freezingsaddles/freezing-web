@@ -1,12 +1,10 @@
-import os
 import operator
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from collections import defaultdict
 import re
 
-from flask import render_template, Blueprint, abort, redirect, url_for
+from flask import render_template, Blueprint, abort
 from sqlalchemy import text
-import yaml
 
 from freezing.model import meta
 from freezing.web.config import config
@@ -280,7 +278,7 @@ def ross_hill_loop():
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
-    tdata = _get_hashtag_tdata("coffeeride".format(year), "coffeeride", 2)
+    tdata = _get_hashtag_tdata("coffeeride{}".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )

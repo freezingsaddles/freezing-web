@@ -8,7 +8,6 @@ import logging
 
 from instagram import InstagramAPIError, InstagramClientError
 
-from polyline.codec import PolylineCodec
 
 from sqlalchemy import and_
 from geoalchemy import WKTSpatialElement
@@ -30,7 +29,7 @@ from freezing.model.orm import (
     Team,
 )
 
-from freezing.web import app, config
+from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.exc import (
     InvalidAuthorizationToken,

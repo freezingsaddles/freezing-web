@@ -9,7 +9,7 @@ import copy
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from flask import current_app, request, Blueprint, jsonify
+from flask import current_app, Blueprint, jsonify
 
 from sqlalchemy import text
 from dateutil import rrule

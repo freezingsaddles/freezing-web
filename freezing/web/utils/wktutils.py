@@ -1,5 +1,4 @@
 import re
-from decimal import Decimal
 from collections import namedtuple
 
 _point_rx = re.compile("^POINT\((.+)\)$")

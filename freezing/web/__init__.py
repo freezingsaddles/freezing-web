@@ -1,6 +1,3 @@
-import os
-import os.path
-
 from flask import Flask, session, g
 
 from freezing.model import init_model, meta
@@ -25,7 +22,6 @@ from freezing.web.views import (
     alt_scoring,
     tribes,
 )
-from freezing.web.utils import auth
 
 # Register our blueprints
 

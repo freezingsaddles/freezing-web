@@ -4,8 +4,6 @@ Created on Feb 10, 2013
 @author: hans
 """
 
-from datetime import timedelta
-
 from flask import (
     render_template,
     redirect,

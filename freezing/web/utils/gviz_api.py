@@ -42,8 +42,6 @@ from decimal import Decimal
 class DataTableException(Exception):
     """The general exception object thrown by DataTable."""
 
-    pass
-
 
 class DataTableJSONEncoder(json.JSONEncoder):
     """JSON encoder that handles date/time/datetime objects correctly."""
