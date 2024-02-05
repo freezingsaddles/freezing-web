@@ -1001,6 +1001,13 @@ def gviz_api_jsonify(*args, **kwargs):
     )
 
 
+def short(name, max_len=22):
+    if len(name) < max_len:
+        return name
+    else:
+        return "{}…{}".format(name[:max_len - 2], name[len(name) - 1:len(name)])
+
+
 def exec_and_jsonify_query(
     q,
     display_label,
@@ -1019,7 +1026,7 @@ def exec_and_jsonify_query(
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res[query_label], "f": hover_lambda(res, query_label)},
         ]
