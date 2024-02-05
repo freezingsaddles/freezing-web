@@ -27,14 +27,15 @@ Google Visualization API.
 __author__ = "Amit Weinstein, Misha Seltzer, Jacob Baskin"
 
 import cgi
-from io import StringIO
 import csv
 import datetime
+from io import StringIO
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
 import types
 from decimal import Decimal
 
@@ -724,6 +725,10 @@ class DataTable(object):
                 raise DataTableException(
                     "Expected tuple with second value: " "'asc' or 'desc'"
                 )
+
+        # Thanks https://stackoverflow.com/a/22490617/424301
+        def cmp(a, b):
+            return (a > b) - (a < b)
 
         def SortCmpFunc(row1, row2):
             """cmp function for sorted. Compares by keys and 'asc'/'desc' keywords."""

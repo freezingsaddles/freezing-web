@@ -1,16 +1,12 @@
-from datetime import date, timedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import render_template, Blueprint, abort
+from flask import Blueprint, abort, render_template
+from freezing.model import meta
+from freezing.model.orm import Athlete, Team
+from pytz import timezone, utc
 from sqlalchemy import text
 
-from freezing.model import meta
-from freezing.model.orm import Team, Athlete
-
 from freezing.web import config
-
-from pytz import utc, timezone
-
 
 blueprint = Blueprint("people", __name__)
 

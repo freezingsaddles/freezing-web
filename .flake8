@@ -1,0 +1,7 @@
+[flake8]
+# Thanks https://www.reddit.com/r/learnpython/comments/rr6y69/comment/hqeqt68/?utm_source=share&utm_medium=web2x&context=3
+ignore = E203, W503, E501
+
+max-line-length = 88
+max-complexity = 39
+extend-ignore = E203

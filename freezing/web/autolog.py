@@ -1,7 +1,7 @@
 from __future__ import absolute_import
-import sys
-import logging
+
 import inspect
+import logging
 
 
 class EagerFormattingAdapter(logging.LoggerAdapter):
@@ -64,16 +64,10 @@ class EagerFormattingAdapter(logging.LoggerAdapter):
             # by casting the left side (the "msg" variable) in this context
             # to unicode. So we'll do that here
 
-            if sys.version_info >= (
-                3,
-                0,
-            ):
-                # this is most likely unnecessary on python 3, but it's here
-                # for completeness, in the case of someone manually creating
-                # a bytestring
-                unicode_type = str
-            else:
-                unicode_type = unicode
+            # this is most likely unnecessary on python 3, but it's here
+            # for completeness, in the case of someone manually creating
+            # a bytestring
+            unicode_type = str
 
             # handle the attempt to print utf-8 encoded data, similar to
             # %-interpolation's handling of unicode formatting non-ascii

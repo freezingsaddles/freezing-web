@@ -1,17 +1,15 @@
-import os
 import operator
-from datetime import date, datetime, timezone
-from collections import defaultdict
 import re
+from collections import defaultdict
+from datetime import datetime, timezone
 
-from flask import render_template, Blueprint, abort, redirect, url_for
-from sqlalchemy import text
-import yaml
-
+from flask import Blueprint, abort, render_template
 from freezing.model import meta
+from sqlalchemy import text
+
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
-from freezing.web.utils.genericboard import load_board_and_data, load_board, format_rows
+from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data
 from freezing.web.utils.hashboard import load_hashtag
 
 blueprint = Blueprint("pointless", __name__)
@@ -280,7 +278,7 @@ def ross_hill_loop():
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
-    tdata = _get_hashtag_tdata("coffeeride".format(year), "coffeeride", 2)
+    tdata = _get_hashtag_tdata("coffeeride{}".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )
@@ -296,7 +294,7 @@ def pointlesskids():
     rs = meta.scoped_session().execute(q)
     d = defaultdict(int)
     for x in rs.fetchall():
-        for match in re.findall("(#withkid\w+)", x["name"]):
+        for match in re.findall(r"(#withkid\w+)", x["name"]):
             d[match.replace("#withkid", "")] += x["distance"]
     return render_template(
         "pointless/pointlesskids.html",
