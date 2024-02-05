@@ -1050,9 +1050,9 @@ def parameterized_suffering_query(
          select A.display_name as athlete_name,
          A.id as ath_id,
             W.{0} as {1},
-            R.start_date as date,
-            R.location as loc,
-            R.moving_time as moving
+            any_value(R.start_date) as date,
+            any_value(R.location) as loc,
+            any_value(R.moving_time) as moving
             from rides R
             inner join ride_weather W on R.id=W.ride_id
             inner join lbd_athletes A on A.id=R.athlete_id
@@ -1067,7 +1067,7 @@ def parameterized_suffering_query(
              ) as SQ
            ON SQ.{1}2 = W.{0}
            AND SQ.ath2_id = A.id
-          group by athlete_name
+          group by athlete_name, ath_id
           order by {1} {3}, moving DESC;
           """.format(
         weath_field, weath_nick, func, desc, superlative_restriction
