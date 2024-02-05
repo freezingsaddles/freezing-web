@@ -50,7 +50,10 @@ def team_leaderboard_data():
     for i, res in enumerate(team_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"],25), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"], 25), place),
+            },
             {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
         ]
         rows.append({"c": cells})
@@ -123,7 +126,10 @@ def team_elev_gain():
     for i, res in enumerate(team_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"]), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["cumul_elev_gain"], "f": str(int(res["cumul_elev_gain"]))},
         ]
         rows.append({"c": cells})
@@ -230,7 +236,10 @@ def team_moving_time():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"]), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {
                 "v": res["total_moving_time"],
                 "f": str(timedelta(seconds=int(res["total_moving_time"]))),
@@ -282,7 +291,10 @@ def team_number_sleaze_days():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"]), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["num_sleaze_days"], "f": str(int(res["num_sleaze_days"]))},
         ]
         rows.append({"c": cells})
@@ -405,7 +417,10 @@ def team_segment(segment_id):
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"]), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["segment_rides"], "f": str(int(res["segment_rides"]))},
         ]
         rows.append({"c": cells})
@@ -475,7 +490,10 @@ def team_avg_speed():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(short(res["team_name"]), place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["avg_speed"], "f": "{0:.2f}".format(res["avg_speed"])},
         ]
         rows.append({"c": cells})
@@ -1005,7 +1023,7 @@ def short(name, max_len=17):
     if len(name) < max_len:
         return name
     else:
-        return "{}…{}".format(name[:max_len - 2], name[len(name) - 1:len(name)])
+        return "{}…{}".format(name[: max_len - 2], name[len(name) - 1 : len(name)])
 
 
 def exec_and_jsonify_query(
