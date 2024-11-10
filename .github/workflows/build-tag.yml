@@ -1,0 +1,17 @@
+---
+name: Build Tag
+
+on:
+  push:
+    tags:
+      - '*' 
+
+jobs:
+  docker:
+    steps:
+    - uses: olegtarasov/get-tag@v2.1.3
+      id: tagName
+    - uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.7
+      with:
+        tag: ${{ steps.tagName.outputs.tag }}
+      secrets: inherit

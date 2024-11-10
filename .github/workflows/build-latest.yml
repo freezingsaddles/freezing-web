@@ -1,0 +1,11 @@
+---
+name: Build
+
+on: pull_request
+
+jobs:
+  docker:
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.7
+    with:
+      tag: latest
+    secrets: inherit
