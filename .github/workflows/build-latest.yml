@@ -1,5 +1,5 @@
 ---
-name: "Build, Deploy and Test Latest"
+name: Build Deploy and Test Latest
 
 on:
   push:
@@ -8,11 +8,11 @@ on:
 
 jobs:
 
-   docker:
-     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.13
-     with:
-       tag: latest
-     secrets: inherit
+  docker:
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.15
+    with:
+      tag: latest
+    secrets: inherit
 
   deploy-and-test:
     runs-on: ubuntu-latest
