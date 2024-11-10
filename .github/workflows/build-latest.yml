@@ -5,16 +5,19 @@ on:
   push:
     branches:
       - 'master'
+      - 'github-actions-deploy-fixup'
 
 jobs:
 
   docker:
     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.16
+    concurrency: build-deploy-and-test
     with:
       tag: latest
     secrets: inherit
 
   deploy-and-test:
+    concurrency: build-deploy-and-test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
