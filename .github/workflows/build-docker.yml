@@ -5,12 +5,12 @@ on:
   workflow_call:
     inputs:
       org:
-        default: ${{ github.event.org.login }}
+        default: freezingsaddles
         description: 'Docker Hub organization'
         required: false
         type: string
       repo:
-        default: ${{ github.event.repository.name }}
+        default: freezing-web
         description: 'Docker Hub repository name'
         required: false
         type: string
