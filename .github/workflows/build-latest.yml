@@ -1,0 +1,47 @@
+---
+name: Build Deploy and Test Latest
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+
+  docker:
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.16
+    with:
+      tag: latest
+    secrets: inherit
+
+  deploy-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+
+    - name: install
+      uses: appleboy/ssh-action@v1.1.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+          set -euo pipefail
+          cd /opt/compose
+          docker-compose pull freezing-web
+          docker-compose up -d freezing-web
+
+    - name: wait
+      uses: iFaxity/wait-on-action@v1.2.1
+      with:
+        resource: https-get://freezingsaddles.org
+        timeout: 5000
+
+    - name: checkout
+      uses: actions/checkout@v4
+
+    - name: test-wget-spider
+      run: "URL=https://freezingsaddles.org test/wget-spider.sh"
+
