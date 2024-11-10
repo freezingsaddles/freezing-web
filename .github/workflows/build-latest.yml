@@ -15,6 +15,8 @@ jobs:
   #  secrets: inherit
 
   deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
     - name: install
       uses: appleboy/ssh-action@v1.1.0
