@@ -8,7 +8,7 @@ on:
 
 jobs:
   docker:
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.15
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.16
     with:
       tag: ${{ github.ref_name }}
     secrets: inherit
