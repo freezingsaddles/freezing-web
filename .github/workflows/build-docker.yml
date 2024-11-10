@@ -46,4 +46,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ org }}/${{ repo }}:${{ tag }}
+          tags: ${{ inputs.org }}/${{ inputs.repo }}:${{ inputs.tag }}
