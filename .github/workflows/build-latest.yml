@@ -27,4 +27,7 @@ jobs:
         port: ${{ secrets.PORT }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          restart
+          set -euo pipefail
+          cd /opt/compose
+          docker-compose pull freezing-web
+          docker-compose up freezing-web -d
