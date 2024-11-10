@@ -5,16 +5,16 @@ on:
   push:
     branches:
       - 'master'
-      - 'github-actions-docker-build'
 
 jobs:
-  #  docker:
-  #  uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.7
-  #  with:
-  #    tag: latest
-  #  secrets: inherit
 
-  deploy:
+   docker:
+     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.8
+     with:
+       tag: latest
+     secrets: inherit
+
+  deploy-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -42,6 +42,6 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
 
-    - name: test
+    - name: test-wget-spider
       run: "URL=https://freezingsaddles.org test/wget-spider.sh"
 
