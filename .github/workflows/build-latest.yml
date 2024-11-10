@@ -27,4 +27,4 @@ jobs:
         port: ${{ secrets.PORT }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          ls .ssh/authorized_keys
+          restart
