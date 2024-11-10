@@ -2,20 +2,24 @@
 name: Docker Build and Push
 
 on: workflow_call
-
-inputs:
-
-  org:
-    description: 'Docker Hub organization'
-    default: ${{ github.event.org.login }}
-
-  repo:
-    description: 'Docker Hub repository name'
-    default: ${{ github.event.repository.name }}
-
-  tag:
-    description: 'tag for Docker container'
-    default: ${{ GITHUB_SHA }}
+  inputs:
+    org:
+      required: false
+      description: 'Docker Hub organization'
+      default: ${{ github.event.org.login }}
+    repo:
+      required: false
+      description: 'Docker Hub repository name'
+      default: ${{ github.event.repository.name }}
+    tag:
+      required: false
+      description: 'tag for Docker container'
+      default: ${{ GITHUB_SHA }}
+  secrets:
+    DOCKERHUB_USERNAME:
+      required: true
+    DOCKERHUB_TOKEN:
+      required: true
 
 jobs:
   docker:
