@@ -9,8 +9,8 @@ on:
 jobs:
 
    docker:
-   uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.12
-    with:
+     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.13
+     with:
        tag: latest
      secrets: inherit
 
