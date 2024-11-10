@@ -33,7 +33,7 @@ jobs:
           docker-compose up -d freezing-web
 
     - name: wait
-      uses: iFaxity/wait-on-action
+      uses: iFaxity/wait-on-action@v1.2.1
       with:
         resource: https-get://freezingsaddles.org
         timeout: 5000
