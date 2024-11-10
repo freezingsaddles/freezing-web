@@ -15,7 +15,6 @@ jobs:
     with:
       tag: latest
     secrets: inherit
-    timeout-minutes: 5
 
   deploy:
     concurrency: build-deploy-and-test
