@@ -15,7 +15,7 @@ on:
         required: false
         type: string
       tag:
-        default: ${{ GITHUB_SHA }}
+        default: latest
         description: 'tag for Docker container'
         required: false
         type: string
