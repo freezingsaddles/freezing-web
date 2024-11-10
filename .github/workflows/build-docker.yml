@@ -5,17 +5,20 @@ on:
   workflow_call:
     inputs:
       org:
-        required: false
-        description: 'Docker Hub organization'
         default: ${{ github.event.org.login }}
+        description: 'Docker Hub organization'
+        required: false
+        type: string
       repo:
-        required: false
-        description: 'Docker Hub repository name'
         default: ${{ github.event.repository.name }}
-      tag:
+        description: 'Docker Hub repository name'
         required: false
-        description: 'tag for Docker container'
+        type: string
+      tag:
         default: ${{ GITHUB_SHA }}
+        description: 'tag for Docker container'
+        required: false
+        type: string
     secrets:
       DOCKERHUB_USERNAME:
         required: true
