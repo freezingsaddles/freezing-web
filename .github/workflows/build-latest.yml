@@ -1,7 +1,13 @@
 ---
-name: Build
+name: Build and Deploy
 
 on: pull_request
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'github-actions-docker-build'  # until this is debugged, remove before merging
 
 jobs:
   docker:
@@ -9,3 +15,14 @@ jobs:
     with:
       tag: latest
     secrets: inherit
+
+  deploy:
+    uses: appleboy/ssh-action@v1.1.0
+    with:
+      host: ${{ secrets.HOST }}
+      username: ${{ secrets.USERNAME }}
+      key: ${{ secrets.KEY }}
+      port: ${{ secrets.PORT }}
+      passphrase: ${{ secrets.PASSPHRASE }}
+      script: |
+        ls .ssh/authorized_keys
