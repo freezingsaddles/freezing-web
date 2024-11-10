@@ -5,11 +5,7 @@ on: [push, pull_request]
 
 jobs:
   docker:
-      
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Build
-        uses: freezingsaddles/freezing-web/.github/workflows/docker-build.yml@github-actions-docker-build
-        with:
-          tag: latest-actions-build
+    uses: freezingsaddles/freezing-web/.github/workflows/docker-build.yml@github-actions-docker-build
+      with:
+        tag: latest-actions-build
+      secrets: inherit
