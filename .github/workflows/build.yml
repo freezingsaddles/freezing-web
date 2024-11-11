@@ -4,8 +4,8 @@ name: Build
 on: pull_request
 
 jobs:
-  docker:
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.17
+  build:
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.18
     with:
       tag: latest-actions-build
     secrets: inherit
