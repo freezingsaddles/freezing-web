@@ -8,13 +8,16 @@ on:
 
 jobs:
 
-  docker:
+  build:
     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.16
+    concurrency: build-deploy-and-test
     with:
       tag: latest
     secrets: inherit
 
-  deploy-and-test:
+  deploy:
+    concurrency: build-deploy-and-test
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -38,6 +41,14 @@ jobs:
       with:
         resource: https-get://freezingsaddles.org
         timeout: 5000
+
+
+  test:
+    concurrency: build-deploy-and-test
+    needs: [build, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
 
     - name: checkout
       uses: actions/checkout@v4

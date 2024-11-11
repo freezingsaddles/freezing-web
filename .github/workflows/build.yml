@@ -4,7 +4,7 @@ name: Build
 on: pull_request
 
 jobs:
-  docker:
+  build:
     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.4.16
     with:
       tag: latest-actions-build
