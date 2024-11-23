@@ -634,7 +634,9 @@ def user_daily_points(athlete_id):
     # only look until the end of the competition though
     end_date = config.END_DATE
     end_date = end_date.replace(tzinfo=None)
-    day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=min(datetime.now(), end_date))
+    day_r = rrule.rrule(
+        rrule.DAILY, dtstart=start_date, until=min(datetime.now(), end_date)
+    )
     rows = []
     for i, dt in enumerate(day_r):
         # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
