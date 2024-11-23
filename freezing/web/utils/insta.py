@@ -1,12 +1,14 @@
 """
 Utility functions for working with images.
 """
+
 import os
-import urllib
 import shutil
+import urllib
 
 from instagram.client import InstagramAPI
-from freezing.web import app, exc
+
+from freezing.web import exc
 from freezing.web.config import config
 
 THUMBNAIL_DIMS = (150, 150)
@@ -57,18 +59,6 @@ def cache_photos(uid, base_dir):
         )
 
 
-def cache_photos(uid, base_dir):
-    api = configured_instagram_client()
-
-    mediaobj = api.media(uid)
-
-    for res in ("standard_resolution", "low_resolution", "thumbnail"):
-        photo = mediaobj.images[res]
-        _write_instagram_photo(
-            uid=uid, photo=photo, dest_dir=os.path.join(base_dir, res)
-        )
-
-
 def _write_instagram_photo(uid, photo, dest_dir):
     """
     Writes out photo for specified uid and Image object to destination directory.
@@ -79,6 +69,6 @@ def _write_instagram_photo(uid, photo, dest_dir):
     """
     photo_fname = IMG_FNAME_TPL.format(uid=uid)
     (filename, headers) = urllib.urlretrieve(photo.url)
-    if not os.path.exists(dest_dir):
+    if os.path.exists(dest_dir) is False:
         os.makedirs(dest_dir)
     shutil.move(filename, os.path.join(dest_dir, photo_fname))

@@ -3,25 +3,30 @@ Created on Feb 10, 2013
 
 @author: hans
 """
-import json
+
 import copy
+import json
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from flask import current_app, request, Blueprint, jsonify
-
-from sqlalchemy import text
 from dateutil import rrule
-
+from flask import Blueprint, current_app, jsonify
 from freezing.model import meta
 from freezing.model.orm import Team
+from pytz import utc
+from sqlalchemy import text
 
 from freezing.web import config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
-from freezing.web.views.shared_sql import *
-
-from pytz import utc
+from freezing.web.views.shared_sql import (
+    indiv_freeze_query,
+    indiv_segment_query,
+    indiv_sleaze_query,
+    team_leaderboard_query,
+    team_segment_query,
+    team_sleaze_query,
+)
 
 blueprint = Blueprint("chartdata", __name__)
 
@@ -45,7 +50,10 @@ def team_leaderboard_data():
     for i, res in enumerate(team_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"], 25), place),
+            },
             {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
         ]
         rows.append({"c": cells})
@@ -83,7 +91,7 @@ def indiv_leaderboard_data():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
         ]
@@ -118,7 +126,10 @@ def team_elev_gain():
     for i, res in enumerate(team_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["cumul_elev_gain"], "f": str(int(res["cumul_elev_gain"]))},
         ]
         rows.append({"c": cells})
@@ -153,7 +164,7 @@ def indiv_elev_gain():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["cumul_elev_gain"], "f": str(int(res["cumul_elev_gain"]))},
         ]
@@ -188,7 +199,7 @@ def indiv_moving_time():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {
                 "v": res["total_moving_time"],
@@ -225,7 +236,10 @@ def team_moving_time():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {
                 "v": res["total_moving_time"],
                 "f": str(timedelta(seconds=int(res["total_moving_time"]))),
@@ -253,7 +267,7 @@ def indiv_number_sleaze_days():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["num_sleaze_days"], "f": str(int(res["num_sleaze_days"]))},
         ]
@@ -277,7 +291,10 @@ def team_number_sleaze_days():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["num_sleaze_days"], "f": str(int(res["num_sleaze_days"]))},
         ]
         rows.append({"c": cells})
@@ -314,7 +331,7 @@ def indiv_kidical():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["kidical_rides"], "f": str(int(res["kidical_rides"]))},
         ]
@@ -339,7 +356,7 @@ def indiv_freeze_points():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {
                 "v": res["freeze_points_total"],
@@ -372,7 +389,7 @@ def indiv_segment(segment_id):
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["segment_rides"], "f": str(int(res["segment_rides"]))},
         ]
@@ -400,7 +417,10 @@ def team_segment(segment_id):
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["segment_rides"], "f": str(int(res["segment_rides"]))},
         ]
         rows.append({"c": cells})
@@ -435,7 +455,7 @@ def indiv_avg_speed():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["avg_speed"], "f": "{0:.2f}".format(res["avg_speed"])},
         ]
@@ -470,7 +490,10 @@ def team_avg_speed():
     for i, res in enumerate(indiv_q):
         place = i + 1
         cells = [
-            {"v": res["team_name"], "f": "{0} [{1}]".format(res["team_name"], place)},
+            {
+                "v": res["team_name"],
+                "f": "{0} [{1}]".format(short(res["team_name"]), place),
+            },
             {"v": res["avg_speed"], "f": "{0:.2f}".format(res["avg_speed"])},
         ]
         rows.append({"c": cells})
@@ -506,7 +529,7 @@ def indiv_freezing():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["distance"], "f": "{0:.2f}".format(res["distance"])},
         ]
@@ -543,7 +566,7 @@ def indiv_before_sunrise():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["dark"], "f": str(timedelta(seconds=int(res["dark"])))},
         ]
@@ -580,7 +603,7 @@ def indiv_after_sunset():
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res["dark"], "f": str(timedelta(seconds=int(res["dark"])))},
         ]
@@ -592,7 +615,6 @@ def indiv_after_sunset():
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     day_q = text(
         """
              select DS.points
@@ -890,7 +912,6 @@ def indiv_elev_dist():
 
     rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
         name_parts = res["athlete_name"].split(" ")
         if len(name_parts) > 1:
             short_name = " ".join([name_parts[0], name_parts[-1]])
@@ -903,7 +924,7 @@ def indiv_elev_dist():
             team_name = res["team_name"]
 
         cells = [
-            {"v": res["athlete_name"], "f": short_name},
+            {"v": res["athlete_name"], "f": short(short_name)},
             {"v": res["total_distance"], "f": "{0:.2f}".format(res["total_distance"])},
             {
                 "v": res["total_elevation_gain"],
@@ -966,12 +987,6 @@ def distance_by_lowtemp():
             """
     )
 
-    cols = [
-        {"id": "date", "label": "Date", "type": "date"},
-        {"id": "distance", "label": "Distance", "type": "number"},
-        {"id": "day_temp_min", "label": "Low Temp", "type": "number"},
-    ]
-
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
         if res["low_temp"] is None:
@@ -1004,6 +1019,13 @@ def gviz_api_jsonify(*args, **kwargs):
     )
 
 
+def short(name, max_len=17):
+    if len(name) < max_len:
+        return name
+    else:
+        return "{}…{}".format(name[: max_len - 2], name[len(name) - 1 : len(name)])
+
+
 def exec_and_jsonify_query(
     q,
     display_label,
@@ -1022,7 +1044,7 @@ def exec_and_jsonify_query(
         cells = [
             {
                 "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(res["athlete_name"], place),
+                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
             },
             {"v": res[query_label], "f": hover_lambda(res, query_label)},
         ]
@@ -1053,9 +1075,9 @@ def parameterized_suffering_query(
          select A.display_name as athlete_name,
          A.id as ath_id,
             W.{0} as {1},
-            R.start_date as date,
-            R.location as loc,
-            R.moving_time as moving
+            any_value(R.start_date) as date,
+            any_value(R.location) as loc,
+            any_value(R.moving_time) as moving
             from rides R
             inner join ride_weather W on R.id=W.ride_id
             inner join lbd_athletes A on A.id=R.athlete_id
@@ -1070,7 +1092,7 @@ def parameterized_suffering_query(
              ) as SQ
            ON SQ.{1}2 = W.{0}
            AND SQ.ath2_id = A.id
-          group by athlete_name
+          group by athlete_name, ath_id
           order by {1} {3}, moving DESC;
           """.format(
         weath_field, weath_nick, func, desc, superlative_restriction
@@ -1080,12 +1102,15 @@ def parameterized_suffering_query(
 @blueprint.route("/indiv_coldest")
 def indiv_coldest():
     q = text(parameterized_suffering_query("ride_temp_start", "temp_start", func="min"))
-    hl = lambda res, ql: "%.2f F for %s on %s in %s" % (
-        res["temp_start"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f F for %s on %s in %s" % (
+            res["temp_start"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Temperature", "temp_start", hover_lambda=hl)
 
 
@@ -1100,12 +1125,15 @@ def indiv_snowiest():
             superlative_restriction="W2.ride_snow=1",
         )
     )
-    hl = lambda res, ql: "%.2f in for %s on %s in %s" % (
-        res["snow"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f in for %s on %s in %s" % (
+            res["snow"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Snowfall", "snow", hover_lambda=hl)
 
 
@@ -1120,10 +1148,13 @@ def indiv_rainiest():
             superlative_restriction="W2.ride_rain=1",
         )
     )
-    hl = lambda res, ql: "%.2f in for %s on %s in %s" % (
-        res["rain"],
-        fmt_dur(res["moving"]),
-        fmt_date(res["date"]),
-        res["loc"],
-    )
+
+    def hl(res, ql):
+        "%.2f in for %s on %s in %s" % (
+            res["rain"],
+            fmt_dur(res["moving"]),
+            fmt_date(res["date"]),
+            res["loc"],
+        )
+
     return exec_and_jsonify_query(q, "Rainfall", "rain", hover_lambda=hl)

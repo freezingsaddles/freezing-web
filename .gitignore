@@ -1,7 +1,8 @@
 *.cfg
 *.egg-info
 *.pyc
-.*
+.env*
+.venv*
 /*.iml
 /build
 /data/cache/*

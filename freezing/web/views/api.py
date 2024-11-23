@@ -1,21 +1,18 @@
+import json
 from datetime import timedelta
 from decimal import Decimal
-import json
 
 import arrow
-import geojson
-from flask import Blueprint, jsonify, request
 import pytz
-from sqlalchemy import text
-from stravalib import unithelper as uh
-
+from flask import Blueprint, jsonify, request
 from freezing.model import meta
-from freezing.model.orm import RidePhoto, Ride, RideTrack, Athlete
+from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
+from sqlalchemy import text
 
-from freezing.web import app, config
+from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.serialize import RidePhotoSchema
-from freezing.web.utils import auth, dates
+from freezing.web.utils import auth
 from freezing.web.utils.wktutils import parse_linestring
 
 blueprint = Blueprint("api", __name__)
@@ -198,7 +195,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = meta.scoped_session()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private == False)
+    q = q.filter(Ride.private is False)
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)

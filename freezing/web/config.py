@@ -1,14 +1,12 @@
 import logging
 import os
-from typing import List
 from datetime import datetime, tzinfo
-
-from colorlog import ColoredFormatter
-from envparse import env
+from typing import List
 
 import arrow
 import pytz
-
+from colorlog import ColoredFormatter
+from envparse import env
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
@@ -90,9 +88,9 @@ def init_logging(loglevel: int = logging.INFO, color: bool = False):
         logging.root,
     ]
 
-    for l in loggers:
-        if l is logging.root:
-            l.setLevel(logging.DEBUG)
+    for logger in loggers:
+        if logger is logging.root:
+            logger.setLevel(logging.DEBUG)
         else:
-            l.setLevel(logging.INFO)
-        l.addHandler(ch)
+            logger.setLevel(logging.INFO)
+        logger.addHandler(ch)

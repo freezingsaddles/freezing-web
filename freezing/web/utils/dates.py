@@ -1,9 +1,6 @@
-import pytz
-
-from datetime import datetime
 from dateutil import parser as date_parser
 
-from freezing.web import app, config
+from freezing.web import config
 
 
 def parse_competition_timestamp(ts):
