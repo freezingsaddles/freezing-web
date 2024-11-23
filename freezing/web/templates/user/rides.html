@@ -18,60 +18,39 @@
       // draws it.
 
       function drawDailyPointsChart() {
-
 	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
-          }).done(function(jsonData) {
-
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-
-              console.log(data);
-
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_daily_points'));
-
-              var options = {
-                  'title': 'Daily Points',
-                  'width': 1000,
-                  'height': 250,
-                  'hAxis': {title: "Day No."},
-                  'vAxis': {title: "Points"},
-                  legend: {position: 'none'},
-                  chartArea: {left: 75, top: 50}
-              };
-              chart.draw(data, options);
-          });
+          }).done(drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points', 'Day No.'));
 	  }
 
 	  function drawWeeklyPointsChart() {
-
 	      $.ajax({
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
-          }).done(function(jsonData) {
-
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-
-              console.log(data);
-
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_weekly_points'));
-
-              var options = {
-                  'title': 'Weekly Points',
-                  'width': 1000,
-                  'height': 250,
-                  'hAxis': {title: "Day No."},
-                  'vAxis': {title: "Points"},
-                  legend: {position: 'none'},
-                  chartArea: {left: 75, top: 50}
-              };
-              chart.draw(data, options);
-          });
+          }).done(drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points', 'Week No.'));
 	  }
+
+      function drawPointsChart(jsonData, element, title, hAxisTitle) {
+          // Create our data table out of JSON data loaded from server.
+          const data = new google.visualization.DataTable(jsonData);
+
+          console.log(data);
+
+          // Instantiate and draw our chart, passing in some options.
+          const chart = new google.visualization.ColumnChart(document.getElementById(element));
+
+          const options = {
+              'title': title,
+              'width': 1000,
+              'height': 250,
+              'hAxis': {title: hAxisTitle},
+              'vAxis': {title: "Points"},
+              legend: {position: 'none'},
+              chartArea: {left: 75, top: 50}
+          };
+          chart.draw(data, options);
+      }
 
 	  </script>
 {% endblock %}
