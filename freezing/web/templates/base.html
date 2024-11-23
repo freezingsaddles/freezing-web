@@ -100,10 +100,16 @@
                         </a>
                         <ul class="dropdown-menu">
 
+                            <li><a href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
+                            <li><a href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
                             <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
                             <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
-                            <li><a href="/explore/team_cumul">Team Cumulative</a></li>
+                            <li><a href="/pointless/daily_variance">Least Daily Variance</a></li>
+                            <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
+                            <li><a href="/pointless/avgdist">Shortest Rides</a></li>
+                            <li class="disabled"><a class="disabled" {# href="/explore/team_cumul" #} data-toggle="tooltip" data-placement="top" title="This leaderboard is returning soon!">Team Cumulative</a></li>
                             <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
+                            <li><a href="/pointless/avgspeed">Tortoise and Hare</a></li>
                         </ul>
                     </li>
                     <li class="dropdown{% if request.path.startswith('/people') %} active{% endif %}">
@@ -121,20 +127,19 @@
                             Pointless <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <!-- li><a href="/pointless/hashtag/biathlon">Biathlon</a></li -->
-                            <li><a href="/pointless/hashtag/bingo">Bicycle Bingo</a></li>
+                            <li><a href="/pointless/hashtag/biathlon">Biathlon</a></li>
+                            <li><a href="http://bikearlingtonforum.com/showthread.php?20996-Pointless-Prize-2023-Bicycle-Bingo">Bicycle Bingo</a></li>
                             <li><a href="https://www.bikearlingtonforum.com/forums/topic/return-of-calvinball/">Calvinball</a></li>
-                            <li><a href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
-                            <li><a href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
                             <li><a href="/pointless/hashtag/Deflated">Deflated Rides</a></li>
-                            <!-- li><a href="/pointless/hashtag/freezingerrands">Errandeering</a></li -->
+                            <li><a href="/pointless/hashtag/donut">Doughnut Rides</a></li>
+                            <li><a href="/pointless/generic/adulting">Errandeering</a></li -->
                             <!-- li><a href="/pointless/hashtag/420">Expand Your Horizons</a></li -->
-                            <li><a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-extra-mile-2/">Extra Mile</a></li>
+                            <li><a href="http://bikearlingtonforum.com/showthread.php?20994-Pointless-Prize-The-Extra-Mile">Extra Mile</a></li>
                             <!-- li><a href="http://bikearlingtonforum.com/showthread.php?21054-Team-Challenge-FEEDING-SADDLES">Feeding Saddles</a></li -->
-                            <!-- li><a href="/pointless/hashtag/FirstTimeFS">First Time Riders</a></li -->
                             <li><a href="/pointless/hashtag/goldenspike">Golden Spike</a></li>
                             <!-- li><a href="/pointless/hashtag/lakefinder">Lake Finder</a></li -->
-                            <li><a href="/pointless/daily_variance">Least Daily Variance</a></li>
+                            <li><a href="/pointless/hashtag/FirstTimeFS">First Time Riders</a></li>
+                            <!-- li><a href="/pointless/hashtag/lakefinder">Lake Finder</a></li -->
                             <li><a href="/pointless/hashtag/fsbooks">Little Free Library</a></li>
                             <li><a href="/pointless/generic/londonbridge">London Bridge Rides</a></li>
                             <li><a href="/pointless/arlington">Loopy for Arlington</a></li>
@@ -146,24 +151,24 @@
                             <!-- li><a href="/pointless/hashtag/oldGeorge">Old Georgetown Bike Lane</a></li -->
                             <!-- li><a href="/pointless/hashtag/parkfinder">Park Finder</a></li -->
                             <li><a href="/pointless/hashtag/phoneride">Phone Ride</a></li>
+                            <li><a href="/pointless/generic/poggio-indiv">POGGIO (Indiv)</a></li>
+                            <li><a href="/pointless/generic/poggio-team">POGGIO (Team)</a></li>
                             <li><a href="/pointless/hashtag/scavhunt">Photo Scavenger Hunt</a></li>
                             <li><a href="/pointless/hashtag/pizza">Pizzaneuring</a></li>
                             <li><a href="/pointless/hashtag/po">Post Office</a></li>
-                            <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
                             <li><a href="/pointless/hashtag/publicartfinder">Public Art Finder</a></li>
                             <li><a href="/pointless/rosshillloop">Ross Hill Loop</a></li>
                             <li><a href="/pointless/hashtag/socks">Socks</a></li>
                             <li><a href="/pointless/hashtag/singlespeed">Singlespeed</a></li>
-                            <!-- li><a href="/pointless/hashtag/stem">STEM</a></li -->
-                            <li><a href="/pointless/avgdist">Shortest Rides</a></li>
-                            <!-- li><a href="/pointless/generic/suppleride">Supple Ride</a></li -->
+                            <!-- <li><a href="/pointless/hashtag/stem">STEM</a></li> -->
+                            <li><a href="/pointless/generic/suppleride">Supple Ride</a></li>
                             <!-- li><a href="http://bikearlingtonforum.com/showthread.php?21022-Pointless-Prize-Stupid-Silly-Bike-Tricks">Stupid Silly Bike Tricks</a></li -->
-                            <li><a href="/pointless/hashtag/tandem">Tandem Rides</a></li>
-                            <!-- li><a href="/pointless/hashtag/tandemVI">Tandem Rides - Visually Impaired</a></li -->
-                            <!-- li><a href="/pointless/hashtag/thetacoride">The Taco Ride</a></li -->
-                            <li><a href="/pointless/avgspeed">Tortoise and Hare</a></li>
                             <li><a href="/pointless/hashtag/treats">Street Treats</a></li>
+                            <li><a href="/pointless/hashtag/tandem">Tandem Rides</a></li>
+                            <li><a href="/pointless/hashtag/tandemVI">Tandem Rides - Visually Impaired</a></li>
+                            <li><a href="/pointless/hashtag/thetacoride">The Taco Ride</a></li>
                             <!-- li><a href="/pointless/hashtag/abc">Vehicle ABCs</a></li -->
+                            <li><a href="/pointless/hashtag/fswormhole">Wormholes</a></li>
                             <li><a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/">Wandrer' About</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/pointless/kidmiles">Kidical by Mileage</a></li>

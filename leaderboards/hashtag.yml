@@ -67,6 +67,12 @@ tags:
     sponsor: alana
     rank_by_rides: True
 
+  - tag: donut
+    name: Doughnut Rides
+    description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
+    sponsor: Currently Unsponsored
+    rank_by_rides: True
+
   # This is a first cut of an implementation for this, to really hew to the rules would be much more
   # complicated - involving excluding rides that are < 5 miles (per day maybe?) and geofencing rides to the DMV.
   - tag: FirstTimeFS
