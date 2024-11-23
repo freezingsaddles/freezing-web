@@ -1,14 +1,12 @@
 import logging
 import os
-from typing import List
 from datetime import datetime, tzinfo
-
-from colorlog import ColoredFormatter
-from envparse import env
+from typing import List
 
 import arrow
 import pytz
-
+from colorlog import ColoredFormatter
+from envparse import env
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
@@ -19,13 +17,10 @@ _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class Config:
-
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
     SECRET_KEY = env("SECRET_KEY")
 
     SQLALCHEMY_URL = env("SQLALCHEMY_URL")
-    BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="beanstalkd.container")
-    BEANSTALKD_PORT: int = env("BEANSTALKD_PORT", cast=int, default=11300)
 
     STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
@@ -93,9 +88,9 @@ def init_logging(loglevel: int = logging.INFO, color: bool = False):
         logging.root,
     ]
 
-    for l in loggers:
-        if l is logging.root:
-            l.setLevel(logging.DEBUG)
+    for logger in loggers:
+        if logger is logging.root:
+            logger.setLevel(logging.DEBUG)
         else:
-            l.setLevel(logging.INFO)
-        l.addHandler(ch)
+            logger.setLevel(logging.INFO)
+        logger.addHandler(ch)

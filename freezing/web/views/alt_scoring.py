@@ -1,15 +1,19 @@
 from collections import defaultdict
 from itertools import groupby
-
-from flask import render_template, Blueprint
-from sqlalchemy import text
 from statistics import median
 
+from flask import Blueprint, render_template
 from freezing.model import meta
+from sqlalchemy import text
 
 from freezing.web import config
-from freezing.web.views.shared_sql import *
-
+from freezing.web.views.shared_sql import (
+    indiv_freeze_query,
+    indiv_segment_query,
+    indiv_sleaze_query,
+    team_segment_query,
+    team_sleaze_query,
+)
 
 blueprint = Blueprint("alt_scoring", __name__)
 
@@ -18,9 +22,9 @@ blueprint = Blueprint("alt_scoring", __name__)
 def team_riders():
     q = text(
         """
-		select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
-		on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
-		"""
+        select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
+        on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
+        """
     )
     team_riders = [
         (x["name"], x["ride_days"]) for x in meta.scoped_session().execute(q).fetchall()

@@ -1,7 +1,6 @@
 # Freezing Saddles Web
 
-This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based
-winter cycling competition software.
+This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based winter cycling competition software.
 
 **NOTE:** This application conists of multiple components that work together (designed to run as Docker containers).
 1. [freezing-web](https://github.com/freezingsaddles/freezing-web) - The website for viewing leaderboards   
@@ -13,12 +12,12 @@ winter cycling competition software.
 
 ## Dependencies
 
-* Python 3.6+ (will not work with python 2.x)
+* Python 3.10+ (will not work with python 2.x)
 * Pip
 * Virtualenv (venv)
-* MySQL 5.6+ (Sadly.)
+* MySQL 5.7
 
-We recommend that for ease of development and debugging, that you install Python 3.6 and pip directly on your workstation. This is tested to work on macOS 13.x (High Sierra), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
+We recommend that for ease of development and debugging, that you install Python 3.10 and pip directly on your workstation. This is tested to work on macOS 14.1.2 (23B92) (Sonoma), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
 
 ## Installation
 
@@ -32,25 +31,28 @@ shell$ for part in sync web compose nq model; do git clone https://github.com/fr
 
 # Create and activate a virtual environment for freezing-web
 shell$ cd freezing-web
-shell$ python3.6 -m venv env
+shell$ python3 -m venv env
 shell$ source env/bin/activate
 (env) shell$ pip install -r requirements.txt
 (env) shell$ python setup.py develop
 ```
 
 We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using
-the "(env) shell$" prefix before shell commands.)    
+the "(env) shell$" prefix before shell commands.)
 
 ### Database Setup
 
-This application requires MySQL.  I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting
-provider only supports MySQL), it's what we're doing.
+This application requires MySQL, for historical reasons. @hozn wrote:
 
-#### DB Setup using Docker
+> I know, MySQL is a horrid database, but since I have to host this myself (and my shared hosting provider only supports MySQL), it's what we're doing.
+
+These days, @obscurerichard hosts the production site on AWS, where we have a choice of many more databases, but since it started as MySQL it will probably stay as MySQL unless there's a really good reason to move. Perhaps PostgreSQL and its geospacial integration would be a better choice in the long run. Also, [Amazon Aurora](https://aws.amazon.com/rds/aurora/) is really slick for MySQL-compatible datbase engines, so we are sticking with MySQL for now.
+
+#### Database Setup using Docker
 
 We have some development support Docker Compose files that can help make database setup simpler, head over to the [freezing-compose](https://github.com/freezingsaddles/freezing-compose) repo for those instructions.
 
-#### Manual DB Setup
+#### Manual Database Setup
 
 Install MySQL, version 5.6 or newer. The current production server for https://freezingsaddles.org/ runs MySQL 5.6.
 
@@ -59,6 +61,7 @@ You should create a database and create a user that can access the database.  So
 ```bash
 shell$ mysql -uroot
 mysql> create database freezing;
+mysql> create user freezing@localhost identified by 'REDACTED';
 mysql> grant all on freezing.* to freezing@localhost;
 ```
 
@@ -123,9 +126,6 @@ with the related containers.
 This component is designed to run as a container and should be configured with environment variables for:
 - `DEBUG`: Whether to display exception stack traces, etc.
 - `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
-- `BEANSTALKD_HOST`: The hostname (probably a container link) to a beanstalkd server.
-shell$ git clone https://github.com/freezingsaddles/freezing-web.git
-- `BEANSTALKD_PORT`: The port for beanstalkd server (default 11300)
 - `SQLALCHEMY_URL`: The URL to the database.
 - `STRAVA_CLIENT_ID`: The ID of the Strava application.
 - `STRAVA_CLIENT_SECRET`: Secret key for the app (available from App settings page in Strava)
@@ -176,6 +176,146 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web.git
 
 Athletes will get assigned to their correct teams as soon as they join exactly one of the defined competition teams.
 
+## On dumping and restoring the database
+
+It is convenient to dump and restore the database onto a local development environment, and it may be necessary from time to time to restore a database dump in production.
+
+When restoring the database, you should do so as the MySQL root user, or if you don't have access to the real MySQL root user, as the highest privilege user you have access to. Some systems, such as AWS RDS, do not give full MySQL root access but they _do_ have an administrative user.
+
+It would be a good idea to first drop the database, then recreate it along with the freezing user, before restoring the backup.
+
+
+You may have to edit the resulting SQL dump to redo the SQL SECURITY DEFINER clauses. The examples below do not have the real production root user name in them, observe the error messages from the production dump restoration to get the user name you will need (or ask @obscurerichard in Slack).
+
+```
+/*!50013 DEFINER=`mysql-admin-user`@`%` SQL SECURITY DEFINER */
+```
+
+In this case you could edit the SQL dump to fix up the root user expressions:
+
+```
+# Thanks https://stackoverflow.com/a/23584470/424301
+LC_ALL=C sed -i.bak 's/mysql-admin-user/root/g' freezing-2023-11-20.sql
+```
+
+Here is a lightly redacted transcript of a MySQL interactive session, run on a local dev environment, demonstrating how to prepare for restoring a dump:
+
+```
+$ docker run -it --rm --network=host mysql:5.7 mysql --host=127.0.0.1 --port=3306 --user=root --password=REDACTED
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33
+Server version: 5.7.44 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> drop database if exists freezing;
+Query OK, 33 rows affected (0.29 sec)
+
+mysql> create database freezing;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use freezing;
+Database changed
+
+mysql> drop user if exists freezing@localhost;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create user freezing@localhost identified by 'REDACTED';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>  grant all on freezing.* to freezing@localhost;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> quit
+Bye
+$ LC_ALL=C sed -i.bak 's/mysql-admin-user/root/g' freezing-2023-11-20.sql
+$ time docker run -i --rm --network=host mysql:5.7 mysql --host=127.0.0.1 --port=3306 --user=root --password=REDACTED --database=freezing --default-character-set=utf8mb4 < freezing-2023-11-20.sql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+
+real	0m43.612s
+user	0m0.510s
+sys	0m0.994s
+$
+```
+
+# Scoring system
+
+The Freezing Saddles o
+The scoring system heavily weights the early miles of each ride.
+
+• 10 points for each day of 1 mile+
+• Additional mileage points as follows: Mile 1=10 points; Mile 2=9 pts; Mile 3=8 pts, etc. Miles 10 and over = 1 pt each.
+• There is no weekly point cap or distinction between individual and team points. Ride your hearts out!
+
+
+## Scoring Cheat Sheet for the Mathematically Challenged
+
+```
+Miles = Points
+1 = 20
+2 = 29
+3 = 37
+4 = 44
+5 = 50
+6 = 55
+7 = 59
+8 = 62
+9 = 64
+10 = 65
+11 = 66
+12 = 67
+13 = 68
+14 = 69
+15 = 70
+16 = 71
+17 = 72
+18 = 73
+19 = 74
+20 = 75
+```
+
+The scores are rounded to the nearest integer point for display, but the system uses precise floating point calculations of points to determine rank. This can lead to some counterintuitive results at first glance, such as a whole-number points tie with the person in the lead having fewer miles recorded.
+
+In 2024, this happened as of Jan 7 between Paul Wilson and Steve Szibler. Check out this detail 
+ 
+```
+mysql> select a.name, ds.distance, ds.points, ds.ride_date from daily_scores ds inner join athletes a on (ds.athlete_id = a.id) where a.name  like 'Steve S%' or name like 'Paul Wilson' order by name, ride_date;
++-------------------+--------------------+--------------------+------------+
+| name              | distance           | points             | ride_date  |
++-------------------+--------------------+--------------------+------------+
+| Paul Wilson       | 30.233999252319336 |  85.23399925231934 | 2024-01-01 |
+| Paul Wilson       | 32.055999755859375 |  87.05599975585938 | 2024-01-02 |
+| Paul Wilson       | 35.689998626708984 |  90.68999862670898 | 2024-01-03 |
+| Paul Wilson       | 33.128000259399414 |  88.12800025939941 | 2024-01-04 |
+| Paul Wilson       |  36.27000045776367 |  91.27000045776367 | 2024-01-05 |
+| Paul Wilson       |   35.4640007019043 |   90.4640007019043 | 2024-01-06 |
+| Paul Wilson       |  40.28300094604492 |  95.28300094604492 | 2024-01-07 |
+| Steve Szibler🕊     |  85.37000274658203 | 140.37000274658203 | 2024-01-01 |
+| Steve Szibler🕊     |  31.36400079727173 |  86.36400079727173 | 2024-01-02 |
+| Steve Szibler🕊     | 21.209999084472656 |  76.20999908447266 | 2024-01-03 |
+| Steve Szibler🕊     |  40.33599853515625 |  95.33599853515625 | 2024-01-04 |
+| Steve Szibler🕊     | 20.131000638008118 |  75.13100063800812 | 2024-01-05 |
+| Steve Szibler🕊     |  40.17300033569336 |  95.17300033569336 | 2024-01-06 |
+| Steve Szibler🕊     |  7.122000217437744 | 59.419558734504676 | 2024-01-07 |
++-------------------+--------------------+--------------------+------------+
+14 rows in set (0.01 sec)
+
+mysql> select a.name, sum(ds.distance), sum(ds.points) from daily_scores ds inner join athletes a on (ds.athlete_id = a.id) where a.name  like 'Steve S%' or name like 'Paul Wilson' group by name order by sum(ds.points) desc;
++-------------------+-------------------+-------------------+
+| name              | sum(ds.distance)  | sum(ds.points)    |
++-------------------+-------------------+-------------------+
+| Paul Wilson       |           243.125 |           628.125 |
+| Steve Szibler🕊     | 245.7060023546219 | 628.0035608716888 |
++-------------------+-------------------+-------------------+
+2 rows in set (0.02 sec)
+```
 # Legal
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:

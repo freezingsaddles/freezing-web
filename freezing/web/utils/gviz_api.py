@@ -27,14 +27,15 @@ Google Visualization API.
 __author__ = "Amit Weinstein, Misha Seltzer, Jacob Baskin"
 
 import cgi
-from io import StringIO
 import csv
 import datetime
+from io import StringIO
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
 import types
 from decimal import Decimal
 
@@ -725,6 +726,10 @@ class DataTable(object):
                     "Expected tuple with second value: " "'asc' or 'desc'"
                 )
 
+        # Thanks https://stackoverflow.com/a/22490617/424301
+        def cmp(a, b):
+            return (a > b) - (a < b)
+
         def SortCmpFunc(row1, row2):
             """cmp function for sorted. Compares by keys and 'asc'/'desc' keywords."""
             for key, asc_mult in proper_sort_keys:
@@ -805,9 +810,9 @@ class DataTable(object):
         jscode += "%s.addRows(%d);\n" % (name, len(self.__data))
 
         # We now go over the data and add each row
-        for (i, (row, cp)) in enumerate(self._PreparedData(order_by)):
+        for i, (row, cp) in enumerate(self._PreparedData(order_by)):
             # We add all the elements of this row by their order
-            for (j, col) in enumerate(columns_order):
+            for j, col in enumerate(columns_order):
                 if col not in row or row[col] is None:
                     continue
                 value = self.CoerceValue(row[col], col_dict[col]["type"])

@@ -1,23 +1,18 @@
 import decimal
 import os
-import enum
 from datetime import datetime
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
 import yaml
-
-from marshmallow import fields
-from marshmallow_enum import EnumField
-
 from freezing.model import meta
-from freezing.model.msg import BaseSchema, BaseMessage
+from freezing.model.msg import BaseMessage, BaseSchema
+from marshmallow import fields
 
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 
 
 class GenericBoardField(BaseMessage):
-
     name = None
     label = None
     type = None  # Do we need this ...?
@@ -26,7 +21,6 @@ class GenericBoardField(BaseMessage):
     rank_by: bool = False
 
     def format_value(self, v, row):
-
         if isinstance(v, str):
             if self.format:
                 return self.format.format(**dict(row))
@@ -89,11 +83,9 @@ class GenericBoardSchema(BaseSchema):
 
 
 def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]]:
-
     board = load_board(leaderboard)
 
     with meta.transaction_context(read_only=True) as session:
-
         rs = session.execute(board.query)
 
         if not board.fields:
@@ -105,7 +97,6 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
 
 
 def load_board(leaderboard) -> GenericBoard:
-
     path = os.path.join(
         config.LEADERBOARDS_DIR, "{}.yml".format(os.path.basename(leaderboard))
     )

@@ -1,16 +1,12 @@
-from datetime import date, timedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import render_template, Blueprint, abort
+from flask import Blueprint, abort, render_template
+from freezing.model import meta
+from freezing.model.orm import Athlete, Team
+from pytz import timezone, utc
 from sqlalchemy import text
 
-from freezing.model import meta
-from freezing.model.orm import Team, Athlete
-
 from freezing.web import config
-
-from pytz import utc, timezone
-
 
 blueprint = Blueprint("people", __name__)
 
@@ -75,10 +71,10 @@ def people_list_users():
 @blueprint.route("/<user_id>")
 def people_show_person(user_id):
     our_user = meta.scoped_session().query(Athlete).filter_by(id=user_id).first()
-    if our_user.profile_photo and not str.startswith(our_user.profile_photo, "http"):
-        our_user.profile_photo = "https://www.strava.com/" + our_user.profile_photo
     if not our_user:
         abort(404)
+    if our_user.profile_photo and not str.startswith(our_user.profile_photo, "http"):
+        our_user.profile_photo = "https://www.strava.com/" + our_user.profile_photo
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
     today = get_today()

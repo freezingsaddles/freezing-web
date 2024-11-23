@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.10-alpine
 RUN apk update
 RUN apk add py3-mysqlclient
 RUN addgroup -S freezing && adduser -S -G freezing freezing
@@ -12,4 +12,4 @@ WORKDIR /app
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000
-ENTRYPOINT gunicorn --bind 0.0.0.0:8000 'freezing.web:app'
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "freezing.web:app"]

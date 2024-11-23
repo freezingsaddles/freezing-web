@@ -1,41 +1,37 @@
 """
 Functions for interacting with the datastore and the strava apis.
 """
+
 from __future__ import division, unicode_literals
-import re
+
 import logging
-
-from instagram import InstagramAPIError, InstagramClientError
-
-from polyline.codec import PolylineCodec
-
-from sqlalchemy import and_
-from geoalchemy import WKTSpatialElement
-
-from requests.exceptions import HTTPError
-
-from stravalib import Client
-from stravalib import model as strava_model
-from stravalib import unithelper
+import re
 
 from freezing.model import meta, orm
 from freezing.model.orm import (
     Athlete,
     Ride,
-    RideGeo,
     RideEffort,
+    RideGeo,
     RidePhoto,
     RideTrack,
     Team,
 )
+from geoalchemy import WKTSpatialElement
+from instagram import InstagramAPIError, InstagramClientError
+from requests.exceptions import HTTPError
+from sqlalchemy import and_
+from stravalib import Client
+from stravalib import model as strava_model
+from stravalib import unithelper
 
-from freezing.web import app, config
+from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.exc import (
-    InvalidAuthorizationToken,
-    NoTeamsError,
-    MultipleTeamsError,
     DataEntryError,
+    InvalidAuthorizationToken,
+    MultipleTeamsError,
+    NoTeamsError,
 )
 from freezing.web.utils import insta, wktutils
 
@@ -118,7 +114,7 @@ def update_athlete_auth(strava_athlete, token_dict):
 
 def disambiguate_athlete_display_names():
     q = meta.scoped_session().query(orm.Athlete)
-    q = q.filter(orm.Athlete.access_token != None)
+    q = q.filter(orm.Athlete.access_token is not None)
     athletes = q.all()
 
     # Ok, here is the plan; bin these things together based on firstname and last initial.
@@ -146,7 +142,7 @@ def disambiguate_athlete_display_names():
             key = "{0} {1}".format(fname, lname[0])
         athletes_bin.setdefault(key, []).append(a)
 
-    for (name_key, athletes) in athletes_bin.items():
+    for name_key, athletes in athletes_bin.items():
         shortest_lname = min([firstlast(a.name)[1] for a in athletes], key=len)
         required_length = None
         for i in range(len(shortest_lname)):
@@ -335,17 +331,6 @@ def list_rides(athlete, start_date=None, end_date=None, exclude_keywords=None):
     return filtered_rides
 
 
-def timedelta_to_seconds(td):
-    """
-    Converts a timedelta to total seconds.
-    (This is built-in in Python 2.7)
-    """
-    # we ignore microseconds for this
-    if not td:
-        return None
-    return td.seconds + td.days * 24 * 3600
-
-
 def write_ride(activity):
     """
     Takes the specified activity and writes it to the database.
@@ -449,7 +434,6 @@ def update_ride_from_activity(strava_activity, ride):
     # If there are multiple instagram photos, then request syncing of non-primary photos too.
 
     if strava_activity.photo_count > 1 and ride.photos_fetched is None:
-
         log.debug("Scheduling non-primary photos sync for {!r}".format(ride))
         ride.photos_fetched = False
 
@@ -462,8 +446,8 @@ def update_ride_from_activity(strava_activity, ride):
 
     ride.average_speed = float(unithelper.mph(strava_activity.average_speed))
     ride.maximum_speed = float(unithelper.mph(strava_activity.max_speed))
-    ride.elapsed_time = timedelta_to_seconds(strava_activity.elapsed_time)
-    ride.moving_time = timedelta_to_seconds(strava_activity.moving_time)
+    ride.elapsed_time = strava_activity.elapsed_time.seconds
+    ride.moving_time = strava_activity.moving_time.seconds
 
     location_parts = []
     if strava_activity.location_city:
@@ -525,7 +509,7 @@ def write_ride_efforts(strava_activity, ride):
             effort = RideEffort(
                 id=se.id,
                 ride_id=strava_activity.id,
-                elapsed_time=timedelta_to_seconds(se.elapsed_time),
+                elapsed_time=se.elapsed_time.seconds,
                 segment_name=se.segment.name,
                 segment_id=se.segment.id,
             )
@@ -541,7 +525,7 @@ def write_ride_efforts(strava_activity, ride):
 
         ride.efforts_fetched = True
 
-    except:
+    except Exception:
         log.exception("Error adding effort for ride: {0}".format(ride))
         raise
 
@@ -743,7 +727,7 @@ def write_ride_photo_primary(strava_activity, ride):
     # Start by removing any priamry photos for this ride.
     meta.engine.execute(
         RidePhoto.__table__.delete().where(
-            and_(RidePhoto.ride_id == strava_activity.id, RidePhoto.primary == True)
+            and_(RidePhoto.ride_id == strava_activity.id, RidePhoto.primary is True)
         )
     )
 
@@ -784,14 +768,13 @@ def write_ride_photos_nonprimary(activity_photos, ride):
 
     meta.engine.execute(
         RidePhoto.__table__.delete().where(
-            and_(RidePhoto.ride_id == ride.id, RidePhoto.primary == False)
+            and_(RidePhoto.ride_id == ride.id, RidePhoto.primary is False)
         )
     )
 
     insta_client = insta.configured_instagram_client()
 
     for activity_photo in activity_photos:
-
         # If it's already in the db, then skip it.
         existing = meta.scoped_session().query(RidePhoto).get(activity_photo.uid)
         if existing:
