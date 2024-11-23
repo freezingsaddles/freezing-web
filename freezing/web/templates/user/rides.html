@@ -21,26 +21,30 @@
 	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
-          }).done(drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points', 'Day No.'));
+          }).done(function(jsonData) {
+              drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points', 'Day No.');
+          });
 	  }
 
 	  function drawWeeklyPointsChart() {
 	      $.ajax({
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
-          }).done(drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points', 'Week No.'));
+          }).done(function(jsonData) {
+              drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points', 'Week No.');
+          });
 	  }
 
       function drawPointsChart(jsonData, element, title, hAxisTitle) {
           // Create our data table out of JSON data loaded from server.
-          const data = new google.visualization.DataTable(jsonData);
+          var data = new google.visualization.DataTable(jsonData);
 
           console.log(data);
 
           // Instantiate and draw our chart, passing in some options.
-          const chart = new google.visualization.ColumnChart(document.getElementById(element));
+          var chart = new google.visualization.ColumnChart(document.getElementById(element));
 
-          const options = {
+          var options = {
               'title': title,
               'width': 1000,
               'height': 250,
