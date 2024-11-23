@@ -688,6 +688,7 @@ def user_weekly_points(athlete_id):
     )
 
     cols = [{"id": "week", "label": "Week No.", "type": "string"}]
+    cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
     week_r = rrule.rrule(
