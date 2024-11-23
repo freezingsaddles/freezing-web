@@ -7,7 +7,7 @@
 
       // Set a callback to run when the Google Visualization API is loaded.
       google.setOnLoadCallback(drawPointsChart);
-      //google.setOnLoadCallback(drawMileageChart);
+      google.setOnLoadCallback(drawMileageChart);
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
@@ -65,7 +65,7 @@
 {% block content %}
   	<h1>Team Cumulative Points</h1>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_cumul_points"></div>
-    <div id="chart_team_cumul_mileage"></div>
+    <div id="chart_team_cumul_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative points...</div>
+    <div id="chart_team_cumul_mileage"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative mileage....</div>
     
 {% endblock %}
