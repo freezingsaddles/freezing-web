@@ -673,7 +673,6 @@ def user_daily_points(athlete_id):
 @blueprint.route("/user_weekly_points/<athlete_id>")
 def user_weekly_points(athlete_id):
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     week_q = text(
         """
              select sum(DS.points) as total_score
@@ -684,8 +683,6 @@ def user_weekly_points(athlete_id):
     )
 
     cols = [{"id": "week", "label": "Week No.", "type": "string"}]
-    for t in teams:
-        cols.append({"id": "team_{0}".format(t.id), "label": t.name, "type": "number"})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
     start_date = config.START_DATE
@@ -704,13 +701,13 @@ def user_weekly_points(athlete_id):
             {"v": "Week {0}".format(i + 1), "f": "Week {0}".format(i + 1)},
             # Competition always starts at week 1, regardless of isocalendar week no
         ]
-        for t in teams:
-            total_score = meta.engine.execute(
-                week_q, athlete_id=athlete_id, week=week_no - 1
-            ).scalar()  # @UndefinedVariable
-            if total_score is None:
-                total_score = 0
-            cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
+
+        total_score = meta.engine.execute(
+            week_q, athlete_id=athlete_id, week=week_no - 1
+        ).scalar()  # @UndefinedVariable
+        if total_score is None:
+            total_score = 0
+        cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
 
         rows.append({"c": cells})
 
@@ -853,10 +850,15 @@ def team_cumul_mileage():
 
     start_date = config.START_DATE
     start_date = start_date.replace(tzinfo=None)
+    # only look until the end of the competition though
+    end_date = config.END_DATE
+    end_date = end_date.replace(tzinfo=None)
     tpl_dict = dict(
         [
             (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+            for dt in rrule.rrule(
+                rrule.DAILY, dtstart=start_date, until=min(datetime.now(), end_date)
+            )
         ]
     )
 
