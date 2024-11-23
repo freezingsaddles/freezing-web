@@ -612,6 +612,16 @@ def indiv_after_sunset():
     return gviz_api_jsonify({"cols": cols, "rows": rows})
 
 
+def competition_start():
+    start_date = config.START_DATE
+    return start_date.replace(tzinfo=None)
+
+
+def now_or_competition_end():
+    end_date = config.END_DATE
+    return min(datetime.now(), end_date.replace(tzinfo=None))
+
+
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
     """ """
@@ -629,13 +639,8 @@ def user_daily_points(athlete_id):
     cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    # only look until the end of the competition though
-    end_date = config.END_DATE
-    end_date = end_date.replace(tzinfo=None)
     day_r = rrule.rrule(
-        rrule.DAILY, dtstart=start_date, until=min(datetime.now(), end_date)
+        rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
     )
     rows = []
     for i, dt in enumerate(day_r):
@@ -685,13 +690,8 @@ def user_weekly_points(athlete_id):
     cols = [{"id": "week", "label": "Week No.", "type": "string"}]
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    # only look until the end of the competition though
-    end_date = config.END_DATE
-    end_date = end_date.replace(tzinfo=None)
     week_r = rrule.rrule(
-        rrule.WEEKLY, dtstart=start_date, until=min(datetime.now(), end_date)
+        rrule.WEEKLY, dtstart=competition_start(), until=now_or_competition_end()
     )
     rows = []
     for i, dt in enumerate(week_r):
@@ -784,12 +784,12 @@ def team_cumul_points():
             {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
         )
 
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict(
         [
             (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+            for dt in rrule.rrule(
+                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
+            )
         ]
     )
 
@@ -848,16 +848,11 @@ def team_cumul_mileage():
             {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
         )
 
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    # only look until the end of the competition though
-    end_date = config.END_DATE
-    end_date = end_date.replace(tzinfo=None)
     tpl_dict = dict(
         [
             (dt.strftime("%Y-%m-%d"), None)
             for dt in rrule.rrule(
-                rrule.DAILY, dtstart=start_date, until=min(datetime.now(), end_date)
+                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
             )
         ]
     )
