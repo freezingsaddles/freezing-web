@@ -2,12 +2,12 @@
 {% block head %}
     <script type="text/javascript">
 
-      // Load the Visualization API and the piechart package.
-      google.load('visualization', '1.0', {'packages':['corechart']});
+      // Load the Visualization API and the corechart package.
+      google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawPointsChart);
-      //google.setOnLoadCallback(drawMileageChart);
+      google.charts.setOnLoadCallback(drawPointsChart);
+      //google.charts.setOnLoadCallback(drawMileageChart);
 
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
