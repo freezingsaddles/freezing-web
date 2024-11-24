@@ -107,12 +107,11 @@
 
 	function movingTimeFormatter(value, row) {
         var options = {
-            hours: "numeric",
-            minutes: "numeric",
-            seconds: "numeric",
+            localeMatcher: "best fit", // other values: "lookup"
+            numeric: "always", // other values: "auto"
+            style: "long", // other values: "short" or "narrow"
         }
-        var date = new Date(row.moving_time)
-        return Intl.DateTimeFormat("en", options).format(date);
+        return Intl.RelativeTimeFormat("en", options).format(row.moving_time);
 	}
 
 	function rideFormatter(value, row) {
