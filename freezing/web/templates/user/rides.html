@@ -111,7 +111,7 @@
             numeric: "always", // other values: "auto"
             style: "long", // other values: "short" or "narrow"
         }
-        return Intl.RelativeTimeFormat("en", options).format(row.moving_time);
+        return Intl.RelativeTimeFormat("en", options).format(row.moving_time / 1000, 'seconds');
 	}
 
 	function rideFormatter(value, row) {
