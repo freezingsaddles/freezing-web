@@ -108,7 +108,7 @@
 	function movingTimeFormatter(value, row) {
         // Thanks https://stackoverflow.com/a/58531661/424301
         // invalid for activities longer than a day though
-        return new Date(row.moving_time).toISOString().slice(11,19);
+        return new Date(row.moving_time*1000).toISOString().slice(11,19);
 	}
 
 	function rideFormatter(value, row) {
