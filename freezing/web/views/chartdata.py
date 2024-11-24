@@ -612,6 +612,16 @@ def indiv_after_sunset():
     return gviz_api_jsonify({"cols": cols, "rows": rows})
 
 
+def competition_start():
+    start_date = config.START_DATE
+    return start_date.replace(tzinfo=None)
+
+
+def now_or_competition_end():
+    end_date = config.END_DATE
+    return min(datetime.now(), end_date.replace(tzinfo=None))
+
+
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
     """ """
@@ -629,9 +639,9 @@ def user_daily_points(athlete_id):
     cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    day_r = rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+    day_r = rrule.rrule(
+        rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
+    )
     rows = []
     for i, dt in enumerate(day_r):
         # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
@@ -668,7 +678,6 @@ def user_daily_points(athlete_id):
 @blueprint.route("/user_weekly_points/<athlete_id>")
 def user_weekly_points(athlete_id):
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
     week_q = text(
         """
              select sum(DS.points) as total_score
@@ -679,13 +688,12 @@ def user_weekly_points(athlete_id):
     )
 
     cols = [{"id": "week", "label": "Week No.", "type": "string"}]
-    for t in teams:
-        cols.append({"id": "team_{0}".format(t.id), "label": t.name, "type": "number"})
+    cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
-    week_r = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=datetime.now())
+    week_r = rrule.rrule(
+        rrule.WEEKLY, dtstart=competition_start(), until=now_or_competition_end()
+    )
     rows = []
     for i, dt in enumerate(week_r):
         week_no = dt.date().isocalendar()[1]
@@ -694,13 +702,13 @@ def user_weekly_points(athlete_id):
             {"v": "Week {0}".format(i + 1), "f": "Week {0}".format(i + 1)},
             # Competition always starts at week 1, regardless of isocalendar week no
         ]
-        for t in teams:
-            total_score = meta.engine.execute(
-                week_q, athlete_id=athlete_id, week=week_no - 1
-            ).scalar()  # @UndefinedVariable
-            if total_score is None:
-                total_score = 0
-            cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
+
+        total_score = meta.engine.execute(
+            week_q, athlete_id=athlete_id, week=week_no - 1
+        ).scalar()  # @UndefinedVariable
+        if total_score is None:
+            total_score = 0
+        cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
 
         rows.append({"c": cells})
 
@@ -777,12 +785,12 @@ def team_cumul_points():
             {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
         )
 
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict(
         [
             (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+            for dt in rrule.rrule(
+                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
+            )
         ]
     )
 
@@ -841,12 +849,12 @@ def team_cumul_mileage():
             {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
         )
 
-    start_date = config.START_DATE
-    start_date = start_date.replace(tzinfo=None)
     tpl_dict = dict(
         [
             (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(rrule.DAILY, dtstart=start_date, until=datetime.now())
+            for dt in rrule.rrule(
+                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
+            )
         ]
     )
 
