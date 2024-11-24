@@ -18,60 +18,43 @@
       // draws it.
 
       function drawDailyPointsChart() {
-
 	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-
-              console.log(data);
-
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_daily_points'));
-
-              var options = {
-                  'title': 'Daily Points',
-                  'width': 1000,
-                  'height': 250,
-                  'hAxis': {title: "Day No."},
-                  'vAxis': {title: "Points"},
-                  legend: {position: 'none'},
-                  chartArea: {left: 75, top: 50}
-              };
-              chart.draw(data, options);
+              drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points', 'Day No.');
           });
 	  }
 
 	  function drawWeeklyPointsChart() {
-
 	      $.ajax({
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-
-              console.log(data);
-
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_user_weekly_points'));
-
-              var options = {
-                  'title': 'Weekly Points',
-                  'width': 1000,
-                  'height': 250,
-                  'hAxis': {title: "Day No."},
-                  'vAxis': {title: "Points"},
-                  legend: {position: 'none'},
-                  chartArea: {left: 75, top: 50}
-              };
-              chart.draw(data, options);
+              drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points', 'Week No.');
           });
 	  }
+
+      function drawPointsChart(jsonData, element, title, hAxisTitle) {
+          // Create our data table out of JSON data loaded from server.
+          var data = new google.visualization.DataTable(jsonData);
+
+          console.log(data);
+
+          // Instantiate and draw our chart, passing in some options.
+          var chart = new google.visualization.ColumnChart(document.getElementById(element));
+
+          var options = {
+              'title': title,
+              'width': 1000,
+              'height': 250,
+              'hAxis': {title: hAxisTitle},
+              'vAxis': {title: "Points"},
+              legend: {position: 'none'},
+              chartArea: {left: 75, top: 50}
+          };
+          chart.draw(data, options);
+      }
 
 	  </script>
 {% endblock %}
@@ -93,13 +76,13 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="home">
-		<table id="table-rides"></table>
+        <table id="table-rides"></table>
 	</div>
     <div role="tabpanel" class="tab-pane" id="profile">
-		<div id="chart_user_daily_points"></div>
+        <div id="chart_user_daily_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading daily points...</div>
 	</div>
     <div role="tabpanel" class="tab-pane" id="messages">
-		<div id="chart_user_weekly_points"></div>
+        <div id="chart_user_weekly_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading weekly points...</div>
 	</div>
   </div>
 
@@ -110,15 +93,22 @@
 {% block foot %}
 <!-- Latest compiled and minified JavaScript -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"></script>
-<script src="/js/moment.js"></script>
 <script type="text/javascript">
 
 	function stampFormatter(value, row) {
-		return moment(row.start_date).calendar();
+        var options = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+        }
+        var date = new Date(row.start_date)
+        return Intl.DateTimeFormat("en", options).format(date);
 	}
 
 	function movingTimeFormatter(value, row) {
-		return moment.duration({seconds: row.moving_time}).humanize();
+        // Thanks https://stackoverflow.com/a/58531661/424301
+        // invalid for activities longer than a day though
+        return new Date(row.moving_time*1000).toISOString().slice(11,19);
 	}
 
 	function rideFormatter(value, row) {
@@ -154,18 +144,8 @@
 		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
 	}
 
-	$(function() {
 
-		moment.locale('en', {
-			calendar: {
-				lastDay: '[Yesterday] LTS',
-				sameDay: 'LTS',
-				nextDay: '[Tomorrow] LTS',
-				lastWeek: 'ddd LTS',
-				nextWeek: '[next] ddd LTS',
-				sameElse: 'L LTS'
-			}
-		});
+	$(function() {
 
 		$table = $('#table-rides').bootstrapTable({
 			method: "get",
@@ -177,6 +157,7 @@
 				{
 					field: "photos_fetched",
 					title: "Photos Fetched",
+					align: "center",
 					checkbox: true,
 					formatter: photosFormatter,
 				},
@@ -197,17 +178,20 @@
 					field: "start_date",
 					title: "Date",
 					sortable: true,
+					align: "right",
 					formatter: stampFormatter
 				},
 				{
 					field: "moving_time",
 					title: "Duration",
 					sortable: true,
+					align: "right",
 					formatter: movingTimeFormatter
 				},
 				{
 					field: "avg_temp",
 					title: "Avg Temp (&#8457;)",
+					align: "right",
 					sortable: true
 				}
 			]
