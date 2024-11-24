@@ -101,7 +101,7 @@
             month: "long",
             day: "numeric",
         }
-        return IntlDateTimeFormat("en", options).format(row.start_date);
+        return Intl.DateTimeFormat("en", options).format(row.start_date);
 	}
 
 	function movingTimeFormatter(value, row) {
@@ -110,7 +110,7 @@
             minutes: "numeric",
             seconds: "numeric",
         }
-        return IntlDateTimeFormat("en", options).format(row.moving_time);
+        return Intl.DateTimeFormat("en", options).format(row.moving_time);
 	}
 
 	function rideFormatter(value, row) {
