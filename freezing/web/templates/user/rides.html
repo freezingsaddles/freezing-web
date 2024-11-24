@@ -101,16 +101,16 @@
             month: "long",
             day: "numeric",
         }
-        var fmt = new IntlDateTimeFormat("en", options)
-		return fmt(row.start_date);
+        return IntlDateTimeFormat("en", options).format(row.start_date);
 	}
 
 	function movingTimeFormatter(value, row) {
         var options = {
+            hours: "numeric",
             minutes: "numeric",
+            seconds: "numeric",
         }
-        var fmt = new IntlDateTimeFormat("en", options)
-		return fmt(row.moving_time);
+        return IntlDateTimeFormat("en", options).format(row.moving_time);
 	}
 
 	function rideFormatter(value, row) {
