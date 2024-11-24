@@ -29,7 +29,8 @@
               var options = {
                   'title': 'Team Cumulative Points',
                   'width': 1000,
-                  'height': 800
+                  'height': 600,
+                  'chartArea': { 'width': '60%', 'height': '80%'} 
               };
 
               chart.draw(data, options);
@@ -52,7 +53,8 @@
               var options = {
                   'title': 'Team Cumulative Mileage',
                   'width': 1000,
-                  'height': 800
+                  'height': 600,
+                  'chartArea': { 'width': '60%', 'height': '80%'} 
               };
 
               chart.draw(data, options);
@@ -63,7 +65,7 @@
 {% endblock %}
 	  
 {% block content %}
-  	<h1>Team Cumulative Points</h1>
+  	<h1>Team Cumulative</h1>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_cumul_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative points...</div>
     <div id="chart_team_cumul_mileage"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative mileage....</div>
