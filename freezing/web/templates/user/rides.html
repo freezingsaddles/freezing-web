@@ -94,15 +94,14 @@
 {% block foot %}
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js" integrity="sha384-K813zDZRKOWoWqjZ4cPEJx9J9j/hl4B7NWO9eQ6/8mFGg9FPiiuh04QPhm+Eri/v" crossorigin="anonymous">
-<script src="/js/moment.js"></script>
 <script type="text/javascript">
 
 	function stampFormatter(value, row) {
-		return moment(row.start_date).calendar();
+		return row.start_date;
 	}
 
 	function movingTimeFormatter(value, row) {
-		return moment.duration({seconds: row.moving_time}).humanize();
+		return row.moving_time;
 	}
 
 	function rideFormatter(value, row) {
@@ -139,17 +138,6 @@
 	}
 
 	$(function() {
-
-		moment.locale('en', {
-			calendar: {
-				lastDay: '[Yesterday] LTS',
-				sameDay: 'LTS',
-				nextDay: '[Tomorrow] LTS',
-				lastWeek: 'ddd LTS',
-				nextWeek: '[next] ddd LTS',
-				sameElse: 'L LTS'
-			}
-		});
 
 		$table = $('#table-rides').bootstrapTable({
 			method: "get",
