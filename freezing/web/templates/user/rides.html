@@ -96,11 +96,21 @@
 <script type="text/javascript">
 
 	function stampFormatter(value, row) {
-		return row.start_date;
+        var options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        }
+        var fmt = new IntlDateTimeFormat("en", options)
+		return fmt(row.start_date);
 	}
 
 	function movingTimeFormatter(value, row) {
-		return row.moving_time;
+        var options = {
+            minutes: "numeric",
+        }
+        var fmt = new IntlDateTimeFormat("en", options)
+		return fmt(row.moving_time);
 	}
 
 	function rideFormatter(value, row) {
@@ -135,6 +145,7 @@
 	function refreshTable() {
 		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
 	}
+
 
 	$(function() {
 
