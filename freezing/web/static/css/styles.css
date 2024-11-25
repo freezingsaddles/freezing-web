@@ -48,3 +48,36 @@ div.row > div > div.row {
 #credits {
     margin-top: 25px;
 }
+
+
+/* Cribbed from old, but newer, bootstrap. */
+
+.d-flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 992px) {
+    .flex-md-row {
+        flex-direction: row;
+    }
+}
