@@ -33,8 +33,8 @@ jobs:
         script: |
           set -euo pipefail
           cd /opt/compose
-          docker-compose pull freezing-web
-          docker-compose up -d freezing-web
+          docker compose pull freezing-web
+          docker compose up -d freezing-web
 
     - name: wait
       uses: iFaxity/wait-on-action@v1.2.1
