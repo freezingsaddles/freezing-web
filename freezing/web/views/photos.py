@@ -59,4 +59,5 @@ def index():
         page=page,
         total_pages=total_pages,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )

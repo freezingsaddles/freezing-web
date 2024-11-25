@@ -65,6 +65,7 @@ def people_list_users():
         weekstart=week_start,
         weekend=week_end,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -102,6 +103,7 @@ def people_show_person(user_id):
             "totalrides": total_rides,
         },
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -180,4 +182,5 @@ def friends():
         "people/friends.html",
         indiv_rows=indiv_rows,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )

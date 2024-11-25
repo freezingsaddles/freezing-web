@@ -121,6 +121,7 @@ def index():
         sub_freezing_hours=sub_freezing_hours,
         photos=photos,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -151,6 +152,7 @@ def join():
         public_authorize_url=public_url,
         private_authorize_url=private_url,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -168,6 +170,7 @@ def authorization():
             "authorization_error.html",
             error=error,
             competition_title=config.COMPETITION_TITLE,
+            registration_site=config.REGISTRATION_SITE,
         )
     else:
         code = request.args.get("code")
@@ -212,6 +215,7 @@ def authorization():
             message=message,
             rides_url=url_for("user.rides"),
             competition_title=config.COMPETITION_TITLE,
+            registration_site=config.REGISTRATION_SITE,
         )
 
 
@@ -243,26 +247,34 @@ def trends():
 @blueprint.route("/explore/team_weekly")
 def team_weekly_points():
     return render_template(
-        "explore/team_weekly_points.html", competition_title=config.COMPETITION_TITLE
+        "explore/team_weekly_points.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/explore/indiv_elev_dist")
 def indiv_elev_dist():
     return render_template(
-        "explore/indiv_elev_dist.html", competition_title=config.COMPETITION_TITLE
+        "explore/indiv_elev_dist.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/explore/distance_by_lowtemp")
 def riders_by_lowtemp():
     return render_template(
-        "explore/distance_by_lowtemp.html", competition_title=config.COMPETITION_TITLE
+        "explore/distance_by_lowtemp.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/explore/team_cumul")
 def team_cumul_trend():
     return render_template(
-        "explore/team_cumul.html", competition_title=config.COMPETITION_TITLE
+        "explore/team_cumul.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )

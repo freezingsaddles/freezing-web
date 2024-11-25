@@ -17,7 +17,9 @@ def leaderboard():
 @blueprint.route("/team")
 def team_leaderboard():
     return render_template(
-        "leaderboard/team.html", competition_title=config.COMPETITION_TITLE
+        "leaderboard/team.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -61,20 +63,25 @@ def team_leaderboard_classic():
         team_rows=team_rows,
         team_members=team_members,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/team_various")
 def team_leaderboard_various():
     return render_template(
-        "leaderboard/team_various.html", competition_title=config.COMPETITION_TITLE
+        "leaderboard/team_various.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/individual")
 def indiv_leaderboard():
     return render_template(
-        "leaderboard/indiv.html", competition_title=config.COMPETITION_TITLE
+        "leaderboard/indiv.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -108,11 +115,14 @@ def individual_leaderboard_text():
         "leaderboard/indiv_text.html",
         indiv_rows=indiv_rows,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
 @blueprint.route("/individual_various")
 def indiv_leaderboard_various():
     return render_template(
-        "leaderboard/indiv_various.html", competition_title=config.COMPETITION_TITLE
+        "leaderboard/indiv_various.html",
+        competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
