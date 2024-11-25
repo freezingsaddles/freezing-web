@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 
-      // Load the Visualization API and the piechart package.
+      // Load the Visualization API and the corechart package.
       google.load('visualization', '1.0', {'packages':['corechart']});
 
       // Set a callback to run when the Google Visualization API is loaded.
@@ -93,15 +93,22 @@
 {% block foot %}
 <!-- Latest compiled and minified JavaScript -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"></script>
-<script src="/js/moment.js"></script>
 <script type="text/javascript">
 
 	function stampFormatter(value, row) {
-		return moment(row.start_date).calendar();
+        var options = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+        }
+        var date = new Date(row.start_date)
+        return Intl.DateTimeFormat("en", options).format(date);
 	}
 
 	function movingTimeFormatter(value, row) {
-		return moment.duration({seconds: row.moving_time}).humanize();
+        // Thanks https://stackoverflow.com/a/58531661/424301
+        // invalid for activities longer than a day though
+        return new Date(row.moving_time*1000).toISOString().slice(11,19);
 	}
 
 	function rideFormatter(value, row) {
@@ -137,18 +144,8 @@
 		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
 	}
 
-	$(function() {
 
-		moment.locale('en', {
-			calendar: {
-				lastDay: '[Yesterday] LTS',
-				sameDay: 'LTS',
-				nextDay: '[Tomorrow] LTS',
-				lastWeek: 'ddd LTS',
-				nextWeek: '[next] ddd LTS',
-				sameElse: 'L LTS'
-			}
-		});
+	$(function() {
 
 		$table = $('#table-rides').bootstrapTable({
 			method: "get",
@@ -160,6 +157,7 @@
 				{
 					field: "photos_fetched",
 					title: "Photos Fetched",
+					align: "center",
 					checkbox: true,
 					formatter: photosFormatter,
 				},
@@ -180,17 +178,20 @@
 					field: "start_date",
 					title: "Date",
 					sortable: true,
+					align: "right",
 					formatter: stampFormatter
 				},
 				{
 					field: "moving_time",
 					title: "Duration",
 					sortable: true,
+					align: "right",
 					formatter: movingTimeFormatter
 				},
 				{
 					field: "avg_temp",
 					title: "Avg Temp (&#8457;)",
+					align: "right",
 					sortable: true
 				}
 			]
