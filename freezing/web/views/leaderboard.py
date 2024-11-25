@@ -3,7 +3,6 @@ from freezing.model import meta
 from sqlalchemy import text
 from werkzeug.utils import redirect
 
-from freezing.web import config
 from freezing.web.views.shared_sql import team_leaderboard_query
 
 blueprint = Blueprint("leaderboard", __name__)
@@ -18,8 +17,6 @@ def leaderboard():
 def team_leaderboard():
     return render_template(
         "leaderboard/team.html",
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -62,8 +59,6 @@ def team_leaderboard_classic():
         "leaderboard/team_text.html",
         team_rows=team_rows,
         team_members=team_members,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -71,8 +66,6 @@ def team_leaderboard_classic():
 def team_leaderboard_various():
     return render_template(
         "leaderboard/team_various.html",
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -80,8 +73,6 @@ def team_leaderboard_various():
 def indiv_leaderboard():
     return render_template(
         "leaderboard/indiv.html",
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -114,8 +105,6 @@ def individual_leaderboard_text():
     return render_template(
         "leaderboard/indiv_text.html",
         indiv_rows=indiv_rows,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -123,6 +112,4 @@ def individual_leaderboard_text():
 def indiv_leaderboard_various():
     return render_template(
         "leaderboard/indiv_various.html",
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )

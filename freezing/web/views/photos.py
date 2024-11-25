@@ -4,7 +4,6 @@ from flask import Blueprint, render_template, request, send_file
 from freezing.model import meta
 from freezing.model.orm import Ride, RidePhoto
 
-from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.utils import insta
 
@@ -58,6 +57,4 @@ def index():
         photos=page_q,
         page=page,
         total_pages=total_pages,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
