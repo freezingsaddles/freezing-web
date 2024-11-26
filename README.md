@@ -12,12 +12,12 @@ This is the web component for the Freezing Saddles (aka BikeArlington Freezing S
 
 ## Dependencies
 
-* Python 3.10+ (will not work with python 2.x)
-* Pip
-* Virtualenv (venv)
-* MySQL 5.7
+* [Python 3.10+](https://www.python.org/downloads/release/python-3100/)
+* [pip](https://pypi.org/project/pip/)
+* [Python virtual environments (venv)](https://docs.python.org/3/library/venv.html)
+* [MySQL 8.0+](https://dev.mysql.com/doc/relnotes/mysql/8.0/en/)
 
-We recommend that for ease of development and debugging, that you install Python 3.10 and pip directly on your workstation. This is tested to work on macOS 14.1.2 (23B92) (Sonoma), on multiple Linux distributions, and on Windows 10. While this will work on Windows 10, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
+We recommend that for ease of development and debugging, that you install Python 3.10 and pip directly on your workstation. This is tested to work on macOS Sonoma 14.1.2 (23B92) &amp; Sequoia 15.1.1 (24B91), on multiple Linux distributions, and on Windows 10 or 11. While this will work on Windows, most of the advice below relates to running this on a UNIX-like operating system, such as macOS or Ubuntu. Pull requests to improve cross-platform documentation are welcome.
 
 ## Installation
 
@@ -37,8 +37,7 @@ shell$ source env/bin/activate
 (env) shell$ python setup.py develop
 ```
 
-We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using
-the "(env) shell$" prefix before shell commands.)
+We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using the "(env) shell$" prefix before shell commands.)
 
 ### Database Setup
 
@@ -54,7 +53,7 @@ We have some development support Docker Compose files that can help make databas
 
 #### Manual Database Setup
 
-Install MySQL, version 5.6 or newer. The current production server for https://freezingsaddles.org/ runs MySQL 5.6.
+Install MySQL, version 8.0 or newer. The current production server for https://freezingsaddles.org/ runs MySQL 8.0.
 
 You should create a database and create a user that can access the database.  Something like this might work in the default case:
 
@@ -69,8 +68,7 @@ mysql> grant all on freezing.* to freezing@localhost;
 
 Configuration files are shell environment files (or you can use environment variables dirctly).
 
-There is a sample file (`example.cfg`) that you can reference.  You need to set an environment variable called
-`APP_SETTINGS` to the path to the file you wish to use.
+There is a sample file (`example.cfg`) that you can reference.  You need to set an environment variable called `APP_SETTINGS` to the path to the file you wish to use.
 
 Here is an example of starting the webserver using settings from a new `development.cfg` config file:
 ```bash
@@ -142,11 +140,17 @@ This component is designed to run as a container and should be configured with e
 * Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means.
 * Make a backup of the database: 
 
-    mysqldump > "freezing-$(date +'%Y-%m-%d').sql"
+```bash
+mkdir -p ~/backups
+time mysqldump > $HOME/backups/freezing-$(date +'%Y-%m-%d').sql
+```
 
 * Make a backup of the `.env` file from `/opt/compose/.env`:
  
-    cp /opt/compose/.env "/opt/compose/.env-$(date +'%Y-%m-%d')"
+```bash
+cd /opt/compose
+cp .env $HOME/backups/.env-$(date +'%Y-%m-%d')
+```
 
 * Edit the `.env` file for the production server (look in `/opt/compose/.env`) as follows:
   * Update the start and end dates
@@ -154,6 +158,11 @@ This component is designed to run as a container and should be configured with e
   * Remove all the teams in `TEAMS` and `OBSERVER_TEAMS`
   * Update the competition title `COMPETITION_TITLE` to reflect the new year
   * Revise any comments to reflect the new year
+
+```bash
+vim /opt/compose/.env
+```
+
 * Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
   * teams
   * athletes
@@ -183,7 +192,6 @@ It is convenient to dump and restore the database onto a local development envir
 When restoring the database, you should do so as the MySQL root user, or if you don't have access to the real MySQL root user, as the highest privilege user you have access to. Some systems, such as AWS RDS, do not give full MySQL root access but they _do_ have an administrative user.
 
 It would be a good idea to first drop the database, then recreate it along with the freezing user, before restoring the backup.
-
 
 You may have to edit the resulting SQL dump to redo the SQL SECURITY DEFINER clauses. The examples below do not have the real production root user name in them, observe the error messages from the production dump restoration to get the user name you will need (or ask @obscurerichard in Slack).
 
@@ -247,8 +255,7 @@ $
 
 # Scoring system
 
-The Freezing Saddles o
-The scoring system heavily weights the early miles of each ride.
+The Freezing Saddles scoring system has evolved over the years to encourage every day riding for those particpating. The scoring system heavily weights the early miles of each ride. You get these points for riding outdoors,  no indoor trainer rides count:
 
 • 10 points for each day of 1 mile+
 • Additional mileage points as follows: Mile 1=10 points; Mile 2=9 pts; Mile 3=8 pts, etc. Miles 10 and over = 1 pt each.
@@ -257,6 +264,7 @@ The scoring system heavily weights the early miles of each ride.
 
 ## Scoring Cheat Sheet for the Mathematically Challenged
 
+Here is a cumulative list of the points you get for riding up to 20 miles per day:
 ```
 Miles = Points
 1 = 20
