@@ -140,11 +140,17 @@ This component is designed to run as a container and should be configured with e
 * Ensure you have MySQL client access to the production database, either through SSH port forwarding or by running a MySQL client through docker on the production server, or some other means.
 * Make a backup of the database: 
 
-    mysqldump > "freezing-$(date +'%Y-%m-%d').sql"
+```bash
+mkdir -p ~/backups
+time mysqldump > $HOME/backups/freezing-$(date +'%Y-%m-%d').sql
+```
 
 * Make a backup of the `.env` file from `/opt/compose/.env`:
  
-    cp /opt/compose/.env "/opt/compose/.env-$(date +'%Y-%m-%d')"
+```bash
+cd /opt/compose
+cp .env $HOME/backups/.env-$(date +'%Y-%m-%d')
+```
 
 * Edit the `.env` file for the production server (look in `/opt/compose/.env`) as follows:
   * Update the start and end dates
@@ -152,6 +158,11 @@ This component is designed to run as a container and should be configured with e
   * Remove all the teams in `TEAMS` and `OBSERVER_TEAMS`
   * Update the competition title `COMPETITION_TITLE` to reflect the new year
   * Revise any comments to reflect the new year
+
+```bash
+vim /opt/compose/.env
+```
+
 * Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
   * teams
   * athletes
