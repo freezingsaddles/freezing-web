@@ -23,3 +23,9 @@ jobs:
             requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+      - name: bandit
+        uses: mdegis/bandit-action@v1.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          level: medium
+          confidence: medium
