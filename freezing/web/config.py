@@ -50,6 +50,10 @@ class Config:
         "LEADERBOARDS_DIR", default=os.path.join(_basedir, "leaderboards")
     )
 
+    FORUM_SITE: str = env(
+        "FORUM_SITE",
+        "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
+    )
     REGISTRATION_SITE: str = env("REGISTRATION_SITE", "https://freezingsaddles.info/")
 
 
