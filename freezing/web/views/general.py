@@ -4,6 +4,8 @@ Created on Feb 10, 2013
 @author: hans
 """
 
+import datetime
+
 from flask import (
     Blueprint,
     jsonify,
@@ -201,8 +203,10 @@ def authorization():
             auth.login_athlete(strava_athlete)
         return render_template(
             "authorization_success.html",
+            after_competiton_start=datetime.now() > config.COMPETITION_START,
             athlete=strava_athlete,
             team=team,
+            competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
             multiple_teams=multiple_teams,
             no_teams=no_teams,
             message=message,
