@@ -14,16 +14,23 @@
 {% if no_teams %}
 	<li><strong>Uh-oh, something went wrong</strong>. 
 	So you are a Strava athlete, we get that. Unfortunately, one of these two things is true:
-	<ol>
-		<li>you did not give Strava permission for us to "View your complete Strava profile".
-			Without that, we can't see what clubs you belong to.</li>
-		<li>you are not registered with any of the configured Freezing Saddles team clubs; 
-			if that is the case, <strong>You need to join a competition team Strava club.</strong> 
-			Or maybe the app just needs to be updated to know about the Strava teams. 
-			Don't worry, your rides will count but they won't be on any leaderboards until you have joined one of the
-			competition teams. 
-	</ol>
-	</li>
+        <ol>
+            <li>you did not give Strava permission for us to "View your complete Strava profile".
+                Without that, we can't see what clubs you belong to.</li>
+{% if after_competition_start %}
+            <li>you are not registered with any of the configured Freezing Saddles team clubs; 
+                if that is the case, <strong>You need to join a competition team Strava club.</strong> 
+                Or maybe the app just needs to be updated to know about the Strava teams.
+            </li>
+{% else %}
+            <li>you are not registered with <a href="{{ main_team_page }}">this year's main Freezing Saddles team.</a> Go join the team and then log in again.
+            </li>
+{% endif %}
+        </ol>
+    </li>
+    <li>Don't worry, your rides will count but they won't be on any leaderboards until you have joined one of the
+        competition team clubs.
+    </li>
 {% elif multiple_teams %}
 	<li><strong>Houston we have a problem</strong>.
 	It looks like you joined _multiple_ Strava clubs that are registered as competition teams.  
@@ -40,6 +47,15 @@
 		You are a member of the
 		<strong>{{ team.name }}</strong> Strava club.
 	</li>
+{% if not after_competition_start %}
+    <li>asdf</li>
+{% else %}
+    <li><em>Later</em>, you will need to join a <strong>competition team Strava club</strong> as well; please attend the season opener Happy Hour (watch the <a href="https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/">forum for an announcement</a>) and check your email for updates. That will make you show up on the <a href="/leaderboard/team">team</a> <a href="/leaderboard/team_text">leaderboards</a>.
+     </li>
+{% endif %}
+            <li>you are not registered with <a href="{{ main_team_page }}">this year's main Freezing Saddles team.</a> Go join the team and then log in again.
+            </li>
+{% endif %}
 	<li>
 		View your <a href={{ rides_url }}>personal rides page.</a>
 	</li>
