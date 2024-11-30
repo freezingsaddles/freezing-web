@@ -203,7 +203,7 @@ def authorization():
             auth.login_athlete(strava_athlete)
         return render_template(
             "authorization_success.html",
-            after_competiton_start=datetime.now() > config.COMPETITION_START,
+            after_competiton_start=datetime.now() > config.START_DATE,
             athlete=strava_athlete,
             team=team,
             competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
