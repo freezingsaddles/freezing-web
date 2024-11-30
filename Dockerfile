@@ -9,7 +9,6 @@ ADD . /app
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
 WORKDIR /app
-RUN bin/freeze.sh
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000
