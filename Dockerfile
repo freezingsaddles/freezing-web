@@ -9,6 +9,7 @@ ADD . /app
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
 WORKDIR /app
+RUN pip3 install .
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000

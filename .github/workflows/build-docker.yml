@@ -30,6 +30,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+            
+      - name: Fix metadata
+        run: |
+          if [ -x  bin/freeze.sh ]; then
+            bin/freeze.sh
+          else
+            echo "No bin/freeze.sh found, skipping"
+          fi
+
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       -
@@ -48,6 +65,7 @@ jobs:
         if: ${{ github.actor == 'dependabot[bot]' }}
         uses: docker/build-push-action@v6
         with:
+          context: .
           push: false
           tags: ${{ inputs.org }}/${{ inputs.repo }}:${{ inputs.tag }}
       -
@@ -55,6 +73,7 @@ jobs:
         if: ${{ github.actor != 'dependabot[bot]' }}
         uses: docker/build-push-action@v6
         with:
+          context: .
           push: true
           tags: ${{ inputs.org }}/${{ inputs.repo }}:${{ inputs.tag }}
 

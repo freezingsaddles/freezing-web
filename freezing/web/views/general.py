@@ -4,7 +4,7 @@ Created on Feb 10, 2013
 @author: hans
 """
 
-import datetime
+from datetime import datetime
 
 from flask import (
     Blueprint,
@@ -15,11 +15,11 @@ from flask import (
     session,
     url_for,
 )
-from freezing.model import meta
-from freezing.model.orm import Ride, RidePhoto
 from sqlalchemy import text
 from stravalib import Client
 
+from freezing.model import meta
+from freezing.model.orm import Ride, RidePhoto
 from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
@@ -201,15 +201,20 @@ def authorization():
             message = noteamx
         if not no_teams:
             auth.login_athlete(strava_athlete)
+        # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
+        after_competition_start = (
+            datetime.now(config.START_DATE.tzinfo) > config.START_DATE
+        )
         return render_template(
             "authorization_success.html",
-            after_competiton_start=datetime.now() > config.COMPETITION_START,
+            after_competition_start_start=after_competition_start,
             athlete=strava_athlete,
-            team=team,
             competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
+            team=team,
+            message=message,
+            main_team_page=f"https://strava.com/clubs/{config.MAIN_TEAM}",
             multiple_teams=multiple_teams,
             no_teams=no_teams,
-            message=message,
             rides_url=url_for("user.rides"),
         )
 
