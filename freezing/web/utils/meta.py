@@ -26,7 +26,11 @@ def get_git_branch() -> str:
 
 
 def freeze():
-    return f"commit={get_git_revision_short_hash()}\nbuild_date={datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}\nbranch={get_git_branch()}"
+    return f"""
+commit = "{get_git_revision_short_hash()}"
+build_date = "{datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}"
+branch = "{get_git_branch()}"
+"""
 
 
 # Thanks https://stackoverflow.com/a/4546755/424301 for inspiration

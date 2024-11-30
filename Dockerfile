@@ -8,8 +8,8 @@ RUN pip3 install -r /tmp/requirements.txt
 ADD . /app
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
-RUN printf 'from freezing.web.utils.meta import freeze\nprint(freeze())' | python3 > /app/freezing/web/utils/meta.py
 WORKDIR /app
+RUN bin/freeze.sh
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000
