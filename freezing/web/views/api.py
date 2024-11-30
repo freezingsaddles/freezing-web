@@ -5,10 +5,10 @@ from decimal import Decimal
 import arrow
 import pytz
 from flask import Blueprint, jsonify, request
-from freezing.model import meta
-from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import text
 
+from freezing.model import meta
+from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.serialize import RidePhotoSchema

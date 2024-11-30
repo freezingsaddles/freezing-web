@@ -3,9 +3,9 @@ import logging
 from datetime import datetime
 
 from flask import Blueprint, current_app, jsonify, render_template, request, session
+
 from freezing.model import meta
 from freezing.model.orm import Ride
-
 from freezing.web.utils.auth import requires_auth
 
 
