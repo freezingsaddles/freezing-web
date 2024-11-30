@@ -63,6 +63,8 @@ class Config:
 
     VERSION_STRING = f"{VERSION_NUM}+{branch}.{commit}.{build_date}"
 
+    ENVIRONMENT = env("ENVIRONMENT", default="localdev")
+
 
 config = Config()
 
