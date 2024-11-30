@@ -4,10 +4,10 @@ from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
 import yaml
-from marshmallow import fields
-
 from freezing.model import meta
 from freezing.model.msg import BaseMessage, BaseSchema
+from marshmallow import fields
+
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 

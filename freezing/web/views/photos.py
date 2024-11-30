@@ -1,9 +1,9 @@
 import math
 
 from flask import Blueprint, render_template, request, send_file
-
 from freezing.model import meta
 from freezing.model.orm import Ride, RidePhoto
+
 from freezing.web.autolog import log
 from freezing.web.utils import insta
 

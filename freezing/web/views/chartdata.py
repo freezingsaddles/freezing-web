@@ -11,11 +11,11 @@ from datetime import datetime, timedelta
 
 from dateutil import rrule
 from flask import Blueprint, current_app, jsonify
+from freezing.model import meta
+from freezing.model.orm import Team
 from pytz import utc
 from sqlalchemy import text
 
-from freezing.model import meta
-from freezing.model.orm import Team
 from freezing.web import config
 from freezing.web.utils import gviz_api
 from freezing.web.utils.dates import parse_competition_timestamp
