@@ -10,10 +10,10 @@ autoflake==2.2.1
 beautifulsoup4==4.12.3
 colorlog==4.1.0
 envparse==0.2.0
-freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.8.5.tar.gz
+freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.8.6.tar.gz
 geojson==2.5.0
 gunicorn==23.0.0
-marshmallow==3.14.1
+marshmallow==3.23.1
 marshmallow-enum @ https://github.com/lyft/marshmallow_enum/archive/support-for-marshamallow-3.tar.gz
 polyline==1.4.0
 python-instagram==1.3.2
