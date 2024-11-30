@@ -202,12 +202,12 @@ def authorization():
         if not no_teams:
             auth.login_athlete(strava_athlete)
         # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
-        after_competiton_start = (
+        after_competition_start = (
             datetime.now(config.START_DATE.tzinfo) > config.START_DATE
         )
         return render_template(
             "authorization_success.html",
-            after_competiton_start=after_competition_start,
+            after_competition_start_start=after_competition_start,
             athlete=strava_athlete,
             competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
             team=team,
