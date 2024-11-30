@@ -39,13 +39,12 @@ jobs:
           python-version: "3.10"
             
       - name: Fix metadata
-        run:
-          script: |
-            if [ -x  bin/freeze.sh ]; then
-              bin/freeze.sh
-            else
-              echo "No bin/freeze.sh found, skipping"
-            fi
+        run: |
+          if [ -x  bin/freeze.sh ]; then
+            bin/freeze.sh
+          else
+            echo "No bin/freeze.sh found, skipping"
+          fi
 
       -
         name: Set up QEMU
