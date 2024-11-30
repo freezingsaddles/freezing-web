@@ -81,3 +81,15 @@ div.row > div > div.row {
         flex-direction: row;
     }
 }
+
+.version-footer {
+    color: #adb5bd;
+    transition: color .1s ease-in;
+    text-align: center;
+    font-size: 85%;
+    padding-bottom: 2rem;
+
+    &:hover {
+        color: #6c757d;
+    }
+}
