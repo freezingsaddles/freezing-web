@@ -2,6 +2,9 @@
 # meta.py
 #
 # Metadata about the built version of this package
+#
+# The bin/freeze.sh script will replace this file with
+# frozen values of commit, build_date, and branch.
 
 import datetime
 import subprocess
