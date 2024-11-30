@@ -4,7 +4,7 @@ Created on Feb 10, 2013
 @author: hans
 """
 
-import datetime
+from datetime import datetime
 
 from flask import (
     Blueprint,
@@ -15,11 +15,11 @@ from flask import (
     session,
     url_for,
 )
-from freezing.model import meta
-from freezing.model.orm import Ride, RidePhoto
 from sqlalchemy import text
 from stravalib import Client
 
+from freezing.model import meta
+from freezing.model.orm import Ride, RidePhoto
 from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
