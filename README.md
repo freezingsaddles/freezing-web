@@ -324,6 +324,7 @@ mysql> select a.name, sum(ds.distance), sum(ds.points) from daily_scores ds inne
 +-------------------+-------------------+-------------------+
 2 rows in set (0.02 sec)
 ```
+
 # Legal
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
