@@ -32,7 +32,6 @@ def team_riders():
     return render_template(
         "alt_scoring/team_riders.html",
         team_riders=team_riders,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -68,7 +67,6 @@ def team_daily():
     return render_template(
         "alt_scoring/team_daily.html",
         team_total=team_total,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -83,6 +81,7 @@ def team_sleaze():
         "alt_scoring/team_sleaze.html",
         team_sleaze=data,
         competition_title=config.COMPETITION_TITLE,
+        registration_site=config.REGISTRATION_SITE,
     )
 
 
@@ -96,7 +95,6 @@ def team_hains():
     return render_template(
         "alt_scoring/team_hains.html",
         team_hains=data,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -110,7 +108,6 @@ def indiv_sleaze():
     return render_template(
         "alt_scoring/indiv_sleaze.html",
         indiv_sleaze=data,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -124,7 +121,6 @@ def indiv_hains():
     return render_template(
         "alt_scoring/indiv_hains.html",
         indiv_hains=data,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -138,7 +134,6 @@ def indiv_freeze():
     return render_template(
         "alt_scoring/indiv_freeze.html",
         indiv_freeze=data,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -178,6 +173,5 @@ def indiv_worst_day_points():
     return render_template(
         "alt_scoring/indiv_worst_day_points.html",
         data=data,
-        competition_title=config.COMPETITION_TITLE,
         median=median_riders,
     )

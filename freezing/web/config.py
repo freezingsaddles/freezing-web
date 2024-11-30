@@ -21,6 +21,8 @@ class Config:
     SECRET_KEY = env("SECRET_KEY")
 
     SQLALCHEMY_URL = env("SQLALCHEMY_URL")
+    BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="localhost")
+    BEANSTALKD_PORT = env("BEANSTALKD_PORT", cast=int, default=11300)
 
     STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
@@ -47,6 +49,12 @@ class Config:
     LEADERBOARDS_DIR = env(
         "LEADERBOARDS_DIR", default=os.path.join(_basedir, "leaderboards")
     )
+
+    FORUM_SITE: str = env(
+        "FORUM_SITE",
+        "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
+    )
+    REGISTRATION_SITE: str = env("REGISTRATION_SITE", "https://freezingsaddles.info/")
 
 
 config = Config()

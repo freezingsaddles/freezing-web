@@ -64,7 +64,6 @@ def people_list_users():
         users=users,
         weekstart=week_start,
         weekend=week_end,
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -101,7 +100,6 @@ def people_show_person(user_id):
             "totaldist": total_dist,
             "totalrides": total_rides,
         },
-        competition_title=config.COMPETITION_TITLE,
     )
 
 
@@ -179,5 +177,4 @@ def friends():
     return render_template(
         "people/friends.html",
         indiv_rows=indiv_rows,
-        competition_title=config.COMPETITION_TITLE,
     )
