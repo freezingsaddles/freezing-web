@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.5.4
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.5.5
     concurrency: build-deploy-and-teset
     with:
       tag: latest
