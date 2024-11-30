@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
-python3 <<EOF > freezing/web/utils/meta.py
-from freezing.web.utils.meta import freeze
+set -eu
+TMPFILE=$(mktemp tmp.freeze.XXXXXX)
+python3 <<EOF > "$TMPFILE"
+from freezing.meta import freeze
 print(freeze())
 EOF
+mv "$TMPFILE" freezing/meta.py
+rm -f "$TMPFILE"
