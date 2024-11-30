@@ -212,6 +212,7 @@ def authorization():
             competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
             team=team,
             message=message,
+            main_team_page=f"https://strava.com/clubs/{config.MAIN_TEAM}",
             multiple_teams=multiple_teams,
             no_teams=no_teams,
             rides_url=url_for("user.rides"),
