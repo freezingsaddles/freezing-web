@@ -3,9 +3,9 @@ from itertools import groupby
 from statistics import median
 
 from flask import Blueprint, render_template
+from freezing.model import meta
 from sqlalchemy import text
 
-from freezing.model import meta
 from freezing.web import config
 from freezing.web.views.shared_sql import (
     indiv_freeze_query,

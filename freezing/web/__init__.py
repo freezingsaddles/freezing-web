@@ -1,5 +1,4 @@
 from flask import Flask, g, session
-
 from freezing.model import init_model, meta
 
 from .config import config

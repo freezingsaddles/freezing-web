@@ -9,7 +9,7 @@
 /data/cache/*
 /dist
 /env
-/freezing/web/utils/meta.py
+/freezing/web/version.py
 /local_settings.py
 /resources/docker/db/sql-scripts
 /resources/docker/settings.cfg

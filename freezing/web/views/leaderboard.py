@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, url_for
+from freezing.model import meta
 from sqlalchemy import text
 from werkzeug.utils import redirect
 
-from freezing.model import meta
 from freezing.web.views.shared_sql import team_leaderboard_query
 
 blueprint = Blueprint("leaderboard", __name__)

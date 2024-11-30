@@ -4,9 +4,9 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 from flask import Blueprint, abort, render_template
+from freezing.model import meta
 from sqlalchemy import text
 
-from freezing.model import meta
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data

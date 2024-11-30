@@ -9,7 +9,7 @@ import pytz
 from colorlog import ColoredFormatter
 from envparse import env
 
-from freezing.meta import branch, build_date, commit
+from .version import branch, build_date, commit
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
