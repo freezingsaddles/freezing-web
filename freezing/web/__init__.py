@@ -60,6 +60,7 @@ def teardown_request(exception):
 def inject_config():
     return {
         "competition_title": config.COMPETITION_TITLE,
+        "environment": config.ENVIRONMENT,
         "registration_site": config.REGISTRATION_SITE,
         "forum_site": config.FORUM_SITE,
         "version_string": config.VERSION_STRING,

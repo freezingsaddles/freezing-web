@@ -209,11 +209,11 @@ def authorization():
             "authorization_success.html",
             after_competiton_start=after_competition_start,
             athlete=strava_athlete,
-            team=team,
             competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
+            team=team,
+            message=message,
             multiple_teams=multiple_teams,
             no_teams=no_teams,
-            message=message,
             rides_url=url_for("user.rides"),
         )
 
