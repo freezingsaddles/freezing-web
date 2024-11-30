@@ -1,12 +1,15 @@
 import logging
 import os
 from datetime import datetime, tzinfo
+from importlib.metadata import version
 from typing import List
 
 import arrow
 import pytz
 from colorlog import ColoredFormatter
 from envparse import env
+
+from freezing.web.utils.meta import branch, build_date, commit
 
 envfile = os.environ.get("APP_SETTINGS", os.path.join(os.getcwd(), ".env"))
 
@@ -56,6 +59,10 @@ class Config:
     )
     REGISTRATION_SITE: str = env("REGISTRATION_SITE", "https://freezingsaddles.info/")
 
+    VERSION_NUM = version("freezing-web")
+
+    VERSION_STRING = f"{VERSION_NUM}+{branch}.{commit}.{build_date}"
+
 
 config = Config()
 
@@ -89,8 +96,9 @@ def init_logging(loglevel: int = logging.INFO, color: bool = False):
 
     ch.setFormatter(formatter)
 
+    logger = logging.getLogger("freezing")
     loggers = [
-        logging.getLogger("freezing"),
+        logger,
         logging.getLogger("stravalib"),
         logging.getLogger("requests"),
         logging.root,
@@ -102,3 +110,5 @@ def init_logging(loglevel: int = logging.INFO, color: bool = False):
         else:
             logger.setLevel(logging.INFO)
         logger.addHandler(ch)
+
+    logger.info(f"logging initialized for app version {config.VERSION_STRING}")

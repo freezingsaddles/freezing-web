@@ -6,6 +6,7 @@ build/*
 dist/*
 env*/*
 data/*
+*.cfg
 *.db
 *.dump
 .idea

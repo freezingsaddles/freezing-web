@@ -61,4 +61,5 @@ def inject_config():
         "competition_title": config.COMPETITION_TITLE,
         "registration_site": config.REGISTRATION_SITE,
         "forum_site": config.FORUM_SITE,
+        "version_string": config.VERSION_STRING,
     }
