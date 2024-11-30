@@ -1,6 +1,7 @@
 *.cfg
 *.egg-info
 *.pyc
+*.tmp
 .env*
 .venv*
 /*.iml
@@ -8,7 +9,9 @@
 /data/cache/*
 /dist
 /env
+/freezing/web/utils/meta.py
 /local_settings.py
 /resources/docker/db/sql-scripts
 /resources/docker/settings.cfg
 /src
+tmp.*
