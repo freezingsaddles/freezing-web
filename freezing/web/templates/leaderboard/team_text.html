@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<button class="pull-right btn btn-default" id="show_hide_people">Show/Hide people</button>
+<button class="float-end btn btn-primary" id="show_hide_people">Show/Hide people</button>
   	<h1>Team Leaderboard (Text)</h1>
   	<p>This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>.</p>
   	<ol>
@@ -25,7 +25,7 @@
 {% block foot %}
 <script type="text/javascript">
 $( "#show_hide_people" ).click(function() {
-$(".people").toggleClass("hide");
+$(".people").toggleClass("d-none");
 });
 </script>
 {% endblock %}

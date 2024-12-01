@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">{{data.segment_name}} Rides</div>
-  <div class="panel-body">
+<div class="card">
+  <h5 class="card-header">{{data.segment_name}} Rides</h5>
+  <div class="card-body">
     <p>Leaderboard for all rides of the <a href="https://www.strava.com/segments/{{data.segment_id}}">{{data.segment_name}}</a> segment on Strava.</p>
     <p>To see another segment, simply edit the URL and replace <em>{{data.segment_id}}</em> with the identifier of the segment you want. The identifier of the segment is the number in the URL when you view the segment on Strava. If no one has yet ridden the segment in this competition, the name will not show up here.</p>
     <table class="table table-condensed">

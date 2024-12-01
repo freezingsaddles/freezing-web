@@ -28,12 +28,12 @@
 
 <div class="row">
     <nav>
-        <ul class="pager">
-            <li class="previous {% if page == 1 %}disabled{% endif %}">
-                <a href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
+        <ul class="pagination">
+            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                <a class="page-link" href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
             </li>
-            <li class="next {% if page >= total_pages %}disabled{% endif %}">
-                <a href="{% if page < total_pages %}{{ url_for('photos.index', page=page+1) }}{% else %}#{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link" href="{% if page < total_pages %}{{ url_for('photos.index', page=page+1) }}{% else %}#{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
             </li>
         </ul>
     </nav>

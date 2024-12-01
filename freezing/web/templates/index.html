@@ -20,6 +20,16 @@ position: relative; padding-bottom: 75%; height: 0; overflow: hidden;
 .responsiveCal iframe {
 position: absolute; top:0; left: 0; width: 100%; height: 100%;
 }
+.img-rounded {
+	border-radius: 1rem;
+}
+
+.mini-img {
+	border-radius: .5rem;
+	max-width: 100%;
+	max-height: 12rem;
+	margin-bottom: .5rem;
+}
 </style>
 {% endblock %}
 {% block beforenav %}
@@ -29,12 +39,14 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
       <div class="modal-content">
 
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h4 class="modal-title" id="myLargeModalLabel-1">{{photo.caption|default("Untitled", true)}}</h4>
+          <h4 class="modal-title text-truncate" id="myLargeModalLabel-1">{{photo.caption|default(photo.ride.name, true)}}</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body d-flex flex-column">
         <img src="{{photo.img_l}}" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
-        Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
+		</div>
+		<div class="modal-footer">
+        	Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
 		</div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -42,28 +54,22 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 {% endfor %}
 {% endblock %}
 {% block content %}
-<div id="sect-main" class="row section">
-		<div class="col-md-12">
-			<div class="row">
-				<div class="col-md-12">
-	        <div class="jumbotron top-buffer">
-	            <img src="/img/logo-blue-sm.png" class="pull-left" />
-	            <h1>Freezing Saddles</h1>
-							<h3>Ride bike. Earn points.</h3>
-	            <p>
-	                The official leaderboard and data analysis charts for the {{ competition_title }}
-	                competition.
-	            </p>
-				<p>
-					<div class="btn-group" role="group" aria-label="Team Points">
-	                    <a href="/leaderboard/team" class="btn btn-primary">Official Points Leaderboard</a>
-						<a href="/leaderboard/team_text" class="btn btn-primary">Official Points Leaderboard (text)</a>
-	                </div>
-				</p>
-	        </div>
+<div id="sect-main" class="card my-3 my-lg-5 bg-light">
+	<div class="p-4 p-lg-5 d-flex flex-column flex-lg-row align-items-center">
+		<img src="/img/logo-blue-sm.png" class="me-lg-5" />
+		<div class="d-flex flex-column align-items-center align-items-lg-start text-center text-lg-start">
+			<h1 style="font-size: 4rem;">Freezing Saddles</h1>
+			<h3>Ride bike. Earn points.</h3>
+			<p class="text-muted">
+				The official leaderboard and data analysis charts for the {{ competition_title }}
+				competition.
+			</p>
+			<div class="btn-group mb-2" role="group" aria-label="Team Points">
+				<a href="/leaderboard/team" class="btn btn-primary">Official Points Leaderboard</a>
+				<a href="/leaderboard/team_text" class="btn btn-primary">Official Points Leaderboard (text)</a>
+			</div>
 		</div>
 	</div>
-</div>
 </div>
 {% if not bafs_is_live %}
 <div id="sect-cal" class="row section">
@@ -75,57 +81,18 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 </div>
 </div>
 {% endif %}
-<!--
-<div id="sect-leaderboards" class="row section">
-<div class="col-md-12">
-		<div class="row">
-			<div class="col-md-12">
-				<span class="pull-left">Team</span>
-	            <div class="btn-toolbar" role="toolbar" aria-label="Team Leaderboards">
-	                <div class="btn-group" role="group" aria-label="Team Points">
-	                    <a href="/leaderboard/team_text" class="btn btn-primary">Points (text)</a>
-	                    <a href="/leaderboard/team" class="btn btn-primary">Points (chart)</a>
-	                </div>
-	                <div class="btn-group" role="group" aria-label="Team Alternate">
-	                    <a href="/alt_scoring/team_riders" class="btn btn-primary">Ride Days</a>
-	                    <a href="/alt_scoring/team_daily" class="btn btn-primary">Win Days</a>
-	                    <a href="/alt_scoring/team_sleaze" class="btn btn-primary">Sleaze Rides</a>
-	                    <a href="/alt_scoring/team_hains" class="btn btn-primary">Hains Point Laps</a>
-	                </div>
-	            </div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<span class="pull-left">Individual</span>
-	            <div class="btn-toolbar" role="toolbar" aria-label="Individual Leaderboards">
-	                <div class="btn-group" role="group" aria-label="Individual Points">
-	                    <a href="/leaderboard/individual_text" class="btn btn-primary">Points (text)</a>
-	                    <a href="/leaderboard/individual" class="btn btn-primary">Points (chart)</a>
-	                </div>
-	                <div class="btn-group" role="group" aria-label="Individual Alternate">
-	                    <a href="/people/ridedays" class="btn btn-primary">Ride Days</a>
-	                    <a href="/alt_scoring/indiv_sleaze" class="btn btn-primary">Sleaze Rides</a>
-	                    <a href="/alt_scoring/indiv_hains" class="btn btn-primary">Hains Point Laps</a>
-	                    <a href="/alt_scoring/indiv_freeze" class="btn btn-primary">Freeze Points</a>
-	                </div>
-	            </div>
-			</div>
-		</div>
-	</div>
-</div>
--->
 
 <div id="sect-stats" class="row section">
 	<div class="col-md-12">
-		<p class="really-big"><span class="label label-default">{{team_count}} teams.  {{contestant_count}} contestants.</span></p>
+		<p class="really-big"><span class="badge bg-secondary">{{team_count}} teams.  {{contestant_count}} contestants.</span></p>
 
-	    <p class="really-big"><span class="label label-default">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span>
+	    <p class="really-big"><span class="badge bg-secondary">{{total_rides|groupnum}} rides.  {{total_hours|groupnum}} hours.  {{total_miles|groupnum}} miles ridden.</span>
 	    </p>
 
-	    <p class="pretty-big"><span class="label label-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
-	        <span class="label label-success">{{rain_hours|groupnum}} hours in the rain.</span>
-	        <span class="label label-info">{{snow_hours|groupnum}} hours in the snow.</span>
+	    <p class="pretty-big">
+			<span class="badge bg-primary">{{sub_freezing_hours|groupnum}} hours below freezing.</span>
+	        <span class="badge bg-success">{{rain_hours|groupnum}} hours in the rain.</span>
+	        <span class="badge bg-info">{{snow_hours|groupnum}} hours in the snow.</span>
 		</p>
 	</div>
 </div>
@@ -133,18 +100,17 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 	<div class="col-md-12">
 		<div class="row">
 			{% for photo in photos %}
-				<div class="col-lg-2 col-md-3 col-xs-4">
-					<a href="#" data-toggle="modal" data-target=".pop-up-{{photo.id}}">
-						<img src="{{ photo.img_l }}" width="150" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
+				<div class="col-lg-2 col-md-3 col-xs-4 text-center">
+					<a href="#" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}">
+						<img src="{{ photo.img_l }}" class="img-responsive mini-img img-rounded center-block" alt="{{photo.caption}}">
 					</a>
 					<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p>
 				</div>
 	    	{% endfor %}
-			<!-- <a href="{{ url_for('photos.index') }}" class="glyphicon glyphicon-chevron-right more-images-link pull-right"></a> -->
-			<div class="row" >
-				<div class="col-md-12" style="padding-top:2em;">
-					<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg pull-right clearfix">More Photos<span class="glyphicon glyphicon-chevron-right"></span></a>
-				</div>
+		</div>
+		<div class="row" >
+			<div class="col-md-12 d-flex flex-column">
+				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg align-self-center align-self-lg-end">More Photos</a>
 			</div>
 		</div>
 	</div>
@@ -166,11 +132,4 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 {% endif %}
 
 </div>
-{% endblock %}
-{% block foot %}
-<script type="text/javascript">
-$(document).ready(function(){
-
-});
-</script>
 {% endblock %}
