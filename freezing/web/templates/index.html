@@ -20,10 +20,6 @@ position: relative; padding-bottom: 75%; height: 0; overflow: hidden;
 .responsiveCal iframe {
 position: absolute; top:0; left: 0; width: 100%; height: 100%;
 }
-.img-rounded {
-	border-radius: 1rem;
-}
-
 .mini-img {
 	border-radius: .5rem;
 	max-width: 100%;
@@ -42,8 +38,8 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
           <h4 class="modal-title text-truncate" id="myLargeModalLabel-1">{{photo.caption|default(photo.ride.name, true)}}</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body d-flex flex-column">
-        <img src="{{photo.img_l}}" class="img-responsive img-rounded center-block" alt="{{photo.caption}}">
+        <div class="modal-body d-flex flex-column ekko-lightbox-container">
+        <img src="{{photo.img_l}}" class="img-responsive center-block" alt="{{photo.caption}}">
 		</div>
 		<div class="modal-footer">
         	Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.  {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}
@@ -54,7 +50,7 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 {% endfor %}
 {% endblock %}
 {% block content %}
-<div id="sect-main" class="card my-3 my-lg-5 bg-light">
+<div id="sect-main" class="card mb-3 mb-lg-5 mt-lg-4 bg-light">
 	<div class="p-4 p-lg-5 d-flex flex-column flex-lg-row align-items-center">
 		<img src="/img/logo-blue-sm.png" class="me-lg-5" />
 		<div class="d-flex flex-column align-items-center align-items-lg-start text-center text-lg-start">
@@ -101,16 +97,17 @@ position: absolute; top:0; left: 0; width: 100%; height: 100%;
 		<div class="row">
 			{% for photo in photos %}
 				<div class="col-lg-2 col-md-3 col-xs-4 text-center">
-					<a href="#" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}">
-						<img src="{{ photo.img_l }}" class="img-responsive mini-img img-rounded center-block" alt="{{photo.caption}}">
+					<a href="#" class="photo-parent" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}">
+						<div class="center-cropped"
+							style="background-image: url('{{ photo.img_l }}');">
+							<img src="https://placehold.it/120x120"/>
+						</div>
 					</a>
-					<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p>
+					<p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p>
 				</div>
 	    	{% endfor %}
-		</div>
-		<div class="row" >
-			<div class="col-md-12 d-flex flex-column">
-				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg align-self-center align-self-lg-end">More Photos</a>
+			<div class="col-lg-2 col-md-3 col-xs-4 text-center">
+				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg d-flex align-items-center" style="width: 10rem; height: 10rem">More Photos</a>
 			</div>
 		</div>
 	</div>

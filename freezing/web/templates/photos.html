@@ -5,15 +5,17 @@
 <div class="row gallery-wrapper">
 
     <div class="col-lg-12">
-        <h1 class="page-header">Competition Photos</h1>
+        <h1 class="page-header mb-4">Competition Photos</h1>
     </div>
 
     {% for photo in photos %}
-    <div class="col-lg-2 col-md-3 col-xs-4 thumb">
+    <div class="col-xl-2 col-md-3 col-sm-4 col-6 thumb">
 
         <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
-           data-title="{{ photo.caption if photo.caption != None }}" data-parent=".gallery-wrapper"
-                                                                     data-footer='<p>Taken by <a href=/people/{{ photo.ride.athlete.id }}>{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'>
+           class="photo-parent"
+           data-title="{{ photo.caption |default(photo.ride.name, true) }}"
+           data-parent=".gallery-wrapper"
+           data-footer='<p>Taken by <a href=/people/{{ photo.ride.athlete.id }}>{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'>
             <div class="center-cropped"
                  style="background-image: url('{{ photo.img_t }}');">
                 <img src="https://placehold.it/120x120"/>
