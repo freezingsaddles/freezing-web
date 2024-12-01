@@ -275,6 +275,51 @@ def ross_hill_loop():
     )
 
 
+def _get_food_rescue_tdata():
+    sess = meta.scoped_session()
+    q = text(
+        """
+        with results as (
+            select
+                A.id as id,
+                A.display_name as athlete_name,
+                sum(
+                    case when R.name like '%#foodrescuex%' then
+                        cast(regexp_replace(R.name, '.*#foodrescuex(\\\\d+).*', '$1') as unsigned)
+                    else 1
+                    end
+                ) AS rescues,
+                sum(R.distance) AS distance
+            from lbd_athletes A
+            join rides R on R.athlete_id = A.id
+            where R.name like '%#foodrescue%'
+            group by A.id, A.display_name
+        )
+        select
+            R.*,
+            rank() over (order by R.rescues desc) AS "rank"
+        from results R
+        order by R.rescues desc, R.athlete_name asc
+        """
+    )
+    rs = sess.execute(q)
+    retval = [
+        (x["id"], x["athlete_name"], x["rescues"], x["distance"], x["rank"])
+        for x in rs.fetchall()
+    ]
+    return retval
+
+
+@blueprint.route("/foodrescue")
+def food_rescue():
+    tdata = _get_food_rescue_tdata()
+    return render_template(
+        "pointless/foodrescue.html",
+        data={"tdata": tdata},
+        meta=meta,
+    )
+
+
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year

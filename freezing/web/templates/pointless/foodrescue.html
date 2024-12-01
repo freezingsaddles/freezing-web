@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">Food Rescue Rides</div>
+    <div class="panel-body">
+        <p> 
+            BikeArlington and Food Rescue DC are partnering on a pointless prize
+            to encourage Freezing Saddlers to get some miles while doing some
+            good. Food Rescue is a nonprofit coordinates volunteers who pick-up
+            excess healthy food from local food donors and deliver it directly 
+            to local social service agencies that feed the food insecure. 
+        </p>
+        <p>
+            Sign up on the <a target="_blank" rel="noreferrer" href="https://foodrescue.us/site/food-rescue-us-dc/">Food Rescue DC</a> website.
+            Make food rescue rides, tag them with <code>#foodrescue</code>. If
+            you make multiple rescues on one ride, append the number of rescues
+            to the tag with an <code>x</code> like so:
+            <code>#foodrescue<strong>x2</strong></code>.
+        </p>
+        <p>
+            <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-rescuing-food-by-bike/">Prize sponsored by henry.</a>
+        </p>
+        <table class="table table-condensed">
+            <tr><th>Rank</th><th>Player</th><th>Rescues</th><th>Total Distance</th></tr>
+            {% for a, b, d, e, f in data.tdata %}
+            <tr>
+                <td>{{f}}</td>
+                <td><a href="/people/{{ a }}">{{b}}</a></td>
+                <td>{{d}}</td>
+                <td>{{e | int}} miles</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
