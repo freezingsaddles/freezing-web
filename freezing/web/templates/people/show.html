@@ -49,8 +49,8 @@ fieldset[disabled] .btn-strava.active {
 </style>
 {% endblock %}
 {% block content %}
-	<div class="d-flex mb-3 mb-lg-4 align-items-center">
-		<img style="border-radius: .5rem" src="{{data.user.profile_photo}}" alt="photo of {{data.user.display_name}}">
+	<div class="card mb-3 mb-lg-4 flex-row align-items-center">
+		<img class="user-profile" src="{{data.user.profile_photo}}" alt="photo of {{data.user.display_name}}">
 		<div class="d-flex flex-column ms-3">
 			<h5 class="card-title"><a href="https://www.strava.com/athletes/{{data.user.id}}">{{data.user.display_name}}</a></h5>
 			<h6 class="card-subtitle text-body-secondary mb-3"><a href="https://www.strava.com/clubs/{{data.team.id}}">{{data.team.name}}</a></h6>

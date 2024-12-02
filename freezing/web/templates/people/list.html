@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row"><div class="col-md-12"><h1>All Participants</h1></div></div>
+<div class="row"><div class="col-md-12">
+	<div class="btn-group float-end mt-2">
+		<button type="button" onclick="hide_km();" class="btn btn-success">America!</button>
+		<button type="button" onclick="hide_miles();" class="btn btn-danger">Other</button>
+	  </div>
+	<h1>All Participants</h1>
+</div></div>
 <div class="row">
 	<div class="col-md-6">
 		<p>Weekly data is for {{weekstart.strftime('%m-%d-%Y')}} to {{weekend.strftime('%m-%d-%Y')}}</p>
 	</div>
 	<div class="col-md-6">
-		<div class="btn-group">
-  <button type="button" onclick="hide_km();" class="btn btn-success">America!</button>
-  <button type="button" onclick="hide_miles();" class="btn btn-danger">Other</button>
-</div>
 
 	</div>
 </div>
@@ -26,6 +28,7 @@
 	</table>
 	</div>
 </div>
+{% endblock %}
 {% block foot %}
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
@@ -82,5 +85,4 @@ function hide_miles()
 	}
 }
 </script>
-{% endblock %}
 {% endblock %}
