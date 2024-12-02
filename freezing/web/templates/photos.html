@@ -28,7 +28,7 @@
 
 
 <div class="row">
-    <nav>
+    <nav class="d-flex justify-content-center">
         <ul class="pagination">
             <li class="page-item {% if page == 1 %}disabled{% endif %}">
                 <a class="page-link" href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
