@@ -1,5 +1,9 @@
-.top-buffer {
-    margin-top:20px;
+body {
+    font-family: Raleway, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 
 /* padding for the gallery */
@@ -8,27 +12,30 @@ div.row > div > div.row {
 }
 
 .center-cropped {
-    width: 120px;
-    height: 120px;
+    width: 10rem;
+    height: 10rem;
     background-position: center center;
     background-repeat: no-repeat;
     overflow: hidden;
+    background-size: cover;
+    border-radius: .5rem;
+    transition: outline .1s ease-in;
+}
 
-    /* add some shadow for the thumbnail */
-    -webkit-box-shadow: 0 1px 2px #777;
-    -moz-box-shadow: 0 2px 1px #777;
-    box-shadow: 0 2px 2px #777;
+.photo-parent:hover .center-cropped, .photo-parent:focus .center-cropped {
+    outline: 2px solid #007bff;
+}
+
+.ekko-lightbox-container .img-responsive {
+    border-radius: .25rem;
+    max-width: 100%;
+    max-height: 75vh;
 }
 
 /* Set the image to fill its parent and make transparent */
 .center-cropped img {
     min-height: 100%;
     min-width: 100%;
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    /* IE 5-7 */
-    filter: alpha(opacity=0);
-    /* modern browsers */
     opacity: 0;
 }
 
@@ -45,51 +52,24 @@ div.row > div > div.row {
     padding-left: 25px;
 }
 
-#credits {
-    margin-top: 25px;
-}
-
-
-/* Cribbed from old, but newer, bootstrap. */
-
-.d-flex {
-    display: flex;
-}
-
-.flex-col {
-    flex-direction: column;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-.justify-content-between {
-    justify-content: space-between;
-}
-
-.gap-3 {
-    gap: 1rem;
-}
-
-.mb-4 {
-    margin-bottom: 1.5rem;
+nav.bg-light {
+    box-shadow: 0 2px 4px #ffffff80;
 }
 
 @media (min-width: 992px) {
-    .flex-md-row {
-        flex-direction: row;
+    /* The pointless menu is too tall. */
+    .pointless-menu {
+        max-height: 85vh;
+        overflow-y: auto;
     }
 }
 
-.version-footer {
-    color: #adb5bd;
-    transition: color .1s ease-in;
-    text-align: center;
-    font-size: 85%;
-    padding-bottom: 2rem;
-
-    &:hover {
-        color: #6c757d;
+@media (prefers-color-scheme: dark) {
+    nav.bg-light {
+        box-shadow: 0 2px 4px #21252980;
+    }
+    
+    .bg-light {
+        background-color: #343a40 !important;
     }
 }

@@ -29,14 +29,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="/css/ekko-lightbox.min.css" rel="stylesheet">
     <link href="/css/styles.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     {% block head %}{% endblock %}
 </head>
 <body>
-   <div class="container-fluid">
     {% block beforenav %}
     {#
     See http://stackoverflow.com/a/13368485/217080
@@ -44,154 +47,150 @@
     #}
     {% endblock %}
 
-
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/"><img src="/img/logo-blue-tiny.png" width="20" height="20"></a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+    <nav class="navbar navbar-expand-lg bg-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex ps-2" href="/" title="Freezing Saddles">
+                <img src="/img/logo-blue-sm.png" style="width: 1.875rem;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!-- <li class="{% if request.path == '/' %}active{% endif %}"><a href="/">Home</a></li> -->
-                    <li>
-                            <a href="{{ registration_site }}">Register</a>
+                    <li class="nav-item">
+                            <a class="nav-link" href="{{ registration_site }}">Register</a>
                     </li>
-                    <li>
-                            <a href="https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/">Forum</a>
+                    <li class="nav-item">
+                            <a class="nav-link" href="https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/">Forum</a>
                     </li>
-                    <li class="dropdown{% if request.path.startswith('/leaderboard') or request.path.startswith('/tribes') %} active{% endif %}">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.path.startswith('/photos') %} active{% endif %}" href="/photos">Photos</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle{% if request.path.startswith('/leaderboard') or request.path.startswith('/tribes') %} active{% endif %}" href="#" id="leaderboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Leaderboards <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/leaderboard/team">Team Points (Chart)</a></li>
-                            <li><a href="/leaderboard/team_text">Team Points (Text)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/alt_scoring/team_hains">Team Hains Point Laps</a></li>
-                            <li><a href="/leaderboard/team_various">Team Pointless (Various)</a></li>
-                            <li><a href="/alt_scoring/team_sleaze">Team Sleaze Rides</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/leaderboard/individual">Individual Points (Chart)</a></li>
-                            <li><a href="/leaderboard/individual_text">Individual Points (Text)</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/alt_scoring/indiv_hains">Individual Hains Point Laps</a></li>
-                            <li><a href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
-                            <li><a href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
-                            <li><a href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/tribes/leaderboard">Bike Tribes</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="leaderboardDropdown">
+                            <li><a class="dropdown-item" href="/leaderboard/team">Team Points (Chart)</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard/team_text">Team Points (Text)</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/team_hains">Team Hains Point Laps</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard/team_various">Team Pointless (Various)</a></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/team_sleaze">Team Sleaze Rides</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/leaderboard/individual">Individual Points (Chart)</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard/individual_text">Individual Points (Text)</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/indiv_hains">Individual Hains Point Laps</a></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/indiv_freeze">Individual Freeze Points</a></li>
+                            <li><a class="dropdown-item" href="/leaderboard/individual_various">Individual Pointless (Various)</a></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/indiv_sleaze">Individual Sleaze Rides</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/tribes/leaderboard">Bike Tribes</a></li>
                         </ul>
                     </li>
-                    <li class="{% if request.path.startswith('/photos') %} active{% endif %}">
-                            <a href="/photos">Photos</a>
-                    </li>
 
-                    <li class="dropdown{% if request.path.startswith('/explore') %} active{% endif %}">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle{% if request.path.startswith('/explore') %} active{% endif %}" href="#" id="exploredDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Data Exploration <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-
-                            <li><a href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
-                            <li><a href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
-                            <li><a href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
-                            <li><a href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
-                            <li><a href="/pointless/daily_variance">Least Daily Variance</a></li>
-                            <li><a href="/pointless/points_per_mile">Points per Mile</a></li>
-                            <li><a href="/pointless/avgdist">Shortest Rides</a></li>
-                            <li><a href="/explore/team_cumul">Team Cumulative</a></li>
-                            <li><a href="/explore/team_weekly">Team Weekly Points</a></li>
-                            <li><a href="/pointless/avgspeed">Tortoise and Hare</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="exploreDropdown">
+                            <li><a class="dropdown-item" href="/pointless/billygoat-indiv">Climbing per Mile (Indiv)</a></li>
+                            <li><a class="dropdown-item" href="/pointless/billygoat-team">Climbing per Mile (Team)</a></li>
+                            <li><a class="dropdown-item" href="/explore/distance_by_lowtemp">Distance vs. Avg Low Temp</a></li>
+                            <li><a class="dropdown-item" href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a></li>
+                            <li><a class="dropdown-item" href="/pointless/daily_variance">Least Daily Variance</a></li>
+                            <li><a class="dropdown-item" href="/pointless/points_per_mile">Points per Mile</a></li>
+                            <li><a class="dropdown-item" href="/pointless/avgdist">Shortest Rides</a></li>
+                            <li><a class="dropdown-item" href="/explore/team_cumul">Team Cumulative</a></li>
+                            <li><a class="dropdown-item" href="/explore/team_weekly">Team Weekly Points</a></li>
+                            <li><a class="dropdown-item" href="/pointless/avgspeed">Tortoise and Hare</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown{% if request.path.startswith('/people') %} active{% endif %}">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle{% if request.path.startswith('/people') %} active{% endif %}" href="#" id="peopleDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             People <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/people">People</a></li>
-                            <li><a href="/people/ridedays">Ride Days</a></li>
-                            <li><a href="/people/friends">Friends of BAFS</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="peopleDropdown">
+                            <li><a class="dropdown-item" href="/people">People</a></li>
+                            <li><a class="dropdown-item" href="/people/ridedays">Ride Days</a></li>
+                            <li><a class="dropdown-item" href="/people/friends">Friends of BAFS</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown{% if request.path.startswith('/pointless') %} active{% endif %}">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle{% if request.path.startswith('/pointless') %} active{% endif %}" href="#" id="pointlessDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Pointless <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/pointless/hashtag/biathlon">Biathlon</a></li>
-                            <li><a href="http://bikearlingtonforum.com/showthread.php?20996-Pointless-Prize-2023-Bicycle-Bingo">Bicycle Bingo</a></li>
-                            <li><a href="https://www.bikearlingtonforum.com/forums/topic/return-of-calvinball/">Calvinball</a></li>
-                            <li><a href="/pointless/hashtag/Deflated">Deflated Rides</a></li>
-                            <li><a href="/pointless/hashtag/donut">Doughnut Rides</a></li>
-                            <li><a href="/pointless/generic/adulting">Errandeering</a></li -->
-                            <!-- li><a href="/pointless/hashtag/420">Expand Your Horizons</a></li -->
-                            <li><a href="http://bikearlingtonforum.com/showthread.php?20994-Pointless-Prize-The-Extra-Mile">Extra Mile</a></li>
-                            <!-- li><a href="http://bikearlingtonforum.com/showthread.php?21054-Team-Challenge-FEEDING-SADDLES">Feeding Saddles</a></li -->
-                            <li><a href="/pointless/hashtag/fire">Fire</a></li>
-                            <li><a href="/pointless/hashtag/FirstTimeFS">First Time Riders</a></li>
-                            <li><a href="/pointless/hashtag/flag">Flag</a></li>
-                            <li><a href="/pointless/foodrescue">Food Rescue</a></li>
-                            <li><a href="/pointless/hashtag/goldenspike">Golden Spike</a></li>
-                            <!-- li><a href="/pointless/hashtag/lakefinder">Lake Finder</a></li -->
-                            <li><a href="/pointless/hashtag/fsbooks">Little Free Library</a></li>
-                            <li><a href="/pointless/generic/londonbridge">London Bridge Rides</a></li>
-                            <li><a href="/pointless/arlington">Loopy for Arlington</a></li>
-                            <li><a href="https://www.bikearlingtonforum.com/forums/topic/meh-diocrity-pointless-prize-2/">Meh-diocrity</a></li>
-                            <li><a href="/pointless/opmdays">Michigander Snow Day Rides</a></li>
-                            <li><a href="/pointless/hashtag/monuments">Monuments and Memorials</a></li>
-                            <!-- li><a href="/pointless/hashtag/oldGeorge">Old Georgetown Bike Lane</a></li -->
-                            <!-- li><a href="/pointless/hashtag/parkfinder">Park Finder</a></li -->
-                            <li><a href="/pointless/hashtag/phoneride">Phone Ride</a></li>
-                            <li><a href="/pointless/generic/poggio-indiv">POGGIO (Indiv)</a></li>
-                            <li><a href="/pointless/generic/poggio-team">POGGIO (Team)</a></li>
-                            <li><a href="/pointless/hashtag/scavhunt">Photo Scavenger Hunt</a></li>
-                            <li><a href="/pointless/hashtag/pizza">Pizzaneuring</a></li>
-                            <li><a href="/pointless/hashtag/po">Post Office</a></li>
-                            <li><a href="/pointless/hashtag/publicartfinder">Public Art Finder</a></li>
-                            <li><a href="/pointless/rosshillloop">Ross Hill Loop</a></li>
-                            <li><a href="/pointless/hashtag/socks">Socks</a></li>
-                            <li><a href="/pointless/hashtag/singlespeed">Singlespeed</a></li>
-                            <!-- <li><a href="/pointless/hashtag/stem">STEM</a></li> -->
-                            <li><a href="/pointless/generic/suppleride">Supple Ride</a></li>
-                            <!-- li><a href="http://bikearlingtonforum.com/showthread.php?21022-Pointless-Prize-Stupid-Silly-Bike-Tricks">Stupid Silly Bike Tricks</a></li -->
-                            <li><a href="/pointless/hashtag/treats">Street Treats</a></li>
-                            <li><a href="/pointless/hashtag/tandem">Tandem Rides</a></li>
-                            <li><a href="/pointless/hashtag/tandemVI">Tandem Rides - Visually Impaired</a></li>
-                            <li><a href="/pointless/hashtag/thetacoride">The Taco Ride</a></li>
-                            <!-- li><a href="/pointless/hashtag/abc">Vehicle ABCs</a></li -->
-                            <li><a href="/pointless/hashtag/fswormhole">Wormholes</a></li>
-                            <li><a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/">Wandrer' About</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/pointless/kidmiles">Kidical by Mileage</a></li>
-                            <li><a href="/pointless/kidsathlon">Kidsathlon</a></li>
-                            <li><a href="/pointless/pointlesskids">Pointless Kids</a></li>
-                            <li><a href="/pointless/hashtag/withkid">Riding with Kids</a></li>
-                            <!-- li><a href="/pointless/hashtag/tandemchild">Tandem with Child</a></li -->
+                        <ul class="dropdown-menu pointless-menu" aria-labelledby="pointlessDropdown">
+                            <li><a class="dropdown-item" href="/pointless/hashtag/biathlon">Biathlon</a></li>
+                            <li><a class="dropdown-item" href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2025-sign-up-now/">Bicycle Bingo</a></li>
+                            <li><a class="dropdown-item" href="https://www.bikearlingtonforum.com/forums/topic/return-of-calvinball/">Calvinball</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/Deflated">Deflated Rides</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/donut">Doughnut Rides</a></li>
+                            <li><a class="dropdown-item" href="/pointless/generic/adulting">Errandeering</a></li -->
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/420">Expand Your Horizons</a></li -->
+                            <li><a class="dropdown-item" href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-extra-mile-2/">Extra Mile</a></li>
+                            <!-- li><a class="dropdown-item" href="http://bikearlingtonforum.com/showthread.php?21054-Team-Challenge-FEEDING-SADDLES">Feeding Saddles</a></li -->
+                            <li><a class="dropdown-item" href="/pointless/hashtag/fire">Fire</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/FirstTimeFS">First Time Riders</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/flag">Flag</a></li>
+                            <li><a class="dropdown-item" href="/pointless/foodrescue">Food Rescue</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/goldenspike">Golden Spike</a></li>
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/lakefinder">Lake Finder</a></li -->
+                            <li><a class="dropdown-item" href="/pointless/hashtag/fsbooks">Little Free Library</a></li>
+                            <li><a class="dropdown-item" href="/pointless/generic/londonbridge">London Bridge Rides</a></li>
+                            <li><a class="dropdown-item" href="/pointless/arlington">Loopy for Arlington</a></li>
+                            <li><a class="dropdown-item" href="https://www.bikearlingtonforum.com/forums/topic/meh-diocrity-pointless-prize-2/">Meh-diocrity</a></li>
+                            <li><a class="dropdown-item" href="/pointless/opmdays">Michigander Snow Day Rides</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/monuments">Monuments and Memorials</a></li>
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/oldGeorge">Old Georgetown Bike Lane</a></li -->
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/parkfinder">Park Finder</a></li -->
+                            <li><a class="dropdown-item" href="/pointless/hashtag/phoneride">Phone Ride</a></li>
+                            <li><a class="dropdown-item" href="/pointless/generic/poggio-indiv">POGGIO (Indiv)</a></li>
+                            <li><a class="dropdown-item" href="/pointless/generic/poggio-team">POGGIO (Team)</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/scavhunt">Photo Scavenger Hunt</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/pizza">Pizzaneuring</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/po">Post Office</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/publicartfinder">Public Art Finder</a></li>
+                            <li><a class="dropdown-item" href="/pointless/rosshillloop">Ross Hill Loop</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/socks">Socks</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/singlespeed">Singlespeed</a></li>
+                            <!-- <li><a class="dropdown-item" href="/pointless/hashtag/stem">STEM</a></li> -->
+                            <li><a class="dropdown-item" href="/pointless/generic/suppleride">Supple Ride</a></li>
+                            <!-- li><a class="dropdown-item" href="http://bikearlingtonforum.com/showthread.php?21022-Pointless-Prize-Stupid-Silly-Bike-Tricks">Stupid Silly Bike Tricks</a></li -->
+                            <li><a class="dropdown-item" href="/pointless/hashtag/treats">Street Treats</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/tandem">Tandem Rides</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/tandemVI">Tandem Rides - Visually Impaired</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/thetacoride">The Taco Ride</a></li>
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/abc">Vehicle ABCs</a></li -->
+                            <li><a class="dropdown-item" href="/pointless/hashtag/fswormhole">Wormholes</a></li>
+                            <li><a class="dropdown-item" href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/">Wandrer' About</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/pointless/kidmiles">Kidical by Mileage</a></li>
+                            <li><a class="dropdown-item" href="/pointless/kidsathlon">Kidsathlon</a></li>
+                            <li><a class="dropdown-item" href="/pointless/pointlesskids">Pointless Kids</a></li>
+                            <li><a class="dropdown-item" href="/pointless/hashtag/withkid">Riding with Kids</a></li>
+                            <!-- li><a class="dropdown-item" href="/pointless/hashtag/tandemchild">Tandem with Child</a></li -->
                         </ul>
                     </li>
-                    <li class="dropdown{% if request.path.startswith('/alt_scoring') %} active{% endif %}">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle{% if request.path.startswith('/alt_scoring') %} active{% endif %}" href="#" id="alternateDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Alternate Scoring <span class="caret"></span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/alt_scoring/team_riders">Ride Days by Team</a></li>
-                            <li><a href="/alt_scoring/indiv_worst_day_points">Steve O's Crazy Idea</a></li>
-                            <li><a href="/alt_scoring/team_daily">Team Wins by Day</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="alternateDropdown">
+                            <li><a class="dropdown-item" href="/alt_scoring/team_riders">Ride Days by Team</a></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/indiv_worst_day_points">Steve O's Crazy Idea</a></li>
+                            <li><a class="dropdown-item" href="/alt_scoring/team_daily">Team Wins by Day</a></li>
                         </ul>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
+
+                <ul class="navbar-nav">
                     {% if g.logged_in %}
-                    <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ session.athlete_fname }} <span
+                    <li class="nav-item">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ session.athlete_fname }} <span
                             class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/my/rides">My Rides</a></li>
@@ -199,27 +198,43 @@
                         </ul>
                     </li>
                     {% else %}
-                    <li><a href="/login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
                     {% endif %}
-                    <!--<li><a href="../navbar-static-top/">Static top</a></li>
-                    <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
-                    -->
                 </ul>
             </div>
             <!--/.nav-collapse -->
         </div>
     </nav>
-    <div class="container">
+
+    <div class="container mt-3 mt-lg-4">
         {% block content %}{% endblock %}
     </div>
-</div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="/js/jquery-1.11.2.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="/js/ekko-lightbox-min.js"></script>
+    <div id="credits" class="container d-flex flex-column flex-md-row justify-content-between align-items-center my-3 mt-lg-4 gap-3">
+    <div>
+        <div>
+        <a href="https://github.com/freezingsaddles/">Freezing Saddles software is available on Github</a>
+        <br>under an <a href="https://github.com/freezingsaddles/freezing-web/blob/master/LICENSE">Apache 2.0 open source license</a>.
+        <br>Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">the original scoreboard by ronwalf</a>.
+        </div>
+    </div>
+    <div>
+        <a href="https://strava.com"><img src="/img/api_logo_pwrdBy_strava_stack_light.png" alt="Powered by Strava"/></a>
+    </div>
+    <div >
+        <a href="https://www.visualcrossing.com/"><img alt="Powered by Visual Crossing Weather" src="/img/PoweredByVC-WeatherLogo-RoundedRect-sm.png"/></a>
+    </div>
+    </div>
 
-<script type="text/javascript">
+    <div class="version-footer text-muted text-center mb-3 mb-lg-4">freezing-web version {{ version_string }} {{ environment }}</div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery-1.11.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="/js/ekko-lightbox-min.js"></script>
+
+    <script type="text/javascript">
         $(document).ready(function ($) {
 
             // delegate calls to data-toggle="lightbox"
@@ -238,33 +253,30 @@
                     }
                 });
             });
+
+            // https://stackoverflow.com/a/75065536
+            // Set theme to the user's preferred color scheme
+            function updateTheme() {
+                const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ?
+                    "dark" :
+                    "light";
+                document.querySelector("html").setAttribute("data-bs-theme", colorMode);
+            }
+
+            // Set theme on load
+            updateTheme()
+
+            // Update theme when the preferred scheme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme)
+
         });
         $(function () {
           $('[data-toggle="tooltip"]').tooltip()
         })
-</script>
-
+    </script>
 
 {% block foot %}
 {% endblock %}
-
-<div id="credits" class="container d-flex flex-col flex-md-row justify-content-between align-items-center mb-4 gap-3">
-  <div>
-    <div>
-      <a href="https://github.com/freezingsaddles/">Freezing Saddles software is available on Github</a>
-      <br>under an <a href="https://github.com/freezingsaddles/freezing-web/blob/master/LICENSE">Apache 2.0 open source license</a>.
-      <br>Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge">the original scoreboard by ronwalf</a>.
-    </div>
-  </div>
-  <div>
-      <a href="https://strava.com"><img src="/img/api_logo_pwrdBy_strava_stack_light.png" alt="Powered by Strava"/></a>
-  </div>
-  <div >
-    <a href="https://www.visualcrossing.com/"><img alt="Powered by Visual Crossing Weather" src="/img/PoweredByVC-WeatherLogo-RoundedRect-sm.png"/></a>
-  </div>
-</div>
-
-<div class="version-footer">freezing-web version {{ version_string }} {{ environment }}</div>
 
 </body>
 </html>
