@@ -18,8 +18,29 @@ div.row > div > div.row {
     background-repeat: no-repeat;
     overflow: hidden;
     background-size: cover;
-    border-radius: .5rem;
+    border-radius: .375rem;
     transition: outline .1s ease-in;
+}
+
+iframe, .g-chart svg {
+    border-radius: .375rem;
+}
+
+.card-body .table {
+    margin-bottom: 0;
+
+    tr:last-child td {
+        border-bottom: 0 !important;
+    }
+}
+
+table.dataTable.no-footer {
+    border-bottom-width: 0 !important;
+}
+
+.photo-parent {
+    display: flex;
+    justify-content: center;
 }
 
 .photo-parent:hover .center-cropped, .photo-parent:focus .center-cropped {
@@ -72,4 +93,15 @@ nav.bg-light {
     .bg-light {
         background-color: #343a40 !important;
     }
+
+    .dataTables_filter {
+        color: #ced4da !important;
+    }
+}
+
+.user-profile {
+    border-radius: .375rem 0 0 .375rem;
+    max-height: 10rem;
+    max-width: 10rem;
+    min-height: 7.5rem;
 }
