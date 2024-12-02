@@ -186,18 +186,23 @@
                             Forum
                         </a>
                     </li>
-                    {% if g.logged_in %}
                     <li class="nav-item">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ session.athlete_fname }} <span
-                            class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/my/rides">My Rides</a></li>
-                            <li><a href="{{ registration_site }}">Register</a></li>
-                            <li><a href="/logout">Logout</a></li>
+                        <a class="nav-link" href="{{ registration_site }}">
+                            Register
+                        </a>
+                    </li>
+                    {% if g.logged_in %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ session.athlete_fname }} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/my/rides">My Rides</a></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
                         </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="/login">Login/Register</a></li>
+                    <li class="nav-item"><a class="nav-link{% if request.path.startswith('/login') %} active{% endif %}" href="/login">Login</a></li>
                     {% endif %}
                 </ul>
             </div>
