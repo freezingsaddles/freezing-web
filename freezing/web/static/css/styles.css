@@ -105,6 +105,9 @@ nav.bg-light {
         color: #ced4da !important;
     }
 
+    iframe {
+        filter: invert(95%) brightness(80%);
+    }
 
     .vc-logo {
         display: block;
