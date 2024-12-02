@@ -58,10 +58,6 @@
             </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <!-- <li class="{% if request.path == '/' %}active{% endif %}"><a href="/">Home</a></li> -->
-                    <li class="nav-item">
-                            <a class="nav-link" href="{{ registration_site }}">Register</a>
-                    </li>
                     <li class="nav-item">
                             <a class="nav-link" href="https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/">Forum</a>
                     </li>
@@ -194,11 +190,12 @@
                             class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/my/rides">My Rides</a></li>
+                            <li><a href="{{ registration_site }}">Register</a></li>
                             <li><a href="/logout">Logout</a></li>
                         </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Login/Register</a></li>
                     {% endif %}
                 </ul>
             </div>
