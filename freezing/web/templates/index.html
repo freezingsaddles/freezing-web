@@ -84,22 +84,16 @@
 {% endif %}
 
 {% if photos %}
-<div id="sect-photos" class="mb-lg-4">
-	<div class="row mb-0">
+<div id="sect-photos" class="mb-4 mb-lg-5 photo-grid">
 		{% for photo in photos %}
-		<div class="col-xl-2 col-md-3 col-xs-4 col-6 d-flex text-center mb-4 justify-content-center">
 			{% if loop.index == 12 %}
-				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="width: 10rem; height: 10rem">More<br>Photos</a>
+				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="aspect-ratio: 1;">More<br>Photos</a>
 			{% else %}
-				<a href="#" class="photo-parent" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}">
-					<div class="center-cropped" style="background-image: url('{{ photo.img_l }}');">
-					</div>
+				<a href="#" class="photo-thumbnail" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}"  style="background-image: url('{{ photo.img_l }}');">
 				</a>
 				<!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
 			{% endif %}
-		</div>
 		{% endfor %}
-	</div>
 </div>
 {% endif %}
 
