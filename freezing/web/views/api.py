@@ -195,7 +195,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = meta.scoped_session()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private is False)
+    q = q.filter(Ride.private == False)
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)
@@ -209,10 +209,9 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     for ride_track in q:
         assert isinstance(ride_track, RideTrack)
         ride_tz = pytz.timezone(ride_track.ride.timezone)
-        wkt = sess.scalar(ride_track.gps_track.wkt)
 
         coordinates = []
-        for i, (lon, lat) in enumerate(parse_linestring(wkt)):
+        for i, (lon, lat) in enumerate(parse_linestring(ride_track.gps_track)):
             elapsed_time = ride_track.ride.start_date + timedelta(
                 seconds=ride_track.time_stream[i]
             )

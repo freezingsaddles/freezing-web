@@ -10,7 +10,7 @@ autoflake==2.2.1
 beautifulsoup4==4.12.3
 colorlog==4.1.0
 envparse==0.2.0
-freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.8.6.tar.gz
+freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.8.8.tar.gz
 geojson==2.5.0
 gunicorn==23.0.0
 marshmallow==3.23.1
