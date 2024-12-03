@@ -36,10 +36,10 @@ $(document).ready(function() {
 	$('#connect-strava').click(function() {
    		if ($('#private-scope').is(':checked')) {
    			// console.log('private', $('#private-scope').val());
-   			window.location.href=$('#private-scope').val();
+   			window.location.href=encodeURIComponent($('#private-scope').val());
    		} else {
    			// console.log('public', $('#public-scope').val());
-   			window.location.href=$('#public-scope').val();
+   			window.location.href=encodeURIComponent($('#public-scope').val());
    		}
 	});
 });
