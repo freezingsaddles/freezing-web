@@ -1,6 +1,4 @@
 ---
-version: '3'
-
 volumes:
   freezing-data:
     external: true
@@ -8,10 +6,10 @@ volumes:
 services:
 
   freezing-db:
-    image: mysql:5.7
-    container_name: freezing-db
+    image: mysql:8.0
+    container_name: freezing-db-dev
     ports:
-      - "3306:3306"
+      - "3306:${MYSQL_PORT:-3306}"
     volumes:
       - freezing-data:/var/lib/mysql
       - ./docker/db/sql-scripts:/sql
@@ -23,24 +21,21 @@ services:
 
   freezing-web:
     build: .
-    container_name: freezing-web
-    command: bafs-server
+    container_name: freezing-web-dev
     ports:
-      - "5000:8000"
+      - "5000:${FREEZING_WEB_PORT:-8000}"
     volumes:
       - ./data/cache:/data/cache
       - ./leaderboards:/data/leaderboards
       - ./data/sessions:/data/sessions
       - ./resources/docker/settings.cfg:/config/settings.cfg
-    links:
-      - freezing-db:freezing-db.container
     environment:
       VIRTUAL_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
-      SQLALCHEMY_URL: ${SQLALCHEMY_URL:-mysql+pymysql://freezing:zeer0@freezing-db.container/freezing?charset=utf8mb4&binary_prefix=true}
+      SQLALCHEMY_URL: ${SQLALCHEMY_URL}
       BEANSTALKD_HOST: beanstalkd.container
       BEANSTALKD_PORT: 11300
       STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
