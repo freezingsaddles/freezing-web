@@ -4,7 +4,12 @@ from freezing.model import init_model, meta
 from .config import config
 
 # Thanks https://stackoverflow.com/a/17073583
-app = Flask(__name__, static_folder="static", static_url_path="/")
+app = Flask(
+    __name__,
+    static_folder="static",
+    static_url_path="/",
+    instance_path=config.INSTANCE_PATH,
+)
 app.config.from_object(config)
 
 init_model(config.SQLALCHEMY_URL)
@@ -59,5 +64,8 @@ def teardown_request(exception):
 def inject_config():
     return {
         "competition_title": config.COMPETITION_TITLE,
+        "environment": config.ENVIRONMENT,
         "registration_site": config.REGISTRATION_SITE,
+        "forum_site": config.FORUM_SITE,
+        "version_string": config.VERSION_STRING,
     }

@@ -12,7 +12,7 @@ __authors__ = [
 
 __copyright__ = "Copyright 2015 Hans Lellelid"
 
-version = "1.3.3"
+version = "1.5.6"
 
 long_description = """
 The freezing saddles cycling competition website/scoreboard.
@@ -20,7 +20,7 @@ The freezing saddles cycling competition website/scoreboard.
 
 install_req = [
     "Flask",
-    "GeoAlchemy",
+    "GeoAlchemy2",
     "PyMySQL",
     "PyYAML",
     "alembic",

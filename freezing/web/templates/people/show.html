@@ -49,49 +49,34 @@ fieldset[disabled] .btn-strava.active {
 </style>
 {% endblock %}
 {% block content %}
-	<div class="row top-buffer">
-		<div class="col-md-12">
-			<div class="panel panel-default">
-                <div class="panel-heading">
-                    <img style="float: right" src="{{data.user.profile_photo}}" alt="photo of {{data.user.display_name}}">
-                    <h1><a href="https://www.strava.com/athletes/{{data.user.id}}">{{data.user.display_name}}</a></h1>
-                    <h2><a href="https://www.strava.com/clubs/{{data.team.id}}">{{data.team.name}}</a></h2>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-md-6">
-							<ul class="list-group">
-								<li class="list-group-item">Total Rides: <span class="pull-right">{{data.totalrides}}</span></li>
-								<li class="list-group-item">Total Mileage: <span class="pull-right">{{data.totaldist | round(1)}}</span></li>
-								<li class="list-group-item">Rides This Week: <span class="pull-right">{{data.weekrides}}</span></li>
-								<li class="list-group-item">Mileage This Week: <span class="pull-right">{{data.weektotal | round(1)}}</span></li>
-							</ul>
-						</div>
-						<div class="col-md-6">
-							<ul class="list-group">
-								<li class="list-group-item">Average Ride: <span class="pull-right">
-									{% if data.totalrides > 0 %}
-										{{(data.totaldist / data.totalrides) | round(1)}}
-									{% else %}
-										N/A
-									{% endif%}
-									</span></li>
-								<li class="list-group-item">Average Ride This Week: <span class="pull-right">
-									{% if data.weekrides > 0 %}
-										{{(data.weektotal / data.weekrides) | round(1)}}
-									{% else %}
-										N/A
-									{% endif%}
-									</span>
-								</li>
-								<li class="list-group-item">
-									<a class="btn btn-strava btn-sm" href="https://www.strava.com/athletes/{{data.user.id}}">View on Strava</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
+	<div class="card mb-3 mb-lg-4 flex-row align-items-center">
+		<img class="user-profile" src="{{data.user.profile_photo}}" alt="photo of {{data.user.display_name}}">
+		<div class="d-flex flex-column ms-3">
+			<h5 class="card-title"><a href="https://www.strava.com/athletes/{{data.user.id}}">{{data.user.display_name}}</a></h5>
+			<h6 class="card-subtitle text-body-secondary mb-3"><a href="https://www.strava.com/clubs/{{data.team.id}}">{{data.team.name}}</a></h6>
+			<a class="btn btn-strava btn-sm" href="https://www.strava.com/athletes/{{data.user.id}}">View on Strava</a>
 		</div>
 	</div>
+	<ul class="list-group">
+		<li class="list-group-item">Total Rides: <span class="float-end">{{data.totalrides}}</span></li>
+		<li class="list-group-item">Total Mileage: <span class="float-end">{{data.totaldist | round(1)}}</span></li>
+		<li class="list-group-item">Average Ride: <span class="float-end">
+			{% if data.totalrides > 0 %}
+				{{(data.totaldist / data.totalrides) | round(1)}}
+			{% else %}
+				N/A
+			{% endif%}
+			</span>
+		</li>
+		<li class="list-group-item">Rides This Week: <span class="float-end">{{data.weekrides}}</span></li>
+		<li class="list-group-item">Mileage This Week: <span class="float-end">{{data.weektotal | round(1)}}</span></li>
+		<li class="list-group-item">Average Ride This Week: <span class="float-end">
+			{% if data.weekrides > 0 %}
+				{{(data.weektotal / data.weekrides) | round(1)}}
+			{% else %}
+				N/A
+			{% endif%}
+			</span>
+		</li>
+	</ul>
 {% endblock %}
