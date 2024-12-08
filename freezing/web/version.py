@@ -7,25 +7,34 @@
 # frozen values of commit, build_date, and branch.
 
 import datetime
+import logging
 import subprocess
 
 
 # Thanks https://stackoverflow.com/a/21901260/424301
 def get_git_revision_short_hash() -> str:
-    return (
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
-        .decode("ascii")
-        .strip()
-    )
+    try:
+        return (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
+            .decode("ascii")
+            .strip()
+        )
+    except Exception as e:
+        logging.warning(f"Could not get revision from git {e}")
+        return "unknown"
 
 
 def get_git_branch() -> str:
-    return (
-        subprocess.check_output(["git", "symbolic-ref", "-q", "HEAD"])
-        .decode("ascii")
-        .strip()
-        .replace("refs/heads/", "")
-    )
+    try:
+        return (
+            subprocess.check_output(["git", "symbolic-ref", "-q", "HEAD"])
+            .decode("ascii")
+            .strip()
+            .replace("refs/heads/", "")
+        )
+    except Exception as e:
+        logging.warning(f"Could not get branch from git {e}")
+        return "unknown"
 
 
 def freeze():
