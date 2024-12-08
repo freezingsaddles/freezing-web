@@ -6,7 +6,7 @@
 .venv*
 /*.iml
 /build
-/data/cache/*
+/data/*
 /dist
 /env
 /freezing/web/version.py
