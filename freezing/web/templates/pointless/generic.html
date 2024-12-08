@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}FS: {{title}}{% endblock %}
 {% block content %}
-<div class="panel panel-default">
-	<div class="panel-heading">{{ title }}</div>
-	<div class="panel-body">
+<div class="card">
+	<h5 class="card-header">{{ title }}</h5>
+	<div class="card-body">
 		<p>{{ description | safe }}</p>
 		{% if url %}<p>See: <a href="{{ url }}">{{ url }}</a></p>{% endif %}
 		<table class="table table-condensed">

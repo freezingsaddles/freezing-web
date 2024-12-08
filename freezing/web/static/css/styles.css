@@ -1,5 +1,9 @@
-.top-buffer {
-    margin-top:20px;
+body {
+    font-family: Raleway, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 
 /* padding for the gallery */
@@ -7,29 +11,47 @@ div.row > div > div.row {
     margin-bottom: 15px;
 }
 
-.center-cropped {
-    width: 120px;
-    height: 120px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    overflow: hidden;
-
-    /* add some shadow for the thumbnail */
-    -webkit-box-shadow: 0 1px 2px #777;
-    -moz-box-shadow: 0 2px 1px #777;
-    box-shadow: 0 2px 2px #777;
+iframe, .g-chart svg {
+    border-radius: var(--bs-border-radius);
 }
 
-/* Set the image to fill its parent and make transparent */
-.center-cropped img {
-    min-height: 100%;
-    min-width: 100%;
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    /* IE 5-7 */
-    filter: alpha(opacity=0);
-    /* modern browsers */
-    opacity: 0;
+.card-body .table {
+    margin-bottom: 0;
+
+    tr:last-child td {
+        border-bottom: 0 !important;
+    }
+}
+
+table.dataTable.no-footer {
+    border-bottom-width: 0 !important;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 1rem;
+    column-gap: 1rem;
+}
+
+.photo-thumbnail {
+    display: block;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: var(--bs-border-radius);
+    transition: outline .1s ease-in;
+    aspect-ratio: 1;
+
+    &:hover, &:focus {
+        outline: 2px solid #007bff;
+    }
+}
+
+.ekko-lightbox-container .img-responsive {
+    border-radius: .25rem;
+    max-width: 100%;
+    max-height: 75vh;
 }
 
 .thumb {
@@ -45,39 +67,129 @@ div.row > div > div.row {
     padding-left: 25px;
 }
 
-#credits {
-    margin-top: 25px;
+nav.bg-light {
+    box-shadow: 0 2px 4px #ffffff80;
 }
 
+.user-profile {
+    border-radius: var(--bs-border-radius) 0 0 var(--bs-border-radius);
+    max-height: 10rem;
+    max-width: 10rem;
+    min-height: 7.5rem;
+}
 
-/* Cribbed from old, but newer, bootstrap. */
+.stat-divider {
+    border-bottom: 1px solid #8888;
+    margin: .5rem 0;
+    width: 100%;
+}
 
-.d-flex {
+.badge-group {
     display: flex;
-}
-
-.flex-col {
     flex-direction: column;
+    align-items: stretch;
+
+    .badge {
+        &:not(:first-child) {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        &:not(:last-child) {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
 }
 
-.align-items-center {
-    align-items: center;
+@media (min-width: 576px) {
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
-.justify-content-between {
-    justify-content: space-between;
-}
-
-.gap-3 {
-    gap: 1rem;
-}
-
-.mb-4 {
-    margin-bottom: 1.5rem;
+@media (min-width: 768px) {
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 }
 
 @media (min-width: 992px) {
-    .flex-md-row {
+    .stat-divider {
+        border-bottom: none;
+        border-right: 1px solid #8888;
+        margin: 0 .5rem;
+        width: 0;
+        height: 1em;
+    }
+    
+    .badge-group {
         flex-direction: row;
+
+        .badge {
+            flex-grow: 1;
+
+            &:first-child {
+                border-bottom-left-radius: var(--bs-badge-border-radius);
+            }
+
+            &:not(:first-child) {
+                border-bottom-left-radius: 0;
+                border-top-right-radius: var(--bs-badge-border-radius);
+            }
+
+            &:not(:last-child) {
+                border-top-right-radius: 0;
+            }
+        }
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* The pointless menu is too tall. */
+    .pointless-menu {
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+}
+
+@media (min-width: 1200px) {
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    nav.bg-light {
+        box-shadow: 0 2px 4px #21252980;
+    }
+    
+    .bg-light {
+        background-color: #343a40 !important;
+    }
+
+    .dataTables_filter {
+        color: #ced4da !important;
+    }
+
+    iframe {
+        filter: invert(95%) brightness(80%);
+    }
+
+    .vc-logo {
+        display: block;
+        background-image: url(/img/PoweredByVC-WeatherLogo-RoundedRectBlack.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+    
+        img {
+            visibility: hidden;
+        }
     }
 }

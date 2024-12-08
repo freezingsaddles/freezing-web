@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="card">
+    <h5 class="card-header">
         My Tribes
-        <span class="pull-right">
+        <span class="float-end">
             <a href="/tribes/leaderboard">Cancel</a>
         </span>
-    </div>
-    <div class="panel-body">
+    </h5>
+    <div class="card-body">
         <form method="post">
             {% for group in tribal_groups %}
             <h4>{{group.name}}</h4>
