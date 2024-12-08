@@ -68,7 +68,14 @@ def _write_instagram_photo(uid, photo, dest_dir):
     :return:
     """
     photo_fname = IMG_FNAME_TPL.format(uid=uid)
-    (filename, headers) = urllib.urlretrieve(photo.url)
+
+    # GitHub Copilot suggested this code, it looks good to me. @obscurerichard
+    # Parse the URL and check its scheme
+    parsed_url = urllib.parse.urlparse(photo.url)
+    if parsed_url.scheme not in ("http", "https"):
+        raise ValueError("Unsupported URL scheme: {}".format(parsed_url.scheme))
+
+    (filename, headers) = urllib.request.urlretrieve(photo.url)
     if os.path.exists(dest_dir) is False:
         os.makedirs(dest_dir)
     shutil.move(filename, os.path.join(dest_dir, photo_fname))
