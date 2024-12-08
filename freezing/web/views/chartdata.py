@@ -1102,7 +1102,7 @@ def parameterized_suffering_query(
            AND SQ.ath2_id = A.id
           group by athlete_name, ath_id
           order by {1} {3}, moving DESC;
-          """.format(
+          """.format(  # nosec B608
         weath_field, weath_nick, func, desc, superlative_restriction
     )
 

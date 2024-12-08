@@ -30,6 +30,7 @@ services:
       - ./data/sessions:/data/sessions
       - ./resources/docker/settings.cfg:/config/settings.cfg
     environment:
+      BIND_INTERFACE: "0.0.0.0"
       VIRTUAL_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}

@@ -7,6 +7,7 @@ jobs:
   
   # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
   lint:
+    name: Python Lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
