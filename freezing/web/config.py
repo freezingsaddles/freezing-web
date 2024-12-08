@@ -17,6 +17,7 @@ _basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 class Config:
+    BIND_INTERFACE: str = env("BIND_INTERFACE", default="127.0.0.1")
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
     SECRET_KEY = env("SECRET_KEY")
 

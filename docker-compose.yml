@@ -35,6 +35,7 @@ services:
     links:
       - freezing-db:freezing-db.container
     environment:
+      BIND_INTERFACE: "0.0.0.0"
       VIRTUAL_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
