@@ -195,7 +195,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = meta.scoped_session()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private == False)
+    q = q.filter(not Ride.private)
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)
