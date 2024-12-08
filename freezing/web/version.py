@@ -7,8 +7,9 @@
 # frozen values of commit, build_date, and branch.
 
 import datetime
-from freezing.web.autolog import log
 import subprocess
+
+from freezing.web.autolog import log
 
 
 # Thanks https://stackoverflow.com/a/21901260/424301
