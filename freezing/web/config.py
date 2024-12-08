@@ -25,6 +25,7 @@ class Config:
 
     Refactored with the help of GitHub Copilot.
     """
+
     BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="localhost")
     BEANSTALKD_PORT = env("BEANSTALKD_PORT", cast=int, default=11300)
     COMPETITION_TEAMS: List[int] = env("TEAMS", cast=list, subcast=int, default=[])
@@ -39,7 +40,9 @@ class Config:
         "FORUM_SITE",
         "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
     )
-    INSTANCE_PATH = env("INSTANCE_PATH", default=os.path.join(_basedir, "data/instance"))
+    INSTANCE_PATH = env(
+        "INSTANCE_PATH", default=os.path.join(_basedir, "data/instance")
+    )
     # Directory to store leaderboard data
     LEADERBOARDS_DIR = env(
         "LEADERBOARDS_DIR", default=os.path.join(_basedir, "leaderboards")
