@@ -8,6 +8,7 @@ RUN pip3 install -r /tmp/requirements.txt
 ADD . /app
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
+COPY alembic.ini /app
 WORKDIR /app
 RUN pip3 install .
 ENV LEADERBOARDS_DIR=/data/leaderboards

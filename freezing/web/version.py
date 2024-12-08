@@ -9,23 +9,33 @@
 import datetime
 import subprocess
 
+from freezing.web.autolog import log
+
 
 # Thanks https://stackoverflow.com/a/21901260/424301
 def get_git_revision_short_hash() -> str:
-    return (
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
-        .decode("ascii")
-        .strip()
-    )
+    try:
+        return (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
+            .decode("ascii")
+            .strip()
+        )
+    except Exception as e:
+        log.warning(f"Could not get revision from git {e}")
+        return "unknown"
 
 
 def get_git_branch() -> str:
-    return (
-        subprocess.check_output(["git", "symbolic-ref", "-q", "HEAD"])
-        .decode("ascii")
-        .strip()
-        .replace("refs/heads/", "")
-    )
+    try:
+        return (
+            subprocess.check_output(["git", "symbolic-ref", "-q", "HEAD"])
+            .decode("ascii")
+            .strip()
+            .replace("refs/heads/", "")
+        )
+    except Exception as e:
+        log.warning(f"Could not get branch from git {e}")
+        return "unknown"
 
 
 def freeze():

@@ -17,7 +17,7 @@ from freezing.model.orm import (
     RideTrack,
     Team,
 )
-from geoalchemy import WKTSpatialElement
+from geoalchemy2 import WKTElement
 from instagram import InstagramAPIError, InstagramClientError
 from requests.exceptions import HTTPError
 from sqlalchemy import and_
@@ -343,7 +343,7 @@ def write_ride(activity):
     """
 
     if activity.start_latlng:
-        start_geo = WKTSpatialElement(
+        start_geo = WKTElement(
             "POINT({lon} {lat})".format(
                 lat=activity.start_latlng.lat, lon=activity.start_latlng.lon
             )
@@ -352,7 +352,7 @@ def write_ride(activity):
         start_geo = None
 
     if activity.end_latlng:
-        end_geo = WKTSpatialElement(
+        end_geo = WKTElement(
             "POINT({lon} {lat})".format(
                 lat=activity.end_latlng.lat, lon=activity.end_latlng.lon
             )
@@ -546,7 +546,7 @@ def write_ride_efforts(strava_activity, ride):
 #     if strava_activity.map.polyline:
 #         latlon_points = PolylineCodec().decode(strava_activity.map.polyline)
 #         lonlat_points = [(lon,lat) for (lat,lon) in latlon_points]
-#         gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
+#         gps_track = WKTElement(wktutils.linestring_wkt(lonlat_points))
 #     else:
 #         gps_track = None
 #
@@ -586,7 +586,7 @@ def write_ride_streams(streams, ride):
             RideTrack.__table__.delete().where(RideTrack.ride_id == ride.id)
         )
 
-        gps_track = WKTSpatialElement(wktutils.linestring_wkt(lonlat_points))
+        gps_track = WKTElement(wktutils.linestring_wkt(lonlat_points))
 
         ride_track = RideTrack()
         ride_track.gps_track = gps_track
