@@ -269,9 +269,12 @@ def _heatmap_tracks(team_id=None):
              limit 1024
              ;
              """.format(
-            "and A.team_id = {}".format(team_id) if team_id else ""
+            "and A.team_id = :team_id" if team_id else ""
         )
     )
+
+    if team_id:
+        q = q.bindparams(team_id=team_id)
 
     points = []
     for [gps_track] in meta.scoped_session().execute(q).fetchall():
