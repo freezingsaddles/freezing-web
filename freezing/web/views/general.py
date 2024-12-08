@@ -108,8 +108,10 @@ def index():
         .query(RidePhoto)
         .join(Ride)
         .order_by(Ride.start_date.desc())
-        .limit(11)
+        .limit(12)
     )
+
+    after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
 
     return render_template(
         "index.html",
@@ -121,7 +123,8 @@ def index():
         rain_hours=rain_hours,
         snow_hours=snow_hours,
         sub_freezing_hours=sub_freezing_hours,
-        photos=photos,
+        photos=[photo for photo in photos],
+        bafs_is_live=after_competition_start,
     )
 
 
