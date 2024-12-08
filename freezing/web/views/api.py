@@ -195,7 +195,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = meta.scoped_session()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private is False)
+    q = q.filter(Ride.private == False)
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)
@@ -230,7 +230,6 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
     geojson_structure = {"type": "MultiLineString", "coordinates": linestrings}
 
-    # return geojson.dumps(geojson.MultiLineString(linestrings))
     return json.dumps(geojson_structure)
 
 
@@ -254,3 +253,43 @@ def geo_tracks_team(team_id):
     end_date = request.args.get("end_date")
 
     return _geo_tracks(start_date=start_date, end_date=end_date, team_id=team_id)
+
+
+# The full geojson structure is triple the size of what we need for a heatmap
+def _heatmap_tracks(team_id=None):
+    q = text(
+        """
+             select ST_AsText(T.gps_track)
+             from ride_tracks T
+             join rides R on R.id = T.ride_id
+             join athletes A on A.id = R.athlete_id
+             where not(R.private)
+             {}
+             order by R.start_date DESC
+             limit 1024
+             ;
+             """.format(
+            "and A.team_id = {}".format(team_id) if team_id else ""
+        )
+    )
+
+    points = []
+    for [gps_track] in meta.scoped_session().execute(q).fetchall():
+        for _, (lon, lat) in enumerate(parse_linestring(gps_track)):
+            point = (
+                float(Decimal(lon)),
+                float(Decimal(lat)),
+            )
+            points.append(point)
+
+    return json.dumps({"points": points})
+
+
+@blueprint.route("/all/heatmap.json")
+def heatmap_tracks_all():
+    return _heatmap_tracks()
+
+
+@blueprint.route("/teams/<int:team_id>/heatmap.json")
+def heatmap_tracks_team(team_id):
+    return _heatmap_tracks(team_id=team_id)

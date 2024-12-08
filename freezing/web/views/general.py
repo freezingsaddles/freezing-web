@@ -4,7 +4,8 @@ Created on Feb 10, 2013
 @author: hans
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
+from re import findall
 
 from flask import (
     Blueprint,
@@ -24,12 +25,38 @@ from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
 from freezing.web.utils import auth
+from freezing.web.views.people import get_today
+from freezing.web.views.shared_sql import team_leaderboard_query
 
 blueprint = Blueprint("general", __name__)
 
 
 class AccessDenied(RuntimeError):
     pass
+
+
+# When a hashtag has a "/pointless/*" route instead of "/pointless/hashtag/*".
+# Many of the generic leaderboards ought to be pure hashtag leaderboards.
+custom_tag_pages = {
+    "civilwarmarker": "civilwarhistory",
+    "civilwarstreet": "civilwarhistory",
+    "coffeeride": "coffeeride",
+    "foodrescue": "foodrescue",
+    "kidical": "kidmiles",
+    "withkid": "pointlesskids",
+    "rosshillloop": "rosshillloop",
+    "adulting": "generic/adulting",
+    "freezingerrands": "generic/adulting",
+    "londonbridge": "generic/londonbridge",
+    "fsrealsuppleride": "generic/suppleride",
+}
+
+
+def tag_page(tag):
+    return next(
+        (tuple[1] for tuple in custom_tag_pages.items() if tag.startswith(tuple[0])),
+        "hashtag/{}".format(tag),
+    )
 
 
 @app.template_filter("groupnum")
@@ -113,8 +140,65 @@ def index():
 
     after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
 
+    # Find the top 16 trending tags from the most recent 250 tagged rides
+    q = text(
+        """
+                select name
+                from rides R
+                where name like '%#%'
+                order by start_date desc
+                limit 250
+                ;
+            """
+    )
+    tag_count = {}
+    original_tag = {}
+    for res in meta.scoped_session().execute(q).fetchall():
+        ride_tags = {}  # Prevent double-tagging
+        for hash in findall(r"(?<=#)\w+", res["name"]):
+            original_tag[hash.lower()] = hash
+            ride_tags[hash.lower()] = 1
+        for tag in ride_tags:
+            tag_count[tag] = tag_count.get(tag, 0) + 1
+    trending_tags = sorted(tag_count.items(), key=lambda t: t[1], reverse=True)
+    top_tags = trending_tags[:16]
+    if top_tags:
+        min_count = top_tags[-1][1]
+        scale = max(1, top_tags[0][1] - min_count)
+        alpha_tags = sorted(top_tags, key=lambda t: t[0])
+        tags = (
+            [original_tag[t[0]], 1 + (t[1] - min_count) / scale, tag_page(t[0])]
+            for t in alpha_tags
+        )
+    else:
+        tags = []
+
+    today = min(get_today(), config.END_DATE - timedelta(days=1)).date()
+    q = text(
+        """
+                select
+                  count(distinct athlete_id) as riders,
+                  coalesce(sum(R.moving_time),0) as moving_time,
+                  coalesce(sum(R.distance),0) as distance
+                from rides R
+                where R.start_date >= '{}'
+                ;
+        """.format(
+            today
+        )
+    )
+    today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    today_riders = int(today_res["riders"])
+    today_hours = int(today_res["moving_time"]) / 3600
+    today_miles = int(today_res["distance"])
+
+    # Get teams sorted by points
+    q = team_leaderboard_query()
+    team_rows = meta.scoped_session().execute(q).fetchall()
+
     return render_template(
         "index.html",
+        year=config.START_DATE.year,
         team_count=len(config.COMPETITION_TEAMS),
         contestant_count=contestant_count,
         total_rides=total_rides,
@@ -123,8 +207,13 @@ def index():
         rain_hours=rain_hours,
         snow_hours=snow_hours,
         sub_freezing_hours=sub_freezing_hours,
-        photos=[photo for photo in photos],
+        today_riders=today_riders,
+        today_hours=today_hours,
+        today_miles=today_miles,
         bafs_is_live=after_competition_start,
+        photos=[photo for photo in photos],
+        tags=tags,
+        winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
     )
 
 

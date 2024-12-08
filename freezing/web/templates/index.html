@@ -1,12 +1,46 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
-.responsiveCal {
-	position: relative; padding-bottom: 75%; height: 0; overflow: hidden;
+#cal, #map {
+	border-radius: var(--bs-border-radius);
+	width: 100%;
+	border: 1px solid #ced4da;
 }
-.responsiveCal iframe {
-	position: absolute; top:0; left: 0; width: 100%; height: 100%;
+
+#cal {
+	aspect-ratio: 1.333;
 }
+
+#map {
+	aspect-ratio: 1;
+}
+
+@media (min-width: 768px) {
+	#map {
+		aspect-ratio: 1.333;
+	}
+}
+
+@media (min-width: 1200px) {
+	#cal:not(.bigly) {
+		aspect-ratio: 2.667;
+	}
+
+	#map {
+		aspect-ratio: initial;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	#map {
+		border-color: #495057;
+	}
+
+	#cal {
+		border-color: #a8a19a;
+  	}
+}
+
 .mini-img {
 	border-radius: .5rem;
 	max-width: 100%;
@@ -14,7 +48,11 @@
 	margin-bottom: .5rem;
 }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+<script src="/js/leaflet-heat.js"></script>
 {% endblock %}
+
 {% block beforenav %}
 {% for photo in photos %}
   <div class="modal fade pop-up-{{photo.id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel-1" aria-hidden="true">
@@ -36,20 +74,19 @@
   </div><!-- /.modal mixer image -->
 {% endfor %}
 {% endblock %}
+
 {% block content %}
-<div id="sect-main" class="card mb-3 mt-lg-4 bg-light">
-	<div class="p-4 p-lg-5 d-flex flex-column flex-lg-row align-items-center">
-		<img src="/img/logo-blue-sm.png" class="me-lg-5" />
-		<div class="d-flex flex-column align-items-center align-items-lg-start text-center text-lg-start">
+<div id="sect-main" class="card mb-3 my-lg-4 bg-light">
+	<div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center">
+		<div class="d-flex flex-column align-items-center me-lg-5">
+			<img src="/img/logo-blue-sm.png"/>
+		</div>
+		<div class="d-flex flex-column align-items-center align-items-lg-stretch text-center text-lg-start flex-grow-1 minw-0">
 			<h1 style="font-size: 4rem;">Freezing Saddles</h1>
 			<h3>Ride bike. Earn points.</h3>
-			<p class="text-muted">
+			<div class="text-muted">
 				The official leaderboard and data analysis charts for the {{ competition_title }}
 				competition.
-			</p>
-			<div class="btn-group mb-2" role="group" aria-label="Team Points">
-				<a href="/leaderboard/team" class="btn btn-primary">Official Points Leaderboard</a>
-				<a href="/leaderboard/team_text" class="btn btn-primary">Official Points Leaderboard (text)</a>
 			</div>
 		</div>
 	</div>
@@ -61,54 +98,158 @@
 	started yet, although there are currently <strong>{{contestant_count}}</strong>
 	contestants registered. There are still bike rides going on, you should go for a bike ride.
 </div>
-{% else %}
-<div id="sect-stats" class="mb-4 mb-lg-5">
-	<div class="badge mb-3 bg-secondary d-flex flex-column flex-lg-row align-items-center justify-content-around" style="font-size: 1.5rem">
-		<span>{{team_count}} teams</span>
-		<span class="stat-divider"></span>
-		<span>{{contestant_count}} contestants</span>
-		<span class="stat-divider"></span>
-		<span>{{total_rides|groupnum}} rides</span>
-		<span class="stat-divider"></span>
-		<span>{{total_hours|groupnum}} hours</span>
-		<span class="stat-divider"></span>
-		<span>{{total_miles|groupnum}} miles</span>
-	</div>
 
-	<div class="badge-group" >
-		<span class="badge bg-primary" style="font-size: 1.33rem">{{sub_freezing_hours|groupnum}} hours below freezing</span>
-		<span class="badge bg-success" style="font-size: 1.33rem">{{rain_hours|groupnum}} hours in the rain</span>
-		<span class="badge bg-info" style="font-size: 1.33rem">{{snow_hours|groupnum}} hours in the snow</span>
+<iframe id="cal" class="bigly mb-lg-4" src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York" frameborder="0" scrolling="no"></iframe>
+
+{% else %}
+<div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
+	<div class="d-flex flex-column gap-3 gap-lg-4">
+		<div class="card bg-light d-flex flex-row" style="font-size: 1.5rem">
+			<a class="flex-grow-1 text-center tag-link" href="/leaderboard/team_text">{{team_count}} team{%if team_count != 1 %}s{% endif %}</a>
+			<a class="flex-grow-1 text-center tag-link" href="/leaderboard/individual_text">{{contestant_count}} contestants</a>
+		</div>
+
+		<div class="d-grid grid-2 grid-gap-3 grid-gap-lg-4" style="font-size: 1.4rem">
+			<div class="d-flex align-items-stretch card bg-light stats-card">
+				<div class="text-black vertical-header">
+					<a class="tag-link block-link" href="/people/">{{year}}</a>
+				</div>
+				<div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
+					<div>
+						{{total_rides|groupnum}} rides
+					</div>
+					<span class="stat-divider horizontal my-1"></span>
+					<div>
+						{{total_hours|groupnum}} hours
+					</div>
+					<span class="stat-divider horizontal my-1"></span>
+					<div>
+						{{total_miles|groupnum}} miles
+					</div>
+				</div>
+			</div>
+
+			<div class="d-flex align-items-stretch card bg-light stats-card">
+				<div class="text-black vertical-header">
+					<a class="tag-link block-link" href="/people/ridedays">today</a>
+				</div>
+				<div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
+					<div>
+						{{today_riders}} rider{% if today_riders != 1 %}s{% endif %}
+					</div>
+					<span class="stat-divider horizontal my-1"></span>
+					<div>
+						{{today_hours|groupnum}} hours
+					</div>
+					<span class="stat-divider horizontal my-1"></span>
+					<div>
+						{{today_miles|groupnum}} miles
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="d-grid grid-3 grid-gap-3 grid-gap-lg-4">
+			<div class="card bg-light hour-card">
+				<div class="hour-datum">
+					<span class="hour-icon">🥶</span>
+					<div class="hour-number">
+						{{sub_freezing_hours|groupnum}}
+					</div>
+				</div>
+				<div class="text-center text-muted text-truncate hour-label">
+					hours below freezing
+				</div>
+			</div>
+			<div class="card bg-light hour-card">
+				<div class="hour-datum">
+					<span class="hour-icon">☔</span>
+					<div class="hour-number">
+						{{rain_hours|groupnum}}
+					</div>
+				</div>
+				<div class="text-center text-muted text-truncate hour-label">
+					hours in the rain
+				</div>
+			</div>
+			<div class="card bg-light hour-card">
+				<div class="hour-datum">
+					<span class="hour-icon">☃️</span>
+					<div class="hour-number">
+						{{snow_hours|groupnum}}
+					</div>
+				</div>
+				<div class="text-center text-muted text-truncate hour-label">
+					hours in the snow
+				</div>
+			</div>
+		</div>
+
+		{% if winners|length > 1 %}
+		<div class="card bg-light">
+			<a class="horizontal-header text-center tag-link" href="/leaderboard/team_text">leaderboard</a>
+			<div class="px-3 py-2">
+				{% for winner in winners %}
+				<div class="d-flex gap-2" style="font-size: 1.1rem">
+					<span class="flex-shrink-0">{% if loop.first %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}☃️{% endif %}</span>
+					<a href="https://www.strava.com/clubs/{{winner[0]}}" class="tag-link text-truncate flex-shrink-1">{{winner[1]}}</a>
+					<span class="flex-shrink-1 text-muted text-nowrap">({{winner[2]|groupnum}} points)</span>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+
 	</div>
+	<div id="map"></div>
+</div>
+
+{% if tags %}
+<div class="badge text-wrap my-3 my-lg-4 card bg-light px-3 py-2" style="font-size: 1.25rem">
+	{% for tag in tags %}<span class="small text-muted">#</span><a href="/pointless/{{ tag[2] }}" class="tag-link" style="font-size: {{ tag[1] }}em">{{ tag[0] }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
 </div>
 {% endif %}
 
 {% if photos %}
-<div id="sect-photos" class="mb-4 mb-lg-5 photo-grid">
-		{% for photo in photos %}
-			{% if loop.index == 12 %}
-				<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="aspect-ratio: 1;">More<br>Photos</a>
-			{% else %}
-				<a href="#" class="photo-thumbnail" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}"  style="background-image: url('{{ photo.img_l }}');">
-				</a>
-				<!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
-			{% endif %}
-		{% endfor %}
+<div id="sect-photos" class="mb-3 mb-lg-4 photo-grid gap-lg-4">
+	{% for photo in photos %}
+		{% if loop.index == 12 %}
+			<a href="{{ url_for('photos.index') }}" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center" style="aspect-ratio: 1;">More<br>Photos</a>
+		{% else %}
+			<a href="#" class="photo-thumbnail" data-bs-toggle="modal" data-bs-target=".pop-up-{{photo.id}}"  style="background-image: url('{{ photo.img_l }}');">
+			</a>
+			<!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
+		{% endif %}
+	{% endfor %}
 </div>
 {% endif %}
 
-<div id="sect-cal" class="mb-4 d-flex flex-column flex-lg-row">
-	<div class="flex-grow-1">
-		<div class="responsiveCal">
-		<iframe src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York" style="border-width:0" width="800" height="400" frameborder="0" scrolling="no"></iframe></div>
-	</div>
-	<div class="flex-grow-1 d-none d-lg-block">
-        &nbsp;
-        <!-- placeholder for real-time graph of rides submitted.
-             See https://github.com/freezingsaddles/freezing-web/issues/178
-        -->
-	</div>
+<div id="sect-cal" class="mb-lg-4">
+	<iframe id="cal" src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York" frameborder="0" scrolling="no"></iframe>
 </div>
+{% endif %}
 
 </div>
+{% endblock %}
+
+{% block foot %}
+<script>
+$(() => {
+	var map = L.map('map', { scrollWheelZoom: false }).setView([38.9072, -77.0369], 9);
+
+	// https://leaflet-extras.github.io/leaflet-providers/preview/ .. see also light_nolabels
+	const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+	var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		subdomains: 'abcd',
+		maxZoom: 20,
+	}).addTo(map);
+
+	fetch('/api/all/heatmap.json').then(r => r.json()).then(data => {
+		var points = data.points.map(([lon, lat]) => [lat, lon, 10]);
+        var heatMap = L.heatLayer(points, { radius: 4, blur: 3, maxZoom: 13});
+        map.addLayer(heatMap);
+	});
+});
+</script>
 {% endblock %}
