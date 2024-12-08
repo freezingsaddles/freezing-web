@@ -7,7 +7,7 @@
 # frozen values of commit, build_date, and branch.
 
 import datetime
-import logging
+from freezing.web.autolog import log
 import subprocess
 
 
@@ -20,7 +20,7 @@ def get_git_revision_short_hash() -> str:
             .strip()
         )
     except Exception as e:
-        logging.warning(f"Could not get revision from git {e}")
+        log.warning(f"Could not get revision from git {e}")
         return "unknown"
 
 
@@ -33,7 +33,7 @@ def get_git_branch() -> str:
             .replace("refs/heads/", "")
         )
     except Exception as e:
-        logging.warning(f"Could not get branch from git {e}")
+        log.warning(f"Could not get branch from git {e}")
         return "unknown"
 
 
