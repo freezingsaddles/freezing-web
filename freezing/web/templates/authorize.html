@@ -12,19 +12,19 @@
 	<p>
 	<div class="radio">
 		<label>
-			<input type="radio" name="scope" id="public-scope" value="{{ public_authorize_url }}" checked="checked">
+			<input type="radio" name="scope" id="public-scope" checked="checked">
 			Only allow Freezing Saddles to read my public activities.
 		</label>
 	</div>
 	<div class="radio">
 		<label>
-			<input type="radio" name="scope" id="private-scope" value="{{ private_authorize_url }}">
+			<input type="radio" name="scope" id="private-scope">
 			Allow Freezing Saddles to also read (and count points for) activities marked "private".
 		</label>
 	</div>
 	</p>
 	<p>
-		<a class="btn btn-lg p-0" href="#" role="button" id="connect-strava" style="margin-left: -.35rem; margin-top: -.25rem">
+		<a class="btn btn-lg p-0" href="{{ public_authorize_url }}" role="button" id="connect-strava" style="margin-left: -.35rem; margin-top: -.25rem">
 			<img src="/img/btn_strava_connectwith_orange.svg" style="height: 4rem;" alt="Connect with Strava" />
 		</a>
 	</p>
@@ -33,15 +33,8 @@
 {% block foot %}
 <script type="text/javascript">
 $(document).ready(function() {
-	$('#connect-strava').click(function() {
-   		if ($('#private-scope').is(':checked')) {
-   			// console.log('private', $('#private-scope').val());
-   			window.location.href=$('#private-scope').val();
-   		} else {
-   			// console.log('public', $('#public-scope').val());
-   			window.location.href=$('#public-scope').val();
-   		}
-	});
+	$("#private-scope").click(() => $("#connect-strava").attr('href', "{{ private_authorize_url }}"));
+	$("#public-scope").click(() => $("#connect-strava").attr('href', "{{ public_authorize_url }}"));
 });
 </script>
 {% endblock %}
