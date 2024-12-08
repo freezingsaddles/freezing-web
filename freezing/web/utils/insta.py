@@ -75,7 +75,8 @@ def _write_instagram_photo(uid, photo, dest_dir):
     if parsed_url.scheme not in ("http", "https"):
         raise ValueError("Unsupported URL scheme: {}".format(parsed_url.scheme))
 
-    (filename, headers) = urllib.request.urlretrieve(photo.url)
+    # Bandit still flags this despite the check above, so we'll suppress it
+    (filename, headers) = urllib.request.urlretrieve(photo.url)  # nosec B310
     if os.path.exists(dest_dir) is False:
         os.makedirs(dest_dir)
     shutil.move(filename, os.path.join(dest_dir, photo_fname))
