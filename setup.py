@@ -20,7 +20,7 @@ The freezing saddles cycling competition website/scoreboard.
 
 install_req = [
     "Flask",
-    "GeoAlchemy",
+    "GeoAlchemy2",
     "PyMySQL",
     "PyYAML",
     "alembic",
