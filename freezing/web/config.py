@@ -26,6 +26,8 @@ class Config:
     Refactored with the help of GitHub Copilot.
     """
 
+    BIND_INTERFACE: str = env("BIND_INTERFACE", default="127.0.0.1")
+    DEBUG: bool = env("DEBUG", cast=bool, default=False)
     BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="localhost")
     BEANSTALKD_PORT = env("BEANSTALKD_PORT", cast=int, default=11300)
     COMPETITION_TEAMS: List[int] = env("TEAMS", cast=list, subcast=int, default=[])
