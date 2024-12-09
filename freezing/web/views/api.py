@@ -278,7 +278,7 @@ def _heatmap_tracks(team_id=None):
 
     points = []
     for [gps_track] in meta.scoped_session().execute(q).fetchall():
-        for _, (lon, lat) in enumerate(parse_linestring(gps_track)):
+        for _, (lat, lon) in enumerate(parse_linestring(gps_track)):
             point = (
                 float(Decimal(lon)),
                 float(Decimal(lat)),

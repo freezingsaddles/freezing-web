@@ -246,8 +246,8 @@ $(() => {
 	}).addTo(map);
 
 	fetch('/api/all/heatmap.json').then(r => r.json()).then(data => {
-		var points = data.points.map(([lon, lat]) => [lat, lon, 10]);
-        var heatMap = L.heatLayer(points, { radius: 4, blur: 3, maxZoom: 13});
+		var points = data.points.map(([lon, lat]) => [lat, lon, 3]);
+        var heatMap = L.heatLayer(points, { radius: 3, blur: 2, maxZoom: 13});
         map.addLayer(heatMap);
 	});
 });
