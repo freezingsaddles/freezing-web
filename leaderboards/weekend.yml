@@ -15,15 +15,22 @@ fields:
     label: Total Points
   - name: weekend_percentage
     label: Weekend %
+    rank_by: true
 query: |
+  with weekend_scores as (
+    select
+      DS.athlete_id,
+      sum(case when dayofweek(DS.ride_date)=7 or dayofweek(DS.ride_date)=1 then DS.points else 0 end) as weekend_points,
+      sum(DS.points) as total_points
+    from daily_scores DS group by DS.athlete_id
+  )
   select
     A.id as athlete_id,
     A.display_name as athlete_name,
-    sum(DS.points) as total,
-    (sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0))  / sum(DS.points)) * 100 as weekend_percentage,
-    sum(if((dayofweek(DS.ride_date)=7 or (dayofweek(DS.ride_date)=1)) , DS.points, 0)) as weekend,
-    sum(if((dayofweek(DS.ride_date)<7 and (dayofweek(DS.ride_date)>1)) , DS.points, 0)) as weekday
-  from daily_scores DS
-    join lbd_athletes A on A.id = DS.athlete_id
-  group by A.id, A.display_name
+    W.total_points as total,
+    (W.weekend_points / W.total_points) * 100 as weekend_percentage,
+    W.weekend_points as weekend,
+    W.total_points - W.weekend_points as weekday
+  from weekend_scores W
+    join lbd_athletes A on A.id = W.athlete_id
   order by weekend_percentage desc
