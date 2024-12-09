@@ -9,6 +9,7 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: dist
     label: Average Distance
+    rank_by: true
   - name: num_ride_days
     label: Num Ride Days
 query: |

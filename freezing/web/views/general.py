@@ -176,15 +176,15 @@ def index():
     today = min(get_today(), config.END_DATE - timedelta(days=1)).date()
     q = text(
         """
-                select
-                  count(distinct athlete_id) as riders,
-                  coalesce(sum(R.moving_time),0) as moving_time,
-                  coalesce(sum(R.distance),0) as distance
-                from rides R
-                where R.start_date >= '{}'
-                ;
+            select
+                count(distinct athlete_id) as riders,
+                coalesce(sum(R.moving_time),0) as moving_time,
+                coalesce(sum(R.distance),0) as distance
+            from rides R
+            where date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) >= '{1}'
+            ;
         """.format(
-            today
+            config.TIMEZONE, today
         )
     )
     today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable

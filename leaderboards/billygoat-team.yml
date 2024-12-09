@@ -10,6 +10,7 @@ fields:
     label: Distance (mi)
   - name: gainpermile
     label: Ft. / Mile
+    rank_by: true
 query: |
   select
     sum(R.elevation_gain) as elev,

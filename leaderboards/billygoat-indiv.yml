@@ -13,6 +13,7 @@ fields:
     label: Distance (mi)
   - name: gainpermile
     label: Ft. / Mile
+    rank_by: true
 query: |
   select
     A.id,
