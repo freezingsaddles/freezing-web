@@ -285,14 +285,14 @@ def _heatmap_tracks(team_id=None):
             )
             points.append(point)
 
-    return json.dumps({"points": points})
+    return {"points": points}
 
 
 @blueprint.route("/all/heatmap.json")
 def heatmap_tracks_all():
-    return _heatmap_tracks()
+    return jsonify(_heatmap_tracks())
 
 
 @blueprint.route("/teams/<int:team_id>/heatmap.json")
 def heatmap_tracks_team(team_id):
-    return _heatmap_tracks(team_id=team_id)
+    return jsonify(_heatmap_tracks(team_id=team_id))
