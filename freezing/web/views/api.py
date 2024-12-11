@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import arrow
 import pytz
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import text
@@ -266,7 +266,7 @@ _max_d2 = 0.01
 
 
 # The full geojson structure is triple the size of what we need
-def _track_map(team_id=None):
+def _track_map(team_id=None, athlete_id=None, include_private=False):
     q = text(
         """
              with team_idx(team_id, team_index) as (
@@ -277,18 +277,22 @@ def _track_map(team_id=None):
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
              join team_idx X on X.team_id = A.team_id
-             where not(R.private)
-             {}
+             where
+             {0} and {1} and {2}
              order by R.start_date DESC
              limit 1024
              ;
              """.format(
-            "and A.team_id = :team_id" if team_id else ""
+            "true" if include_private else "not(R.private)",
+            "A.id = :athlete_id" if athlete_id else "true",
+            "A.team_id = :team_id" if team_id else "true",
         )
     )
 
     if team_id:
         q = q.bindparams(team_id=team_id)
+    if athlete_id:
+        q = q.bindparams(athlete_id=athlete_id)
 
     tracks = []
     for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
@@ -312,6 +316,13 @@ def _track_map(team_id=None):
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     return jsonify(_track_map())
+
+
+@blueprint.route("/my/trackmap.json")
+@auth.requires_auth
+def track_map_my():
+    athlete_id = session.get("athlete_id")
+    return jsonify(_track_map(athlete_id=athlete_id, include_private=True))
 
 
 @blueprint.route("/teams/<int:team_id>/trackmap.json")
