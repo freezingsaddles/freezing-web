@@ -5,7 +5,7 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-<script src="/js/leaflet-heat.js"></script>
+<script src="/js/ride-map.js"></script>
 
 <script type="text/javascript">
 
@@ -207,23 +207,8 @@
 
 		});
 
-	});
-
-	$('#map-link').one('click', () => {
-		const map = L.map('map', { scrollWheelZoom: false }).setView([38.9072, -77.0369], 9);
-
-		const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-		var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
-			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-			subdomains: 'abcd',
-			maxZoom: 20,
-		}).addTo(map);
-
-		fetch('/api/my/trackmap.json').then(r => r.json()).then(data => {
-			data.tracks.forEach(({ team, track}, index) => {
-				const opacity = .2 + .4 * (index + 1) / data.tracks.length;
-				var polyline = L.polyline([track], { color: 'red', opacity, weight: 2 }).addTo(map);
-			});
+		$('#map-link').one('click', () => {
+			create_ride_map('map', '/api/my/trackmap.json', 'red');
 		});
 	});
 </script>

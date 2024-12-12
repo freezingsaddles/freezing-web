@@ -266,7 +266,7 @@ _max_d2 = 0.01
 
 
 # The full geojson structure is triple the size of what we need
-def _track_map(team_id=None, athlete_id=None, include_private=False):
+def _track_map(team_id=None, athlete_id=None, include_private=False, hash_tag=None):
     q = text(
         """
              with team_idx(team_id, team_index) as (
@@ -278,7 +278,7 @@ def _track_map(team_id=None, athlete_id=None, include_private=False):
              join athletes A on A.id = R.athlete_id
              join team_idx X on X.team_id = A.team_id
              where
-             {0} and {1} and {2}
+             {0} and {1} and {2} and {3}
              order by R.start_date DESC
              limit 1024
              ;
@@ -286,6 +286,7 @@ def _track_map(team_id=None, athlete_id=None, include_private=False):
             "true" if include_private else "not(R.private)",
             "A.id = :athlete_id" if athlete_id else "true",
             "A.team_id = :team_id" if team_id else "true",
+            "R.name like :hash_tag" if hash_tag else "true",
         )
     )
 
@@ -293,6 +294,8 @@ def _track_map(team_id=None, athlete_id=None, include_private=False):
         q = q.bindparams(team_id=team_id)
     if athlete_id:
         q = q.bindparams(athlete_id=athlete_id)
+    if hash_tag:
+        q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
 
     tracks = []
     for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
@@ -315,7 +318,8 @@ def _track_map(team_id=None, athlete_id=None, include_private=False):
 
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
-    return jsonify(_track_map())
+    hash_tag = request.args.get("hashtag")
+    return jsonify(_track_map(hash_tag=hash_tag))
 
 
 @blueprint.route("/my/trackmap.json")
