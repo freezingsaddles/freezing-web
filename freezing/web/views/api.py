@@ -255,14 +255,28 @@ def geo_tracks_team(team_id):
     return _geo_tracks(start_date=start_date, end_date=end_date, team_id=team_id)
 
 
-# The full geojson structure is triple the size of what we need for a heatmap
-def _heatmap_tracks(team_id=None):
+# Crude approximation of the distance squared between points
+def _distance2(lon0, lat0, lon1, lat1):
+    return (lon0 - lon1) * (lon0 - lon1) + (lat0 - lat1) * (lat0 - lat1)
+
+
+# The maximum "distance squared" to allow between points in a ride track.
+# I think in a pretend flat world, this is ~6 miles.
+_max_d2 = 0.01
+
+
+# The full geojson structure is triple the size of what we need
+def _track_map(team_id=None):
     q = text(
         """
-             select ST_AsText(T.gps_track)
+             with team_idx(team_id, team_index) as (
+                 select id, row_number() over(order by id) from teams
+             )
+             select ST_AsText(T.gps_track), X.team_index
              from ride_tracks T
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
+             join team_idx X on X.team_id = A.team_id
              where not(R.private)
              {}
              order by R.start_date DESC
@@ -276,23 +290,30 @@ def _heatmap_tracks(team_id=None):
     if team_id:
         q = q.bindparams(team_id=team_id)
 
-    points = []
-    for [gps_track] in meta.scoped_session().execute(q).fetchall():
-        for _, (lat, lon) in enumerate(parse_linestring(gps_track)):
-            point = (
-                float(Decimal(lon)),
-                float(Decimal(lat)),
-            )
-            points.append(point)
+    tracks = []
+    for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
+        track = []
+        tracks.append({"team": team_id, "track": track})
+        point = None
+        for _, (lons, lats) in enumerate(parse_linestring(gps_track)):
+            lon = float(Decimal(lons))
+            lat = float(Decimal(lats))
+            # Break tracks that span flights and train journeys
+            if point and _distance2(lon, lat, point[0], point[1]) > _max_d2:
+                track = []
+                tracks.append({"team": team_id, "track": track})
+            point = (lon, lat)
+            track.append(point)
+    tracks.reverse()
 
-    return {"points": points}
+    return {"tracks": tracks}
 
 
-@blueprint.route("/all/heatmap.json")
-def heatmap_tracks_all():
-    return jsonify(_heatmap_tracks())
+@blueprint.route("/all/trackmap.json")
+def track_map_all():
+    return jsonify(_track_map())
 
 
-@blueprint.route("/teams/<int:team_id>/heatmap.json")
-def heatmap_tracks_team(team_id):
-    return jsonify(_heatmap_tracks(team_id=team_id))
+@blueprint.route("/teams/<int:team_id>/trackmap.json")
+def track_map_team(team_id):
+    return jsonify(_track_map(team_id=team_id))
