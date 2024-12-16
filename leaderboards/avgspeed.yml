@@ -10,6 +10,7 @@ fields:
   - name: speed
     label: Average Speed
     rank_by: true
+    type: number
 query: |
   select a.id,
          a.display_name as athlete_name,

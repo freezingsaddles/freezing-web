@@ -13,13 +13,13 @@
     	  and it is not case sensitive (so ilovekittens, ILoveKittens, and i-love-kittens will generate <em>the same</em> results).</p>
 	{% endif %}
 	<table class="table table-condensed">
-	<tr><th>Rank</th><th>Player</th><th>{{data.hashtag}} Rides</th><th>{{data.hashtag}} Distance</th></tr>
+	<tr><th class="number">Rank</th><th>Player</th><th class="number">{{data.hashtag}} Rides</th><th class="number">{{data.hashtag}} Distance</th></tr>
 {% for a, b, c, d in data.tdata %}
 	<tr>
-		<td>{{loop.index}}</td>
+		<td class="number">{{loop.index}}</td>
 		<td><a href="/people/{{ a }}">{{b}}</a></td>
-		<td>{{c}}</td>
-		<td>{{d | round(1)}}</td>
+		<td class="number">{{c}}</td>
+		<td class="number">{{d | round(1)}}</td>
 		</tr>
 {% endfor %}
 </table>

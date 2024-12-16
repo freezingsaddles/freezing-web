@@ -192,6 +192,11 @@ nav.bg-light {
     display: none;
 }
 
+/* Align cells with numbers to the right */
+.number {
+    text-align: right;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
@@ -216,6 +221,7 @@ nav.bg-light {
 
     .hour-label {
         display: block;
+        font-size: 0.8rem;
     }
 
     .photo-grid {
@@ -228,6 +234,10 @@ nav.bg-light {
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .hour-label {
+        font-size: 1rem;
     }
 }
 
@@ -262,6 +272,10 @@ nav.bg-light {
         }
     }
 
+    .hour-label {
+        font-size: 1.25rem;
+    }
+
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -287,6 +301,10 @@ nav.bg-light {
         height: 1em;
     }
     
+    .hour-label {
+        font-size: 1rem;
+    }
+
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -312,6 +330,17 @@ nav.bg-light {
 
     #cal, .leaflet-control {
         filter: invert(95%) brightness(80%);
+    }
+
+    /* Thanks to Jamie Holding for this snippet to get Leaflet dark mode going:
+     * https://blog.jamie.holdings/2022/05/15/dark-mode-for/
+     */
+    .leaflet-tile {
+        filter: var(--leaflet-tile-filter, none);
+    }
+
+    .leaflet-container {
+        background: #303030;
     }
 
     .vc-logo {

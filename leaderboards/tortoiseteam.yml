@@ -7,6 +7,7 @@ fields:
   - name: avg_speed
     label: Average Speed (mph)
     rank_by: true
+    type: number
 query: |
   select avg(r.average_speed) as avg_speed,
           sum(r.distance) / (sum(r.moving_time) / 3600) as avg_speed,

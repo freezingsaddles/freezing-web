@@ -10,8 +10,10 @@ fields:
   - name: kidical_miles
     label: Kidical Miles
     rank_by: true
+    type: number
   - name: kidical_rides
     label: Kidical Rides
+    type: number
 query: |
   select
     A.id as athlete_id,

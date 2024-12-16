@@ -11,8 +11,10 @@ fields:
     format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
   - name: days
     label: Days Ridden
+    type: number
   - name: distance
     label: Distance
+    type: number
 query: |
   select
     A.id as athlete_id,

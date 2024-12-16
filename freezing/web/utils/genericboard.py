@@ -1,5 +1,6 @@
 import decimal
 import os
+import logging
 from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
@@ -15,7 +16,7 @@ from freezing.web.exc import ObjectNotFound
 class GenericBoardField(BaseMessage):
     name = None
     label = None
-    type = None  # Do we need this ...?
+    type = None  # Do we need this ...?  Yes, for formatting, for alignment.
     format = None
     visible: bool = True
     rank_by: bool = False

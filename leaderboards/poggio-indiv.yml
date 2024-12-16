@@ -11,6 +11,7 @@ fields:
   - name: total_rides
     label: Total Rides
     rank_by: true
+    type: number
 query: |
   select
     A.id,
