@@ -1,64 +1,64 @@
 {% extends "base.html" %}
 {% block head %}
-    <script type="text/javascript">
+	<script type="text/javascript">
 
-      // Load the Visualization API and the corechart package.
-      google.charts.load('visualization', '1.0', {'packages':['corechart']});
+	  // Load the Visualization API and the corechart package.
+	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawPointsChart);
-      google.charts.setOnLoadCallback(drawMileageChart);
+	  // Set a callback to run when the Google Visualization API is loaded.
+	  google.charts.setOnLoadCallback(drawPointsChart);
+	  google.charts.setOnLoadCallback(drawMileageChart);
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      
-      function drawPointsChart() {
-	      
-	      $.ajax({
-	          url: "/chartdata/team_cumul_points",
-	          dataType: "json"
-          }).done(function(jsonData) {
+	  // Callback that creates and populates a data table,
+	  // instantiates the pie chart, passes in the data and
+	  // draws it.
+	  
+	  function drawPointsChart() {
+		  
+		  $.ajax({
+			  url: "/chartdata/team_cumul_points",
+			  dataType: "json"
+		  }).done(function(jsonData) {
 
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
+			  // Create our data table out of JSON data loaded from server.
+			  var data = new google.visualization.DataTable(jsonData);
 
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_points'));
+			  // Instantiate and draw our chart, passing in some options.
+			  var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_points'));
 
-              var options = {
-                  'title': 'Team Cumulative Points',
-                  'width': 1000,
-                  'height': 600,
-                  'chartArea': { 'width': '60%', 'height': '80%'} 
-              };
+			  var options = {
+				  'title': 'Team Cumulative Points',
+				  'width': 1000,
+				  'height': 600,
+				  'chartArea': { 'width': '60%', 'height': '80%'} 
+			  };
 
-              chart.draw(data, options);
-          });
+			  chart.draw(data, options);
+		  });
 	  }
 	  
 	  function drawMileageChart() {
-	      
-	      $.ajax({
-	          url: "/chartdata/team_cumul_mileage",
-	          dataType: "json"
-          }).done(function(jsonData) {
+		  
+		  $.ajax({
+			  url: "/chartdata/team_cumul_mileage",
+			  dataType: "json"
+		  }).done(function(jsonData) {
 
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
+			  // Create our data table out of JSON data loaded from server.
+			  var data = new google.visualization.DataTable(jsonData);
 
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_mileage'));
+			  // Instantiate and draw our chart, passing in some options.
+			  var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_mileage'));
 
-              var options = {
-                  'title': 'Team Cumulative Mileage',
-                  'width': 1000,
-                  'height': 600,
-                  'chartArea': { 'width': '60%', 'height': '80%'} 
-              };
+			  var options = {
+				  'title': 'Team Cumulative Mileage',
+				  'width': 1000,
+				  'height': 600,
+				  'chartArea': { 'width': '60%', 'height': '80%'} 
+			  };
 
-              chart.draw(data, options);
-          });
+			  chart.draw(data, options);
+		  });
 	  }
 	  
 	  </script>
@@ -66,8 +66,8 @@
 	  
 {% block content %}
   	<h1>Team Cumulative</h1>
-    <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_cumul_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative points...</div>
-    <div id="chart_team_cumul_mileage"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative mileage....</div>
-    
+	<!--Div that will hold our leaderboard chart-->
+	<div id="chart_team_cumul_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative points...</div>
+	<div id="chart_team_cumul_mileage"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team cumulative mileage....</div>
+	
 {% endblock %}

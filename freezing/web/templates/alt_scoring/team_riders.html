@@ -5,12 +5,12 @@
 	<div class="card-body">
 		<p>Ride days per team</p>
 <table class="table table-condensed">
-	<tr><th>Rank</th><th>Team</th><th>Ride Days</th></tr>
+	<tr><th class="number">Rank</th><th>Team</th><th class="number">Ride Days</th></tr>
 {% for a, b in team_riders %}
 	<tr>
-		<td>{{loop.index}}</td>
+		<td class="number">{{loop.index}}</td>
 		<td>{{a}}</td>
-		<td>{{b}}</td>
+		<td class="number">{{b}}</td>
 		</tr>
 {% endfor %}
 </table>
