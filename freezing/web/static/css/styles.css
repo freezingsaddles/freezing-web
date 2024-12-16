@@ -210,9 +210,13 @@ nav.bg-light {
     .vertical-header {
         font-size: 1.5rem;
         padding: .5rem;
-        writing-mode: sideways-lr;
+        writing-mode: vertical-lr; /* chrome does not support sideways-lr */
         border-bottom: none;
         border-right: 1px solid var(--bs-border-color-translucent);
+        > a {
+            display: block;
+            transform: rotate(180deg);
+        }
     }
     
     .hour-card {
