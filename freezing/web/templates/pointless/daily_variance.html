@@ -19,33 +19,33 @@
 	<table id="variance" class="table table-striped">
       <thead><tr>
          <th>Athlete</th>
-         <th>Ride Days</th>
-			<th>Total Distance</th>
-         <th>Average Variance</th>
-         <th>Monday Variance</th>
-         <th>Tuesday Variance</th>
-         <th>Wednesday Variance</th>
-         <th>Thursday Variance</th>
-         <th>Friday Variance</th>
-         <th>Saturday Variance</th>
-         <th>Sunday Variance</th>
+         <th class="number">Ride Days</th>
+			<th class="number">Total Distance</th>
+         <th class="number">Average Variance</th>
+         <th class="number">Monday Variance</th>
+         <th class="number">Tuesday Variance</th>
+         <th class="number">Wednesday Variance</th>
+         <th class="number">Thursday Variance</th>
+         <th class="number">Friday Variance</th>
+         <th class="number">Saturday Variance</th>
+         <th class="number">Sunday Variance</th>
       </tr>
          </thead>
 
 		<tbody>
 			{% for a,b,c,dist,can_win,d,e,f,g,h,i,j,k in data.tdata %}
-         <tr{% if not can_win %} class="danger" {% endif %}>
+            <tr{% if not can_win %} class="number danger"{% else %}class="number"{% endif %}>
          <td><a href="/people/{{a}}">{{b}}</a></td>
-         <td>{{c}}</td>
-			<td>{{dist}}</td>
-         <td><b>{{d}}</b></td>
-         <td>{{e}}</td>
-         <td>{{f}}</td>
-         <td>{{g}}</td>
-         <td>{{h}}</td>
-         <td>{{i}}</td>
-         <td>{{j}}</td>
-         <td>{{k}}</td>
+         <td class="number">{{c}}</td>
+			<td class="number">{{dist}}</td>
+         <td class="number"><b>{{d}}</b></td>
+         <td class="number">{{e}}</td>
+         <td class="number">{{f}}</td>
+         <td class="number">{{g}}</td>
+         <td class="number">{{h}}</td>
+         <td class="number">{{i}}</td>
+         <td class="number">{{j}}</td>
+         <td class="number">{{k}}</td>
          </tr>
 			{% endfor %}
 		</tbody>

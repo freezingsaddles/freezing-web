@@ -5,9 +5,13 @@
 	<div class="card-body">
 		<p>Rider average distance per ride, minimum ten days with a ride for CPTJohnC's Pointless Prize</p>
 <table class="table table-condensed">
-	<tr><th>Rank</th><th>Rider</th><th>Average Distance</th></tr>
+	<tr><th class="number">Rank</th><th>Rider</th><th class="number">Average Distance</th></tr>
 {% for a, b, c in avg %}
-	<tr {% if loop.index==7 %} class="success" {%endif %}><td>{{loop.index}}</td><td><a href="/people/{{a}}">{{b}}</a></td><td>{{c | round(2)}}</td></tr>
+	<tr {% if loop.index==7 %} class="success" {%endif %}>
+		<td class="number">{{loop.index}}</td>
+		<td><a href="/people/{{a}}">{{b}}</a></td>
+		<td class="number">{{c | round(2)}}</td>
+	</tr>
 {% endfor %}
 </table>
 </div>

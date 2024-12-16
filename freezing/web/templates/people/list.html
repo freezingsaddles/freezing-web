@@ -18,11 +18,11 @@
 <div class="row">
 	<div class="col-md-12">
 	<table id="user-list" class="table table-striped">
-		<thead><tr><th>User</th><th>Rides This Week</th><th>Mileage This Week</th><th>Kilometerage This Week</th><th>Total Rides</th><th>Total Mileage</th><th>Total Kilometerage</th></tr></thead>
+		<thead><tr><th>User</th><th class+number">Rides This Week</th><th class="number">Mileage This Week</th><th class="number">Kilometerage This Week</th><th class="number">Total Rides</th><th class="number">Total Mileage</th><th class="number">Total Kilometerage</th></tr></thead>
 		<tbody>
 			{% for u in users %}
-				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td>{{u.weekrides}}</td><td>{{u.weektotal | round(1)}}</td><td>{{(u.weektotal/0.62137) | round(1) }}</td>
-					<td>{{u.totalrides}}</td><td>{{u.totaldist | round(1)}}</td><td>{{(u.totaldist /0.62137) | round(1)}}</td></tr>
+				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td class="number">{{u.weekrides}}</td><td class="number">{{u.weektotal | round(1)}}</td><td class="number">{{(u.weektotal/0.62137) | round(1) }}</td>
+					<td class="number">{{u.totalrides}}</td><td class="number">{{u.totaldist | round(1)}}</td><td class="number">{{(u.totaldist /0.62137) | round(1)}}</td></tr>
 			{% endfor %}
 		</tbody>
 	</table>

@@ -7,6 +7,7 @@ from pytz import timezone, utc
 from sqlalchemy import text
 
 from freezing.web import config
+from freezing.web.utils.tribes import load_tribes, query_tribes
 
 blueprint = Blueprint("people", __name__)
 
@@ -90,6 +91,11 @@ def people_show_person(user_id):
         if week_start <= ride_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
+
+    tribal_groups = load_tribes()
+    my_tribes = query_tribes(user_id)
+    print(my_tribes)
+
     return render_template(
         "people/show.html",
         data={
@@ -99,6 +105,8 @@ def people_show_person(user_id):
             "weektotal": weekly_dist,
             "totaldist": total_dist,
             "totalrides": total_rides,
+            "tribal_groups": tribal_groups,
+            "my_tribes": my_tribes,
         },
     )
 

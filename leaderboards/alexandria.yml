@@ -14,6 +14,7 @@ fields:
   - name: segment_rides
     label: Infrastructure Rides
     rank_by: true
+    type: number
 query: |
   select
     A.id,

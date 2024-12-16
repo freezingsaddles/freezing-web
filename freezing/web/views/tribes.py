@@ -6,29 +6,23 @@ from freezing.model.orm import Tribe
 from sqlalchemy import text
 
 from freezing.web.utils.auth import requires_auth
-from freezing.web.utils.tribes import load_tribes
+from freezing.web.utils.tribes import load_tribes, query_tribes
 
 blueprint = Blueprint("tribes", __name__)
 
 
-def query_tribes():
+def query_my_tribes():
     athlete_id = session.get("athlete_id")
     if not athlete_id:
         return None
 
-    tribes_q = meta.scoped_session().query(Tribe).filter(Tribe.athlete_id == athlete_id)
-
-    my_tribes = defaultdict(str)
-    for r in tribes_q:
-        my_tribes[r.tribal_group] = r.tribe_name
-
-    return my_tribes
+    return query_tribes(athlete_id)
 
 
 @blueprint.route("/leaderboard")
 def leaderboard():
     tribal_groups = load_tribes()
-    my_tribes = query_tribes()
+    my_tribes = query_my_tribes()
 
     tribe_stats = defaultdict(lambda: dict(distance=0, points=0, ride_days=0, riders=0))
 
@@ -76,7 +70,7 @@ def leaderboard():
 @requires_auth
 def my():
     tribal_groups = load_tribes()
-    my_tribes = query_tribes()
+    my_tribes = query_my_tribes()
 
     return render_template(
         "tribes/my.html", tribal_groups=tribal_groups, my_tribes=my_tribes

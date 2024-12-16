@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import arrow
 import pytz
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import text
@@ -195,7 +195,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
     sess = meta.scoped_session()
 
     q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private is False)
+    q = q.filter(not Ride.private)
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)
@@ -230,7 +230,6 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
     geojson_structure = {"type": "MultiLineString", "coordinates": linestrings}
 
-    # return geojson.dumps(geojson.MultiLineString(linestrings))
     return json.dumps(geojson_structure)
 
 
@@ -254,3 +253,82 @@ def geo_tracks_team(team_id):
     end_date = request.args.get("end_date")
 
     return _geo_tracks(start_date=start_date, end_date=end_date, team_id=team_id)
+
+
+# Crude approximation of the distance squared between points
+def _distance2(lon0, lat0, lon1, lat1):
+    return (lon0 - lon1) * (lon0 - lon1) + (lat0 - lat1) * (lat0 - lat1)
+
+
+# The maximum "distance squared" to allow between points in a ride track.
+# I think in a pretend flat world, this is ~6 miles.
+_max_d2 = 0.01
+
+
+# The full geojson structure is triple the size of what we need
+def _track_map(team_id=None, athlete_id=None, include_private=False, hash_tag=None):
+    q = text(
+        """
+             with team_idx(team_id, team_index) as (
+                 select id, row_number() over(order by id) from teams
+             )
+             select ST_AsText(T.gps_track), X.team_index
+             from ride_tracks T
+             join rides R on R.id = T.ride_id
+             join athletes A on A.id = R.athlete_id
+             join team_idx X on X.team_id = A.team_id
+             where
+             {0} and {1} and {2} and {3}
+             order by R.start_date DESC
+             limit 1024
+             ;
+             """.format(
+            "true" if include_private else "not(R.private)",
+            "A.id = :athlete_id" if athlete_id else "true",
+            "A.team_id = :team_id" if team_id else "true",
+            "R.name like :hash_tag" if hash_tag else "true",
+        )
+    )
+
+    if team_id:
+        q = q.bindparams(team_id=team_id)
+    if athlete_id:
+        q = q.bindparams(athlete_id=athlete_id)
+    if hash_tag:
+        q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
+
+    tracks = []
+    for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
+        track = []
+        tracks.append({"team": team_id, "track": track})
+        point = None
+        for _, (lons, lats) in enumerate(parse_linestring(gps_track)):
+            lon = float(Decimal(lons))
+            lat = float(Decimal(lats))
+            # Break tracks that span flights and train journeys
+            if point and _distance2(lon, lat, point[0], point[1]) > _max_d2:
+                track = []
+                tracks.append({"team": team_id, "track": track})
+            point = (lon, lat)
+            track.append(point)
+    tracks.reverse()
+
+    return {"tracks": tracks}
+
+
+@blueprint.route("/all/trackmap.json")
+def track_map_all():
+    hash_tag = request.args.get("hashtag")
+    return jsonify(_track_map(hash_tag=hash_tag))
+
+
+@blueprint.route("/my/trackmap.json")
+@auth.requires_auth
+def track_map_my():
+    athlete_id = session.get("athlete_id")
+    return jsonify(_track_map(athlete_id=athlete_id, include_private=True))
+
+
+@blueprint.route("/teams/<int:team_id>/trackmap.json")
+def track_map_team(team_id):
+    return jsonify(_track_map(team_id=team_id))
