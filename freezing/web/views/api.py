@@ -7,7 +7,7 @@ import pytz
 from flask import Blueprint, jsonify, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
-from sqlalchemy import text
+from sqlalchemy import text, func
 
 from freezing.web import config
 from freezing.web.autolog import log
@@ -194,8 +194,14 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
     sess = meta.scoped_session()
 
-    q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(not Ride.private)
+    q = (
+        sess.query(
+            RideTrack, func.ST_AsText(RideTrack.gps_track).label("gps_track_wkt")
+        )
+        .join(Ride)
+        .join(Athlete)
+    )
+    q = q.filter(~(Ride.private))
 
     if team_id:
         q = q.filter(Athlete.team_id == team_id)
@@ -206,10 +212,14 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
         q = q.filter(Ride.start_date < end_date)
 
     linestrings = []
-    for ride_track in q:
+    for ride_track, wkt in q:
         assert isinstance(ride_track, RideTrack)
+        assert isinstance(wkt, str)
         ride_tz = pytz.timezone(ride_track.ride.timezone)
-        wkt = sess.scalar(ride_track.gps_track.wkt)
+        log.info(
+            "processing ride_track and wkt",
+            extra={"ride_track": ride_track, "wkt": wkt},
+        )
 
         coordinates = []
         for i, (lon, lat) in enumerate(parse_linestring(wkt)):
@@ -236,7 +246,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 @blueprint.route("/all/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_all():
-    # log.info("Fetching gps tracks for team {}".format(team_id))
+    log.info("Fetching gps tracks")
 
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
@@ -247,7 +257,7 @@ def geo_tracks_all():
 @blueprint.route("/teams/<int:team_id>/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_team(team_id):
-    # log.info("Fetching gps tracks for team {}".format(team_id))
+    log.info("Fetching gps tracks for team {}".format(team_id))
 
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
