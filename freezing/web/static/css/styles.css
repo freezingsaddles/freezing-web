@@ -210,9 +210,13 @@ nav.bg-light {
     .vertical-header {
         font-size: 1.5rem;
         padding: .5rem;
-        writing-mode: sideways-lr;
+        writing-mode: vertical-lr; /* chrome does not support sideways-lr */
         border-bottom: none;
         border-right: 1px solid var(--bs-border-color-translucent);
+        > a {
+            display: block;
+            transform: rotate(180deg);
+        }
     }
     
     .hour-card {
@@ -335,17 +339,6 @@ nav.bg-light {
 
     #cal, .leaflet-control {
         filter: invert(95%) brightness(80%);
-    }
-
-    /* Thanks to Jamie Holding for this snippet to get Leaflet dark mode going:
-     * https://blog.jamie.holdings/2022/05/15/dark-mode-for/
-     */
-    .leaflet-tile {
-        filter: var(--leaflet-tile-filter, none);
-    }
-
-    .leaflet-container {
-        background: #303030;
     }
 
     .vc-logo {
