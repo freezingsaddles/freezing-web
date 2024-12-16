@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-	<script type="text/javascript">
-
+    <script type="text/javascript">
 	  // Load the Visualization API and the corechart package.
 	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -39,13 +38,16 @@
 			  chart.draw(data, options);
 		  });
 	  }
-	  </script>
+    </script>
 {% endblock %}
-	  
 {% block content %}
-  	<h1>Riders by Low Temp</h1>
-  	<p>Relationship between number of participating riders and the average low daily temperatures.</p>
-	<!--Div that will hold our leaderboard chart-->
-	<div id="chart"></div>
-	
+    <h1>
+        Riders by Low Temp
+    </h1>
+    <p>
+        Relationship between number of participating riders and the average low daily temperatures.
+    </p>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart">
+    </div>
 {% endblock %}

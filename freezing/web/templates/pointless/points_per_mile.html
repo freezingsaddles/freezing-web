@@ -1,31 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Points per Mile</h5>
-	<div class="card-body">
-		<p>Most points per mile, minimum {{data.days}} ride days (by the end of the competition)</p>
-<div class="table-responsive">
-<table class="table table-condensed">
-	<tr>
-		<th class="number">Rank</th>
-		<th>Name</th>
-		<th class="number">Points</th>
-		<th class="number">Miles</th>
-		<th class="number">Points per Mile</th>
-		<th class="number">Ride Days</th>
-	</tr>
-{% for a, b, c, d, e in data.riders %}
-	<tr{% if e>=data.days %} class="success"{% endif %}>
-		<td class="number">{{loop.index}}</td>
-		<td>{{a}}</td>
-		<td class="number">{{b|round(1)}}</td>
-		<td class="number">{{c|round(1)}}</td>
-		<td class="number" style="font-weight:bold;">{{d|round(2)}}</td>
-		<td class="number">{{e}}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Points per Mile
+        </h5>
+        <div class="card-body">
+            <p>
+                Most points per mile, minimum {{ data.days }} ride days (by the end of the competition)
+            </p>
+            <div class="table-responsive">
+                <table class="table table-condensed">
+                    <tr>
+                        <th class="number">
+                            Rank
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th class="number">
+                            Points
+                        </th>
+                        <th class="number">
+                            Miles
+                        </th>
+                        <th class="number">
+                            Points per Mile
+                        </th>
+                        <th class="number">
+                            Ride Days
+                        </th>
+                    </tr>
+                    {% for a, b, c, d, e in data.riders %}
+                        <tr {% if e>=data.days %}class="success"{% endif %}>
+                            <td class="number">
+                                {{ loop.index }}
+                            </td>
+                            <td>
+                                {{ a }}
+                            </td>
+                            <td class="number">
+                                {{ b|round(1) }}
+                            </td>
+                            <td class="number">
+                                {{ c|round(1) }}
+                            </td>
+                            <td class="number" style="font-weight:bold;">
+                                {{ d|round(2) }}
+                            </td>
+                            <td class="number">
+                                {{ e }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

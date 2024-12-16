@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Team Hains Point Laps</h5>
-	<div class="card-body">
-		<p>Certainly hope at least some of these were together as a team.</p>
-<table class="table table-condensed">
-	<tr><th>Rank</th><th>Team</th><th>Laps</th></tr>
-{% for a, b in team_hains %}
-	<tr>
-		<td>{{loop.index}}</td>
-		<td>{{a}}</td>
-		<td>{{b}}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Team Hains Point Laps
+        </h5>
+        <div class="card-body">
+            <p>
+                Certainly hope at least some of these were together as a team.
+            </p>
+            <table class="table table-condensed">
+                <tr>
+                    <th>
+                        Rank
+                    </th>
+                    <th>
+                        Team
+                    </th>
+                    <th>
+                        Laps
+                    </th>
+                </tr>
+                {% for a, b in team_hains %}
+                    <tr>
+                        <td>
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            {{ a }}
+                        </td>
+                        <td>
+                            {{ b }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}
