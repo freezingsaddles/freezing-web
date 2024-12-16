@@ -10,12 +10,12 @@
 	<p>For the purpose of this contest, a kid is defined as a human being younger than 14 years old. Older than that and they can have their own Strava account.</p>
     	<p>This prize is in search of a new sponsor since jrenaut is absolutely the worst prize sponsor ever and never actually gives prizes. (jrenaut wrote this, you can ask him)</p>
 		<table class="table table-condensed">
-	<tr><th>Rank</th><th>Pointless Kid</th><th>Distance</th></tr>
+	<tr><th class="number">Rank</th><th>Pointless Kid</th><th class="number">Distance</th></tr>
 {% for a, b in data.tdata %}
 	<tr>
-		<td>{{loop.index}}</td>
+		<td class="number">{{loop.index}}</td>
 		<td>{{a}}</td>
-		<td>{{b| round(1)}}</td>
+		<td class="number">{{b| round(1)}}</td>
 		</tr>
 {% endfor %}
 </table>

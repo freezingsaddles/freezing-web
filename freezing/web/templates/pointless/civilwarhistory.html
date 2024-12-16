@@ -13,26 +13,26 @@
     {{tdata}}
     	<table id="scores" class="table table-striped">
         <thead><tr>
-           <th>Rank</th>
+           <th class="number">Rank</th>
            <th>Athlete</th>
-           <th>Markers Visited</th>
-           <th>Markers Points</th>
-           <th>Streets Found</th>
-           <th>Streets Points</th>
-           <th>Total Points</th>
+           <th class="number">Markers Visited</th>
+           <th class="number">Markers Points</th>
+           <th class="number">Streets Found</th>
+           <th class="number">Streets Points</th>
+           <th class="number">Total Points</th>
         </tr>
            </thead>
 
          <tbody>
            {% for a,b,c,d,e,f,g in data.tdata %}
                <tr>
-                 <td>{{loop.index}}</td>
+                 <td class="number">{{loop.index}}</td>
                  <td><a href="/people/{{a}}">{{b}}</a></td>
-                 <td>{{c}}</td>
-                 <td>{{d}}</td>
-                 <td>{{e}}</td>
-                 <td>{{f}}</td>
-                 <td>{{g}}</td>
+                 <td class="number">{{c}}</td>
+                 <td class="number">{{d}}</td>
+                 <td class="number">{{e}}</td>
+                 <td class="number">{{f}}</td>
+                 <td class="number">{{g}}</td>
                </tr>
            {% endfor %}
          </tbody>

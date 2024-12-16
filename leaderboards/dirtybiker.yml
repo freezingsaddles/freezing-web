@@ -10,6 +10,7 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: dirty_ride_days
     label: Dirty Ride Days
+    type: number
 query: |
   select *, count(*) as dirty_ride_days from (
   select

@@ -11,6 +11,7 @@ fields:
   - name: adulting_rides
     label: Errandeering Rides
     rank_by: true
+    type: number
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as adulting_rides
   from lbd_athletes A join rides R on R.athlete_id = A.id

@@ -15,7 +15,7 @@ from freezing.web.exc import ObjectNotFound
 class GenericBoardField(BaseMessage):
     name = None
     label = None
-    type = None  # Do we need this ...?
+    type = None  # Do we need this ...?  Yes, for formatting, for alignment.
     format = None
     visible: bool = True
     rank_by: bool = False
@@ -104,7 +104,7 @@ def load_board(leaderboard) -> GenericBoard:
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
 
     with open(path, "rt", encoding="utf-8") as fp:
-        doc = yaml.safe_load(fp, Loader=yaml.FullLoader)
+        doc = yaml.safe_load(fp)
 
     schema = GenericBoardSchema()
     board: GenericBoard = schema.load(doc)

@@ -9,6 +9,7 @@ fields:
     format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
   - name: avgtemp
     label: Avg Temp (F)
+    type: number
 query: |
   select
     athlete_id,
