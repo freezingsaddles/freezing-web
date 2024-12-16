@@ -15,7 +15,7 @@ iframe, .g-chart svg {
     border-radius: var(--bs-border-radius);
 }
 
-.card-body .table {
+.card-body .table, .accordion-body .table {
     margin-bottom: 0;
 
     tr:last-child td {

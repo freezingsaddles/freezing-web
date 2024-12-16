@@ -50,7 +50,7 @@
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-<script src="/js/leaflet-heat.js"></script>
+<script src="/js/ride-map.js"></script>
 {% endblock %}
 
 {% block beforenav %}
@@ -235,45 +235,11 @@
 {% block foot %}
 <script>
 $(() => {
-	var map = L.map('map', { scrollWheelZoom: false }).setView([38.9072, -77.0369], 9);
-
-	// https://leaflet-extras.github.io/leaflet-providers/preview/ .. see also light_nolabels
-	const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-	var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-		subdomains: 'abcd',
-		maxZoom: 20,
-	}).addTo(map);
-
-	// https://mokole.com/palette.html - 25 / 20% / 80% / 5000
-	// const colors = [
-	// 	'#c0c0c0', '#2f4f4f', '#556b2f', '#800000', '#483d8b',
-	// 	'#3cb371', '#000080', '#9acd32', '#8b008b', '#ff0000',
-	// 	'#00ced1', '#ffa500', '#ffff00', '#7fff00', '#8a2be2',
-	// 	'#00ff7f', '#00bfff', '#0000ff', '#ff7f50', '#ff00ff',
-	// 	'#1e90ff', '#db7093', '#f0e68c', '#ff1493', '#ee82ee',
-	// ];
-
-	// https://observablehq.com/@shan/oklab-color-wheel - .65 / 26 / 2 / 0 / .29
-	const colors = [
-		'rgb(255, 0, 0)', 'rgb(255, 49, 0)', 'rgb(246, 83, 0)', 'rgb(224, 109, 0)', 'rgb(195, 132, 0)',
-		'rgb(157, 151, 0)', 'rgb(106, 166, 0)', 'rgb(0, 178, 0)', 'rgb(0, 186, 3)', 'rgb(0, 191, 99)',
-		'rgb(0, 191, 150)', 'rgb(0, 188, 194)', 'rgb(0, 180, 232)', 'rgb(0, 169, 255)', 'rgb(0, 154, 255)',
-		'rgb(0, 137, 255)', 'rgb(33, 119, 255)', 'rgb(112, 101, 255)', 'rgb(153, 83, 255)', 'rgb(185, 65, 255)',
-		'rgb(212, 44, 252)', 'rgb(234, 10, 218)', 'rgb(252, 0, 179)', 'rgb(255, 0, 136)', 'rgb(255, 0, 87)',
-	];
-
-	fetch('/api/all/trackmap.json').then(r => r.json()).then(data => {
-        // var points = data.tracks.flatMap(({track}) => track.map(([lon, lat]) => [lon, lat, 20]));
-        // var heatMap = L.heatLayer(points, { radius: 1, blur: 1, maxZoom: 13});
-        // map.addLayer(heatMap);
-        data.tracks.forEach(({ team, track}, index) => {
-            const color = colors[team % colors.length];
-            const opacity = .2 + .4 * (index + 1) / data.tracks.length;
-            var polyline = L.polyline([track], { color, opacity, weight: 2 }).addTo(map);
-        });
-	});
+    // script src="/js/leaflet-heat.js"
+    // var points = data.tracks.flatMap(({track}) => track.map(([lon, lat]) => [lon, lat, 20]));
+    // var heatMap = L.heatLayer(points, { radius: 1, blur: 1, maxZoom: 13});
+    // map.addLayer(heatMap);
+    create_ride_map('map', '/api/all/trackmap.json');
 });
 </script>
 {% endblock %}
-

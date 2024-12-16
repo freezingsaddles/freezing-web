@@ -3,6 +3,9 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css">
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+<script src="/js/ride-map.js"></script>
 
 <script type="text/javascript">
 
@@ -61,16 +64,18 @@
 
 {% block content %}
 
+<div class="alert alert-warning px-2 py-1 float-end">This page is only visible to you.</div>
 
-<div class="row"><div class="col-md-12"><h2>Ride data for {{ session.athlete_fname }}</h2></div></div>
+<h2 class="clearfix">Ride data for {{ session.athlete_fname }}</h2>
 
 <div role="tabpanel">
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">My Rides</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">My Daily Points</a></li>
-    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">My Weekly Points</a></li>
+  <ul class="nav nav-tabs mb-3" role="tablist">
+    <li role="presentation" class="nav-item"><a href="#home" class="nav-link active" aria-controls="home" role="tab" data-bs-toggle="tab">My Rides</a></li>
+    <li role="presentation" class="nav-item"><a href="#profile" class="nav-link" aria-controls="profile" role="tab" data-bs-toggle="tab">My Daily Points</a></li>
+    <li role="presentation" class="nav-item"><a href="#messages" class="nav-link" aria-controls="messages" role="tab" data-bs-toggle="tab">My Weekly Points</a></li>
+    <li role="presentation" class="nav-item"><a href="#map" id="map-link" class="nav-link" aria-controls="map" role="tab" data-bs-toggle="tab">My Ride Map</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -83,6 +88,9 @@
 	</div>
     <div role="tabpanel" class="tab-pane" id="messages">
         <div id="chart_user_weekly_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading weekly points...</div>
+	</div>
+    <div role="tabpanel" class="tab-pane" id="map">
+        <div id="track-map" style="aspect-ratio: 1.333;"></div>
 	</div>
   </div>
 
@@ -192,13 +200,16 @@
 					field: "avg_temp",
 					title: "Avg Temp (&#8457;)",
 					align: "right",
-					sortable: true
+					sortable: true,
+					formatter: f => f.toFixed(1)
 				}
 			]
 
 		});
 
+		$('#map-link').one('click', () => {
+			create_ride_map('map', '/api/my/trackmap.json', 'red');
+		});
 	});
-
 </script>
 {% endblock %}
