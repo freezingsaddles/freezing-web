@@ -197,6 +197,11 @@ nav.bg-light {
     text-align: right;
 }
 
+/* Align cells with emoji in them in the middle */
+.emoji {
+    text-align: center;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;

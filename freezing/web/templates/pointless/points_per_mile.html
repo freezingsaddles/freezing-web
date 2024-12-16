@@ -7,21 +7,21 @@
 <div class="table-responsive">
 <table class="table table-condensed">
 	<tr>
-		<th>Rank</th>
+		<th class="number">Rank</th>
 		<th>Name</th>
-		<th>Points</th>
-		<th>Miles</th>
-		<th>Points per Mile</th>
-		<th>Ride Days</th>
+		<th class="number">Points</th>
+		<th class="number">Miles</th>
+		<th class="number">Points per Mile</th>
+		<th class="number">Ride Days</th>
 	</tr>
 {% for a, b, c, d, e in data.riders %}
 	<tr{% if e>=data.days %} class="success"{% endif %}>
-		<td>{{loop.index}}</td>
+		<td class="number">{{loop.index}}</td>
 		<td>{{a}}</td>
-		<td>{{b|round(1)}}</td>
-		<td>{{c|round(1)}}</td>
-		<td style="font-weight:bold;">{{d|round(2)}}</td>
-		<td>{{e}}</td>
+		<td class="number">{{b|round(1)}}</td>
+		<td class="number">{{c|round(1)}}</td>
+		<td class="number" style="font-weight:bold;">{{d|round(2)}}</td>
+		<td class="number">{{e}}</td>
 		</tr>
 {% endfor %}
 </table>

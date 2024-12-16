@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block head %}
-    <script type="text/javascript">
+	<script type="text/javascript">
 
-      // Load the Visualization API and the corechart package.
-      google.charts.load('visualization', '1.0', {'packages':['corechart']});
+	  // Load the Visualization API and the corechart package.
+	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      //google.charts.setOnLoadCallback(drawIndivChart);
+	  // Set a callback to run when the Google Visualization API is loaded.
+	  //google.charts.setOnLoadCallback(drawIndivChart);
 
 
 	  function drawChart(api_method, label) {
-	      
-	      $.ajax({
-	          url: "/chartdata/"+api_method,
-	          dataType:"json"
+		  
+		  $.ajax({
+			  url: "/chartdata/"+api_method,
+			  dataType:"json"
 		  }).done(function(jsonData) {
 
 			  // Create our data table out of JSON data loaded from server.
@@ -65,7 +65,7 @@
   		</select>
   		<button onclick="redraw();">Draw Chart</button>	
   	</form>
-    <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_leaderboard"></div>
-    
+	<!--Div that will hold our leaderboard chart-->
+	<div id="chart_team_leaderboard"></div>
+	
 {% endblock %}

@@ -21,13 +21,13 @@
             <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-rescuing-food-by-bike/">Prize sponsored by henry.</a>
         </p>
         <table class="table table-condensed">
-            <tr><th>Rank</th><th>Player</th><th>Rescues</th><th>Total Distance</th></tr>
+            <tr><th class="number">Rank</th><th>Player</th><th class="number">Rescues</th><th class="number">Total Distance</th></tr>
             {% for a, b, d, e, f in data.tdata %}
             <tr>
-                <td>{{f}}</td>
+                <td class="number">{{f}}</td>
                 <td><a href="/people/{{ a }}">{{b}}</a></td>
-                <td>{{d}}</td>
-                <td>{{e | int}} miles</td>
+                <td class="number">{{d}}</td>
+                <td class="number">{{e | int}} miles</td>
             </tr>
             {% endfor %}
         </table>

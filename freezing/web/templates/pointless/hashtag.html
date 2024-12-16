@@ -9,8 +9,8 @@
 		{% if meta.sponsor %}<p>Sponsored by <em>{{ meta.sponsor }}</em>.</p>{% endif %}
 	{% else %}
 		<p>Leaderboard for all rides hashtagged <code>{{data.hashtag}}</code></p>
-    	<p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,
-    	  and it is not case sensitive (so ilovekittens, ILoveKittens, and i-love-kittens will generate <em>the same</em> results).</p>
+		<p>To see your own, simply go edit your URL bar and replace <strong>{{data.hashtag_notag}}</strong> with whatever you want. Only letters and numbers are allowed,
+		  and it is not case sensitive (so ilovekittens, ILoveKittens, and i-love-kittens will generate <em>the same</em> results).</p>
 	{% endif %}
 	<table class="table table-condensed">
 	<tr><th class="number">Rank</th><th>Player</th><th class="number">{{data.hashtag}} Rides</th><th class="number">{{data.hashtag}} Distance</th></tr>
