@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-	<script type="text/javascript">
-
+    <script type="text/javascript">
 	  // Load the Visualization API and the corechart package.
 	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -38,10 +37,10 @@
 	  }
 	  
 
-	  </script>
+    </script>
 {% endblock %}
 {% block foot %}
-<script type="text/javascript">
+    <script type="text/javascript">
 	$(function(){
 	  $("#choose_api").submit(function(event) { event.preventDefault(); });	
 	});
@@ -49,31 +48,59 @@
 		drawIndivChart($("#api_method").val(), $('#api_method option:selected').text());
 		$("#title").val($('#api_method option:selected').text());
 	}  		
-</script>
+    </script>
 {% endblock %}
 {% block content %}
-
-  	<h1 id="title">Individual Leaderboards</h1>
-
-  	<form action="#" id="choose_api">
-  		<select name="api_method" id="api_method">
-  			<option value="indiv_elev_gain" selected="selected">Elevation Gain</option>
-  			<option value="indiv_moving_time">Time in the Saddle</option>
-  			<option value="indiv_number_sleaze_days">Number of Sleaze (at least 1 mile, less than 2 miles) Days</option>
-  			<option value="indiv_avg_speed">Average Speed</option>
-  			<option value="indiv_segment/1081507">Hains Point Laps</option>
-  			<option value="indiv_freezing">Rides (Miles) Below Freezing</option>
-  			<option value="indiv_before_sunrise">Before Sunrise</option>
-  			<option value="indiv_after_sunset">After Sunset</option>
-  			<option value="indiv_kidical">#kidical</option>
-  			<option value="indiv_coldest">Coldest Ride</option>
-  			<option value="indiv_rainiest">Rainiest Ride</option>
-  			<option value="indiv_snowiest">Snowiest Ride</option>
-			<option value="indiv_freeze_points">Freeze Points</option>
-  		</select>
-  		<button onclick="redraw();">Draw Chart</button>	
-  	</form>
-	<!--Div that will hold our leaderboard chart-->
-	<div id="chart_indiv_leaderboard"></div>
-	
+    <h1 id="title">
+        Individual Leaderboards
+    </h1>
+    <form action="#" id="choose_api">
+        <select name="api_method" id="api_method">
+            <option value="indiv_elev_gain" selected="selected">
+                Elevation Gain
+            </option>
+            <option value="indiv_moving_time">
+                Time in the Saddle
+            </option>
+            <option value="indiv_number_sleaze_days">
+                Number of Sleaze (at least 1 mile, less than 2 miles) Days
+            </option>
+            <option value="indiv_avg_speed">
+                Average Speed
+            </option>
+            <option value="indiv_segment/1081507">
+                Hains Point Laps
+            </option>
+            <option value="indiv_freezing">
+                Rides (Miles) Below Freezing
+            </option>
+            <option value="indiv_before_sunrise">
+                Before Sunrise
+            </option>
+            <option value="indiv_after_sunset">
+                After Sunset
+            </option>
+            <option value="indiv_kidical">
+                #kidical
+            </option>
+            <option value="indiv_coldest">
+                Coldest Ride
+            </option>
+            <option value="indiv_rainiest">
+                Rainiest Ride
+            </option>
+            <option value="indiv_snowiest">
+                Snowiest Ride
+            </option>
+            <option value="indiv_freeze_points">
+                Freeze Points
+            </option>
+        </select>
+        <button onclick="redraw();">
+            Draw Chart
+        </button>
+    </form>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart_indiv_leaderboard">
+    </div>
 {% endblock %}

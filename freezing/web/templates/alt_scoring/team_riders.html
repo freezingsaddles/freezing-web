@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Team Riders</h5>
-	<div class="card-body">
-		<p>Ride days per team</p>
-<table class="table table-condensed">
-	<tr><th class="number">Rank</th><th>Team</th><th class="number">Ride Days</th></tr>
-{% for a, b in team_riders %}
-	<tr>
-		<td class="number">{{loop.index}}</td>
-		<td>{{a}}</td>
-		<td class="number">{{b}}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Team Riders
+        </h5>
+        <div class="card-body">
+            <p>
+                Ride days per team
+            </p>
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number">
+                        Rank
+                    </th>
+                    <th>
+                        Team
+                    </th>
+                    <th class="number">
+                        Ride Days
+                    </th>
+                </tr>
+                {% for a, b in team_riders %}
+                    <tr>
+                        <td class="number">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            {{ a }}
+                        </td>
+                        <td class="number">
+                            {{ b }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}

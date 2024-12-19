@@ -4,9 +4,9 @@ name: Lint
 on: pull_request
 
 jobs:
-  
-  # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
-  lint:
+  # Thanks for the inspiration:
+  # https://black.readthedocs.io/en/stable/integrations/github_actions.html
+  python:
     name: Python Lint
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +21,24 @@ jobs:
       - name: isort Lint
         uses: isort/isort-action@v1
         with:
-            requirements-files: "requirements.txt requirements-test.txt"
+          requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+
+  templates:
+    name: Templates Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-test.txt
+      - name: djlint Lint
+        run: |
+          djlint --check freezing/web/templates
