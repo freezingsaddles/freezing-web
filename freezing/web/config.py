@@ -102,19 +102,22 @@ def init_logging(loglevel: int = logging.INFO, color: bool = False):
 
     ch.setFormatter(formatter)
 
-    logger = logging.getLogger("freezing")
-    loggers = [
-        logger,
-        logging.getLogger("stravalib"),
-        logging.getLogger("requests"),
-        logging.root,
-    ]
+    log_level_map = {
+        "freezing": logging.DEBUG,
+        "requests": logging.INFO,
+        "stravalib": logging.INFO,
+    }
+    log_level_map["root"] = logging.DEBUG
+    loggers = {k: logging.getLogger(k) for k in log_level_map.keys()}
+    loggers.update({"root": logging.root})
 
-    for logger in loggers:
-        if logger is logging.root:
-            logger.setLevel(logging.DEBUG)
-        else:
-            logger.setLevel(logging.INFO)
-        logger.addHandler(ch)
+    for k, logger in loggers.items():
+        logger.setLevel(log_level_map[k])
+    # logger.addHandler(ch)
+    # logging.root.setLevel(loglevel)
+
+    logging.root.addHandler(ch)
+
+    print(f"loggers: {loggers}")
 
     logger.info(f"logging initialized for app version {config.VERSION_STRING}")
