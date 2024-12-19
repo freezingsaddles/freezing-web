@@ -162,7 +162,12 @@
 	}
 
 	function temperatureFormatter(value, row) {
-        return f"{value:.2f}"
+        if (value != null && typeof value === "number") {
+            // Thanks https://stackoverflow.com/a/53378133/424301
+            return value.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+        } else {
+            return "🌞🤷☃️"; // sun, shrug, snowman
+        }
 	}
 
 	function refetchPhotosForRide(rideId) {
