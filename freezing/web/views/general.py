@@ -253,6 +253,12 @@ def authorization():
     - state
     - code
     - error
+
+    For local development (ENVIRONMENT=localdev), we can bypass the Strava authorization
+    by passing the athlete ID as a query parameter. This is useful for testing the site without
+    having to authenticate with Strava each time.
+
+    http://localhost:5000/authorization?athlete_id=123456
     """
     error = request.args.get("error")
     if error:
@@ -260,6 +266,27 @@ def authorization():
             "authorization_error.html",
             error=error,
         )
+    multiple_teams = None
+    no_teams = False
+    team = None
+    message = None
+    log.info(f"Authorization request host: {request.host}")
+    if config.ENVIRONMENT == "localdev" and request.host in ["localhost:5000", "127.0.0.1:5000"]:
+    #if config.ENVIRONMENT == "localdev":
+        class MockAthlete():
+            firstname: str = "Ferd"
+            lastname: str = "Berferd"
+            profile_medium: str = "/img/logo-blue-sm.png"
+            email: str = "ferd.berferd@example.com"
+
+            def __init__(self, athlete_id: int):
+                self.id = athlete_id
+
+        # Cheat and pretend we're authorized
+        athlete_id = int(request.args.get("athlete_id", 2332659))
+        log.warning(f"Local development login bypass exercised for athlete {athlete_id}")
+        strava_athlete = MockAthlete(athlete_id)
+        message = "Local development enabled"
     else:
         code = request.args.get("code")
         client = Client()
@@ -276,10 +303,6 @@ def authorization():
                 "authorization_error.html",
                 error="ATHLETE_NOT_FOUND",
             )
-        multiple_teams = None
-        no_teams = False
-        team = None
-        message = None
         try:
             team = data.register_athlete_team(
                 strava_athlete=strava_athlete,
@@ -291,24 +314,24 @@ def authorization():
         except NoTeamsError as noteamx:
             no_teams = True
             message = noteamx
-        if not no_teams:
-            auth.login_athlete(strava_athlete)
-        # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
-        after_competition_start = (
-            datetime.now(config.START_DATE.tzinfo) > config.START_DATE
-        )
-        return render_template(
-            "authorization_success.html",
-            after_competition_start_start=after_competition_start,
-            athlete=strava_athlete,
-            competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
-            team=team,
-            message=message,
-            main_team_page=f"https://strava.com/clubs/{config.MAIN_TEAM}",
-            multiple_teams=multiple_teams,
-            no_teams=no_teams,
-            rides_url=url_for("user.rides"),
-        )
+    if not no_teams:
+        auth.login_athlete(strava_athlete)
+    # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
+    after_competition_start = (
+        datetime.now(config.START_DATE.tzinfo) > config.START_DATE
+    )
+    return render_template(
+        "authorization_success.html",
+        after_competition_start_start=after_competition_start,
+        athlete=strava_athlete,
+        competition_teams_assigned=len(config.COMPETITION_TEAMS) > 0,
+        team=team,
+        message=message,
+        main_team_page=f"https://strava.com/clubs/{config.MAIN_TEAM}",
+        multiple_teams=multiple_teams,
+        no_teams=no_teams,
+        rides_url=url_for("user.rides"),
+    )
 
 
 @blueprint.route("/webhook", methods=["GET"])
