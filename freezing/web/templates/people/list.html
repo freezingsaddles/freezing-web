@@ -1,38 +1,93 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row"><div class="col-md-12">
-	<div class="btn-group float-end mt-2">
-		<button type="button" onclick="hide_km();" class="btn btn-success">America!</button>
-		<button type="button" onclick="hide_miles();" class="btn btn-danger">Other</button>
-	  </div>
-	<h1>All Participants</h1>
-</div></div>
-<div class="row">
-	<div class="col-md-6">
-		<p>Weekly data is for {{weekstart.strftime('%m-%d-%Y')}} to {{weekend.strftime('%m-%d-%Y')}}</p>
-	</div>
-	<div class="col-md-6">
-
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-	<table id="user-list" class="table table-striped">
-		<thead><tr><th>User</th><th>Rides This Week</th><th>Mileage This Week</th><th>Kilometerage This Week</th><th>Total Rides</th><th>Total Mileage</th><th>Total Kilometerage</th></tr></thead>
-		<tbody>
-			{% for u in users %}
-				<tr><td><a href="/people/{{u.id}}">{{u.name}}</a></td><td>{{u.weekrides}}</td><td>{{u.weektotal | round(1)}}</td><td>{{(u.weektotal/0.62137) | round(1) }}</td>
-					<td>{{u.totalrides}}</td><td>{{u.totaldist | round(1)}}</td><td>{{(u.totaldist /0.62137) | round(1)}}</td></tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	</div>
-</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group float-end mt-2">
+                <button type="button" onclick="hide_km();" class="btn btn-success">
+                    America!
+                </button>
+                <button type="button" onclick="hide_miles();" class="btn btn-danger">
+                    Other
+                </button>
+            </div>
+            <h1>
+                All Participants
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <p>
+                Weekly data is for {{ weekstart.strftime("%m-%d-%Y") }} to {{ weekend.strftime("%m-%d-%Y") }}
+            </p>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="user-list" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            User
+                        </th>
+                        <th class+number">Rides This Week
+                        </th>
+                        <th class="number">
+                            Mileage This Week
+                        </th>
+                        <th class="number">
+                            Kilometerage This Week
+                        </th>
+                        <th class="number">
+                            Total Rides
+                        </th>
+                        <th class="number">
+                            Total Mileage
+                        </th>
+                        <th class="number">
+                            Total Kilometerage
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr>
+                            <td>
+                                <a href="/people/{{ u.id }}">{{ u.name }}</a>
+                            </td>
+                            <td class="number">
+                                {{ u.weekrides }}
+                            </td>
+                            <td class="number">
+                                {{ u.weektotal | round(1) }}
+                            </td>
+                            <td class="number">
+                                {{ (u.weektotal/0.62137) | round(1) }}
+                            </td>
+                            <td class="number">
+                                {{ u.totalrides }}
+                            </td>
+                            <td class="number">
+                                {{ u.totaldist | round(1) }}
+                            </td>
+                            <td class="number">
+                                {{ (u.totaldist /0.62137) | round(1) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
 {% block foot %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
-<script type="text/javascript">
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script type="text/javascript">
 $(document).ready(function(){
     $('#user-list').dataTable({
 		"bPaginate": false,
@@ -84,5 +139,5 @@ function hide_miles()
 		oTable.fnSetColumnVis(5, false);
 	}
 }
-</script>
+    </script>
 {% endblock %}

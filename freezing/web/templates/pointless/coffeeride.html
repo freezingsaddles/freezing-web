@@ -1,20 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Coffee Rides</h5>
-	<div class="card-body">
-		<p>Leaderboard for the BAFS {{data.year}} Coffee Ride prize</p>
-<table class="table table-condensed">
-	<tr><th>Rank</th><th>Player</th><th>{{data.hashtag}} Rides</th><th>{{data.hashtag}} Distance</th></tr>
-{% for a, b, c, d in data.tdata %}
-	<tr>
-		<td>{{loop.index}}</td>
-		<td><a href="/people/{{ a }}">{{b}}</a></td>
-		<td>{{c}}</td>
-		<td>{{d | round(1)}}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Coffee Rides
+        </h5>
+        <div class="card-body">
+            <p>
+                Leaderboard for the BAFS {{ data.year }} Coffee Ride prize
+            </p>
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number">
+                        Rank
+                    </th>
+                    <th>
+                        Player
+                    </th>
+                    <th class="number">
+                        {{ data.hashtag }} Rides
+                    </th>
+                    <th class="number">
+                        {{ data.hashtag }} Distance
+                    </th>
+                </tr>
+                {% for a, b, c, d in data.tdata %}
+                    <tr>
+                        <td class="number">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ a }}">{{ b }}</a>
+                        </td>
+                        <td class="number">
+                            {{ c }}
+                        </td>
+                        <td class="number">
+                            {{ d | round(1) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}

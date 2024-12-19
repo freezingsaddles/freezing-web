@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-  	<h1>Friends of BAFS</h1>
-  	<p>This "leaderboard" is for the those riders who are not currently on a competitive team, either by choice or by late registration. These riders are encouraged to ride,
-    to participate in reindeer games, and to show up at gatherings, but their rides will be ineligible for any and all leaderboards.</p>
-  	<ul>
-      {% for indiv_row in indiv_rows %}
-  		<li>
-        <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
-        <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
-        ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles)
-        </li>
-  		{% endfor %}
-  	</ul>
+    <h1>
+        Friends of BAFS
+    </h1>
+    <p>
+        This "leaderboard" is for the those riders who are not currently on a competitive team, either by choice or by late registration. These riders are encouraged to ride,
+        to participate in reindeer games, and to show up at gatherings, but their rides will be ineligible for any and all leaderboards.
+    </p>
+    <ul>
+        {% for indiv_row in indiv_rows %}
+            <li>
+                <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
+                <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
+                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles)
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -1,61 +1,63 @@
 {% extends "base.html" %}
 {% block head %}
     <script type="text/javascript">
+	  // Load the Visualization API and the corechart package.
+	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Load the Visualization API and the corechart package.
-      google.charts.load('visualization', '1.0', {'packages':['corechart']});
+	  // Set a callback to run when the Google Visualization API is loaded.
+	  google.charts.setOnLoadCallback(drawPointsChart);
+	  //google.charts.setOnLoadCallback(drawMileageChart);
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawPointsChart);
-      //google.charts.setOnLoadCallback(drawMileageChart);
+	  // Callback that creates and populates a data table,
+	  // instantiates the pie chart, passes in the data and
+	  // draws it.
+	  
+	  function drawPointsChart() {
+		  
+		  $.ajax({
+			  url: "/chartdata/team_weekly_points",
+			  dataType: "json"
+		  }).done(function(jsonData) {
 
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-      
-      function drawPointsChart() {
-	      
-	      $.ajax({
-	          url: "/chartdata/team_weekly_points",
-	          dataType: "json"
-          }).done(function(jsonData) {
-
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-              /*
-        var data = google.visualization.arrayToDataTable([
-          ['Week No.', 'Team 1', 'Team 2'],
-          ['Week 9',  750.2168827056885,      992.3467163443565],
-          ['Week 10',  502.17876356840134,      511.0094782114029],
-        ]);
+			  // Create our data table out of JSON data loaded from server.
+			  var data = new google.visualization.DataTable(jsonData);
+			  /*
+		var data = google.visualization.arrayToDataTable([
+		  ['Week No.', 'Team 1', 'Team 2'],
+		  ['Week 9',  750.2168827056885,	  992.3467163443565],
+		  ['Week 10',  502.17876356840134,	  511.0094782114029],
+		]);
 */
-              console.log(data);
+			  console.log(data);
 
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_team_weekly_points'));
+			  // Instantiate and draw our chart, passing in some options.
+			  var chart = new google.visualization.ColumnChart(document.getElementById('chart_team_weekly_points'));
 
-              var options = {
-                  'title': 'Team Weekly Points',
-                  'width': 1200,
-                  'height': 800,
-                  'hAxis': {title: "Week No."},
-                  'vAxis': {title: "Points"},
-                  legend: {position: 'none'},
-                  chartArea: {left: 200, top: 50, width: 1000, height: 700}
-              };
+			  var options = {
+				  'title': 'Team Weekly Points',
+				  'width': 1200,
+				  'height': 800,
+				  'hAxis': {title: "Week No."},
+				  'vAxis': {title: "Points"},
+				  legend: {position: 'none'},
+				  chartArea: {left: 200, top: 50, width: 1000, height: 700}
+			  };
 
 
-              chart.draw(data, options);
-          });
-	      
+			  chart.draw(data, options);
+		  });
+		  
 	  }
 	  	  
-	  </script>
+    </script>
 {% endblock %}
-	  
 {% block content %}
-  	<h1>Team Weekly Points</h1>
+    <h1>
+        Team Weekly Points
+    </h1>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_weekly_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading weekly points...</div>
-    
+    <div id="chart_team_weekly_points">
+        <img src="/img/loading2-blue.gif" alt="">
+        &nbsp;Loading weekly points...
+    </div>
 {% endblock %}

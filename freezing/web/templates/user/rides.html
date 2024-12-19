@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 {% block head %}
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css">
-
-
-<script type="text/javascript">
-
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.6.0/dist/bootstrap-table.min.css"
+          integrity="sha256-SAChiSCzuX+r8fGO1EDy38z7Bcj1Qd2VUS+64BlFSIM="
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+          crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+            crossorigin=""></script>
+    <script src="/js/ride-map.js"></script>
+    <script type="text/javascript">
       // Load the Visualization API and the corechart package.
       google.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -56,45 +64,79 @@
           chart.draw(data, options);
       }
 
-	  </script>
+    </script>
 {% endblock %}
-
 {% block content %}
-
-
-<div class="row"><div class="col-md-12"><h2>Ride data for {{ session.athlete_fname }}</h2></div></div>
-
-<div role="tabpanel">
-
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">My Rides</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">My Daily Points</a></li>
-    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">My Weekly Points</a></li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="home">
-        <table id="table-rides"></table>
-	</div>
-    <div role="tabpanel" class="tab-pane" id="profile">
-        <div id="chart_user_daily_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading daily points...</div>
-	</div>
-    <div role="tabpanel" class="tab-pane" id="messages">
-        <div id="chart_user_weekly_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading weekly points...</div>
-	</div>
-  </div>
-
-</div>
-
+    <div class="alert alert-warning px-2 py-1 float-end">
+        This page is only visible to you.
+    </div>
+    <h2 class="clearfix">
+        Ride data for {{ session.athlete_fname }}
+    </h2>
+    <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs mb-3" role="tablist">
+            <li role="presentation" class="nav-item">
+                <a href="#home"
+                   class="nav-link active"
+                   aria-controls="home"
+                   role="tab"
+                   data-bs-toggle="tab">My Rides</a>
+            </li>
+            <li role="presentation" class="nav-item">
+                <a href="#profile"
+                   class="nav-link"
+                   aria-controls="profile"
+                   role="tab"
+                   data-bs-toggle="tab">My Daily Points</a>
+            </li>
+            <li role="presentation" class="nav-item">
+                <a href="#messages"
+                   class="nav-link"
+                   aria-controls="messages"
+                   role="tab"
+                   data-bs-toggle="tab">My Weekly Points</a>
+            </li>
+            <li role="presentation" class="nav-item">
+                <a href="#map"
+                   id="map-link"
+                   class="nav-link"
+                   aria-controls="map"
+                   role="tab"
+                   data-bs-toggle="tab">My Ride Map</a>
+            </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <table id="table-rides">
+                </table>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="profile">
+                <div id="chart_user_daily_points">
+                    <img src="/img/loading2-blue.gif" alt="">
+                    &nbsp;Loading daily points...
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="messages">
+                <div id="chart_user_weekly_points">
+                    <img src="/img/loading2-blue.gif" alt="">
+                    &nbsp;Loading weekly points...
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="map">
+                <div id="track-map" style="aspect-ratio: 1.333;">
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
-
 {% block foot %}
-<!-- Latest compiled and minified JavaScript -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"></script>
-<script type="text/javascript">
-
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.6.0/dist/bootstrap-table.min.js"
+            integrity="sha256-I+994H7NziIk5lIzMW+m7F6Iga56kmy34rpHhd8wKww="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
 	function stampFormatter(value, row) {
         var options = {
             year: "numeric",
@@ -117,6 +159,15 @@
 
 	function photosFormatter(value, row) {
 		return { disabled: true, checked: row.photos_fetched }
+	}
+
+	function temperatureFormatter(value, row) {
+        if (value != null && typeof value === "number") {
+            // Thanks https://stackoverflow.com/a/53378133/424301
+            return value.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+        } else {
+            return "🌞🤷☃️"; // sun, shrug, snowman
+        }
 	}
 
 	function refetchPhotosForRide(rideId) {
@@ -192,13 +243,16 @@
 					field: "avg_temp",
 					title: "Avg Temp (&#8457;)",
 					align: "right",
-					sortable: true
+					sortable: true,
+					formatter: temperatureFormatter
 				}
 			]
 
 		});
 
+		$('#map-link').one('click', () => {
+			create_ride_map('map', '/api/my/trackmap.json', 'red');
+		});
 	});
-
-</script>
+    </script>
 {% endblock %}

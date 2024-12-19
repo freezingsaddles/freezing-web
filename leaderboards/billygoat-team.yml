@@ -6,10 +6,14 @@ fields:
     label: Team
   - name: elev
     label: Elevation (ft)
+    type: number
   - name: dist
     label: Distance (mi)
+    type: number
   - name: gainpermile
     label: Ft. / Mile
+    type: number
+    rank_by: true
 query: |
   select
     sum(R.elevation_gain) as elev,

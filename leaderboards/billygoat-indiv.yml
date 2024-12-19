@@ -9,10 +9,14 @@ fields:
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
   - name: elev
     label: Elevation (ft)
+    type: number
   - name: dist
     label: Distance (mi)
+    type: number
   - name: gainpermile
     label: Ft. / Mile
+    rank_by: true
+    type: number
 query: |
   select
     A.id,

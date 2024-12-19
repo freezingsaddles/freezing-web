@@ -17,4 +17,5 @@ fields:
   - name: segment_rides
     label: Loop Rides
     rank_by: true
+    type: number
 query: select 1

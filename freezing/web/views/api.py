@@ -4,10 +4,10 @@ from decimal import Decimal
 
 import arrow
 import pytz
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, abort, jsonify, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
-from sqlalchemy import text
+from sqlalchemy import func, text
 
 from freezing.web import config
 from freezing.web.autolog import log
@@ -16,6 +16,31 @@ from freezing.web.utils import auth
 from freezing.web.utils.wktutils import parse_linestring
 
 blueprint = Blueprint("api", __name__)
+
+"""Have a default limit for GeoJSON track APIs."""
+TRACK_LIMIT_DEFAULT = 1024
+
+"""A limit on the number of tracks to return."""
+TRACK_LIMIT_MAX = 2048
+
+
+def get_limit(request):
+    """Get the limit parameter from the request, if it exists.
+
+    Impose a maximum limit on the number of tracks to return.
+    This is a safety measure to mitigate denial of service attacks.
+    Geojson APIs can return 1024 entries in <5 seconds.
+
+    See: Geojson APIs suspeculatively not scalable #310
+    https://github.com/freezingsaddles/freezing-web/issues/310
+    """
+    limit = request.args.get("limit")
+    if limit is None:
+        return None
+    limit = int(limit)
+    if limit > TRACK_LIMIT_MAX:
+        abort(400, f"limit {limit} exceeds {TRACK_LIMIT_MAX}")
+    return min(TRACK_LIMIT_MAX, int(limit))
 
 
 @blueprint.route("/stats/general")
@@ -181,12 +206,14 @@ def team_leaderboard():
     return jsonify(dict(leaderboard=rows))
 
 
-def _geo_tracks(start_date=None, end_date=None, team_id=None):
+def _geo_tracks(
+    start_date=None, end_date=None, team_id=None, limit=TRACK_LIMIT_DEFAULT
+):
     # These dates  must be made naive, since we don't have TZ info stored in our ride columns.
-    if start_date:
+    if start_date is not None:
         start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
 
-    if end_date:
+    if end_date is not None:
         end_date = arrow.get(end_date).datetime.replace(tzinfo=None)
 
     log.debug("Filtering on start_date: {}".format(start_date))
@@ -194,22 +221,32 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
     sess = meta.scoped_session()
 
-    q = sess.query(RideTrack).join(Ride).join(Athlete)
-    q = q.filter(Ride.private is False)
+    q = (
+        sess.query(
+            RideTrack, func.ST_AsText(RideTrack.gps_track).label("gps_track_wkt")
+        )
+        .join(Ride)
+        .join(Athlete)
+    )
+    q = q.filter(~(Ride.private))
 
-    if team_id:
+    if team_id is not None:
         q = q.filter(Athlete.team_id == team_id)
 
-    if start_date:
+    if start_date is not None:
         q = q.filter(Ride.start_date >= start_date)
-    if end_date:
+    if end_date is not None:
         q = q.filter(Ride.start_date < end_date)
 
+    if limit is not None:
+        q = q.limit(limit)
+
     linestrings = []
-    for ride_track in q:
+    log.debug(f"Querying for tracks: {q}")
+    for ride_track, wkt in q:
         assert isinstance(ride_track, RideTrack)
+        assert isinstance(wkt, str)
         ride_tz = pytz.timezone(ride_track.ride.timezone)
-        wkt = sess.scalar(ride_track.gps_track.wkt)
 
         coordinates = []
         for i, (lon, lat) in enumerate(parse_linestring(wkt)):
@@ -230,27 +267,122 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None):
 
     geojson_structure = {"type": "MultiLineString", "coordinates": linestrings}
 
-    # return geojson.dumps(geojson.MultiLineString(linestrings))
     return json.dumps(geojson_structure)
 
 
 @blueprint.route("/all/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_all():
-    # log.info("Fetching gps tracks for team {}".format(team_id))
+    log.info("Fetching gps tracks")
 
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
+    limit = get_limit(request)
 
-    return _geo_tracks(start_date=start_date, end_date=end_date)
+    return _geo_tracks(start_date=start_date, end_date=end_date, limit=limit)
 
 
 @blueprint.route("/teams/<int:team_id>/tracks.geojson")
 @auth.crossdomain(origin="*")
 def geo_tracks_team(team_id):
-    # log.info("Fetching gps tracks for team {}".format(team_id))
+    log.info("Fetching gps tracks for team {}".format(team_id))
 
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
+    limit = get_limit(request)
 
-    return _geo_tracks(start_date=start_date, end_date=end_date, team_id=team_id)
+    return _geo_tracks(
+        start_date=start_date, end_date=end_date, team_id=team_id, limit=limit
+    )
+
+
+# Crude approximation of the distance squared between points
+def _distance2(lon0, lat0, lon1, lat1):
+    return (lon0 - lon1) * (lon0 - lon1) + (lat0 - lat1) * (lat0 - lat1)
+
+
+# The maximum "distance squared" to allow between points in a ride track.
+# I think in a pretend flat world, this is ~6 miles.
+_max_d2 = 0.01
+
+
+# The full geojson structure is triple the size of what we need
+def _track_map(
+    team_id=None,
+    athlete_id=None,
+    include_private=False,
+    hash_tag=None,
+    limit=TRACK_LIMIT_DEFAULT,
+):
+    q = text(
+        """
+             with team_idx(team_id, team_index) as (
+                 select id, row_number() over(order by id) from teams
+             )
+             select ST_AsText(T.gps_track), X.team_index
+             from ride_tracks T
+             join rides R on R.id = T.ride_id
+             join athletes A on A.id = R.athlete_id
+             join team_idx X on X.team_id = A.team_id
+             where
+             {0} and {1} and {2} and {3}
+             order by R.start_date DESC
+             {4}
+             ;
+             """.format(
+            "true" if include_private else "not(R.private)",
+            "A.id = :athlete_id" if athlete_id else "true",
+            "A.team_id = :team_id" if team_id else "true",
+            "R.name like :hash_tag" if hash_tag else "true",
+            "limit :limit" if limit is not None else "",
+        )
+    )
+
+    if team_id:
+        q = q.bindparams(team_id=team_id)
+    if athlete_id:
+        q = q.bindparams(athlete_id=athlete_id)
+    if hash_tag:
+        q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
+    if limit is not None:
+        q = q.bindparams(limit=limit)
+
+    tracks = []
+    for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
+        track = []
+        tracks.append({"team": team_id, "track": track})
+        point = None
+        for _, (lons, lats) in enumerate(parse_linestring(gps_track)):
+            lon = float(Decimal(lons))
+            lat = float(Decimal(lats))
+            # Break tracks that span flights and train journeys
+            if point and _distance2(lon, lat, point[0], point[1]) > _max_d2:
+                track = []
+                tracks.append({"team": team_id, "track": track})
+            point = (lon, lat)
+            track.append(point)
+    tracks.reverse()
+
+    return {"tracks": tracks}
+
+
+@blueprint.route("/all/trackmap.json")
+def track_map_all():
+    hash_tag = request.args.get("hashtag")
+    return jsonify(_track_map(hash_tag=hash_tag, limit=get_limit(request)))
+
+
+@blueprint.route("/my/trackmap.json")
+@auth.requires_auth
+def track_map_my():
+    athlete_id = session.get("athlete_id")
+    return jsonify(
+        _track_map(
+            athlete_id=athlete_id, include_private=True, limit=get_limit(request)
+        ),
+    )
+
+
+@blueprint.route("/teams/<int:team_id>/trackmap.json")
+def track_map_team(team_id):
+    return jsonify(_track_map(team_id=team_id, limit=get_limit(request)))

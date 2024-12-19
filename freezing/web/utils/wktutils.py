@@ -26,10 +26,11 @@ def parse_linestring(wkt):
     :rtype: list[(str,str)]
     """
     return [
-        lonlat.split(" ") for lonlat in _linestring_rx.match(wkt).group(1).split(",")
+        lonlat.strip().split(" ")
+        for lonlat in _linestring_rx.match(wkt).group(1).split(",")
     ]
 
 
 def linestring_wkt(points):
     wkt_dims = ["{} {}".format(lon, lat) for (lon, lat) in points]
-    return "LINESTRING({})".format(", ".join(wkt_dims))
+    return "LINESTRING({})".format(",".join(wkt_dims))

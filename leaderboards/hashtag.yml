@@ -17,15 +17,6 @@ tags:
     sponsor: bikingjenn
     rank_by_rides: True
 
-  - tag: bafs2021smallbiz
-    name: Quaxapalooza
-    description: |
-      Support a local small business by buying something and picking it up via bike. Be sure to tag your ride with
-       <code>#BAFS2021SmallBiz</code> and the name of the business you visited.
-    url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
-    sponsor: rumipumi
-    rank_by_rides: True
-
   - tag: biathlon
     name: Biathlon
     description: |
@@ -46,7 +37,7 @@ tags:
     name: Bicycle Bingo
     description: |
       Ride your bike and play Bingo!
-    url: https://www.bikearlingtonforum.com/forums/topic/bicycle-bingo-sign-up-now/
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2025-sign-up-now/
     sponsor: cvcalhoun
     rank_by_rides: True
 
@@ -100,15 +91,6 @@ tags:
     sponsor: BeeTinDC
     rank_by_rides: True
 
-  - tag: fs2021coffeesnobride
-    name: Coffee Snob
-    description: |
-      Ride your bike to drink coffee (a certain Seattle chain is verboten). Be sure to post
-      photographic evidence on Strava and to tag your ride with <code>#FS2021coffeesnobride</code>.
-    url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021&p=203471#post203471
-    sponsor: chuxtr
-    rank_by_rides: True
-
   - tag: fswormhole
     name: Wormholes
     description: |
@@ -123,6 +105,22 @@ tags:
       Ride your bike to a metro or train station and post a photo.
     sponsor: arlcxrider
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-golden-spike-award/
+    rank_by_rides: True
+
+  - tag: groupridegroupie
+    name: Group Ride Groupie
+    description: |
+      The person who joins the most group rides.
+    sponsor: drevil
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-grouprideguru-groupridegroupie/
+    rank_by_rides: True
+
+  - tag: grouprideguru
+    name: Group Ride Guru
+    description: |
+      The person who organizes and leads the most amount of Freezing Saddles group rides.
+    sponsor: drevil
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-grouprideguru-groupridegroupie/
     rank_by_rides: True
 
   - tag: heroesworkhere
@@ -190,7 +188,7 @@ tags:
     description: |
       Ride your bike to find the word of the day and post its photo on the forum.
     sponsor: Kelley and Serdar
-    url: https://www.bikearlingtonforum.com/forums/topic/2024-photo-scavenger-hunt-rules-and-alternate-words/
+    url: https://www.bikearlingtonforum.com/forums/topic/2025-photo-scavenger-hunt/
     rank_by_rides: True
 
   - tag: socks

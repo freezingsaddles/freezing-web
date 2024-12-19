@@ -1,43 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Hains Point Laps</h5>
-	<div class="card-body">
-		<p class="lead">We're looking for the hamsterest hamster who ever hamstered.</p>
-		<p>Segment Miles is based on the 2.5 mile <a href="https://www.strava.com/segments/1081507">Gate
-			to Gate segment</a>, so it undercounts your mileage if you did a full lap.
-			However, since this segment is the official measure of "A Hains Point Lap" as far as
-			this contest is concerned, it was thought best to use 2.5 miles.</p>
-		<p>If you feel the wrong decision has been made here, please be reminded that you are a hamster, and hamsters don't get the admin password to the web server.</p>
-<div class="table-responsive">
-<table id="hamster" class="table table-condensed">
-	<thead>
-		<tr><th>Rank</th><th>Hamster</th><th>Times Hamstered</th><th>Segment Miles</th><th>Total Miles</th><th>Hamster %</th></tr>
-	</thead>
-{% for a, b, c in indiv_hains %}
-	<tr>
-		<td>{{loop.index}}</td>
-		<td>{{a}}</td>
-		<td>{{b}}</td>
-		<td>{{b * 2.5}}</td>
-		<td>{{c|round(1)}}</td>
-		<td>{{((b*250)/c)|round(1)}}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Hains Point Laps
+        </h5>
+        <div class="card-body">
+            <p class="lead">
+                We're looking for the hamsterest hamster who ever hamstered.
+            </p>
+            <p>
+                Segment Miles is based on the 2.5 mile <a href="https://www.strava.com/segments/1081507">Gate
+                to Gate segment</a>, so it undercounts your mileage if you did a full lap.
+                However, since this segment is the official measure of "A Hains Point Lap" as far as
+                this contest is concerned, it was thought best to use 2.5 miles.
+            </p>
+            <p>
+                If you feel the wrong decision has been made here, please be reminded that you are a hamster, and hamsters don't get the admin password to the web server.
+            </p>
+            <div class="table-responsive">
+                <table id="hamster" class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Rank
+                            </th>
+                            <th>
+                                Hamster
+                            </th>
+                            <th>
+                                Times Hamstered
+                            </th>
+                            <th>
+                                Segment Miles
+                            </th>
+                            <th>
+                                Total Miles
+                            </th>
+                            <th>
+                                Hamster %
+                            </th>
+                        </tr>
+                    </thead>
+                    {% for a, b, c in indiv_hains %}
+                        <tr>
+                            <td>
+                                {{ loop.index }}
+                            </td>
+                            <td>
+                                {{ a }}
+                            </td>
+                            <td>
+                                {{ b }}
+                            </td>
+                            <td>
+                                {{ b * 2.5 }}
+                            </td>
+                            <td>
+                                {{ c|round(1) }}
+                            </td>
+                            <td>
+                                {{ ((b*250)/c)|round(1) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block foot %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
-<script type="text/javascript">
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script type="text/javascript">
 $(document).ready(function(){
-    $('#hamster').DataTable( {
+	$('#hamster').DataTable( {
 		"paging":   false,
-        "order": [[ 2, "desc" ]]
-    } );
+		"order": [[ 2, "desc" ]]
+	} );
 });
-</script>
+    </script>
 {% endblock %}
