@@ -4,8 +4,9 @@ name: Security
 on: pull_request
 
 jobs:
-  
-  # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
+
+  # Thanks for inspiration:
+  # https://black.readthedocs.io/en/stable/integrations/github_actions.html
   bandit:
     name: Bandit
     runs-on: ubuntu-latest

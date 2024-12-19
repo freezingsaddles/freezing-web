@@ -4,8 +4,8 @@ name: Lint
 on: pull_request
 
 jobs:
-  
-  # Thanks https://black.readthedocs.io/en/stable/integrations/github_actions.html
+  # Thanks for the inspiration:
+  # https://black.readthedocs.io/en/stable/integrations/github_actions.html
   python:
     name: Python Lint
     runs-on: ubuntu-latest
@@ -21,12 +21,12 @@ jobs:
       - name: isort Lint
         uses: isort/isort-action@v1
         with:
-            requirements-files: "requirements.txt requirements-test.txt"
+          requirements-files: "requirements.txt requirements-test.txt"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
 
   templates:
-    name: Python Lint
+    name: Templates Lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
