@@ -36,7 +36,7 @@ def get_limit(request):
     """
     limit = request.args.get("limit")
     if limit is None:
-        return None
+        return TRACK_LIMIT_DEFAULT
     limit = int(limit)
     if limit > TRACK_LIMIT_MAX:
         abort(400, f"limit {limit} exceeds {TRACK_LIMIT_MAX}")
@@ -206,9 +206,7 @@ def team_leaderboard():
     return jsonify(dict(leaderboard=rows))
 
 
-def _geo_tracks(
-    start_date=None, end_date=None, team_id=None, limit=TRACK_LIMIT_DEFAULT
-):
+def _geo_tracks(start_date=None, end_date=None, team_id=None, limit=None):
     # These dates  must be made naive, since we don't have TZ info stored in our ride columns.
     if start_date is not None:
         start_date = arrow.get(start_date).datetime.replace(tzinfo=None)
@@ -312,7 +310,7 @@ def _track_map(
     athlete_id=None,
     include_private=False,
     hash_tag=None,
-    limit=TRACK_LIMIT_DEFAULT,
+    limit=None,
 ):
     q = text(
         """
