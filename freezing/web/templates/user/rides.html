@@ -2,9 +2,9 @@
 {% block head %}
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css"
-          integrity="sha256-NIkwai80u+RVUcKPoMioyPywvEzlvYUlwAcmKXhAyGU="
-          crossorigin="anonymous" />
+          href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.6.0/dist/bootstrap-table.min.css"
+          integrity="sha256-SAChiSCzuX+r8fGO1EDy38z7Bcj1Qd2VUS+64BlFSIM="
+          crossorigin="anonymous">
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
           integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -133,9 +133,9 @@
 {% endblock %}
 {% block foot %}
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js"
-            integrity="'sha256-Cb55Dgfu0z4lFDMw0xmvsbuGhPheZ57lqKG2jdS2EJw="
-            crossorgin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.6.0/dist/bootstrap-table.min.js"
+            integrity="sha256-I+994H7NziIk5lIzMW+m7F6Iga56kmy34rpHhd8wKww="
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
 	function stampFormatter(value, row) {
         var options = {
@@ -159,6 +159,10 @@
 
 	function photosFormatter(value, row) {
 		return { disabled: true, checked: row.photos_fetched }
+	}
+
+	function temperatureFormatter(value, row) {
+        return f"{value:.2f}"
 	}
 
 	function refetchPhotosForRide(rideId) {
@@ -235,7 +239,7 @@
 					title: "Avg Temp (&#8457;)",
 					align: "right",
 					sortable: true,
-					formatter: f => f.toFixed(1)
+					formatter: temperatureFormatter
 				}
 			]
 
