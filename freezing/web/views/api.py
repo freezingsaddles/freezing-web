@@ -377,11 +377,10 @@ def track_map_all():
 def track_map_my():
     athlete_id = session.get("athlete_id")
     return jsonify(
-        _track_map(athlete_id=athlete_id, include_private=True),
-        limit=get_limit(request),
+        _track_map(athlete_id=athlete_id, include_private=True, limit=get_limit(request)),
     )
 
 
 @blueprint.route("/teams/<int:team_id>/trackmap.json")
 def track_map_team(team_id):
-    return jsonify(_track_map(team_id=team_id), limit=get_limit(request))
+    return jsonify(_track_map(team_id=team_id, limit=get_limit(request)))
