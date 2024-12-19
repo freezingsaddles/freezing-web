@@ -271,9 +271,12 @@ def authorization():
     team = None
     message = None
     log.info(f"Authorization request host: {request.host}")
-    if config.ENVIRONMENT == "localdev" and request.host in ["localhost:5000", "127.0.0.1:5000"]:
-    #if config.ENVIRONMENT == "localdev":
-        class MockAthlete():
+    if config.ENVIRONMENT == "localdev" and request.host in [
+        "localhost:5000",
+        "127.0.0.1:5000",
+    ]:
+        # if config.ENVIRONMENT == "localdev":
+        class MockAthlete:
             firstname: str = "Ferd"
             lastname: str = "Berferd"
             profile_medium: str = "/img/logo-blue-sm.png"
@@ -284,7 +287,9 @@ def authorization():
 
         # Cheat and pretend we're authorized
         athlete_id = int(request.args.get("athlete_id", 2332659))
-        log.warning(f"Local development login bypass exercised for athlete {athlete_id}")
+        log.warning(
+            f"Local development login bypass exercised for athlete {athlete_id}"
+        )
         strava_athlete = MockAthlete(athlete_id)
         message = "Local development enabled"
     else:
@@ -317,9 +322,7 @@ def authorization():
     if not no_teams:
         auth.login_athlete(strava_athlete)
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
-    after_competition_start = (
-        datetime.now(config.START_DATE.tzinfo) > config.START_DATE
-    )
+    after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
     return render_template(
         "authorization_success.html",
         after_competition_start_start=after_competition_start,
