@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Freeze Points</h5>
-	<div class="card-body">
-		<p>Thanks to VVill for coming up with this, (<a href="https://www.bikearlingtonforum.com/forums/topic/freeze-points-metric/">explained here</a>). Basically you get more points for riding in the cold, but distance doesn't matter so much.</p>
-<table class="table table-condensed">
-	<tr><th>Rank</th><th>Team</th><th>Points</th></tr>
-{% for a, b in indiv_freeze %}
-	<tr>
-		<td>{{loop.index}}</td>
-		<td>{{a}}</td>
-		<td>{{ '%0.1f' % b }}</td>
-		</tr>
-{% endfor %}
-</table>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Freeze Points
+        </h5>
+        <div class="card-body">
+            <p>
+                Thanks to VVill for coming up with this, (<a href="https://www.bikearlingtonforum.com/forums/topic/freeze-points-metric/">explained here</a>). Basically you get more points for riding in the cold, but distance doesn't matter so much.
+            </p>
+            <table class="table table-condensed">
+                <tr>
+                    <th>
+                        Rank
+                    </th>
+                    <th>
+                        Team
+                    </th>
+                    <th>
+                        Points
+                    </th>
+                </tr>
+                {% for a, b in indiv_freeze %}
+                    <tr>
+                        <td>
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            {{ a }}
+                        </td>
+                        <td>
+                            {{ '%0.1f' % b }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}

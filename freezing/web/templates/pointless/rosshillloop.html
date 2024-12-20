@@ -1,26 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-    <h5 class="card-header">Ross Hill Loop Rides</h5>
-    <div class="card-body">
-        <p> Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
-            <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
-            double dips.
-        </p>
-        <p>
-            <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024/">Prize sponsored by randomduck.</a>
-        </p>
-        <table class="table table-condensed">
-            <tr><th class="number">Rank</th><th>Player</th><th class="number">Loops</th><th class="number">Average Time</th></tr>
-            {% for a, b, d, e in data.tdata %}
-            <tr {% if a==48773683 %} class="danger" {% endif %}>
-                <td class="number">{{loop.index}}</td>
-                <td><a href="/people/{{ a }}">{{b}}{% if a==48773683 %} (banned){% endif %}</a></td>
-                <td class="number">{{d}}</td>
-                <td class="number">{{(e / d / 60) | int}}m {{((e / d) % 60) | int}}s</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="card">
+        <h5 class="card-header">
+            Ross Hill Loop Rides
+        </h5>
+        <div class="card-body">
+            <p>
+                Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
+                <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
+                double dips.
+            </p>
+            <p>
+                <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024/">Prize sponsored by randomduck.</a>
+            </p>
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number">
+                        Rank
+                    </th>
+                    <th>
+                        Player
+                    </th>
+                    <th class="number">
+                        Loops
+                    </th>
+                    <th class="number">
+                        Average Time
+                    </th>
+                </tr>
+                {% for a, b, d, e in data.tdata %}
+                    <tr {% if a==48773683 %}class="danger"{% endif %}>
+                        <td class="number">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ a }}">{{ b }}
+                                {% if a==48773683 %}
+                                    (banned)
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td class="number">
+                            {{ d }}
+                        </td>
+                        <td class="number">
+                            {{(e / d / 60) | int}}m {{((e / d) % 60) | int}}s
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}

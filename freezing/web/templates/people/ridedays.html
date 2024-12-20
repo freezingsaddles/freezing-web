@@ -1,28 +1,68 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Every Day Riders - Day {{num_days}}</h5>
-	<div class="card-body">
-		{% if all_done %}<p><strong>The competiton for this year is complete after {{num_days}} days of riding!</strong>{% endif %}
-		<p>If your name is green, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!</em></p>
-		<p>If your name is yellow or red, either you haven't ridden (see <a href="http://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.</p>
-		<p>Yellow means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong></p>
-		<p>Red means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.</p>
-<table class="table table-condensed">
-	<tr><th>Rider</th><th class="number">Days</th><th class="number">Miles</th><th class="emoji">Every Day Rider?</th></tr>
-{% for a, b, c, d in ride_days %}
-	{% if c >= num_days %}<tr class="success">
-	{% elif c == (num_days - 1) and not all_done %}<tr class="warning">
-	{% elif c < num_days %}<tr class="danger">
-	{% endif %}
-	<td><a href="/people/{{a}}">{{b}}</a></td><td class="number">{{c}}</td><td class="number">{{d | round(1)}}</td><td class="emoji">
-	{% if c >= num_days %}🏆
-	{% elif c == (num_days - 1) and not all_done %}
-	⚠️
-	{% endif %}
-	<td></tr>
-{% endfor %}
-</table>
-</div>
-</div>
-{% endblock %}
+    <div class="card">
+        <h5 class="card-header">
+            Every Day Riders - Day {{ num_days }}
+        </h5>
+        <div class="card-body">
+            {% if all_done %}
+                <p>
+                    <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
+                {% endif %}
+                <p>
+                    If your name is green, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!</em>
+                </p>
+                <p>
+                    If your name is yellow or red, either you haven't ridden (see <a href="http://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.
+                </p>
+                <p>
+                    Yellow means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
+                </p>
+                <p>
+                    Red means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
+                </p>
+                <table class="table table-condensed">
+                    <tr>
+                        <th>
+                            Rider
+                        </th>
+                        <th class="number">
+                            Days
+                        </th>
+                        <th class="number">
+                            Miles
+                        </th>
+                        <th class="emoji">
+                            Every Day Rider?
+                        </th>
+                    </tr>
+                    {% for a, b, c, d in ride_days %}
+                        {% if c >= num_days %}
+                            <tr class="success">
+                            {% elif c == (num_days - 1) and not all_done %}
+                                <tr class="warning">
+                                {% elif c < num_days %}
+                                    <tr class="danger">
+                                    {% endif %}
+                                    <td>
+                                        <a href="/people/{{ a }}">{{ b }}</a>
+                                    </td>
+                                    <td class="number">
+                                        {{ c }}
+                                    </td>
+                                    <td class="number">
+                                        {{ d | round(1) }}
+                                    </td>
+                                    <td class="emoji">
+                                        {% if c >= num_days %}
+                                            🏆
+                                        {% elif c == (num_days - 1) and not all_done %}
+                                            ⚠️
+                                        {% endif %}
+                                        <td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    {% endblock %}

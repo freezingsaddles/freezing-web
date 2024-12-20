@@ -114,7 +114,13 @@ To get `freezing-web` to permanently use the `freezing-model` changes you will h
 
 ### Coding standards
 
-The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/), [isort](https://pycqa.github.io/isort/) and [djlint}(https://www.djlint.com/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+
+To run _all_ the linters and formatters, use the following commands:
+```
+bin/lint.sh
+bin/fmt.sh
+```
 
 ## Docker Deployment
 
