@@ -1,7 +1,12 @@
+import faulthandler
+import signal
+
 from flask import Flask, g, session
 from freezing.model import init_model, meta
 
-from .config import config
+faulthandler.register(signal.SIGUSR1)
+
+from .config import config  # noqa
 
 # Thanks https://stackoverflow.com/a/17073583
 app = Flask(

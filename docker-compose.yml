@@ -26,7 +26,7 @@ services:
     depends_on:
       - freezing-db
     ports:
-      - "${FREEZING_WEB_PORT:-8000}:5000"
+      - "${FREEZING_WEB_PORT:-8000}:8000"
     volumes:
       - ./data/cache:/data/cache
       - ./leaderboards:/data/leaderboards
