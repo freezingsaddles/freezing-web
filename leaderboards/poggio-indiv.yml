@@ -1,8 +1,10 @@
 ---
 title: POGGIO (Individual)
 description: |
-  Number of individual rides of the <a href=\"https://www.strava.com/segments/650024\">POGGIO</a> segment.
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/
+  Number of individual rides of the
+  <a href="https://www.strava.com/segments/650024">POGGIO</a>
+  segment.
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/  # yamllint disable-line
 sponsor: spelter
 fields:
   - name: id
