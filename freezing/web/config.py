@@ -25,6 +25,7 @@ class Config:
 
     Refactored with the help of GitHub Copilot.
     """
+
     BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="localhost")
     BEANSTALKD_PORT = env("BEANSTALKD_PORT", cast=int, default=11300)
     BIND_INTERFACE: str = env("BIND_INTERFACE", default="127.0.0.1")
