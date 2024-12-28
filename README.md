@@ -170,11 +170,14 @@ vim /opt/compose/.env
 ```
 
 * Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
-  * teams
   * athletes
   * rides
+  * ride_efforts
   * ride_geo
+  * ride_photos
+  * ride_tracks
   * ride_weather
+  * teams
 * Insert a new record into the `teams` table matching the MAIN_TEAM id:
 
     insert into teams values (567288, 'Freezing Saddles 2020', 1);
