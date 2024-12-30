@@ -14,13 +14,13 @@ services:
       - ./data/mysql/data:/var/lib/mysql
       - ./data/mysql/sql:/sql
     environment:
-      MYSQL_DATABASE: freezing
-      MYSQL_PASSWORD: zeer0
-      MYSQL_ROOT_PASSWORD: fr33z3
-      MYSQL_USER: freezing
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-freezing}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-zeer0}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fr33z3}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER:-root}
+      MYSQL_USER: ${MYSQL_USER:-freezing}
 
   freezing-web:
-    image: freezingsaddles/freezing-web
     build: ./
     container_name: freezing-web-dev
     depends_on:
@@ -48,8 +48,8 @@ services:
       OBSERVER_TEAMS: ${OBSERVER_TEAMS:-5678,9013}
       REGISTRATION_SITE: ${REGISTRATION_SITE:-https://freezingsaddles.info/}
       SECRET_KEY: ${SECRET_KEY:-e6c07402-0307-11e8-b087-000000000000}  # yamllint disable-line
-      SQLALCHEMY_URL: 'mysql+pymysql://freezing:zeer0@freezing-db-dev/freezing?charset=utf8mb4&binary_prefix=true'  # yamllint disable-line
-      SQLALCHEMY_URL_ROOT: 'mysql+pymysql://root:fr33z3@freezing-db-dev/mysql?charset=utf8mb4&binary_prefix=true'  # yamllint disable-line
+      SQLALCHEMY_URL: "mysql+pymysql://${MYSQL_USER:-freezing}:${MYSQL_PASSWORD:-zeer0}@freezing-db-dev/${MYSQL_DATABASE:-freezing}?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
+      SQLALCHEMY_URL_ROOT: "mysql+pymysql://${MYSQL_ROOT_USER:-freezing}:${MYSQL_ROOT_PASSWORD:-zeer0}@freezing-db-dev/mysql?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
       START_DATE: ${START_DATE:-2018-01-01T00:00:00-05:00}
       STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID:-?}
       STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET:-?}

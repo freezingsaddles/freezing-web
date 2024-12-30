@@ -3,6 +3,7 @@
 *.pyc
 *.tmp
 .env*
+.gitkeep
 .venv*
 /*.iml
 /build
