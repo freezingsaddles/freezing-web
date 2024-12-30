@@ -99,14 +99,15 @@ def people_show_person(user_id):
     return render_template(
         "people/show.html",
         data={
-            "user": our_user,
+            "environment": config.ENVIRONMENT,
+            "my_tribes": my_tribes,
             "team": our_team,
-            "weekrides": weekly_rides,
-            "weektotal": weekly_dist,
             "totaldist": total_dist,
             "totalrides": total_rides,
             "tribal_groups": tribal_groups,
-            "my_tribes": my_tribes,
+            "user": our_user,
+            "weekrides": weekly_rides,
+            "weektotal": weekly_dist,
         },
     )
 
