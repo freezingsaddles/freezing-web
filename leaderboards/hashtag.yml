@@ -17,6 +17,14 @@ tags:
     sponsor: bikingjenn
     rank_by_rides: True
 
+  - tag: bob
+    name: Baby on Board
+    description: |
+      Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with #BoB.
+    url: https://www.bikearlingtonforum.com/forums/topic/2025-pointless-prize-baby-on-board-bob/
+    sponsor: bigredboiler
+    rank_by_rides: True
+
   - tag: biathlon
     name: Biathlon
     description: |
