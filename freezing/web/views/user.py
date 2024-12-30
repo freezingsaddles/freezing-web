@@ -73,44 +73,15 @@ def rides_data():
 
         results.append(
             dict(
-                id=r.id,
-                private=r.private,
-                name=r.name,
-                start_date=r.start_date,
-                elapsed_time=r.elapsed_time,
-                moving_time=r.moving_time,
-                distance=r.distance,
-                photos_fetched=r.photos_fetched,
                 avg_temp=avg_temp,
+                distance=r.distance,
+                elapsed_time=r.elapsed_time,
+                id=r.id,
+                moving_time=r.moving_time,
+                name=r.name,
+                photos_fetched=r.photos_fetched,
+                private=r.private,
+                start_date=r.start_date,
             )
         )
-
-    # rides = meta.session_factory().query(Ride).all()
     return bt_jsonify(results)
-
-
-#     athlete_id = sa.Column(sa.BigInteger, sa.ForeignKey('athletes.id', ondelete='cascade'), nullable=False, index=True)
-#     elapsed_time = sa.Column(sa.Integer, nullable=False) # Seconds
-#     # in case we want to conver that to a TIME type ... (using time for interval is kinda mysql-specific brokenness, though)
-#     # time.strftime('%H:%M:%S', time.gmtime(12345))
-#     moving_time = sa.Column(sa.Integer, nullable=False, index=True) #
-#     elevation_gain = sa.Column(sa.Integer, nullable=True) # 269.6 (feet)
-#     average_speed = sa.Column(sa.Float) # mph
-#     maximum_speed = sa.Column(sa.Float) # mph
-#     start_date = sa.Column(sa.DateTime, nullable=False, index=True) # 2010-02-28T08:31:35Z
-#     distance = sa.Column(sa.Float, nullable=False, index=True) # 82369.1 (meters)
-#     location = sa.Column(sa.String(255), nullable=True)
-#
-#     commute = sa.Column(sa.Boolean, nullable=True)
-#     trainer = sa.Column(sa.Boolean, nullable=True)
-#
-#     efforts_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
-#
-#     timezone = sa.Column(sa.String(255), nullable=True)
-#
-#     geo = orm.relationship("RideGeo", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
-#     weather = orm.relationship("RideWeather", uselist=False, backref="ride", cascade="all, delete, delete-orphan")
-#     photos = orm.relationship("RidePhoto", backref="ride", cascade="all, delete, delete-orphan")
-#
-#     photos_fetched = sa.Column(sa.Boolean, default=False, nullable=False)
-#     private = sa.Column(sa.Boolean, default=False, nullable=False)

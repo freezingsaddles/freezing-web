@@ -46,6 +46,51 @@ fieldset[disabled] .btn-strava.active {
   color: #FC4C02;
   background-color: #ffffff;
 }
+.btn-impersonate {
+  color: #ffffff;
+  background-color: #022CA2;
+  border-color: #3C3CA2;
+}
+
+.btn-impersonate:hover,
+.btn-impersonate:focus,
+.btn-impersonate:active,
+.btn-impersonate.active,
+.open .dropdown-toggle.btn-impersonate {
+  color: #ffffff;
+  background-color: #100640;
+  border-color: #3C3CA2;
+}
+
+.btn-impersonate:active,
+.btn-impersonate.active,
+.open .dropdown-toggle.btn-impersonate {
+  background-image: none;
+}
+
+.btn-impersonate.disabled,
+.btn-impersonate[disabled],
+fieldset[disabled] .btn-impersonate,
+.btn-impersonate.disabled:hover,
+.btn-impersonate[disabled]:hover,
+fieldset[disabled] .btn-impersonate:hover,
+.btn-impersonate.disabled:focus,
+.btn-impersonate[disabled]:focus,
+fieldset[disabled] .btn-impersonate:focus,
+.btn-impersonate.disabled:active,
+.btn-impersonate[disabled]:active,
+fieldset[disabled] .btn-impersonate:active,
+.btn-impersonate.disabled.active,
+.btn-impersonate[disabled].active,
+fieldset[disabled] .btn-impersonate.active {
+  background-color: #022CA2;
+  border-color: #FC3CA2;
+}
+
+.btn-impersonate .badge {
+  color: #022CA2;
+  background-color: #ffffff;
+}
     </style>
 {% endblock %}
 {% block content %}
@@ -62,6 +107,10 @@ fieldset[disabled] .btn-strava.active {
             </h6>
             <a class="btn btn-strava btn-sm"
                href="https://www.strava.com/athletes/{{ data.user.id }}">View on Strava</a>
+            {% if data.environment == 'localdev' %}
+                <a class="btn btn-impersonate btn-sm"
+                   href="/authorization?athlete_id={{ data.user.id }}">🕵 Impersonate 👀</a>
+            {% endif %}
         </div>
     </div>
     <div class="mt-3 mt-lg-4 d-grid grid-gap-3 grid-gap-lg-4 grid-lg-2">

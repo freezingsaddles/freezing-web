@@ -170,6 +170,14 @@
         }
 	}
 
+	function distanceFormatter(value, row) {
+        return value.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+	}
+
+	function privateFormatter(value, row) {
+        return value ? "🕵&nbsp;Private&nbsp;🕵" : "Public";
+	}
+
 	function refetchPhotosForRide(rideId) {
 		$.ajax({
 			url: "/my/refetch_ride_photos",
@@ -226,11 +234,25 @@
 					formatter: rideFormatter
 				},
 				{
+					field: "private",
+					title: "Visibility",
+					sortable: true,
+					align: "center",
+					formatter: privateFormatter
+				},
+				{
 					field: "start_date",
 					title: "Date",
 					sortable: true,
 					align: "right",
 					formatter: stampFormatter
+				},
+				{
+					field: "distance",
+					title: "Distance (mi)",
+					sortable: true,
+					align: "right",
+					formatter: distanceFormatter
 				},
 				{
 					field: "moving_time",
