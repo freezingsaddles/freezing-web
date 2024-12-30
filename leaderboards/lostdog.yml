@@ -1,7 +1,6 @@
 ---
 title: Lost Dog
 description: "Number of rides to Lost Dog (tagged with #LostDog)."
-url: http://bikearlingtonforum.com/showthread.php?14029-The-Lost-Dog-Award
 fields:
   - name: id
     visible: false

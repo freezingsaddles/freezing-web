@@ -5,16 +5,12 @@ tags:
     name: Expand Your Horizons
     description: |
       Ride to a cannabis dispensary and take a picture of it. Tag rides with <code>#420</code> (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
-    url: http://bikearlingtonforum.com/showthread.php?18120-Pointless-prize-Quaxapalooza
-    sponsor: AlanA
     rank_by_rides: False
 
   - tag: abc
     name: Vehicle ABCs
     description: |
        find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
-    url: http://bikearlingtonforum.com/showthread.php?21015-POINTLESS-PRIZE-2023-VEHICLE-ABCs-abc
-    sponsor: bikingjenn
     rank_by_rides: True
 
   - tag: bob
@@ -29,16 +25,12 @@ tags:
     name: Biathlon
     description: |
       No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see.
-    url: http://bikearlingtonforum.com/showthread.php?21007-Pointless-Prize-Biathalon
-    sponsor: lordofthemark
     rank_by_rides: False
 
   - tag: bikeinfrastructure
     name: Bike Infrastructure
     description: |
       Find publicly accessible cool infrastructure that makes our cycling lives easier. Tag with <code>#BikeInfrastructure</code>.
-    url: http://bikearlingtonforum.com/showthread.php?18116-Bike-Infrastructure-Pointless-Prize
-    sponsor: smb9600
     rank_by_rides: True
 
   - tag: bingo
@@ -49,13 +41,21 @@ tags:
     sponsor: cvcalhoun
     rank_by_rides: True
 
+  - tag: civilwarforts
+    name: Civil War Forts
+    description: |
+      During the American Civil War (1861-1865) Washington was surrounded by a chain of fortifications. Mostly in DC and northern Virginia, I think maybe a couple in Maryland.
+      Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag #civilwarforts on Strava.
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-civilwarforts/
+    sponsor: lordofthemark
+    rank_by_rides: True
+
   - tag: Deflated
     name: Don’t be deflated this prize is for you!
     description: |
       Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code>, the person with
       the most flats wins! Well loses.
     url: https://www.bikearlingtonforum.com/forums/topic/deflated-pointless-prize/
-    sponsor: unsponsored
     rank_by_rides: True
 
   - tag: fire
@@ -63,13 +63,11 @@ tags:
     description: |
       Ride your bike and take photo of the fire stations.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-fire-bad/
-    sponsor: alana
     rank_by_rides: True
 
   - tag: donut
     name: Doughnut Rides
     description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
-    sponsor: Currently Unsponsored
     rank_by_rides: True
 
   # This is a first cut of an implementation for this, to really hew to the rules would be much more
@@ -78,8 +76,6 @@ tags:
     name: First Time Riders
     description: |
        Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
-    url: http://bikearlingtonforum.com/showthread.php?21057-FS-First-Time-Riders-A-PP-just-for-you!
-    sponsor: Kbikeva
     rank_by_rides: True
 
   - tag: flag
@@ -87,7 +83,6 @@ tags:
     description: |
       Take a photo of a flag on your ride.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2024-flag/
-    sponsor: bigredboiler
     rank_by_rides: True
 
   - tag: freezingerrands
@@ -95,23 +90,18 @@ tags:
     description: |
        Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
        Tag with <code>#FreezingErrands</code>.
-    url: http://bikearlingtonforum.com/showthread.php?18042-Pointless-Prize-Thread-2021&p=203703#post203703
-    sponsor: BeeTinDC
     rank_by_rides: True
 
   - tag: fswormhole
     name: Wormholes
     description: |
       Find clever connections between places or tears in spacetime (tagged with <code>#FSWormhole</code>).
-    sponsor: Felipe
-    url: http://bikearlingtonforum.com/showthread.php?18080-FSWormhole/
     rank_by_rides: True
 
   - tag: goldenspike
     name: Golden Spike
     description: |
       Ride your bike to a metro or train station and post a photo.
-    sponsor: arlcxrider
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-golden-spike-award/
     rank_by_rides: True
 
@@ -136,8 +126,6 @@ tags:
     description: |
       Heroes can be anywhere -- a hospital, school, grocery store, or police station. Find a sign
       that thanks them, take a picture, and tag your ride <code>#HeroesWorkHere</code>.
-    sponsor: bikedavid
-    url: http://bikearlingtonforum.com/showthread.php?18179-HeroesWorkHere-Pointless-Prize
     rank_by_rides: True
 
   - tag: lakefinder
@@ -145,16 +133,12 @@ tags:
     description: |
       Ride your bike a least a mile to any lake, pond or massive impounded body of water (loosely defined) that is freely accessible
       to the public. Tag with <code>#LakeFinder</code>.
-    sponsor: Boomer2U
-    url: http://bikearlingtonforum.com/showthread.php?18069-FS2021-LakeFinder
     rank_by_rides: True
 
   - tag: oldGeorge
     name: Old Georgetown Bike Lane
     description: |
        Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
-    sponsor: Jessica Hirschhorn
-    url: http://bikearlingtonforum.com/showthread.php?21013-Pointless-Prize!-Old-Georgetown-Bike-Lane
     rank_by_rides: True
 
   - tag: parks
@@ -171,7 +155,6 @@ tags:
     name: Pizzaneuring
     description: |
       Ride for pizza, eat pizza, and post a photo.
-    sponsor: lordofthemark
     url: https://www.bikearlingtonforum.com/forums/topic/pizzaneuring/
     rank_by_rides: True
 
@@ -196,7 +179,7 @@ tags:
     name: Photo Scavenger Hunt
     description: |
       Ride your bike to find the word of the day and post its photo on the forum.
-    sponsor: Kelley and Serdar
+    sponsor: kbikeva
     url: https://www.bikearlingtonforum.com/forums/topic/2025-photo-scavenger-hunt/
     rank_by_rides: True
 
@@ -204,7 +187,6 @@ tags:
     name: Socks
     description: |
       Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
-    sponsor: Jessica Hirschhorn
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-socks/
     rank_by_rides: False
 
@@ -214,16 +196,12 @@ tags:
       Ride your bike, at least a mile, to any site related to
       Science, Technology, Engineering, or Mathematics (STEM) and take a picture with your bike.
       Tag with <code>#STEM</code>.
-    sponsor: bikesnick
-    url: http://bikearlingtonforum.com/showthread.php?18148-FS2021-Pointless-Prize-STEM
     rank_by_rides: False
 
   - tag: thetacoride
     name: The Taco Ride
     description: |
-      Leon and Robbie Rob are co-sponsoring The Taco Ride pointless prize. Of course, you know there are lots of taco places in the DMV area. And there is no better way re-energize during a ride or end a long ride with some tacos! For this pointless prize, simply ride your bike at least 5 miles round trip and snap a pic of your bike in front of the establishment, along with a pic of your meal. <strong>A BONUS POINT WILL BE GIVEN FOR A VEGAN OR VEGGIE TACO!</strong>
-    sponsor: Robbie Rob
-    url: http://bikearlingtonforum.com/showthread.php?21011-The-Taco-Ride
+      Of course, you know there are lots of taco places in the DMV area. And there is no better way re-energize during a ride or end a long ride with some tacos! For this pointless prize, simply ride your bike at least 5 miles round trip and snap a pic of your bike in front of the establishment, along with a pic of your meal. <strong>A BONUS POINT WILL BE GIVEN FOR A VEGAN OR VEGGIE TACO!</strong>
     rank_by_rides: True
 
   - tag: tandemstyle
@@ -231,15 +209,12 @@ tags:
     description: |
       If you see a tandem, snap a picture, put it in your Strava, and tag with <code>#tandemstyle</code>.
       If you see Russ @DCA & Elizabeth I Like Wheels on Miss MoneyPenny, snap that picture for 5 points extra!
-    sponsor: elizsnyder
-    url: http://bikearlingtonforum.com/showthread.php?18114-tandemstyle-Pointless-Prize
     rank_by_rides: True
 
   - tag: tandem
     name: Tandem
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
-    sponsor: NoVaNoobGA
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-tandem-rides-2/
     rank_by_rides: True
 
@@ -247,22 +222,17 @@ tags:
     name: Tandem - Visually Impaired
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
-    sponsor: NoVaNoobGA
-    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
     rank_by_rides: True
 
   - tag: tandemchild
     name: Tandem Child
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
-    sponsor: NoVaNoobGA
-    url: http://bikearlingtonforum.com/showthread.php?21001-Pointless-Prize-Tandem
     rank_by_rides: True
 
   - tag: treats
     name: Street Treats
     description: |
       Find a street treat out in the wild while riding your bike.
-    sponsor: Boomer2U
     url: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
     rank_by_rides: True
