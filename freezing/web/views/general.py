@@ -271,9 +271,9 @@ def authorization():
     team = None
     message = None
     log.info(f"Authorization request host: {request.host}")
-    if config.ENVIRONMENT == "localdev" and request.host in [
-        "localhost:5000",
-        "127.0.0.1:5000",
+    if config.ENVIRONMENT == "localdev" and request.host.split(":")[0] in [
+        "localhost",
+        "127.0.0.1",
     ]:
         # if config.ENVIRONMENT == "localdev":
         class MockAthlete:
