@@ -42,3 +42,6 @@ jobs:
       - name: djlint Lint
         run: |
           djlint --check freezing/web/templates
+      - name: PyMarkdown Lint
+        run: |
+          pymarkdown scan .
