@@ -21,8 +21,13 @@
                 to the tag with an <code>x</code> like so:
                 <code>#foodrescue<strong>x2</strong></code>.
             </p>
+            {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-prize-rescuing-food-by-bike/" %}
+            {% set sponsor = "Henry" %}
             <p>
-                <a href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-rescuing-food-by-bike/">Prize sponsored by henry.</a>
+                See: <a href="{{ url }}">{{ url }}</a>
+            </p>
+            <p>
+                Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
             </p>
             <table class="table table-condensed">
                 <tr>
