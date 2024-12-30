@@ -108,8 +108,8 @@ fieldset[disabled] .btn-impersonate.active {
             <a class="btn btn-strava btn-sm"
                href="https://www.strava.com/athletes/{{ data.user.id }}">View on Strava</a>
             {% if data.environment == 'localdev' %}
-            <a class="btn btn-impersonate btn-sm"
-               href="/authorization?athlete_id={{ data.user.id  }}">🕵 Impersonate 👀</a>
+                <a class="btn btn-impersonate btn-sm"
+                   href="/authorization?athlete_id={{ data.user.id }}">🕵 Impersonate 👀</a>
             {% endif %}
         </div>
     </div>

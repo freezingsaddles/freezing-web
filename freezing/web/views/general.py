@@ -17,7 +17,7 @@ from flask import (
     url_for,
 )
 from freezing.model import meta
-from freezing.model.orm import Ride, RidePhoto
+from freezing.model.orm import Athlete, Ride, RidePhoto
 from sqlalchemy import text
 from stravalib import Client
 
@@ -276,21 +276,34 @@ def authorization():
         "127.0.0.1",
     ]:
         # if config.ENVIRONMENT == "localdev":
+        # Cheat and pretend we're authorized
+        athlete_id = int(request.args.get("athlete_id", 2332659))
+        log.warning(
+            f"Local development login bypass exercised for athlete {athlete_id}"
+        )
+
         class MockAthlete:
             firstname: str = "Ferd"
             lastname: str = "Berferd"
             profile_medium: str = "/img/logo-blue-sm.png"
             email: str = "ferd.berferd@example.com"
 
-            def __init__(self, athlete_id: int):
+            def __init__(self, athlete_id: int, firstname: str, lastname: str):
                 self.id = athlete_id
+                self.firstname = firstname
+                self.lastname = lastname
 
-        # Cheat and pretend we're authorized
-        athlete_id = int(request.args.get("athlete_id", 2332659))
-        log.warning(
-            f"Local development login bypass exercised for athlete {athlete_id}"
+        athlete = (
+            meta.scoped_session()
+            .query(Athlete)
+            .filter(Athlete.id == athlete_id)
+            .first()
         )
-        strava_athlete = MockAthlete(athlete_id)
+        strava_athlete = MockAthlete(
+            athlete_id,
+            athlete.display_name.split(" ")[0],
+            athlete.display_name.split(" ")[:0],
+        )
         message = "Local development enabled"
     else:
         code = request.args.get("code")
