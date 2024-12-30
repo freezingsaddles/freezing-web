@@ -11,13 +11,19 @@
                 double dips.
             </p>
             {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024" %}
-            {% set sponsor = "randomduck" %}
+            {% set sponsor = "" %}
             <p>
                 See: <a href="{{ url }}">{{ url }}</a>
             </p>
-            <p>
-                Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
-            </p>
+            {% if sponsor %}
+                <p>
+                    Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+                </p>
+            {% else %}
+                <p class="text-muted">
+                    This ride has no sponsor and is completely pointless.
+                </p>
+            {% endif %}
             <table class="table table-condensed">
                 <tr>
                     <th class="number">
