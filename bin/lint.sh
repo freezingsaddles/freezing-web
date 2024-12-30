@@ -9,3 +9,5 @@ flake8 freezing
 echo "*** mypy ***"
 echo "*** djlint ***"
 djlint --check freezing/web/templates
+echo "*** pymarkdown ***"
+pymarkdown scan .
