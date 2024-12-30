@@ -3,8 +3,6 @@ title: Supple Ride
 description: |
   Number of miles multiplied by tyre width (2" is <code>#FSrealsuppleride2</code>,
   3" is <code>#FSrealsuppleride3</code>, 4" is <code>#FSrealsuppleride4</code>).
-  Drevil sponsors this prize.
-url: http://bikearlingtonforum.com/showthread.php?15642-Pointless-Prize-Real-Supple-Ride-FSrealsuppleride
 fields:
   - name: id
     visible: false
