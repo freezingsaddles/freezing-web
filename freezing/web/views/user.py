@@ -84,6 +84,4 @@ def rides_data():
                 start_date=r.start_date,
             )
         )
-
-    # rides = meta.session_factory().query(Ride).all()
     return bt_jsonify(results)

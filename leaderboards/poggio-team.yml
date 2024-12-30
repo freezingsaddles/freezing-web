@@ -1,7 +1,10 @@
 ---
 title: POGGIO (Team)
-description: "Number of team rides of the <a href=\"https://www.strava.com/segments/650024\">POGGIO</a> segment."
-url: http://bikearlingtonforum.com/showthread.php?15654-Pointless-Prize-POGGIO-Simulations
+description: |
+  Number of team rides of the
+  <a href="https://www.strava.com/segments/650024">POGGIO</a>
+  segment.
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/  # yamllint disable-line
 fields:
   - name: id
     visible: false
