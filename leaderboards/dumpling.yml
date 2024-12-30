@@ -8,7 +8,7 @@ fields:
   - name: athlete_name
     label: Athlete
     format: "<a href=\"/people/{id}\">{athlete_name}</a>"
-  - name: dumpling_rides 
+  - name: dumpling_rides
     label: Dumpling Rides
     rank_by: true
     type: number

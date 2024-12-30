@@ -131,9 +131,11 @@
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row" style="font-size: 1.5rem">
                     <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/team_text">{{ team_count }} team
-                        {% if team_count != 1 %}
-                            s
+                       href="/leaderboard/team_text">{{ team_count }}
+                        {% if team_count == 1 %}
+                            team
+                            {% else %}
+                            teams
                         {% endif %}
                     </a>
                     <a class="flex-grow-1 text-center tag-link"

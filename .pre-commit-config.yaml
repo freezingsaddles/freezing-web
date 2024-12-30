@@ -14,5 +14,3 @@ repos:
     rev: v0.9.26
     hooks:
       - id: pymarkdown
-        args:
-          - "-d MD013 scan ."
