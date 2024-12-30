@@ -30,6 +30,10 @@
             <p>
                 Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ meta.sponsor }}/">{{ meta.sponsor }}</a></em>.
             </p>
+        {% else %}
+            <p class="text-muted">
+                This ride has no sponsor and is completely pointless.
+            </p>
         {% endif %}
     {% else %}
         <p>

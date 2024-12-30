@@ -1,7 +1,6 @@
 ---
 title: Alexandria Infrastructure
 description: "Number of rides of all Alexandria Infrastructure segments (i.e. the minimum rides of any one segment)."
-url: http://bikearlingtonforum.com/showthread.php?14047-Ride-Alexandria-Infrastructure-Pointless-Prize-2019
 fields:
   - name: id
     visible: false

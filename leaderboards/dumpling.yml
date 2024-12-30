@@ -1,7 +1,6 @@
 ---
 title: Dumpling
 description: "Number of rides to eat dumplings (tagged with #dumplingride)."
-url: http://bikearlingtonforum.com/showthread.php?13988-Dumpling-Ride-Pointless-Prize
 fields:
   - name: id
     visible: false
