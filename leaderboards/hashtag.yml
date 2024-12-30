@@ -49,6 +49,15 @@ tags:
     sponsor: cvcalhoun
     rank_by_rides: True
 
+  - tag: civilwarforts
+    name: Civil War Forts
+    description: |
+      During the American Civil War (1861-1865) Washington was surrounded by a chain of fortifications. Mostly in DC and northern Virginia, I think maybe a couple in Maryland.
+      Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag #civilwarforts on Strava.
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-civilwarforts/
+    sponsor: lordofthemark
+    rank_by_rides: True
+
   - tag: Deflated
     name: Don’t be deflated this prize is for you!
     description: |
