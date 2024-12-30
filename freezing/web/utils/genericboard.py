@@ -60,6 +60,7 @@ class GenericBoardFieldSchema(BaseSchema):
     label = fields.Str()
     type = fields.Str()
     format = fields.Str()
+    sponsor = fields.Str()
     visible = fields.Bool()
     rank_by = fields.Bool()
 
@@ -68,6 +69,7 @@ class GenericBoard(BaseMessage):
     title = None
     description = None
     url = None
+    sponsor = None
     query = None
     fields: List[GenericBoardField] = None
 
@@ -78,6 +80,7 @@ class GenericBoardSchema(BaseSchema):
     title = fields.Str()
     description = fields.Str()
     url = fields.Str()
+    sponsor = fields.Str()
     query = fields.Str(required=True, allow_none=False)
     fields = fields.Nested(GenericBoardFieldSchema, many=True, required=False)
 

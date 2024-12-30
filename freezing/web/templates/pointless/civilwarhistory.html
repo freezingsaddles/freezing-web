@@ -1,42 +1,83 @@
 {% extends "base.html" %}
-{% block title %}Civil War History Rides{% endblock %}
+{% block title %}
+    Civil War History Rides
+{% endblock %}
 {% block content %}
-<div class="row"><div class="col-md-12"><h1>Civil War History</h1></div></div>
-<div class="row"><div class="col-md-12">
-	<p>Ride to a Civil War historical marker and tag your ride with #CivilWarMarker to earn five points. Find streets named after Civil War figures
-  and tag your ride with #CivilWarStreet to earn two points. You may find one marker and one street per day.</p>
-	<p>See: <a href="http://bikearlingtonforum.com/showthread.php?18067-Pointless-Prize-Civil-War-History">http://bikearlingtonforum.com/showthread.php?18067-Pointless-Prize-Civil-War-History</a></p>
-</div></div>
-
-<div class="row">
-  <div class="col-md-12">
-    {{tdata}}
-    	<table id="scores" class="table table-striped">
-        <thead><tr>
-           <th class="number">Rank</th>
-           <th>Athlete</th>
-           <th class="number">Markers Visited</th>
-           <th class="number">Markers Points</th>
-           <th class="number">Streets Found</th>
-           <th class="number">Streets Points</th>
-           <th class="number">Total Points</th>
-        </tr>
-           </thead>
-
-         <tbody>
-           {% for a,b,c,d,e,f,g in data.tdata %}
-               <tr>
-                 <td class="number">{{loop.index}}</td>
-                 <td><a href="/people/{{a}}">{{b}}</a></td>
-                 <td class="number">{{c}}</td>
-                 <td class="number">{{d}}</td>
-                 <td class="number">{{e}}</td>
-                 <td class="number">{{f}}</td>
-                 <td class="number">{{g}}</td>
-               </tr>
-           {% endfor %}
-         </tbody>
-       </table>
-   </div>
-</div>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>
+                Civil War History
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Ride to a Civil War historical marker and tag your ride with #CivilWarMarker to earn five points. Find streets named after Civil War figures
+                and tag your ride with #CivilWarStreet to earn two points. You may find one marker and one street per day.
+            </p>
+            <p>
+                See: <a href="http://bikearlingtonforum.com/showthread.php?18067-Pointless-Prize-Civil-War-History">http://bikearlingtonforum.com/showthread.php?18067-Pointless-Prize-Civil-War-History</a>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {{ tdata }}
+            <table id="scores" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="number">
+                            Rank
+                        </th>
+                        <th>
+                            Athlete
+                        </th>
+                        <th class="number">
+                            Markers Visited
+                        </th>
+                        <th class="number">
+                            Markers Points
+                        </th>
+                        <th class="number">
+                            Streets Found
+                        </th>
+                        <th class="number">
+                            Streets Points
+                        </th>
+                        <th class="number">
+                            Total Points
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a,b,c,d,e,f,g in data.tdata %}
+                        <tr>
+                            <td class="number">
+                                {{ loop.index }}
+                            </td>
+                            <td>
+                                <a href="/people/{{ a }}">{{ b }}</a>
+                            </td>
+                            <td class="number">
+                                {{ c }}
+                            </td>
+                            <td class="number">
+                                {{ d }}
+                            </td>
+                            <td class="number">
+                                {{ e }}
+                            </td>
+                            <td class="number">
+                                {{ f }}
+                            </td>
+                            <td class="number">
+                                {{ g }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

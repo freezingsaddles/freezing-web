@@ -1,30 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-    <h5 class="card-header">
-        My Tribes
-        <span class="float-end">
-            <a href="/tribes/leaderboard">Cancel</a>
-        </span>
-    </h5>
-    <div class="card-body">
-        <form method="post">
-            {% for group in tribal_groups %}
-            <h4>{{group.name}}</h4>
-            <select name="{{group.name}}" class="form-control" style="margin-bottom: 15px">
-                <option></option>
-                {% for tribe in group.tribes %}
-                    {% if tribe == my_tribes[group.name] %}
-                        <option selected>{{tribe}}</option>
-                    {% else %}
-                        <option>{{tribe}}</option>
-                    {% endif %}
+    <div class="card">
+        <h5 class="card-header">
+            My Tribes
+            <span class="float-end">
+                <a href="/tribes/leaderboard">Cancel</a>
+            </span>
+        </h5>
+        <div class="card-body">
+            <form method="post">
+                {% for group in tribal_groups %}
+                    <h4>
+                        {{ group.name }}
+                    </h4>
+                    <select name="{{ group.name }}"
+                            class="form-control"
+                            style="margin-bottom: 15px">
+                        <option>
+                        </option>
+                        {% for tribe in group.tribes %}
+                            {% if tribe == my_tribes[group.name] %}
+                                <option selected>
+                                    {{ tribe }}
+                                </option>
+                            {% else %}
+                                <option>
+                                    {{ tribe }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 {% endfor %}
-            </select>
-            {% endfor %}
-            <button style="padding-left: 40px; padding-right: 40px; margin-top: 30px; margin-bottom: 20px" type="submit" class="btn btn-primary center-block">Submit</button>
-        </form>
+                <button style="padding-left: 40px;
+                               padding-right: 40px;
+                               margin-top: 30px;
+                               margin-bottom: 20px"
+                        type="submit"
+                        class="btn btn-primary center-block">
+                    Submit
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 {% endblock %}

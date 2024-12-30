@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
     <script type="text/javascript">
-
       // Load the Visualization API and the corechart package.
       google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -39,13 +38,18 @@
               chart.draw(data, options);
           });
 	  }
-	  </script>
+    </script>
 {% endblock %}
-	  
 {% block content %}
-  	<h1>Team Leaderboard (Chart)</h1>
-  	<p>This leaderboard is also available as a <a href="/leaderboard/team_text">text-only version</a>.</p>
+    <h1>
+        Team Leaderboard (Chart)
+    </h1>
+    <p>
+        This leaderboard is also available as a <a href="/leaderboard/team_text">text-only version</a>.
+    </p>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_leaderboard" class="g-chart"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading team leaderboard...</div>
-    
+    <div id="chart_team_leaderboard" class="g-chart">
+        <img src="/img/loading2-blue.gif" alt="">
+        &nbsp;Loading team leaderboard...
+    </div>
 {% endblock %}

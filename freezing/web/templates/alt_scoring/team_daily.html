@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-<h5 class="card-header">Team Points by Day</h5>
-<div class="card-body">
-	<p>For each day, the team with the highest daily total gets {{team_total|length}} points. Second gets {{team_total|length - 1}}, down to 1 for the last place team.</p>
-	<ol>
-		{% for a,b in team_total %}
-			<li><strong>{{b}}</strong> {{a}}</li>
-		{% endfor %}
-	</ol>
-</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            Team Points by Day
+        </h5>
+        <div class="card-body">
+            <p>
+                For each day, the team with the highest daily total gets {{ team_total|length }} points. Second gets {{ team_total|length - 1 }}, down to 1 for the last place team.
+            </p>
+            <ol>
+                {% for a,b in team_total %}
+                    <li>
+                        <strong>{{ b }}</strong> {{ a }}
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
 {% endblock %}

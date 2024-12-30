@@ -1,35 +1,58 @@
 {% extends "base.html" %}
-{% block title %}FS: {{title}}{% endblock %}
+{% block title %}
+    FS: {{ title }}
+{% endblock %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">{{ title }}</h5>
-	<div class="card-body">
-		<p>{{ description | safe }}</p>
-		{% if url %}<p>See: <a href="{{ url }}">{{ url }}</a></p>{% endif %}
-		<table class="table table-condensed">
-			<thead>
-				<tr>
-					<th class="number">Rank</th>
-					{% for field in fields %}
-					{% if field.visible %}
-					<th class="{{field.type}}">{{ field.label or field.name }}</th>
-					{% endif %}
-					{% endfor %}
-				</tr>
-			</thead>
-			<tbody>
-			{% for row in data %}
-			<tr>
-				<td class="number">{{row.rank}}</td>
-				{% for field in fields %}
-				{% if field.visible %}
-				<td class="{{field.type}}">{{ row[field.name] | safe }}</td>
-				{% endif %}
-				{% endfor %}
-			</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
-</div>
+    <div class="card">
+        <h5 class="card-header">
+            {{ title }}
+        </h5>
+        <div class="card-body">
+            <p>
+                {{ description | safe }}
+            </p>
+            {% if url %}
+                <p>
+                    See: <a href="{{ url }}">{{ url }}</a>
+                </p>
+            {% endif %}
+            {% if sponsor %}
+                <p>
+                    Sponsored by <em>{{ sponsor }}</em>.
+                </p>
+            {% endif %}
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="number">
+                            Rank
+                        </th>
+                        {% for field in fields %}
+                            {% if field.visible %}
+                                <th class="{{ field.type }}">
+                                    {{ field.label or field.name }}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td class="number">
+                                {{ row.rank }}
+                            </td>
+                            {% for field in fields %}
+                                {% if field.visible %}
+                                    <td class="{{ field.type }}">
+                                        {{ row[field.name] | safe }}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

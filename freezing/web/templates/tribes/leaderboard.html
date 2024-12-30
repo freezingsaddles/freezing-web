@@ -1,42 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-    <h5 class="card-header">
-        Bike Tribes
-        <span class="float-end">
-            {% if g.logged_in %}
-            <a href="/tribes/my">My Tribes</a>
-            {% else %}
-            Log in to join tribes
-            {% endif %}
-        </span>
-    </h5>
-    <div class="card-body">
-        {% for group in tribal_groups %}
-        <h4>{{group.name}}</h4>
-        <div style="margin: 15px 25px 30px 25px">
-            {% for tribe in group.tribes %}
-            <h5>
-                {% if tribe == my_tribes[group.name] %}
-                {% if stats[(group.name, tribe)]["points"] >= maxima[group.name]["points"] %}&#128513;{% else %}&#128148;{% endif %}
+    <div class="card">
+        <h5 class="card-header">
+            Bike Tribes
+            <span class="float-end">
+                {% if g.logged_in %}
+                    <a href="/tribes/my">My Tribes</a>
+                {% else %}
+                    Log in to join tribes
                 {% endif %}
-                {{tribe}}
-                <span style="font-weight: normal">
-                    ({{stats[(group.name, tribe)]["points"]}} points,
-                    {{stats[(group.name, tribe)]["distance"]}} miles,
-                    {{stats[(group.name, tribe)]["ride_days"]}} ride days,
-                    {{stats[(group.name, tribe)]["riders"]}} riders)
-                </span>
-            </h5>
-            <div class="progress" style="margin-bottom: 5px">
-                <div
-                  class="progress-bar progress-bar-{{"success" if stats[(group.name, tribe)]["points"] >= maxima[group.name]["points"] else "warning"}} progress-bar-striped"
-                  style="width: {{100 * stats[(group.name, tribe)]["points"] / maxima[group.name]["points"]}}%">
+            </span>
+        </h5>
+        <div class="card-body">
+            {% for group in tribal_groups %}
+                <h4>
+                    {{ group.name }}
+                </h4>
+                <div style="margin: 15px 25px 30px 25px">
+                    {% for tribe in group.tribes %}
+                        <h5>
+                            {% if tribe == my_tribes[group.name] %}
+                                {% if stats[(group.name, tribe)]["points"] >= maxima[group.name]["points"] %}
+                                    &#128513;
+                                {% else %}
+                                    &#128148;
+                                {% endif %}
+                            {% endif %}
+                            {{ tribe }}
+                            <span style="font-weight: normal">
+                                ({{ stats[(group.name, tribe)]["points"] }} points,
+                                {{ stats[(group.name, tribe)]["distance"] }} miles,
+                                {{ stats[(group.name, tribe)]["ride_days"] }} ride days,
+                                {{ stats[(group.name, tribe)]["riders"] }} riders)
+                            </span>
+                        </h5>
+                        <div class="progress" style="margin-bottom: 5px">
+                            <div class="progress-bar progress-bar-{{"success" if stats[(group.name, tribe)]["points"] >= maxima[group.name]["points"] else "warning"}} progress-bar-striped"
+                                 style="width: {{ 100 * stats[(group.name, tribe)]["points"] / maxima[group.name]["points"] }}%">
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-            </div>
             {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 {% endblock %}

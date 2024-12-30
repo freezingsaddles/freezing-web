@@ -1,31 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<button class="float-end btn btn-primary mt-2" id="show_hide_people">Show/Hide people</button>
-  	<h1>Team Leaderboard (Text)</h1>
-  	<p>This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>.</p>
-  	<ol>
-  		{% for team_row in team_rows %}
-  		<li>
-        <h4>
-          <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
-  		   <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
-       </h4>
-        <ol class="people">
-	  			{% for member_row in team_members[team_row['team_id']] %}
-                <li><a href="/people/{{ member_row['athlete_id'] }}">{{ member_row['athlete_name'] }}</a>:
-	  			{{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} miles)</li>
-	  			{% endfor %}
-	  		</ol>
-  		</li>
-  		{% endfor %}
-  	</ol>
-
+    <button class="float-end btn btn-primary mt-2" id="show_hide_people">
+        Show/Hide people
+    </button>
+    <h1>
+        Team Leaderboard (Text)
+    </h1>
+    <p>
+        This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>.
+    </p>
+    <ol>
+        {% for team_row in team_rows %}
+            <li>
+                <h4>
+                    <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
+                    <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
+                </h4>
+                <ol class="people">
+                    {% for member_row in team_members[team_row['team_id']] %}
+                        <li>
+                            <a href="/people/{{ member_row['athlete_id'] }}">{{ member_row['athlete_name'] }}</a>:
+                            {{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} miles)
+                        </li>
+                    {% endfor %}
+                </ol>
+            </li>
+        {% endfor %}
+    </ol>
 {% endblock %}
-
 {% block foot %}
-<script type="text/javascript">
+    <script type="text/javascript">
 $( "#show_hide_people" ).click(function() {
 $(".people").toggleClass("d-none");
 });
-</script>
+    </script>
 {% endblock %}

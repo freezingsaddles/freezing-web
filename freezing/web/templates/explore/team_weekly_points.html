@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-	<script type="text/javascript">
-
+    <script type="text/javascript">
 	  // Load the Visualization API and the corechart package.
 	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -50,12 +49,15 @@
 		  
 	  }
 	  	  
-	  </script>
+    </script>
 {% endblock %}
-	  
 {% block content %}
-  	<h1>Team Weekly Points</h1>
-	<!--Div that will hold our leaderboard chart-->
-	<div id="chart_team_weekly_points"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading weekly points...</div>
-	
+    <h1>
+        Team Weekly Points
+    </h1>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart_team_weekly_points">
+        <img src="/img/loading2-blue.gif" alt="">
+        &nbsp;Loading weekly points...
+    </div>
 {% endblock %}
