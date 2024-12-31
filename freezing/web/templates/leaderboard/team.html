@@ -11,9 +11,9 @@
       // Callback that creates and populates a data table,
       // instantiates the pie chart, passes in the data and
       // draws it.
-      
+
       function drawTeamChart() {
-	      
+
 	      $.ajax({
 	          url: "/chartdata/team_leaderboard",
 	          dataType:"json",
@@ -49,7 +49,7 @@
     </p>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_leaderboard" class="g-chart">
-        <img src="/img/loading2-blue.gif" alt="">
+        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
         &nbsp;Loading team leaderboard...
     </div>
 {% endblock %}

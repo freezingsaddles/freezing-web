@@ -156,6 +156,8 @@ bin/lint.sh
 bin/fmt.sh
 ```
 
+This project also has _optional_ support for [pre-commit](https://pre-commit.org) to run these checks automatically before you commit. To install pre-commit, run `pip install pre-commit` and then `pre-commit install` in the root of the repository.
+
 ## Production deployment
 
 See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for a guide to deploying this in production along

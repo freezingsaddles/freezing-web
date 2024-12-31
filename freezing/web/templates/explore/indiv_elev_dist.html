@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block head %}
-	<script type="text/javascript">
-	
+    <script type="text/javascript">
 	  google.charts.load("visualization", "1", {packages:["corechart"]});
 	  google.charts.setOnLoadCallback(drawChart);
-	  
+
 	  // Callback that creates and populates a data table,
 	  // instantiates the pie chart, passes in the data and
 	  // draws it.
-	  
+
 	  function drawChart() {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/indiv_elev_dist",
 			  dataType: "json"
@@ -41,14 +40,19 @@
 			  chart.draw(data, options);
 		  });
 	  }
-	  
-	  </script>
+
+    </script>
 {% endblock %}
-	  
 {% block content %}
-  	<h1>Individual Distance, Elevation, Speed</h1>
-  	<p>Note, riders that are tracking rides manually in Strava will be misrepresented here as having 0 elevation.</p>
-	<!--Div that will hold our leaderboard chart-->
-	<div id="chart_div"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading correlation chart...</div>
-	
+    <h1>
+        Individual Distance, Elevation, Speed
+    </h1>
+    <p>
+        Note, riders that are tracking rides manually in Strava will be misrepresented here as having 0 elevation.
+    </p>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart_div">
+        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
+        &nbsp;Loading correlation chart...
+    </div>
 {% endblock %}

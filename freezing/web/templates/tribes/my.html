@@ -13,11 +13,7 @@
                     <h4>
                         {{ group.name }}
                     </h4>
-                    <select name="{{ group.name }}"
-                            class="form-control"
-                            style="margin-bottom: 15px">
-                        <option>
-                        </option>
+                    <select name="{{ group.name }}" class="form-control big-bottom">
                         {% for tribe in group.tribes %}
                             {% if tribe == my_tribes[group.name] %}
                                 <option selected>
@@ -31,16 +27,10 @@
                         {% endfor %}
                     </select>
                 {% endfor %}
-                <button style="padding-left: 40px;
-                               padding-right: 40px;
-                               margin-top: 30px;
-                               margin-bottom: 20px"
-                        type="submit"
-                        class="btn btn-primary center-block">
+                <button type="submit" class="btn btn-primary center-block extra-padding">
                     Submit
                 </button>
             </form>
         </div>
     </div>
-</div>
 {% endblock %}

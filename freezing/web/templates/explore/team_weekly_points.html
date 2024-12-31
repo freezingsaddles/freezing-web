@@ -11,9 +11,9 @@
 	  // Callback that creates and populates a data table,
 	  // instantiates the pie chart, passes in the data and
 	  // draws it.
-	  
+
 	  function drawPointsChart() {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/team_weekly_points",
 			  dataType: "json"
@@ -46,9 +46,9 @@
 
 			  chart.draw(data, options);
 		  });
-		  
+
 	  }
-	  	  
+
     </script>
 {% endblock %}
 {% block content %}
@@ -57,7 +57,7 @@
     </h1>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_weekly_points">
-        <img src="/img/loading2-blue.gif" alt="">
+        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
         &nbsp;Loading weekly points...
     </div>
 {% endblock %}

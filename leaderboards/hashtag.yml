@@ -24,7 +24,7 @@ tags:
   - tag: biathlon
     name: Biathlon
     description: |
-      No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see. 
+      No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see.
     rank_by_rides: False
 
   - tag: bikeinfrastructure
@@ -218,7 +218,7 @@ tags:
     sponsor: shirag,NoVaNoobGA
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
-    
+
   - tag: tandemVI
     name: Tandem - Visually Impaired
     description: |
@@ -226,7 +226,7 @@ tags:
     sponsor: shirag,NoVaNoobGA
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
-    
+
   - tag: tandemKid
     name: Tandem Kid
     description: |

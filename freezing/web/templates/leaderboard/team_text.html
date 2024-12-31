@@ -13,7 +13,7 @@
         {% for team_row in team_rows %}
             <li>
                 <h4>
-                    <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
+                    <a href="https://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
                     <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
                 </h4>
                 <ol class="people">

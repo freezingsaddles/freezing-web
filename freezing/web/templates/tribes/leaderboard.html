@@ -16,6 +16,7 @@
                 <h4>
                     {{ group.name }}
                 </h4>
+                {# djlint:off H021,H023 #}
                 <div style="margin: 15px 25px 30px 25px">
                     {% for tribe in group.tribes %}
                         <h5>
@@ -41,6 +42,7 @@
                         </div>
                     {% endfor %}
                 </div>
+                {# djlint:on #}
             {% endfor %}
         </div>
     </div>

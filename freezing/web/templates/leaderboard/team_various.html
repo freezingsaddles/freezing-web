@@ -9,7 +9,7 @@
 
 
 	  function drawChart(api_method, label) {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/"+api_method,
 			  dataType:"json"
@@ -35,19 +35,19 @@
 			  chart.draw(data, options);
 		  });
 	  }
-	  
+
 
     </script>
 {% endblock %}
 {% block foot %}
     <script type="text/javascript">
 	$(function(){
-	  $("#choose_api").submit(function(event) { event.preventDefault(); });	
+	  $("#choose_api").submit(function(event) { event.preventDefault(); });
 	});
 	function redraw() {
 		drawChart($("#api_method").val(), $('#api_method option:selected').text());
 		$("#title").val($('#api_method option:selected').text());
-	}  		
+	}
     </script>
 {% endblock %}
 {% block content %}

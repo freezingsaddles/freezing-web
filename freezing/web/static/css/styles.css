@@ -7,7 +7,7 @@ body {
 }
 
 /* padding for the gallery */
-div.row > div > div.row {
+div.row > div > div.row, .big-bottom {
     margin-bottom: 15px;
 }
 
@@ -202,11 +202,40 @@ nav.bg-light {
     text-align: center;
 }
 
+.important {
+    font-weight: bold;
+}
+
+.wide-aspect {
+    aspect-ratio: 1.333;
+}
+
+.leaderboard-overflow {
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.extra-padding {
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.extra-margin {
+    margin: 15px 25px 30px 25px
+}
+
+.menu-subheading {
+    font-variant: small-caps;
+    line-height: 1;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
     }
-    
+
     .vertical-header {
         font-size: 1.5rem;
         padding: .5rem;
@@ -218,7 +247,7 @@ nav.bg-light {
             transform: rotate(180deg);
         }
     }
-    
+
     .hour-card {
         padding-bottom: .5rem;
     }
@@ -300,7 +329,7 @@ nav.bg-light {
 @media (min-width: 1200px) {
     .grid-xl-2 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }    
+    }
 
     .stat-divider:not(.horizontal) {
         border-bottom: none;
@@ -309,7 +338,7 @@ nav.bg-light {
         width: 0;
         height: 1em;
     }
-    
+
     .hour-label {
         font-size: 1rem;
     }
@@ -328,7 +357,7 @@ nav.bg-light {
     nav.bg-light {
         box-shadow: 0 2px 4px #21252980;
     }
-    
+
     .bg-light {
         background-color: #343a40 !important;
     }
@@ -343,10 +372,10 @@ nav.bg-light {
 
     .vc-logo {
         display: block;
-        background-image: url(/img/PoweredByVC-WeatherLogo-RoundedRectBlack.png);
+        background-image: url(/img/PoweredByVC-WeatherLogo-RoundedRectBlack-sm.png);
         background-size: contain;
         background-repeat: no-repeat;
-    
+
         img {
             visibility: hidden;
         }
@@ -354,7 +383,7 @@ nav.bg-light {
 
     .tag-link {
         color: #dee2e6;
-    
+
         &:hover {
             color: #ffffff;
         }

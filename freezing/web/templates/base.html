@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html xml:lang="en" lang="en">
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>
             {% block title %}
                 {{ competition_title }}
             {% endblock %}
         </title>
-        <script src="https://www.gstatic.com/charts/loader.js"></script>
+        <meta charset="utf-8" />
+        <meta name="keywords"
+              content="winter,bicycle,social motivation,community,freezing saddles" />
+        <meta name="description"
+              content="Freezing Saddles winter cycling competiton" />
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- generated favicon stuff -->
         <link rel="apple-touch-icon" sizes="57x57" href="/ico/apple-icon-57x57.png">
         <link rel="apple-touch-icon" sizes="60x60" href="/ico/apple-icon-60x60.png">
@@ -45,10 +52,6 @@
               sizes="16x16"
               href="/ico/favicon-16x16.png">
         <link rel="manifest" href="/ico/manifest.json">
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-        <meta name="theme-color" content="#ffffff">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
               rel="stylesheet"
@@ -56,25 +59,30 @@
               crossorigin="anonymous">
         <link href="/css/ekko-lightbox.min.css" rel="stylesheet">
         <link href="/css/styles.css" rel="stylesheet">
+        <!-- Google Font and Charts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
               rel="stylesheet">
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
         {% block head %}
         {% endblock %}
     </head>
     <body>
         {% block beforenav %}
-            {#
-    See http://stackoverflow.com/a/13368485/217080
-    put modal windows before the navbar
-    #}
+            {# put modal windows before the navbar, see: #}
+            {# https://stackoverflow.com/a/13368485/217080 #}
         {% endblock %}
         <!-- Fixed navbar -->
         <nav class="navbar navbar-expand-lg bg-light sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex ps-2" href="/" title="Freezing Saddles">
-                    <img src="/img/logo-blue-sm.png" style="width: 1.875rem;">
+                    {# djlint:off H006,H021 #}
+                    <img src="/img/logo-blue-sm.png"
+                         style="width: 1.875rem;
+                                height: 1.875rem"
+                         alt="logo">
+                    {# djlint:on H021 #}
                 </a>
                 <button class="navbar-toggler"
                         type="button"
@@ -186,9 +194,7 @@
                             </a>
                             <ul class="dropdown-menu pointless-menu"
                                 aria-labelledby="pointlessDropdown">
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Active Pointless Prizes
                                 </li>
                                 <li>
@@ -223,9 +229,6 @@
                                     <a class="dropdown-item" href="/pointless/generic/poggio-indiv">POGGIO (Individual)</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="/pointless/generic/poggio-team">POGGIO (Team)</a>
-                                </li>
-                                <li>
                                     <a class="dropdown-item" href="/pointless/hashtag/publicartfinder">Public Art Finder</a>
                                 </li>
                                 <li>
@@ -240,9 +243,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Children are our Future
                                 </li>
                                 <li>
@@ -266,9 +267,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Completely Pointless
                                     <br>
                                     unsponsored but fun!
@@ -349,6 +348,9 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="/pointless/hashtag/pizza">Pizzaneuring</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/pointless/generic/poggio-team">POGGIO (Team)</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="/pointless/points_per_mile">Points per Mile</a>
@@ -499,6 +501,7 @@
     rel="noreferrer">the original scoreboard by ronwalf</a>.
                 </div>
             </div>
+            {# djlint:off #}
             <div>
                 <a href="https://strava.com" rel="noreferrer">
                     <img src="/img/api_logo_pwrdBy_strava_stack_light.svg"
@@ -516,6 +519,7 @@
                          style="height: 4rem" />
                 </a>
             </div>
+            {# djlint:on #}
         </div>
         <div class="version-footer text-muted text-center mb-3 mb-lg-4 small">
             freezing-web version {{ version_string }} {{ environment }}

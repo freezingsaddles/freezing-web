@@ -11,9 +11,9 @@
 	  // Callback that creates and populates a data table,
 	  // instantiates the pie chart, passes in the data and
 	  // draws it.
-	  
+
 	  function drawPointsChart() {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/team_cumul_points",
 			  dataType: "json"
@@ -29,15 +29,15 @@
 				  'title': 'Team Cumulative Points',
 				  'width': 1000,
 				  'height': 600,
-				  'chartArea': { 'width': '60%', 'height': '80%'} 
+				  'chartArea': { 'width': '60%', 'height': '80%'}
 			  };
 
 			  chart.draw(data, options);
 		  });
 	  }
-	  
+
 	  function drawMileageChart() {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/team_cumul_mileage",
 			  dataType: "json"
@@ -53,13 +53,13 @@
 				  'title': 'Team Cumulative Mileage',
 				  'width': 1000,
 				  'height': 600,
-				  'chartArea': { 'width': '60%', 'height': '80%'} 
+				  'chartArea': { 'width': '60%', 'height': '80%'}
 			  };
 
 			  chart.draw(data, options);
 		  });
 	  }
-	  
+
     </script>
 {% endblock %}
 {% block content %}
@@ -68,11 +68,11 @@
     </h1>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart_team_cumul_points">
-        <img src="/img/loading2-blue.gif" alt="">
+        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
         &nbsp;Loading team cumulative points...
     </div>
     <div id="chart_team_cumul_mileage">
-        <img src="/img/loading2-blue.gif" alt="">
-        &nbsp;Loading team cumulative mileage....
+        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
+        &nbsp;Loading team cumulative mileage...
     </div>
 {% endblock %}
