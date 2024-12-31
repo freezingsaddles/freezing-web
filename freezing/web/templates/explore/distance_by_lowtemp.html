@@ -62,6 +62,12 @@
                           format: (d) => d + '°F'
                         }
                       }
+                    },
+                    tooltip: {
+                      format: {
+                        value: (value, ratio, id) =>
+                           Math.round(value) + (id === 'distance' ? ' mi' :  '°F')
+                      }
                     }
                   });
                 },
@@ -72,6 +78,18 @@
         requestData();
 });
     </script>
+<style>
+  .c3 path, .c3 line {
+    stroke: var(--bs-body-color);
+  }
+  .c3-axis text, .c3-legend-item text {
+    fill: var(--bs-body-color);
+  }
+  .c3-tooltip-container td, .c3-tooltip-container th {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+  }
+</style>
 {% endblock %}
 {% block content %}
     <!--Div that will hold our leaderboard chart-->
@@ -82,7 +100,7 @@
         Relationship between total number of miles logged riders and the average low daily temperatures.
     </div>
     {# djlint:off H021 #}
-    <div id="chart" style="width:100%; height:400px;">
+    <div id="chart" style="width:100%; height:560px;">
         {# djlint:on #}
     </div>
 {% endblock %}
