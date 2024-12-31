@@ -214,18 +214,11 @@
 			showColumns: false,
 			columns: [
 				{
-					field: "photos_fetched",
-					title: "Photos Fetched",
-					align: "center",
-					checkbox: true,
-					formatter: photosFormatter,
-				},
-				{
-					field: "id",
-					title: "Refetch Photos?",
+					field: "start_date",
+					title: "Date",
 					sortable: true,
-					align: "center",
-					formatter: refetchFormatter
+					align: "right",
+					formatter: stampFormatter
 				},
 				{
 					field: "name",
@@ -234,22 +227,8 @@
 					formatter: rideFormatter
 				},
 				{
-					field: "private",
-					title: "Visibility",
-					sortable: true,
-					align: "center",
-					formatter: privateFormatter
-				},
-				{
-					field: "start_date",
-					title: "Date",
-					sortable: true,
-					align: "right",
-					formatter: stampFormatter
-				},
-				{
 					field: "distance",
-					title: "Distance (mi)",
+                    title: "Distance<br>(mi)",
 					sortable: true,
 					align: "right",
 					formatter: distanceFormatter
@@ -263,13 +242,33 @@
 				},
 				{
 					field: "avg_temp",
-					title: "Avg Temp (&#8457;)",
+                    title: "Avg Temp<br>(&#8457;)",
 					align: "right",
 					sortable: true,
 					formatter: temperatureFormatter
+				},
+				{
+					field: "private",
+					title: "Visibility",
+					sortable: true,
+					align: "center",
+					formatter: privateFormatter
+				},
+				{
+					field: "photos_fetched",
+                    title: "Photos<br>Fetched?",
+					align: "center",
+					checkbox: true,
+					formatter: photosFormatter,
+				},
+				{
+					field: "id",
+                    title: "Refetch<br>Photos?",
+					sortable: true,
+					align: "center",
+					formatter: refetchFormatter
 				}
 			]
-
 		});
 
 		$('#map-link').one('click', () => {
