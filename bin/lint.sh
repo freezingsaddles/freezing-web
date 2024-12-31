@@ -8,6 +8,6 @@ echo "*** flake8 ***"
 flake8 freezing
 echo "*** mypy ***"
 echo "*** djlint ***"
-djlint --check freezing/web/templates
+djlint --check .
 echo "*** pymarkdown ***"
 pymarkdown scan .

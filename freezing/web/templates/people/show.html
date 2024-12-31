@@ -95,9 +95,11 @@ fieldset[disabled] .btn-impersonate.active {
 {% endblock %}
 {% block content %}
     <div class="card flex-row align-items-center">
+        {# djlint:off H006 #}
         <img class="user-profile"
              src="{{ data.user.profile_photo }}"
              alt="photo of {{ data.user.display_name }}">
+        {# djlint:on #}
         <div class="d-flex flex-column ms-3">
             <h5 class="card-title">
                 <a href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>

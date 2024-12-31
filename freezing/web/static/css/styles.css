@@ -202,6 +202,16 @@ nav.bg-light {
     text-align: center;
 }
 
+
+.wide-aspect {
+    aspect-ratio: 1.333;
+}
+
+.leaderboard-overflow {
+    min-width: 0;
+    overflow-x: auto;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;

@@ -5,4 +5,4 @@ black freezing
 echo "*** isort ***"
 isort freezing
 echo "*** djlint ***"
-djlint --reformat freezing/web/templates
+djlint --reformat .

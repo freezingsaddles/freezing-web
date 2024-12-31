@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-	<script type="text/javascript">
-
+    <script type="text/javascript">
 	  google.charts.load("visualization", "1", {packages:["corechart"]});
 	  google.charts.setOnLoadCallback(drawChart);
 
@@ -42,13 +41,20 @@
 		  });
 	  }
 
-	  </script>
+    </script>
 {% endblock %}
-
 {% block content %}
-  	<h1>Individual Distance, Elevation, Speed</h1>
-  	<p>Note, riders that are tracking rides manually in Strava will be misrepresented here as having 0 elevation.</p>
-	<!--Div that will hold our leaderboard chart-->
-	<div id="chart_div"><img src="/img/loading2-blue.gif" alt="">&nbsp;Loading correlation chart...</div>
-
+    <h1>
+        Individual Distance, Elevation, Speed
+    </h1>
+    <p>
+        Note, riders that are tracking rides manually in Strava will be misrepresented here as having 0 elevation.
+    </p>
+    <!--Div that will hold our leaderboard chart-->
+    <div id="chart_div">
+        <img src="/img/loading2-blue.gif"
+             alt="Loading correlation chart..."
+             height="48"
+             width="48">
+    </div>
 {% endblock %}
