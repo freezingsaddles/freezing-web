@@ -114,18 +114,20 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="profile">
                 <div id="chart_user_daily_points">
-                    <img src="/img/loading2-blue.gif" alt="">
+                    <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
                     &nbsp;Loading daily points...
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="messages">
                 <div id="chart_user_weekly_points">
-                    <img src="/img/loading2-blue.gif" alt="">
-                    &nbsp;Loading weekly points...
+                    <div id="chart_user_daily_points">
+                        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
+                        &nbsp;Loading weekly points...
+                    </div>
                 </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="map">
-                <div id="track-map" style="aspect-ratio: 1.333;">
+                <div role="tabpanel" class="tab-pane" id="map">
+                    <div id="track-map" class="wide-aspect">
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,9 +205,7 @@
 		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
 	}
 
-
 	$(function() {
-
 		$table = $('#table-rides').bootstrapTable({
 			method: "get",
 			url: "/my/rides.json",

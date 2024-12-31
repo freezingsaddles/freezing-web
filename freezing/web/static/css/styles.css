@@ -7,7 +7,7 @@ body {
 }
 
 /* padding for the gallery */
-div.row > div > div.row {
+div.row > div > div.row, .big-bottom {
     margin-bottom: 15px;
 }
 
@@ -202,6 +202,9 @@ nav.bg-light {
     text-align: center;
 }
 
+.important {
+    font-weight: bold;
+}
 
 .wide-aspect {
     aspect-ratio: 1.333;
@@ -210,6 +213,29 @@ nav.bg-light {
 .leaderboard-overflow {
     min-width: 0;
     overflow-x: auto;
+}
+
+.extra-padding {
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.front-page h1 {
+    font-size: 4rem;
+}
+
+.front-page-counts  {
+    font-size: 1.5rem;
+}
+.extra-margin {
+    margin: 15px 25px 30px 25px
+}
+
+.menu-subheading {
+    font-variant: small-caps;
+    line-height: 1;
 }
 
 @media (min-width: 576px) {
@@ -353,7 +379,7 @@ nav.bg-light {
 
     .vc-logo {
         display: block;
-        background-image: url(/img/PoweredByVC-WeatherLogo-RoundedRectBlack.png);
+        background-image: url(/img/PoweredByVC-WeatherLogo-RoundedRectBlack-sm.png);
         background-size: contain;
         background-repeat: no-repeat;
 

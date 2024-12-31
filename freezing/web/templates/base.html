@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html xml:lang="en" lang="en">
+<html lang="en">
     <head>
+        <meta charset="utf-8">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="keywords"
+              content="winter,bicycle,social motivation,community,freezing saddles" />
+        <meta name="description"
+              content="Freezing Saddles winter cycling competiton" />
         <title>
             {% block title %}
                 {{ competition_title }}
@@ -74,7 +79,12 @@
         <nav class="navbar navbar-expand-lg bg-light sticky-top">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex ps-2" href="/" title="Freezing Saddles">
-                    <img src="/img/logo-blue-sm.png" style="width: 1.875rem;">
+                    {# djlint:off H006,H021 #}
+                    <img src="/img/logo-blue-sm.png"
+                         style="width: 1.875rem;
+                                height: 1.875rem"
+                         alt="logo">
+                    {# djlint:on H021 #}
                 </a>
                 <button class="navbar-toggler"
                         type="button"
@@ -186,9 +196,7 @@
                             </a>
                             <ul class="dropdown-menu pointless-menu"
                                 aria-labelledby="pointlessDropdown">
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Active Pointless Prizes
                                 </li>
                                 <li>
@@ -234,9 +242,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Children are our Future
                                 </li>
                                 <li>
@@ -260,9 +266,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li class="px-3 text-center small text-muted"
-                                    style="font-variant: small-caps;
-                                           line-height: 1">
+                                <li class="px-3 text-center small text-muted menu-subheading">
                                     Completely Pointless
                                     <br>
                                     unsponsored but fun!
@@ -499,6 +503,7 @@
     rel="noreferrer">the original scoreboard by ronwalf</a>.
                 </div>
             </div>
+            {# djlint:off #}
             <div>
                 <a href="https://strava.com" rel="noreferrer">
                     <img src="/img/api_logo_pwrdBy_strava_stack_light.svg"
@@ -516,6 +521,7 @@
                          style="height: 4rem" />
                 </a>
             </div>
+            {# djlint:on #}
         </div>
         <div class="version-footer text-muted text-center mb-3 mb-lg-4 small">
             freezing-web version {{ version_string }} {{ environment }}
