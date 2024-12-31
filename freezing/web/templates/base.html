@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="{{ request.cookies.get('theme', 'light') }}">
     <head>
         <title>
             {% block title %}
@@ -557,6 +557,10 @@
                     "dark" :
                     "light";
                 document.querySelector("html").setAttribute("data-bs-theme", colorMode);
+                // Persist the theme to avoid light-mode always flashing in first
+                const date = new Date();
+                date.setDate(date.getDate() + 30);
+                document.cookie = "theme=" + colorMode + "; expires=" + date.toUTCString() + "; path=/";
             }
 
             // Set theme on load
