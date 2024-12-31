@@ -8,27 +8,30 @@
         </h1>
         <div class="photo-grid mb-4 gap-lg-4">
             {% for photo in photos %}
-                <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages" class="photo-thumbnail" data-title="{{ photo.caption |default(photo.ride.name, true) }}" data-parent=".gallery-wrapper" data-footer='
-                    <p>
-                        Taken by <a href=/people/{{ photo.ride.athlete.id }}>{{ photo.ride.athlete.display_name }}</a>
-                        {% if photo.ref %}
-                            <a href='{{ photo.ref }}'>View in Instagram</a>
-                        {% endif %}
-                        <p style="background-image: url('{{ photo.img_l }}');">
-                        </p>
-                    {% endfor %}
-                </div>
-                <nav class="d-flex justify-content-center">
-                    <ul class="pagination">
-                        <li class="page-item {% if page == 1 %}disabled{% endif %}">
-                            <a class="page-link"
-                               href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">⬅️ </span> Newer</a>
-                        </li>
-                        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-                            <a class="page-link"
-                               href="{% if page < total_pages %}{{ url_for('photos.index', page=page+1) }}{% else %}#{% endif %}">Older <span aria-hidden="true">➡️ </span></a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        {% endblock %}
+                <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+                    class="photo-thumbnail"
+                    data-title="{{ photo.caption | default(photo.ride.name, true) }}"
+                    data-parent=".gallery-wrapper"
+                    {# djlint:off #}
+                    data-footer='<p>Taken by <a href=/people/{{ photo.ride.athlete.id }}>{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
+                    style="background-image: url('{{ photo.img_l }}');">
+                    {# djlint:on #}
+                </a>
+            {% endfor %}
+        </div>
+        <nav class="d-flex justify-content-center">
+            {# djlint:off H023#}
+            <ul class="pagination">
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
+                </li>
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link"
+                       href="{% if page < total_pages %}{{ url_for('photos.index', page=page+1) }}{% else %}#{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
+                </li>
+            </ul>
+            {# djlint:on #}
+        </nav>
+    </div>
+{% endblock %}
