@@ -39,15 +39,15 @@
                 </tr>
                 {% for a, b, c, d in ride_days %}
                     {% if c >= num_days %}
-                        {% set class = "success" %}
+                        {% set class = "text-success" %}
                     {% elif c == (num_days - 1) and not all_done %}
-                        {% set class = "warning" %}
-                    {% elif c < num_days %}
-                        {% set class = "danger" %}
+                        {% set class = "text-warning" %}
+                    {% else %}
+                        {% set class = "text-danger" %}
                     {% endif %}
-                    <tr class="{{ class }}">
+                    <tr>
                         <td>
-                            <a href="/people/{{ a }}">{{ b }}</a>
+                            <a href="/people/{{ a }}" class="{{ class }} hover-underline">{{ b }}</a>
                         </td>
                         <td class="number">
                             {{ c }}

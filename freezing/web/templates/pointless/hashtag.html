@@ -84,32 +84,32 @@
                 <div class="accordion-body py-2 leaderboard-overflow">
                     <table class="table table-condensed">
                         <tr>
-                            <th class="number">
+                            <th class="number rank">
                                 Rank
                             </th>
                             <th>
-                                Player
+                                Rider
                             </th>
                             <th class="number">
-                                {{ data.hashtag }} Rides
+                                Rides
                             </th>
                             <th class="number">
-                                {{ data.hashtag }} Distance
+                                Distance
                             </th>
                         </tr>
                         {% for a, b, c, d in data.tdata %}
                             <tr>
-                                <td class="number">
+                                <td class="number rank">
                                     {{ loop.index }}
                                 </td>
                                 <td>
-                                    <a href="/people/{{ a }}">{{ b }}</a>
+                                    <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
                                 </td>
                                 <td class="number">
                                     {{ c }}
                                 </td>
                                 <td class="number">
-                                    {{ d | round(1) }}
+                                    {{ d | round(1) }} mi
                                 </td>
                             </tr>
                         {% endfor %}

@@ -16,11 +16,11 @@
             </p>
             <table class="table table-condensed">
                 <tr>
-                    <th class="number">
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
-                        Athlete
+                        Rider
                     </th>
                     <th class="number">
                         Kidical
@@ -33,8 +33,8 @@
                     </th>
                 </tr>
                 {% for a, b, c, d, e in data.tdata %}
-                    <tr {% if a==1873089 %}class="danger"{% endif %}>
-                        <td class="number">
+                    <tr>
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>

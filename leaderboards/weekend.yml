@@ -5,8 +5,8 @@ fields:
   - name: athlete_id
     visible: false
   - name: athlete_name
-    label: Athlete
-    format: "<a href=\"/people/{athlete_id}\">{athlete_name}</a>"
+    label: Rider
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: weekend
     label: Weekend Points
   - name: weekday

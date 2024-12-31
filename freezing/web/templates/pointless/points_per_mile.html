@@ -11,7 +11,7 @@
             <div class="table-responsive">
                 <table class="table table-condensed">
                     <tr>
-                        <th class="number">
+                        <th class="number rank">
                             Rank
                         </th>
                         <th>
@@ -32,7 +32,7 @@
                     </tr>
                     {% for a, b, c, d, e in data.riders %}
                         <tr {% if e>=data.days %}class="success"{% endif %}>
-                            <td class="number">
+                            <td class="number rank">
                                 {{ loop.index }}
                             </td>
                             <td>

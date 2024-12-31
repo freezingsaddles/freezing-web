@@ -24,7 +24,7 @@
             <table id="scores" class="table table-striped">
                 <thead>
                     <tr>
-                        <th class="number">
+                        <th class="number rank">
                             Rank
                         </th>
                         <th>
@@ -50,11 +50,11 @@
                 <tbody>
                     {% for a,b,c,d,e,f,g in data.tdata %}
                         <tr>
-                            <td class="number">
+                            <td class="number rank">
                                 {{ loop.index }}
                             </td>
                             <td>
-                                <a href="/people/{{ a }}">{{ b }}</a>
+                                <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
                             </td>
                             <td class="number">
                                 {{ c }}

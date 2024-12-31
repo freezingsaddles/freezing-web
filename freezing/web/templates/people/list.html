@@ -30,7 +30,7 @@
                 <thead>
                     <tr>
                         <th>
-                            User
+                            Rider
                         </th>
                         <th class"number">
                             Rides This Week
@@ -56,7 +56,7 @@
                     {% for u in users %}
                         <tr>
                             <td>
-                                <a href="/people/{{ u.id }}">{{ u.name }}</a>
+                                <a href="/people/{{ u.id }}" class="hover-underline">{{ u.name }}</a>
                             </td>
                             <td class="number">
                                 {{ u.weekrides }}

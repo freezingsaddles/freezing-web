@@ -9,11 +9,11 @@ fields:
   - name: id
     visible: false
   - name: athlete_name
-    label: Athlete
-    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+    label: Rider
+    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: segment_name
     label: Least-Ridden Segment
-    format: "<a href=\"https://www.strava.com/segments/{segment_id}\">{segment_name}</a>"
+    format: "<a href=\"https://www.strava.com/segments/{segment_id}\" class=\"hover-underline\">{segment_name}</a>"
   - name: segment_rides
     label: Loop Rides
     rank_by: true

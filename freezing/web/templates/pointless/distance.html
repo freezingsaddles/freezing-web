@@ -10,7 +10,7 @@
             </p>
             <table class="table table-condensed">
                 <tr>
-                    <th class="number">
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
@@ -22,11 +22,11 @@
                 </tr>
                 {% for a, b, c in avg %}
                     <tr {% if loop.index==7 %} class="success" {% endif %}>
-                        <td class="number">
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            <a href="/people/{{ a }}">{{ b }}</a>
+                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
                         </td>
                         <td class="number">
                             {{ c | round(2) }}

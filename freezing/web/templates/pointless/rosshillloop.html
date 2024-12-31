@@ -26,11 +26,11 @@
             {% endif %}
             <table class="table table-condensed">
                 <tr>
-                    <th class="number">
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
-                        Player
+                        Rider
                     </th>
                     <th class="number">
                         Loops
@@ -40,16 +40,16 @@
                     </th>
                 </tr>
                 {% for a, b, d, e in data.tdata %}
-                    <tr {% if a==48773683 %}class="danger"{% endif %}>
-                        <td class="number">
+                    <tr>
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            <a href="/people/{{ a }}">{{ b }}
-                                {% if a==48773683 %}
-                                    (banned)
-                                {% endif %}
-                            </a>
+                            {% if a==48773683 or a == 120519 %}
+                                🚫 <a href="/people/{{ a }}" class="hover-underline"><strike>{{ b }}</strike></a>
+                            {% else %}
+                                <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                            {% endif %}
                         </td>
                         <td class="number">
                             {{ d }}
