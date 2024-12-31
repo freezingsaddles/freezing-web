@@ -2,50 +2,47 @@
 {% block head %}
     <style>
 #cal, #map {
-	border-radius: var(--bs-border-radius);
-	width: 100%;
-	border: 1px solid #ced4da;
+    border-radius: var(--bs-border-radius);
+    width: 100%;
+    border: 1px solid #ced4da;
+    aspect-ratio: 1;
 }
 
 #cal {
-	aspect-ratio: 1.333;
-}
-
-#map {
-	aspect-ratio: 1;
+    aspect-ratio: .75;
 }
 
 @media (min-width: 768px) {
-	#map {
-		aspect-ratio: 1.333;
-	}
+    #map, #cal {
+        aspect-ratio: 1.333;
+    }
 }
 
 @media (min-width: 1200px) {
-	#cal:not(.bigly) {
-		aspect-ratio: 2.667;
-	}
+    #cal:not(.bigly) {
+        aspect-ratio: 2;
+    }
 
-	#map {
-		aspect-ratio: initial;
-	}
+    #map {
+        aspect-ratio: initial;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
-	#map {
-		border-color: #495057;
-	}
+    #map {
+        border-color: #495057;
+    }
 
-	#cal {
-		border-color: #a8a19a;
-  	}
+    #cal {
+        border-color: #a8a19a;
+      }
 }
 
 .mini-img {
-	border-radius: .5rem;
-	max-width: 100%;
-	max-height: 12rem;
-	margin-bottom: .5rem;
+    border-radius: .5rem;
+    max-width: 100%;
+    max-height: 12rem;
+    margin-bottom: .5rem;
 }
     </style>
     <link rel="stylesheet"
