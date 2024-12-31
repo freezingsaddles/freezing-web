@@ -24,7 +24,7 @@
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th class="number">
+                        <th class="number rank">
                             Rank
                         </th>
                         {% for field in fields %}
@@ -39,7 +39,7 @@
                 <tbody>
                     {% for row in data %}
                         <tr>
-                            <td class="number">
+                            <td class="number rank">
                                 {{ row.rank }}
                             </td>
                             {% for field in fields %}

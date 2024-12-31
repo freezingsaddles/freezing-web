@@ -13,9 +13,7 @@
     <div class="row">
         <div class="col-md-12">
             <p>
-                While the <em>Least Daily Variance</em> price is currently retired, the leaderboard is cool so we're keeping it, and moving this to the Data Exploration area.
-            </p>
-            <p>
+                While the <em>Least Daily Variance</em> prize is currently retired, the leaderboard is cool so we're keeping it.
                 To qualify as a Least Daily Variance leader you <em>both</em> have to ride at least <b>50</b> days,
                 which is about 2/3 of the total days in the Freezing Saddles season,
                 <em>and</em> average more than 2 miles per ride day. If your name is in red, you don't qualify.
@@ -28,7 +26,7 @@
                 This prize was given to the player with the lowest average variance in miles per day.
             </p>
             <p>
-                This prize has been in search of a new sponsor since jrenaut is absolutely the worst prize sponsor ever (in his own mind) and never actually gives prizes. (jrenaut wrote this, you can ask him). obscurerichard may have nailed this prize in 2020 definitively but is still waiting for his prize. However he forgives jreneaut. Actual prizes are overrated, <b>bragging rights are FOREVER</b>.
+                This prize has been in search of a new sponsor since jrenaut is absolutely the worst prize sponsor ever (in his own mind) and never actually gives prizes. (jrenaut wrote this, you can ask him). obscurerichard may have nailed this prize in 2020 definitively but is still waiting for his prize. However he forgives jrenaut. Actual prizes are overrated, <b>bragging rights are FOREVER</b>.
             </p>
             <hr>
         </div>
@@ -40,7 +38,7 @@
                 <thead>
                     <tr>
                         <th>
-                            Athlete
+                            Rider
                         </th>
                         <th class="number">
                             Ride Days
@@ -76,9 +74,10 @@
                 </thead>
                 <tbody>
                     {% for a,b,c,dist,can_win,d,e,f,g,h,i,j,k in data.tdata %}
-                        <tr {% if not can_win %} class="number danger"{% else %}class="number"{% endif %}>
+                        <tr>
                             <td>
-                                <a href="/people/{{ a }}">{{ b }}</a>
+                                <a href="/people/{{ a }}"
+                                   {% if not can_win %}class="hover-underline text-danger"{% else %}class="hover-underline"{% endif %}>{{ b }}</a>
                             </td>
                             <td class="number">
                                 {{ c }}

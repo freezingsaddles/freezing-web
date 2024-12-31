@@ -92,7 +92,7 @@ h1 {
                         {# djlint:on #}
                     </div>
                     <div class="modal-footer">
-                        Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.
+                        Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>
                         {% if photo.ref %}
                             <a href='{{ photo.ref }}'>View in Instagram</a>
                         {% endif %}

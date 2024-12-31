@@ -31,11 +31,11 @@
             </p>
             <table class="table table-condensed">
                 <tr>
-                    <th class="number">
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
-                        Player
+                        Rider
                     </th>
                     <th class="number">
                         Rescues
@@ -46,11 +46,11 @@
                 </tr>
                 {% for a, b, d, e, f in data.tdata %}
                     <tr>
-                        <td class="number">
+                        <td class="number rank">
                             {{ f }}
                         </td>
                         <td>
-                            <a href="/people/{{ a }}">{{ b }}</a>
+                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
                         </td>
                         <td class="number">
                             {{ d }}

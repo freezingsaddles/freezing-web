@@ -68,6 +68,14 @@ table.dataTable.no-footer {
     }
 }
 
+.hover-underline {
+    text-decoration: none;
+
+    &:hover, &:focus {
+        text-decoration: underline;
+    }
+}
+
 .ekko-lightbox-container .img-responsive {
     border-radius: .25rem;
     max-width: 100%;
@@ -195,6 +203,10 @@ nav.bg-light {
 /* Align cells with numbers to the right */
 .number {
     text-align: right;
+
+    &.rank {
+        width: 3%;
+    }
 }
 
 /* Align cells with emoji in them in the middle */

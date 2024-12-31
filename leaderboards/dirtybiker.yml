@@ -5,8 +5,8 @@ fields:
   - name: id
     visible: false
   - name: athlete_name
-    label: Athlete
-    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+    label: Rider
+    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: dirty_ride_days
     label: Dirty Ride Days
     type: number

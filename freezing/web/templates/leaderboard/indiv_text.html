@@ -9,8 +9,8 @@
     <ol>
         {% for indiv_row in indiv_rows[:10] %}
             <li>
-                <h4>
-                    <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
+                <h4 class="mb-0">
+                    <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                     {{ indiv_row['total_score']|round|int|groupnum }} points
                 </h4>
                 ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
@@ -18,7 +18,7 @@
         {% endfor %}
         {% for indiv_row in indiv_rows[10:] %}
             <li>
-                <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
+                <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                 <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
                 ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
             </li>
