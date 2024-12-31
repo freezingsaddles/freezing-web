@@ -27,8 +27,12 @@
             </p>
         {% endif %}
         {% if meta.sponsor %}
+            {% set sponsors = meta.sponsor.split(',') %}
             <p>
-                Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ meta.sponsor }}/">{{ meta.sponsor }}</a></em>.
+                Sponsored by
+                {% for sp in sponsors %}
+                    {# djlint:off #}<em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sp }}/">{{ sp }}</a></em>{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
+                {% endfor %}
             </p>
         {% else %}
             <p class="text-muted">
