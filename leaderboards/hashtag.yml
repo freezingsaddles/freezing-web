@@ -16,7 +16,7 @@ tags:
   - tag: bob
     name: Baby on Board
     description: |
-      Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with #BoB.
+      Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with <code>#BoB</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/2025-pointless-prize-baby-on-board-bob/
     sponsor: bigredboiler
     rank_by_rides: True
@@ -45,7 +45,7 @@ tags:
     name: Civil War Forts
     description: |
       During the American Civil War (1861-1865) Washington was surrounded by a chain of fortifications. Mostly in DC and northern Virginia, I think maybe a couple in Maryland.
-      Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag #civilwarforts on Strava.
+      Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag <code>#civilwarforts</code> on Strava.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-civilwarforts/
     sponsor: lordofthemark
     rank_by_rides: True
@@ -214,20 +214,25 @@ tags:
   - tag: tandem
     name: Tandem
     description: |
-      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-tandem-rides-2/
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    sponsor: shirag,NoVaNoobGA
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
-  - tag: tandemvi
+  - tag: tandemVI
     name: Tandem - Visually Impaired
     description: |
-      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    sponsor: shirag,NoVaNoobGA
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
-  - tag: tandemchild
-    name: Tandem Child
+  - tag: tandemKid
+    name: Tandem Kid
     description: |
-      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemchild</code>).
+      Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    sponsor: shirag,NoVaNoobGA
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
   - tag: treats
