@@ -1,6 +1,4 @@
 ---
-version: '3'
-
 volumes:
   freezing-data:
     external: true
@@ -8,48 +6,53 @@ volumes:
 services:
 
   freezing-db:
-    image: mysql:5.7
-    container_name: freezing-db
+    image: mysql:8.0
+    container_name: freezing-db-dev
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
-      - freezing-data:/var/lib/mysql
-      - ./docker/db/sql-scripts:/sql
+      - ./data/mysql/data:/var/lib/mysql
+      - ./data/mysql/sql:/sql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fr33z3}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-freezing}
-      MYSQL_USER: ${MYSQL_USER:-freezing}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-zeer0}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-fr33z3}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER:-root}
+      MYSQL_USER: ${MYSQL_USER:-freezing}
 
   freezing-web:
-    build: .
-    container_name: freezing-web
-    command: bafs-server
+    build: ./
+    container_name: freezing-web-dev
+    depends_on:
+      - freezing-db
     ports:
-      - "5000:8000"
+      - "${FREEZING_WEB_PORT:-8000}:8000"
     volumes:
       - ./data/cache:/data/cache
       - ./leaderboards:/data/leaderboards
       - ./data/sessions:/data/sessions
-      - ./resources/docker/settings.cfg:/config/settings.cfg
-    links:
-      - freezing-db:freezing-db.container
     environment:
+      BEANSTALKD_HOST: ${BEANSTALKD_HOST:-beanstalkd.invalid}
+      BEANSTALKD_PORT: ${BEANSTALKD_PORT:-11300}
       BIND_INTERFACE: "0.0.0.0"
-      VIRTUAL_HOST: ${FREEZING_WEB_FQDN}
-      LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN}
-      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
-      SECRET_KEY: ${SECRET_KEY}
-      DEBUG: ${DEBUG}
-      SQLALCHEMY_URL: ${SQLALCHEMY_URL:-mysql+pymysql://freezing:zeer0@freezing-db.container/freezing?charset=utf8mb4&binary_prefix=true}
-      BEANSTALKD_HOST: beanstalkd.container
-      BEANSTALKD_PORT: 11300
-      STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
-      STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
-      TEAMS: ${TEAMS}
-      OBSERVER_TEAMS: ${OBSERVER_TEAMS}
-      MAIN_TEAM: ${MAIN_TEAM}
-      START_DATE: ${START_DATE}
-      END_DATE: ${END_DATE}
-      TIMEZONE: ${TIMEZONE:-America/New_York}
       COMPETITION_TITLE: ${COMPETITION_TITLE:-Freezing Saddles Local Dev}
+      DEBUG: ${DEBUG:-True}
+      END_DATE: ${END_DATE:-2118-03-20T00:01:00-04:00}
+      ENVIRONMENT: ${ENVIRONMENT:-localdev}
+      FAULTHANDLER: ${FAULT_HANDLER:-True}
+      FORUM_SITE: https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/  # yamllint disable-line
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:-nobody@nowhere.invalid}
+      LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN:-localhost.localdomain}
+      LOG_LEVEL: ${LOG_LEVEL:-DEBUG}
+      MAIN_TEAM: ${MAIN_TEAM:-324147}
+      OBSERVER_TEAMS: ${OBSERVER_TEAMS:-5678,9013}
+      REGISTRATION_SITE: ${REGISTRATION_SITE:-https://freezingsaddles.info/}
+      SECRET_KEY: ${SECRET_KEY:-e6c07402-0307-11e8-b087-000000000000}  # yamllint disable-line
+      SQLALCHEMY_URL: "mysql+pymysql://${MYSQL_USER:-freezing}:${MYSQL_PASSWORD:-zeer0}@freezing-db-dev/${MYSQL_DATABASE:-freezing}?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
+      SQLALCHEMY_URL_ROOT: "mysql+pymysql://${MYSQL_ROOT_USER:-freezing}:${MYSQL_ROOT_PASSWORD:-zeer0}@freezing-db-dev/mysql?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
+      START_DATE: ${START_DATE:-2018-01-01T00:00:00-05:00}
+      STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID:-?}
+      STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET:-?}
+      TEAMS: ${TEAMS:-1234,1235}
+      TIMEZONE: ${TIMEZONE:-America/New_York}
+      VIRTUAL_HOST: ${FREEZING_WEB_FQDN:-localhost.localdomain}

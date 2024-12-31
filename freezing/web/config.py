@@ -26,27 +26,26 @@ class Config:
     Refactored with the help of GitHub Copilot.
     """
 
+    BEANSTALKD_HOST: str = env("BEANSTALKD_HOST", default="localhost")
+    BEANSTALKD_PORT: str = env("BEANSTALKD_PORT", cast=int, default=11300)
     BIND_INTERFACE: str = env("BIND_INTERFACE", default="127.0.0.1")
-    DEBUG: bool = env("DEBUG", cast=bool, default=False)
-    BEANSTALKD_HOST = env("BEANSTALKD_HOST", default="localhost")
-    BEANSTALKD_PORT = env("BEANSTALKD_PORT", cast=int, default=11300)
     COMPETITION_TEAMS: List[int] = env("TEAMS", cast=list, subcast=int, default=[])
-    COMPETITION_TITLE = env("COMPETITION_TITLE", default="Freezing Saddles")
+    COMPETITION_TITLE: str = env("COMPETITION_TITLE", default="Freezing Saddles")
     DEBUG: bool = env("DEBUG", cast=bool, default=False)
     END_DATE: datetime = env(
         "END_DATE", postprocessor=lambda val: arrow.get(val).datetime
     )
     # Environment (localdev, production, etc.)
-    ENVIRONMENT = env("ENVIRONMENT", default="localdev")
+    ENVIRONMENT: str = env("ENVIRONMENT", default="localdev")
     FORUM_SITE: str = env(
         "FORUM_SITE",
         "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
     )
-    INSTANCE_PATH = env(
+    INSTANCE_PATH: str = env(
         "INSTANCE_PATH", default=os.path.join(_basedir, "data/instance")
     )
     # Directory to store leaderboard data
-    LEADERBOARDS_DIR = env(
+    LEADERBOARDS_DIR: str = env(
         "LEADERBOARDS_DIR", default=os.path.join(_basedir, "leaderboards")
     )
     MAIN_TEAM: int = env("MAIN_TEAM", cast=int)
@@ -55,7 +54,8 @@ class Config:
     )
     REGISTRATION_SITE: str = env("REGISTRATION_SITE", "https://freezingsaddles.info/")
     SECRET_KEY = env("SECRET_KEY")
-    SQLALCHEMY_URL = env("SQLALCHEMY_URL")
+    SQLALCHEMY_URL: str = env("SQLALCHEMY_URL")
+    SQLALCHEMY_ROOT_URL: str = env("SQLALCHEMY_ROOT_URL", None)
     START_DATE: datetime = env(
         "START_DATE", postprocessor=lambda val: arrow.get(val).datetime
     )
@@ -66,8 +66,8 @@ class Config:
         default="America/New_York",
         postprocessor=lambda val: pytz.timezone(val),
     )
-    VERSION_NUM = version("freezing-web")
-    VERSION_STRING = f"{VERSION_NUM}+{branch}.{commit}.{build_date}"
+    VERSION_NUM: str = version("freezing-web")
+    VERSION_STRING: str = f"{VERSION_NUM}+{branch}.{commit}.{build_date}"
 
 
 config = Config()

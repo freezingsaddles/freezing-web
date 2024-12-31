@@ -6,4 +6,3 @@ echo "*** isort ***"
 isort freezing
 echo "*** djlint ***"
 djlint --reformat freezing/web/templates
-
