@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block head %}
     <style>
+h1 {
+    font-size: 4rem;
+}
 #cal, #map {
     border-radius: var(--bs-border-radius);
     width: 100%;
@@ -10,6 +13,14 @@
 
 #cal {
     aspect-ratio: .75;
+}
+
+.front-page-counts {
+    font-size: 1.5rem;
+}
+
+.front-page-leaderboard {
+    font-size: 1.1rem;
 }
 
 @media (min-width: 768px) {
@@ -104,7 +115,7 @@
                      alt="Snowflake made of bike chain parts" />
             </div>
             <div class="d-flex flex-column align-items-center align-items-lg-stretch text-center text-lg-start flex-grow-1 minw-0">
-                <h1 class="front-page">
+                <h1>
                     Freezing Saddles
                 </h1>
                 <h3>
@@ -259,9 +270,6 @@
                     <span class="small text-muted">#</span><a href="/pointless/{{ tag[2] }}"
    class="tag-link"
    style="font-size: {{ tag[1] }}em">{{ tag[0] }}</a>
-                    {% if not loop.last %}
-                        ,
-                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
@@ -297,10 +305,6 @@
 {% block foot %}
     <script>
 $(() => {
-    // script src="/js/leaflet-heat.js"
-    // var points = data.tracks.flatMap(({track}) => track.map(([lon, lat]) => [lon, lat, 20]));
-    // var heatMap = L.heatLayer(points, { radius: 1, blur: 1, maxZoom: 13});
-    // map.addLayer(heatMap);
     create_ride_map('map', '/api/all/trackmap.json');
 });
     </script>
