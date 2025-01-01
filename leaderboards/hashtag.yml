@@ -241,3 +241,11 @@ tags:
       Find a street treat out in the wild while riding your bike.
     url: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
     rank_by_rides: True
+
+  - tag: withkid
+    name: Riding with Kids
+    description: |
+      For the Saddlero who rides the most miles accompanying kids who are riding under their own power.
+    url: https://www.bikearlingtonforum.com/forums/topic/fs-2025-pointless-kids-prizes/
+    sponsor: chill-dad
+
