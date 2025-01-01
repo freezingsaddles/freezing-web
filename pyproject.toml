@@ -49,7 +49,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = [
+dev = [
     "bandit",
     "black",
     "djlint",
