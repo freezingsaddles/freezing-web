@@ -1,0 +1,2 @@
+recursive-include freezing/web/templates *
+recursive-include freezing/web/static *
