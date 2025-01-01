@@ -144,15 +144,10 @@ h1 {
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
                     <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/team_text">{{ team_count }}
-                        {% if team_count == 1 %}
-                            team
-                        {% else %}
-                            teams
-                        {% endif %}
+                       href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
                     </a>
                     <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/individual_text">{{ contestant_count }} contestants</a>
+                       href="/leaderboard/individual_text">{{ contestant_count }} contestant{{ contestant_count|ess }}</a>
                 </div>
                 <div class="d-grid grid-2 grid-gap-3 grid-gap-lg-4 front-page-counts">
                     <div class="d-flex align-items-stretch card bg-light stats-card">
@@ -161,15 +156,15 @@ h1 {
                         </div>
                         <div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
                             <div>
-                                {{ total_rides|groupnum }} rides
+                                {{ total_rides|groupnum }} ride{{ total_rides|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ total_hours|groupnum }} hours
+                                {{ total_hours|groupnum }} hour{{ total_hours|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ total_miles|groupnum }} miles
+                                {{ total_miles|groupnum }} mile{{ total_miles|ess }}
                             </div>
                         </div>
                     </div>
@@ -179,20 +174,15 @@ h1 {
                         </div>
                         <div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
                             <div>
-                                {{ today_riders }}
-                                {% if today_riders != 1 %}
-                                    riders
-                                {% else %}
-                                    rider
-                                {% endif %}
+                                {{ today_riders }} rider{{ today_riders|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ today_hours|groupnum }} hours
+                                {{ today_hours|groupnum }} hour{{ today_hours|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ today_miles|groupnum }} miles
+                                {{ today_miles|groupnum }} mile{{ today_miles|ess }}
                             </div>
                         </div>
                     </div>
@@ -206,12 +196,7 @@ h1 {
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            {% if sub_freezing_hours == 1 %}
-                                hour
-                            {% else %}
-                                hours
-                            {% endif %}
-                            below freezing
+                            hour{{ sub_freezing_hours|ess }} below freezing
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -222,12 +207,7 @@ h1 {
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            {% if rain_hours == 1 %}
-                                hour
-                            {% else %}
-                                hours
-                            {% endif %}
-                            in the rain
+                            hour{{ rain_hours|ess }} in the rain
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -237,13 +217,8 @@ h1 {
                                 {{ snow_hours|groupnum }}
                             </div>
                         </div>
-                        {% if snow_hours == 1 %}
-                            hour
-                        {% else %}
-                            hours
-                        {% endif %}
                         <div class="text-center text-muted text-truncate hour-label">
-                            in the snow
+                            hour{{ snow_hours|ess }} in the snow
                         </div>
                     </div>
                 </div>

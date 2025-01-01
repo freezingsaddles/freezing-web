@@ -69,6 +69,11 @@ def groupnum(number):
     return s + ",".join(reversed(groups))
 
 
+@app.template_filter("ess")
+def ess(number):
+    return "" if groupnum(number) == "1" else "s"
+
+
 @blueprint.route("/")
 def index():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
