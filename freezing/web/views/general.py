@@ -5,7 +5,7 @@ Created on Feb 10, 2013
 """
 
 from datetime import datetime, timedelta
-from re import findall
+from re import findall, fullmatch
 
 from flask import (
     Blueprint,
@@ -162,8 +162,11 @@ def index():
     for res in meta.scoped_session().execute(q).fetchall():
         ride_tags = {}  # Prevent double-tagging
         for hash in findall(r"(?<=#)\w+", res["name"]):
-            original_tag[hash.lower()] = hash
-            ride_tags[hash.lower()] = 1
+            if not fullmatch(
+                r"(?i)(BAFS|FS|FreezingSaddles)?\d*", hash
+            ):  # Ditch useless tags
+                original_tag[hash.lower()] = hash
+                ride_tags[hash.lower()] = 1
         for tag in ride_tags:
             tag_count[tag] = tag_count.get(tag, 0) + 1
     trending_tags = sorted(tag_count.items(), key=lambda t: t[1], reverse=True)
