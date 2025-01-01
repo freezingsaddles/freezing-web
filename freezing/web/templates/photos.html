@@ -14,7 +14,7 @@
                     data-parent=".gallery-wrapper"
                     {# djlint:off #}
                     data-footer='<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
-                    style="background-image: url('{{ photo.img_l }}');">
+                    style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
                     {# djlint:on #}
                 </a>
             {% endfor %}
