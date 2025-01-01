@@ -1,3 +1,63 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freezing-web"
+version = "1.6.0"
+description = "Freezing Saddles website component."
+authors = [
+    {name = "Hans Lellelid", email = "hans@xmpl.org"},
+    {name = "Ian Will"},
+    {name = "Jon Renaut"},
+    {name = "Merlin Hughes"},
+    {name = "Richard Bullington-McGuire", email = "richard.bullington.mcguire@gmail.com"},
+    {name = "Adrian Porter"},
+    {name = "Joe Tatsuko"}
+]
+license = {text = "Apache License (2.0)"}
+dependencies = [
+    "Flask==3.1.0",
+    "GeoAlchemy2==0.16.0",
+    "PyMySQL[rsa]==1.1.1",
+    "PyYAML==6.0.2",
+    "SQLAlchemy==1.4.54",
+    # Thanks https://stackoverflow.com/a/77214086/424301 - Flask did not pin Werkzeug dep
+    "Werkzeug==3.1.3",
+    "arrow==0.15.5",
+    "autoflake==2.3.1",
+    "beautifulsoup4==4.12.3",
+    "colorlog==4.1.0",
+    "envparse==0.2.0",
+    "freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.10.4.tar.gz",
+    "gunicorn==23.0.0",
+    "marshmallow==3.23.2",
+    "marshmallow-enum @ https://github.com/lyft/marshmallow_enum/archive/support-for-marshamallow-3.tar.gz",
+    "python-instagram==1.3.2",
+    "pytz==2024.2",
+    "stravalib==1.2.0",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Games",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Natural Language :: English",
+]
+
+[project.optional-dependencies]
+dev = [
+    "bandit",
+    "black",
+    "djlint",
+    "flake8",
+    "isort",
+    "pymarkdownlnt"
+]
+
 [tool.isort]
 profile = "black"
 
@@ -8,3 +68,10 @@ max_line_length=88
 [tool.pymarkdown]
 plugins.md013.enabled = false
 extensions.front-matter.enabled = true
+
+[tool.setuptools]
+# Thanks https://stackoverflow.com/a/72547402/424301
+py-modules = ["freezing"]
+
+[project.scripts]
+freezing-server = "freezing.web.runserver:main"

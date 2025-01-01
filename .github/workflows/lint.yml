@@ -21,7 +21,7 @@ jobs:
       - name: isort Lint
         uses: isort/isort-action@v1
         with:
-          requirements-files: "requirements.txt requirements-test.txt"
+          requirements-files: "pyproject.toml"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
 
@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-test.txt
+          pip install '.[dev]'
       - name: djlint Lint
         run: |
           djlint --check freezing/web/templates
