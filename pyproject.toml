@@ -55,7 +55,8 @@ dev = [
     "djlint",
     "flake8",
     "isort",
-    "pymarkdownlnt"
+    "pre-commit",
+    "pymarkdownlnt",
 ]
 
 [tool.isort]
