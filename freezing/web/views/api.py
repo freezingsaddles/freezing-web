@@ -357,7 +357,7 @@ def _track_map(
             if point and _distance2(lon, lat, point[0], point[1]) > _max_d2:
                 track = []
                 tracks.append({"team": team_id, "track": track})
-            point = (lon, lat)
+            point = (lat, lon)
             track.append(point)
     tracks.reverse()
 
