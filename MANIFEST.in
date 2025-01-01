@@ -1,5 +1,0 @@
-recursive-include freezing/web/templates *
-recursive-include freezing/web/static *
-include requirements.txt
-include requirements-test.txt
-include setup.py

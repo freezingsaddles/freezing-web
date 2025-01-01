@@ -3,12 +3,11 @@ RUN apk update
 RUN apk add py3-mysqlclient
 RUN addgroup -S freezing && adduser -S -G freezing freezing
 RUN pip3 install --upgrade pip
-ADD requirements.txt /tmp/requirements.txt
-RUN pip3 install -r /tmp/requirements.txt
 ADD . /app
 RUN mkdir -p /data
 COPY leaderboards /data/leaderboards
 COPY alembic.ini /app
+COPY pyproject.toml /app/
 WORKDIR /app
 RUN pip3 install .
 ENV LEADERBOARDS_DIR=/data/leaderboards

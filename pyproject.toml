@@ -1,3 +1,53 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freezing-web"
+version = "1.5.6"
+description = "Freezing Saddles website component."
+authors = [
+    {name = "Hans Lellelid", email = "hans@xmpl.org"},
+    {name = "Ian Will"},
+    {name = "Jon Renaut"},
+    {name = "Merlin Hughes"},
+    {name = "Richard Bullington-McGuire", email = "richard.bullington.mcguire@gmail.com"},
+    {name = "Adrian Porter"},
+    {name = "Joe Tatsuko"}
+]
+license = {name = "Apache-2.0"}
+dependencies = [
+    "Flask",
+    "GeoAlchemy2",
+    "PyMySQL",
+    "PyYAML",
+    "alembic",
+    "arrow",
+    "beautifulsoup4",
+    "colorlog",
+    "envparse",
+    "freezing-model",
+    "geojson",
+    "gunicorn",
+    "marshmallow",
+    "marshmallow-enum",
+    "polyline",
+    "python-instagram",
+    "pytz",
+    "stravalib"
+]
+
+[project.optional-dependencies]
+test = [
+    "bandit",
+    "black",
+    "djlint",
+    "flake8",
+    "isort",
+    "pur",
+    "pymarkdownlnt"
+]
+
 [tool.isort]
 profile = "black"
 
