@@ -354,7 +354,7 @@ def _track_map(
             lon = float(Decimal(lons))
             lat = float(Decimal(lats))
             # Break tracks that span flights and train journeys
-            if point and _distance2(lon, lat, point[0], point[1]) > _max_d2:
+            if point and _distance2(lat, lon, point[0], point[1]) > _max_d2:
                 track = []
                 tracks.append({"team": team_id, "track": track})
             point = (lat, lon)
