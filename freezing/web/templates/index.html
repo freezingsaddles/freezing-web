@@ -206,7 +206,12 @@ h1 {
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours below freezing
+                            {% if sub_freezing_hours == 1 %}
+                                hour
+                            {% else %}
+                                hours
+                            {% endif %}
+                            below freezing
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -217,7 +222,12 @@ h1 {
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours in the rain
+                            {% if rain_hours == 1 %}
+                                hour
+                            {% else %}
+                                hours
+                            {% endif %}
+                            in the rain
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -227,8 +237,13 @@ h1 {
                                 {{ snow_hours|groupnum }}
                             </div>
                         </div>
+                        {% if snow_hours == 1 %}
+                            hour
+                        {% else %}
+                            hours
+                        {% endif %}
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours in the snow
+                            in the snow
                         </div>
                     </div>
                 </div>
