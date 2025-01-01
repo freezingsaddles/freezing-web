@@ -49,6 +49,7 @@ custom_tag_pages = {
     "freezingerrands": "generic/adulting",
     "londonbridge": "generic/londonbridge",
     "fsrealsuppleride": "generic/suppleride",
+    "decasleaze": "generic/decasleaze",
 }
 
 
