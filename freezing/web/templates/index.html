@@ -109,7 +109,7 @@ h1 {
     <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
         <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center">
             <div class="d-flex flex-column align-items-center me-lg-5">
-                <img src="/img/logo-blue-sm.png"
+                <img src="/img/logo-blue.png"
                      height="160"
                      width="160"
                      alt="Snowflake made of bike chain parts" />
@@ -277,7 +277,7 @@ h1 {
                            class="photo-thumbnail"
                            data-bs-toggle="modal"
                            data-bs-target=".pop-up-{{ photo.id }}"
-                           style="background-image: url('{{ photo.img_l }}')"></a>
+                           style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png')"></a>
                         <!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
                     {% endif %}
                 {% endfor %}
