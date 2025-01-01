@@ -72,3 +72,6 @@ extensions.front-matter.enabled = true
 [tool.setuptools]
 # Thanks https://stackoverflow.com/a/72547402/424301
 py-modules = ["freezing"]
+
+[project.scripts]
+freezing-server = "freezing.web.runserver:main"

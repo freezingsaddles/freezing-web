@@ -156,7 +156,7 @@
 	}
 
 	function rideFormatter(value, row) {
-		return "<a href=\"https://www.strava.com/activities/"+row.id+"\">" + value + "</a>";
+        return `<a href="https://www.strava.com/activities/${row.id}">${value}</a>`;
 	}
 
 	function photosFormatter(value, row) {
@@ -197,7 +197,7 @@
 
 	function refetchFormatter(value, row) {
 		if (row.photos_fetched) {
-			return "<a href=\"#\" onclick=\"refetchPhotosForRide("+value+")\">refetch</a>";
+            return `<a href="#" onclick="refetchPhotosForRide(${value})">refetch</a>`;
 		}
 	}
 
