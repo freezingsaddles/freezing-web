@@ -38,18 +38,17 @@ class AccessDenied(RuntimeError):
 # When a hashtag has a "/pointless/*" route instead of "/pointless/hashtag/*".
 # Many of the generic leaderboards ought to be pure hashtag leaderboards.
 custom_tag_pages = {
+    "adulting": "generic/adulting",
     "civilwarmarker": "civilwarhistory",
     "civilwarstreet": "civilwarhistory",
     "coffeeride": "coffeeride",
-    "foodrescue": "foodrescue",
-    "kidical": "kidmiles",
-    "withkid": "pointlesskids",
-    "rosshillloop": "rosshillloop",
-    "adulting": "generic/adulting",
-    "freezingerrands": "generic/adulting",
-    "londonbridge": "generic/londonbridge",
-    "fsrealsuppleride": "generic/suppleride",
     "decasleaze": "generic/decasleaze",
+    "foodrescue": "foodrescue",
+    "freezingerrands": "generic/adulting",
+    "fsrealsuppleride": "generic/suppleride",
+    "kidical": "kidmiles",
+    "londonbridge": "generic/londonbridge",
+    "rosshillloop": "rosshillloop",
     "withkid": "pointlesskids",
 }
 
@@ -163,8 +162,8 @@ def index():
     for res in meta.scoped_session().execute(q).fetchall():
         ride_tags = {}  # Prevent double-tagging
         for hash in findall(r"(?<=#)\w+", res["name"]):
-            if hash.lower().startswith("withkid"):
-                hash = "withkid"
+            desuffix = fullmatch(r"(?i)(withkid|foodrescue).*", hash)
+            hash = desuffix[1] if desuffix else hash
             if not fullmatch(
                 r"(?i)(BAFS|FS|FreezingSaddles)?\d*", hash
             ):  # Ditch useless tags
