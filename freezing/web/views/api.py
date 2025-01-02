@@ -13,7 +13,7 @@ from freezing.web import config
 from freezing.web.autolog import log
 from freezing.web.serialize import RidePhotoSchema
 from freezing.web.utils import auth
-from freezing.web.utils.wktutils import parse_linestring
+from freezing.web.utils.wktutils import parse_linestring, parse_point_wkt
 
 blueprint = Blueprint("api", __name__)
 
@@ -239,6 +239,7 @@ def _geo_tracks(start_date=None, end_date=None, team_id=None, limit=None):
     if limit is not None:
         q = q.limit(limit)
 
+    # Note this does not respect privacy but we do not currently display this.
     linestrings = []
     log.debug(f"Querying for tracks: {q}")
     for ride_track, wkt in q:
@@ -301,7 +302,16 @@ def _distance2(lon0, lat0, lon1, lat1):
 
 # The maximum "distance squared" to allow between points in a ride track.
 # I think in a pretend flat world, this is ~6 miles.
-_max_d2 = 0.01
+_max_contiguous2 = 0.01
+
+# The "distance squared" to prune from the start and end of tracks for
+# privacy reasons. ~.2 miles?
+_min_privacy2 = 0.00001
+
+
+def _parse_point(wkt):
+    point = parse_point_wkt(wkt)
+    return (float(Decimal(point.lon)), float(Decimal(point.lat)))
 
 
 # The full geojson structure is triple the size of what we need
@@ -317,8 +327,9 @@ def _track_map(
              with team_idx(team_id, team_index) as (
                  select id, row_number() over(order by id) from teams
              )
-             select ST_AsText(T.gps_track), X.team_index
+             select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), X.team_index
              from ride_tracks T
+             join ride_geo G on G.ride_id = T.ride_id
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
              join team_idx X on X.team_id = A.team_id
@@ -345,19 +356,50 @@ def _track_map(
     if limit is not None:
         q = q.bindparams(limit=limit)
 
+    # Be warned, the terms "lon" and lat" in the following code should not be read as longitude and
+    # latitude. There is confusion about which order these fields occur in the database; it has
+    # varied from year to year.
     tracks = []
-    for [gps_track, team_id] in meta.scoped_session().execute(q).fetchall():
-        track = []
-        tracks.append({"team": team_id, "track": track})
+    for [gps_track, start_geowkt, end_geowkt, team_id] in (
+        meta.scoped_session().execute(q).fetchall()
+    ):
+        start_geo = _parse_point(start_geowkt)
+        end_geo = _parse_point(end_geowkt)
+
+        track_points = [
+            (float(Decimal(lon)), float(Decimal(lat)))
+            for (lon, lat) in parse_linestring(gps_track)
+        ]
+
+        # Trim points from the start and end that are within a short distance of the actual ride start
+        # and end locations, because Strava sometimes feeds us geometry within riders' privacy radii
+        # and they do not wish these data to be shown. This will not hide a mid-ride stop back home, but
+        # Strava does not hide this either.
+        while (
+            track_points
+            and _distance2(
+                track_points[0][0], track_points[0][1], start_geo[0], start_geo[1]
+            )
+            < _min_privacy2
+        ):
+            del track_points[0]
+        while (
+            track_points
+            and _distance2(
+                track_points[-1][0], track_points[-1][1], end_geo[0], end_geo[1]
+            )
+            < _min_privacy2
+        ):
+            del track_points[-1]
+
+        track = None
         point = None
-        for _, (lons, lats) in enumerate(parse_linestring(gps_track)):
-            lon = float(Decimal(lons))
-            lat = float(Decimal(lats))
+        for lat, lon in track_points:
             # Break tracks that span flights and train journeys
-            if point and _distance2(lat, lon, point[0], point[1]) > _max_d2:
+            if not point or _distance2(lon, lat, point[0], point[1]) > _max_contiguous2:
                 track = []
                 tracks.append({"team": team_id, "track": track})
-            point = (lat, lon)
+            point = (lon, lat)
             track.append(point)
     tracks.reverse()
 
