@@ -13,7 +13,7 @@ fields:
     label: Rider
     format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: days
-    label: Decasleazes
+    label: Decasleaze Days
     rank_by: true
     type: number
   - name: points
