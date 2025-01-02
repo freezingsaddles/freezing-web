@@ -125,9 +125,9 @@
                         &nbsp;Loading weekly points...
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane" id="map">
-                    <div id="track-map" class="wide-aspect">
-                    </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="map">
+                <div id="track-map" class="wide-aspect">
                 </div>
             </div>
         </div>
@@ -156,7 +156,7 @@
 	}
 
 	function rideFormatter(value, row) {
-        return `<a href="https://www.strava.com/activities/${row.id}">${value}</a>`;
+        return `<a href="https://www.strava.com/activities/${row.id}" class="hover-underline">${value}</a>`;
 	}
 
 	function photosFormatter(value, row) {

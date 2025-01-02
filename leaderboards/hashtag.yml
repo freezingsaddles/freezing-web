@@ -144,7 +144,7 @@ tags:
   - tag: parks
     name: Park Finder
     description: |
-      Ride a bike to a park, post the ride to Strava with #parks in the title. Each park is one point.
+      Ride a bike to a park, post the ride to Strava with <code>#parks</code> in the title. Each park is one point.
       No daily limit, but you’ll have to break your ride into multiple Strava rides with <code>#parks</code>
       in the title to tabulate correctly. Must be a unique park to qualify in the scoring–no repeats.
     sponsor: arlcxrider

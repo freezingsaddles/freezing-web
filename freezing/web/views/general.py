@@ -50,6 +50,7 @@ custom_tag_pages = {
     "londonbridge": "generic/londonbridge",
     "fsrealsuppleride": "generic/suppleride",
     "decasleaze": "generic/decasleaze",
+    "withkid": "pointlesskids",
 }
 
 
@@ -162,6 +163,8 @@ def index():
     for res in meta.scoped_session().execute(q).fetchall():
         ride_tags = {}  # Prevent double-tagging
         for hash in findall(r"(?<=#)\w+", res["name"]):
+            if hash.lower().startswith("withkid"):
+                hash = "withkid"
             if not fullmatch(
                 r"(?i)(BAFS|FS|FreezingSaddles)?\d*", hash
             ):  # Ditch useless tags
