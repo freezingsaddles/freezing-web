@@ -132,6 +132,7 @@ def ridedays():
                     daily_scores b where a.id = b.athlete_id
                 group by b.athlete_id
                 order by
+                    case when rides = :total then 0 when rides = :total - 1 and contender = 0 then 1 else 2 end,
                     rides desc,
                     display_name
                 ;
@@ -146,7 +147,9 @@ def ridedays():
     all_done = competition_done(loc_time)
     ride_days = [
         (x["id"], x["display_name"], x["rides"], x["miles"], x["contender"])
-        for x in meta.engine.execute(q, today=loc_time.date()).fetchall()
+        for x in meta.engine.execute(
+            q, today=loc_time.date(), total=loc_total_days
+        ).fetchall()
     ]
     return render_template(
         "people/ridedays.html",
