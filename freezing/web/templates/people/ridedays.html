@@ -10,25 +10,28 @@
                     <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
                 </p>
             {% endif %}
+            <ul>
+                <li>
+                    If your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
+                </li>
+                <li>
+                    <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
+                </li>
+                <li>
+                    <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
+                </li>
+            </ul>
             <p>
-                If your name is green, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
-            </p>
-            <p>
-                If your name is yellow or red, either you haven't ridden (see <a href="https://www.velominati.com/the-rules/#5">Rule 5</a>) or you need to upload your rides.
-            </p>
-            <p>
-                Yellow means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
-            </p>
-            <p>
-                Red means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
+                If your name is <span class="text-warning">yellow</span> or <span class="text-danger">red</span>, either you haven't ridden enough (see
+                <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
             </p>
             <table class="table table-condensed">
                 <tr>
+                    <th class="number rank">
+                        Days
+                    </th>
                     <th>
                         Rider
-                    </th>
-                    <th class="number">
-                        Days
                     </th>
                     <th class="number">
                         Miles
@@ -37,20 +40,20 @@
                         Every Day Rider?
                     </th>
                 </tr>
-                {% for a, b, c, d in ride_days %}
+                {% for a, b, c, d, e in ride_days %}
                     {% if c >= num_days %}
                         {% set class = "text-success" %}
-                    {% elif c == (num_days - 1) and not all_done %}
+                    {% elif c == (num_days - 1) and e == 0 and not all_done %}
                         {% set class = "text-warning" %}
                     {% else %}
                         {% set class = "text-danger" %}
                     {% endif %}
                     <tr>
+                        <td class="number rank">
+                            {{ c }}
+                        </td>
                         <td>
                             <a href="/people/{{ a }}" class="{{ class }} hover-underline">{{ b }}</a>
-                        </td>
-                        <td class="number">
-                            {{ c }}
                         </td>
                         <td class="number">
                             {{ d | round(1) }}
@@ -58,7 +61,7 @@
                         <td class="emoji">
                             {% if c >= num_days %}
                                 🏆
-                            {% elif c == (num_days - 1) and not all_done %}
+                            {% elif c == (num_days - 1) and e == 0 and not all_done %}
                                 ⚠️
                             {% endif %}
                         </td>

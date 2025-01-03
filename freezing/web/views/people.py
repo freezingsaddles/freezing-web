@@ -22,7 +22,7 @@ def get_today() -> datetime:
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
     if False:
-        return datetime(2019, 3, 20, tzinfo=config.TIMEZONE)
+        return datetime(2024, 3, 18, tzinfo=config.TIMEZONE)
     return get_local_datetime()
 
 
@@ -126,35 +126,27 @@ def ridedays():
                     a.display_name,
                     count(b.ride_date) as rides,
                     sum(b.distance) as miles,
-                    max(b.ride_date) < :today as contender
+                    sum(case when b.ride_date = :today then 1 else 0 end) as contender
                 FROM
                     lbd_athletes a,
                     daily_scores b where a.id = b.athlete_id
                 group by b.athlete_id
                 order by
                     rides desc,
-                    contender desc,
-                    miles desc,
                     display_name
                 ;
                 """
     )
     loc_time = get_today()
-    start_yday = config.START_DATE.timetuple().tm_yday
-    end_yday = config.END_DATE.timetuple().tm_yday
-    current_yday = loc_time.timetuple().tm_yday
-    loc_total_days = min(current_yday, end_yday) - start_yday + 1
+    loc_total_days = (
+        min(loc_time.toordinal(), config.END_DATE.toordinal())
+        - config.START_DATE.toordinal()
+        + 1
+    )
     all_done = competition_done(loc_time)
-    # once the competition is over, even if you're a day short you are no longer a contender
-    contender_date = config.END_DATE.date() if all_done else loc_time.date()
     ride_days = [
-        (
-            x["id"],
-            x["display_name"],
-            x["rides"],
-            x["miles"],
-        )
-        for x in meta.engine.execute(q, today=contender_date).fetchall()
+        (x["id"], x["display_name"], x["rides"], x["miles"], x["contender"])
+        for x in meta.engine.execute(q, today=loc_time.date()).fetchall()
     ]
     return render_template(
         "people/ridedays.html",
