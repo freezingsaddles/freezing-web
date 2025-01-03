@@ -194,7 +194,7 @@ cp .env $HOME/backups/.env-$(date +'%Y-%m-%d')
 vim /opt/compose/.env
 ```
 
-* Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/master/freezing/sql/year-start.sql))
+* Delete all the data in the following MySQL tables: (see [freezing/sql/year-start.sql](https://github.com/freezingsaddles/freezing-web/blob/main/freezing/sql/year-start.sql))
   * athletes
   * rides
   * ride_efforts
