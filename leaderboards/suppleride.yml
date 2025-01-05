@@ -4,7 +4,7 @@ description: |
   Number of miles multiplied by tyre width (2" is <code>#FSrealsuppleride2</code>,
   3" is <code>#FSrealsuppleride3</code>, 4" is <code>#FSrealsuppleride4</code>).
   Capital Bikeshare rides tagged with <code>#CABI</code> automatically count as 2" tyre rides,
-  see also <a href="/pointless/generic/cabi">CABI rides</a>
+  see also <a href="/pointless/hashtag/cabi">CABI rides</a>
 fields:
   - name: id
     visible: false
