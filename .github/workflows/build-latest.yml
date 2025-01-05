@@ -4,7 +4,7 @@ name: Build Deploy and Test Latest
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
 
 jobs:
 
