@@ -3,6 +3,8 @@ title: Supple Ride
 description: |
   Number of miles multiplied by tyre width (2" is <code>#FSrealsuppleride2</code>,
   3" is <code>#FSrealsuppleride3</code>, 4" is <code>#FSrealsuppleride4</code>).
+  Capital Bikeshare rides tagged with <code>#CABI</code> automatically count as 2" tyre rides,
+  see also <a href="/pointless/generic/cabi">CABI rides</a>
 fields:
   - name: id
     visible: false
@@ -24,7 +26,7 @@ query: |
       A.display_name as athlete_name,
       R.distance,
       case
-        when R.name like '%#FSrealsuppleride2%' collate utf8mb4_general_ci then 2
+        when (R.name like '%#FSrealsuppleride2%' or R.name like '%#cabi%') collate utf8mb4_general_ci then 2
         when R.name like '%#FSrealsuppleride3%' collate utf8mb4_general_ci then 3
         when R.name like '%#FSrealsuppleride4%' collate utf8mb4_general_ci then 4
       end as tyre_width
