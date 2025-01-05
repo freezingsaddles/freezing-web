@@ -24,6 +24,8 @@ jobs:
           requirements-files: "pyproject.toml"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+        with:
+          plugins: "flake8-pyproject"
 
   templates:
     name: Templates Lint
