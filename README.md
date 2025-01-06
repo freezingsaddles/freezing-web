@@ -35,7 +35,7 @@ shell$ git clone https://github.com/freezingsaddles/freezing-web
 shell$ cd freezing-web
 shell$ python3 -m venv env
 shell$ source env/bin/activate
-(env) shell$ pip install -r requirements.txt -r requirements-dev.txt -e .
+(env) shell$ pip install -e '.[dev]'
 ```
 
 We will assume for all subsequent shell examples that you are running in the freezing-web activated virtualenv.  (This is denoted by using the "(env) shell$" prefix before shell commands.) Activate the virtualenv when you open a new shell with `source env/bin/activate`.
@@ -131,23 +131,24 @@ Doing this will start the server on port 5000. You can access the site at [http:
 
 During development, you may find you need to make changes to the database. Because this suite of projects uses SQLAlchemy and Alembic, and multiple projects depend on the model, it is in a [separate git repo](https://github.com/freezingsaddles/freezing-model).
 
-This an easy pattern to use to make changes to the project `freezing-model` that this depends on, without having to push tags to the repository. Assuming you have the project checked out in a directory called `workspace` below your home directory, try this:
+This an easy pattern to use to make changes to the project `freezing-model` that this depends on, without having to push tags to the repository. Let's assume you have activated the `freezing-web` virtual environment per the setup instructions above. Then try this:
 
-1. `cd ~/workspace/freezing-web`
-2. `python3 -m venv env`
-3. `source env/bin/activate`
-4. `cd ~/workspace/freezing-model`
-5. `pip install -r requirements.txt && python setup.py develop`
-6. `cd -`
-7. `pip install -r requirements.txt && python setup.py develop`
+```bash
+(env) shell$ # Assuming you aleready have a working .venv that is activated for freezing-web
+(env) shell$ cd ..
+(env) shell$ git clone https://github.com/freezingsaddles/freezing-model
+(env) shell$ cd freezing-model
+(env) shell$ pip install -e '.[dev]'
+(env) shell$ cd -
+```
 
 Now freezing-model is symlinked in, so you can make changes and add migrations to it.
 
-To get `freezing-web` to permanently use the `freezing-model` changes you will have to tag the `freezing-model` repository with a new version number (don't forget to update `setup.py` also) and update the tag in [freezing-web/requirements.txt](requirements.txt) to match the tag number. It's ok to make a pull request in `freezing-model` and bump the version after merging `master` into your branch.
+To get `freezing-web` to permanently use the `freezing-model` changes you will have to tag the `freezing-model` repository with a new version number (don't forget to update its `pyproject.toml` also) and update the tag in [freezing-web/pyproject.toml](pyproject.toml) to match the tag number. It's ok to make a pull request in `freezing-model` and bump the version after merging `master` into your branch.
 
 ### Coding standards
 
-The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/), [isort](https://pycqa.github.io/isort/) and [djlint](https://www.djlint.com/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r test-requirements.txt`).
+The `freezing-web` code is intended to be [PEP-8](https://www.python.org/dev/peps/pep-0008/) compliant. Code formatting is done with [black](https://black.readthedocs.io/en/stable/), [isort](https://pycqa.github.io/isort/) and [djlint](https://www.djlint.com/) and can be linted with [flake8](http://flake8.pycqa.org/en/latest/). See the [.flake8](.flake8) file and install the test dependencies to get these tools (`pip install -r '.[dev]'`).
 
 To run _all_ the linters and formatters, use the following commands:
 
