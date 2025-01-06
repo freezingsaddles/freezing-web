@@ -124,7 +124,7 @@
     <script type="text/javascript">
 $(function() {
 	$('#map-button').one('click', () => {
-		create_ride_map('map', '/api/all/trackmap.json?hashtag={{data.hashtag_notag}}');
+		create_ride_map('map', '/api/all/trackmap.json?hashtag={{data.hashtag_notag}}', null, true);
 	});
 });
     </script>

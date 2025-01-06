@@ -13,6 +13,16 @@ tags:
        find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
     rank_by_rides: True
 
+  - tag: adulting
+    alt: freezingerrands
+    name: Errandeering
+    description: |
+      Pointless prize for doing stuff on your bike you might be tempted to do in your car.
+      Grocery store, post office, pharmacy dentist, manicurist, gym, farmers market, dry cleaning, bike shop, library, etc.
+      Commutes, coffee rides, kid pick up / drop off do not count.
+      Tag rides with <code>#adulting</code> or <code>#freezingerrands</code>.
+    rank_by_rides: True
+
   - tag: bob
     name: Baby on Board
     description: |
@@ -141,6 +151,13 @@ tags:
     description: |
       Ride your bike a least a mile to any lake, pond or massive impounded body of water (loosely defined) that is freely accessible
       to the public. Tag with <code>#LakeFinder</code>.
+    rank_by_rides: True
+
+  - tag: londonbridge
+    name: London Bridge
+    description: |
+      Number of rides where you fell 😨🚲😱 (tagged with <code>#londonbridge</code>).
+    url: https://www.bikearlingtonforum.com/forums/topic/ww-london-bridge-pointless-prize-log/
     rank_by_rides: True
 
   - tag: oldGeorge

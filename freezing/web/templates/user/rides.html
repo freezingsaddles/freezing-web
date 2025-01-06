@@ -84,6 +84,14 @@
                    data-bs-toggle="tab">My Rides</a>
             </li>
             <li role="presentation" class="nav-item">
+                <a href="#map"
+                   id="map-link"
+                   class="nav-link"
+                   aria-controls="map"
+                   role="tab"
+                   data-bs-toggle="tab">My Ride Map</a>
+            </li>
+            <li role="presentation" class="nav-item">
                 <a href="#profile"
                    class="nav-link"
                    aria-controls="profile"
@@ -96,14 +104,6 @@
                    aria-controls="messages"
                    role="tab"
                    data-bs-toggle="tab">My Weekly Points</a>
-            </li>
-            <li role="presentation" class="nav-item">
-                <a href="#map"
-                   id="map-link"
-                   class="nav-link"
-                   aria-controls="map"
-                   role="tab"
-                   data-bs-toggle="tab">My Ride Map</a>
             </li>
         </ul>
         <!-- Tab panes -->
@@ -272,7 +272,7 @@
 		});
 
 		$('#map-link').one('click', () => {
-			create_ride_map('map', '/api/my/trackmap.json', 'red');
+			create_ride_map('map', '/api/my/trackmap.json', 'red', true);
 		});
 	});
     </script>
