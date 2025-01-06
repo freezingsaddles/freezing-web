@@ -41,6 +41,14 @@ tags:
     sponsor: cvcalhoun
     rank_by_rides: True
 
+  - tag: cabi
+    name: Capital Bikeshare (CaBi) Rides
+    description: |
+      Tag your rides on CaBi with <code>#cabi</code> (eBike or red bike!) and whoever does the most miles will get a prize. The prize is likely to either be a CaBi embroidery or whatever I have in my bag at the final happy hour (up to and including trivial cash amounts or random stickers). Get riding!
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-cabi/
+    sponsor: veleau_monica
+    rank_by_rides: True
+
   - tag: civilwarforts
     name: Civil War Forts
     description: |
