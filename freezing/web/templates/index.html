@@ -23,6 +23,16 @@ h1 {
     font-size: 1.1rem;
 }
 
+body.map-expanded {
+  #map {
+    aspect-ratio: 1.333;
+  }
+
+  #sect-stats {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 768px) {
     #map, #cal {
         aspect-ratio: 1.333;
@@ -250,6 +260,17 @@ h1 {
                 {% endif %}
             </div>
             <div id="map">
+                <div class="leaflet-control-container d-none d-xl-block">
+                    <div class="leaflet-top leaflet-right">
+                        <div class="leaflet-bar leaflet-control">
+                            <a id="expand-map"
+                               class="leaflet-control-expand"
+                               href="#"
+                               role="button"
+                               title="Toggle full size">↹</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {# djlint:off H021 #}
@@ -299,7 +320,13 @@ h1 {
 {% block foot %}
     <script>
 $(() => {
-    create_ride_map('map', '/api/all/trackmap.json');
+    const map = create_ride_map('map', '/api/all/trackmap.json');
+    $('#expand-map').click(e => {
+      e.preventDefault();
+      $('body').toggleClass('map-expanded');
+      map.invalidateSize();
+      $('#map')[0].scrollIntoView({block: 'center'});
+    })
 });
     </script>
 {% endblock %}

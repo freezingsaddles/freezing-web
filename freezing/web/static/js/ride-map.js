@@ -27,8 +27,10 @@ function create_ride_map(id, url, ride_color = null, recenter = false) {
       let minlat = 90, maxlat = -90, minlon = 180, maxlon = -180;
       for (const { track } of data.tracks) {
         for (const [lat, lon] of track) {
-          if (lat < minlat) minlat = lat; else if (lat > maxlat) maxlat = lat;
-          if (lon < minlon) minlon = lon; else if (lon > maxlon) maxlon = lon;
+          if (lat < minlat) minlat = lat;
+          if (lat > maxlat) maxlat = lat;
+          if (lon < minlon) minlon = lon;
+          if (lon > maxlon) maxlon = lon;
         }
       }
       if (minlat < maxlat) {
@@ -42,4 +44,5 @@ function create_ride_map(id, url, ride_color = null, recenter = false) {
       var polyline = L.polyline([track], { color, opacity, weight: 2 }).addTo(map);
     });
   });
+  return map;
 }
