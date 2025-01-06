@@ -54,6 +54,7 @@ dev = [
     "black",
     "djlint",
     "flake8",
+    "flake8-pyproject",
     "isort",
     "pre-commit",
     "pymarkdownlnt",
@@ -76,3 +77,15 @@ py-modules = ["freezing"]
 
 [project.scripts]
 freezing-server = "freezing.web.runserver:main"
+
+[tool.flake8]
+# Thanks https://www.reddit.com/r/learnpython/comments/rr6y69/comment/hqeqt68/?utm_source=share&utm_medium=web2x&context=3
+ignore = [
+    "E203",
+    "E501",
+    "W503",
+]
+max-line-length = 88
+max-complexity = 39
+extend-ignore = "E203"
+inline-quotes = "double"
