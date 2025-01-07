@@ -15,7 +15,7 @@ const track_colors = [
   'rgb(212, 44, 252)', 'rgb(234, 10, 218)', 'rgb(252, 0, 179)', 'rgb(255, 0, 136)', 'rgb(255, 0, 87)',
 ];
 function create_ride_map(id, url, ride_color = null, recenter = false) {
-  const map = L.map(id, { scrollWheelZoom: false }).setView([38.9072, -77.0369], 9);
+  const map = L.map(id, { gestureHandling: true }).setView([38.9072, -77.0369], 9);
   const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
