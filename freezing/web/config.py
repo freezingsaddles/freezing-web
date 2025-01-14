@@ -61,7 +61,7 @@ class Config:
     )
     STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
-    JSON_CACHE_DIR = env("JSON_CACHE_DIR", default=None)
+    JSON_CACHE_DIR = env("JSON_CACHE_DIR", default="/data/cache/json")
     TIMEZONE: tzinfo = env(
         "TIMEZONE",
         default="America/New_York",
