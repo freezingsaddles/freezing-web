@@ -1,10 +1,14 @@
+import datetime
+import gzip
 import json
+import re
 from datetime import timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import arrow
 import pytz
-from flask import Blueprint, abort, jsonify, request, session
+from flask import Blueprint, abort, jsonify, make_response, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import func, text
@@ -22,6 +26,9 @@ TRACK_LIMIT_DEFAULT = 1024
 
 """A limit on the number of tracks to return."""
 TRACK_LIMIT_MAX = 2048
+
+"""For how many minutes to cache track maps."""
+TRACK_CACHE_MINUTES = 30
 
 
 def get_limit(request):
@@ -406,23 +413,81 @@ def _track_map(
     return {"tracks": tracks}
 
 
+def _get_cached(key: str, compute):
+    cache_dir = config.JSON_CACHE_DIR
+    if not cache_dir:
+        return compute()
+
+    cache_file = Path(cache_dir).joinpath(key)
+    if cache_file.is_file():
+        time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
+        age = datetime.datetime.now() - time_stamp
+        if age.total_seconds() < TRACK_CACHE_MINUTES * 60:
+            return cache_file.read_bytes()
+
+    content = compute()
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+    cache_file.write_bytes(content)
+
+    return content
+
+
+def _make_gzip_json_response(content):
+    response = make_response(content)
+    response.headers["Content-Length"] = len(content)
+    response.headers["Content-Encoding"] = "gzip"
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     hash_tag = request.args.get("hashtag")
-    return jsonify(_track_map(hash_tag=hash_tag, limit=get_limit(request)))
+    limit = get_limit(request)
+
+    hash_clean = re.sub(r"\W+", "", hash_tag) if hash_tag else None
+    return _make_gzip_json_response(
+        _get_cached(
+            (
+                f"track_map/all/{hash_clean}-{limit}.json.gz"
+                if hash_clean
+                else f"track_map/all/{limit}.json.gz"
+            ),
+            lambda: gzip.compress(
+                json.dumps(_track_map(hash_tag=hash_tag, limit=limit)).encode("utf8"), 5
+            ),
+        )
+    )
 
 
 @blueprint.route("/my/trackmap.json")
 @auth.requires_auth
 def track_map_my():
     athlete_id = session.get("athlete_id")
-    return jsonify(
-        _track_map(
-            athlete_id=athlete_id, include_private=True, limit=get_limit(request)
-        ),
+    limit = get_limit(request)
+
+    return _make_gzip_json_response(
+        _get_cached(
+            f"track_map/athlete/{athlete_id}-{limit}.json.gz",
+            lambda: gzip.compress(
+                json.dumps(
+                    _track_map(athlete_id=athlete_id, include_private=True, limit=limit)
+                ).encode("utf8"),
+                5,
+            ),
+        )
     )
 
 
 @blueprint.route("/teams/<int:team_id>/trackmap.json")
 def track_map_team(team_id):
-    return jsonify(_track_map(team_id=team_id, limit=get_limit(request)))
+    limit = get_limit(request)
+
+    return _make_gzip_json_response(
+        _get_cached(
+            f"track_map/team/{team_id}-{limit}.json.gz",
+            lambda: gzip.compress(
+                json.dumps(_track_map(team_id=team_id, limit=limit)).encode("utf8"), 5
+            ),
+        )
+    )
