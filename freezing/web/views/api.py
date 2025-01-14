@@ -28,7 +28,7 @@ TRACK_LIMIT_DEFAULT = 1024
 TRACK_LIMIT_MAX = 2048
 
 """For how many minutes to cache track maps."""
-TRACK_CACHE_MINUTES = 30
+JSON_CACHE_MINUTES = 30
 
 
 def get_limit(request):
@@ -424,7 +424,7 @@ def _get_cached(key: str, compute):
     if cache_file.is_file():
         time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
         age = datetime.datetime.now() - time_stamp
-        if age.total_seconds() < TRACK_CACHE_MINUTES * 60:
+        if age.total_seconds() < JSON_CACHE_MINUTES * 60:
             return cache_file.read_bytes()
 
     content = compute()
@@ -434,11 +434,14 @@ def _get_cached(key: str, compute):
     return content
 
 
-def _make_gzip_json_response(content):
+def _make_gzip_json_response(content, private=False):
     response = make_response(content)
     response.headers["Content-Length"] = len(content)
     response.headers["Content-Encoding"] = "gzip"
     response.headers["Content-Type"] = "application/json"
+    response.headers["Cache-Control"] = (
+        f"max-age={JSON_CACHE_MINUTES * 60}, {'private' if private else 'public'}"
+    )
     return response
 
 
@@ -477,7 +480,8 @@ def track_map_my():
                 ).encode("utf8"),
                 5,
             ),
-        )
+        ),
+        private=True,
     )
 
 
