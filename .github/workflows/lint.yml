@@ -26,6 +26,8 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           plugins: "flake8-pyproject"
+      - name: lint - FawltyDeps
+        uses: tweag/FawltyDeps-action@v0.2.0
 
   templates:
     name: Templates Lint
