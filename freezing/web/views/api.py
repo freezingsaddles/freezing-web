@@ -418,7 +418,9 @@ def _get_cached(key: str, compute):
     if not cache_dir:
         return compute()
 
-    cache_file = Path(cache_dir).joinpath(key)
+    cache_file = Path(cache_dir).joinpath(key).resolve()
+    if not str(cache_file).startswith(str(Path(cache_dir).resolve())):
+        raise Exception("Invalid cache file path")
     if cache_file.is_file():
         time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
         age = datetime.datetime.now() - time_stamp
