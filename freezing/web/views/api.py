@@ -482,7 +482,7 @@ def track_map_my():
 
 
 @blueprint.route("/teams/<int:team_id>/trackmap.json")
-def track_map_team(team_id):
+def track_map_team(team_id: int):
     limit = get_limit(request)
 
     return _make_gzip_json_response(
