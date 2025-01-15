@@ -16,6 +16,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install '.[dev]'
       - name: black Lint
         uses: psf/black@24.1.1
       - name: isort Lint
@@ -26,6 +30,10 @@ jobs:
         uses: py-actions/flake8@v2
         with:
           plugins: "flake8-pyproject"
+      - name: lint - FawltyDeps
+        uses: tweag/FawltyDeps-action@v0.2.0
+        with:
+          options: --detailed
 
   templates:
     name: Templates Lint
