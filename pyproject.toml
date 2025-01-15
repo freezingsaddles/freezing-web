@@ -2,6 +2,15 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# PEP 420 namespace packages need some special treatment, see
+# Thanks @jherland for the hints!
+# https://realpython.com/python-namespace-package/
+# https://peps.python.org/pep-0420/
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["freezing"]
+namespaces = true
+
 [project]
 name = "freezing-web"
 version = "1.6.0"
@@ -73,10 +82,6 @@ max_line_length=88
 plugins.md013.enabled = false
 extensions.front-matter.enabled = true
 
-[tool.setuptools]
-# Thanks https://stackoverflow.com/a/72547402/424301
-py-modules = ["freezing"]
-
 [project.scripts]
 freezing-server = "freezing.web.runserver:main"
 
@@ -93,8 +98,8 @@ extend-ignore = "E203"
 inline-quotes = "double"
 
 [tool.fawltydeps]
-#code = ["freezing"]
-#deps = ["pyproject.toml"]
+code = ["freezing"]
+deps = ["pyproject.toml"]
 ignore_unused = [
     "PyMySQL",
     "autoflake",
@@ -104,12 +109,9 @@ ignore_unused = [
     "fawltydeps",
     "flake8",
     "flake8-pyproject",
+    "freezing-model",
     "gunicorn",
     "isort",
     "pre-commit",
     "pymarkdownlnt",
 ]
-
-[tool.fawltydeps.custom_mapping]
-# FIXME: What should this be? freezing-model brings in freezing.model.* classes... but this does not work:
-freezing-model = ["freezing"]
