@@ -49,7 +49,7 @@ services:
       REGISTRATION_SITE: ${REGISTRATION_SITE:-https://freezingsaddles.info/}
       SECRET_KEY: ${SECRET_KEY:-e6c07402-0307-11e8-b087-000000000000}  # yamllint disable-line
       SQLALCHEMY_URL: "mysql+pymysql://${MYSQL_USER:-freezing}:${MYSQL_PASSWORD:-zeer0}@freezing-db-dev/${MYSQL_DATABASE:-freezing}?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
-      SQLALCHEMY_URL_ROOT: "mysql+pymysql://${MYSQL_ROOT_USER:-freezing}:${MYSQL_ROOT_PASSWORD:-zeer0}@freezing-db-dev/mysql?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
+      SQLALCHEMY_URL_ROOT: "mysql+pymysql://${MYSQL_ROOT_USER:-root}:${MYSQL_ROOT_PASSWORD:-fr33z3}@freezing-db-dev/mysql?charset=utf8mb4&binary_prefix=true"  # yamllint disable-line
       START_DATE: ${START_DATE:-2018-01-01T00:00:00-05:00}
       STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID:-?}
       STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET:-?}

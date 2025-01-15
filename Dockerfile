@@ -9,7 +9,7 @@ COPY leaderboards /data/leaderboards
 COPY alembic.ini /app
 COPY pyproject.toml /app/
 WORKDIR /app
-RUN pip3 install .
+RUN pip3 install '.[runtime]'
 ENV LEADERBOARDS_DIR=/data/leaderboards
 USER freezing
 EXPOSE 8000
