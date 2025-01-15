@@ -21,15 +21,6 @@ from freezing.web.utils.wktutils import parse_linestring, parse_point_wkt
 
 blueprint = Blueprint("api", __name__)
 
-"""Have a default limit for GeoJSON track APIs."""
-TRACK_LIMIT_DEFAULT = 1024
-
-"""A limit on the number of tracks to return."""
-TRACK_LIMIT_MAX = 2048
-
-"""For how many minutes to cache track maps."""
-JSON_CACHE_MINUTES = 30
-
 
 def get_limit(request):
     """Get the limit parameter from the request, if it exists.
@@ -43,11 +34,11 @@ def get_limit(request):
     """
     limit = request.args.get("limit")
     if limit is None:
-        return TRACK_LIMIT_DEFAULT
+        return config.TRACK_LIMIT_DEFAULT
     limit = int(limit)
-    if limit > TRACK_LIMIT_MAX:
-        abort(400, f"limit {limit} exceeds {TRACK_LIMIT_MAX}")
-    return min(TRACK_LIMIT_MAX, int(limit))
+    if limit > config.TRACK_LIMIT_MAX:
+        abort(400, f"limit {limit} exceeds {config.TRACK_LIMIT_MAX}")
+    return min(config.TRACK_LIMIT_MAX, int(limit))
 
 
 @blueprint.route("/stats/general")
@@ -424,7 +415,7 @@ def _get_cached(key: str, compute):
     if cache_file.is_file():
         time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
         age = datetime.datetime.now() - time_stamp
-        if age.total_seconds() < JSON_CACHE_MINUTES * 60:
+        if age.total_seconds() < config.JSON_CACHE_MINUTES * 60:
             return cache_file.read_bytes()
 
     content = compute()
@@ -440,7 +431,7 @@ def _make_gzip_json_response(content, private=False):
     response.headers["Content-Encoding"] = "gzip"
     response.headers["Content-Type"] = "application/json"
     response.headers["Cache-Control"] = (
-        f"max-age={JSON_CACHE_MINUTES * 60}, {'private' if private else 'public'}"
+        f"max-age={config.JSON_CACHE_MINUTES * 60}, {'private' if private else 'public'}"
     )
     return response
 
