@@ -112,4 +112,4 @@ ignore_unused = [
 
 [tool.fawltydeps.custom_mapping]
 # FIXME: What should this be? freezing-model brings in freezing.model.* classes... but this does not work:
-# freezing-model = ["freezing.model"]
+freezing-model = ["freezing"]
