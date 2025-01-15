@@ -98,8 +98,6 @@ extend-ignore = "E203"
 inline-quotes = "double"
 
 [tool.fawltydeps]
-code = ["freezing"]
-deps = ["pyproject.toml"]
 ignore_unused = [
     "PyMySQL",
     "autoflake",
