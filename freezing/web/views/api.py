@@ -422,6 +422,8 @@ def _get_cached(key: str, compute):
 
         content = compute()
         cache_file.parent.mkdir(parents=True, exist_ok=True)
+        if not str(cache_file).startswith(str(Path(cache_dir).resolve()) + os.sep):
+            raise Exception("Invalid cache file path")
         cache_file.write_bytes(content)
 
         return content
