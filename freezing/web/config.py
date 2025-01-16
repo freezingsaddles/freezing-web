@@ -61,6 +61,10 @@ class Config:
     )
     STRAVA_CLIENT_ID = env("STRAVA_CLIENT_ID")
     STRAVA_CLIENT_SECRET = env("STRAVA_CLIENT_SECRET")
+    JSON_CACHE_DIR = env("JSON_CACHE_DIR", default="/cache/json")
+    JSON_CACHE_MINUTES = env("JSON_CACHE_MINUTES", cast=int, default=30)
+    TRACK_LIMIT_DEFAULT = env("TRACK_LIMIT_DEFAULT", cast=int, default=1024)
+    TRACK_LIMIT_MAX = env("TRACK_LIMIT_MAX", cast=int, default=2048)
     TIMEZONE: tzinfo = env(
         "TIMEZONE",
         default="America/New_York",

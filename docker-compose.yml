@@ -28,7 +28,7 @@ services:
     ports:
       - "${FREEZING_WEB_PORT:-8000}:8000"
     volumes:
-      - ./data/cache:/data/cache
+      - ./data/cache:/cache
       - ./leaderboards:/data/leaderboards
       - ./data/sessions:/data/sessions
     environment:

@@ -1,13 +1,19 @@
+import datetime
+import gzip
 import json
+import os
+import re
 from datetime import timedelta
 from decimal import Decimal
+from pathlib import Path
 
 import arrow
 import pytz
-from flask import Blueprint, abort, jsonify, request, session
+from flask import Blueprint, abort, jsonify, make_response, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import func, text
+from werkzeug.utils import secure_filename
 
 from freezing.web import config
 from freezing.web.autolog import log
@@ -16,12 +22,6 @@ from freezing.web.utils import auth
 from freezing.web.utils.wktutils import parse_linestring, parse_point_wkt
 
 blueprint = Blueprint("api", __name__)
-
-"""Have a default limit for GeoJSON track APIs."""
-TRACK_LIMIT_DEFAULT = 1024
-
-"""A limit on the number of tracks to return."""
-TRACK_LIMIT_MAX = 2048
 
 
 def get_limit(request):
@@ -36,11 +36,11 @@ def get_limit(request):
     """
     limit = request.args.get("limit")
     if limit is None:
-        return TRACK_LIMIT_DEFAULT
+        return config.TRACK_LIMIT_DEFAULT
     limit = int(limit)
-    if limit > TRACK_LIMIT_MAX:
-        abort(400, f"limit {limit} exceeds {TRACK_LIMIT_MAX}")
-    return min(TRACK_LIMIT_MAX, int(limit))
+    if limit > config.TRACK_LIMIT_MAX:
+        abort(400, f"limit {limit} exceeds {config.TRACK_LIMIT_MAX}")
+    return min(config.TRACK_LIMIT_MAX, int(limit))
 
 
 @blueprint.route("/stats/general")
@@ -406,23 +406,101 @@ def _track_map(
     return {"tracks": tracks}
 
 
+def _get_cached(key: str, compute):
+    cache_dir = config.JSON_CACHE_DIR
+    if not cache_dir:
+        return compute()
+
+    sanitized_key = secure_filename(key)
+    cache_file = Path(
+        os.path.normpath(Path(cache_dir).joinpath(sanitized_key))
+    ).resolve()
+    try:
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(
+            Path(cache_dir).resolve()
+        ):
+            raise Exception("Invalid cache file path")
+        if cache_file.is_file():
+            time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
+            age = datetime.datetime.now() - time_stamp
+            if age.total_seconds() < config.JSON_CACHE_MINUTES * 60:
+                return cache_file.read_bytes()
+
+        content = compute()
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(
+            Path(cache_dir).resolve()
+        ):
+            raise Exception("Invalid cache file path")
+        cache_file.write_bytes(content)
+
+        return content
+    except Exception as e:
+        err = f"Error retrieving cached item {sanitized_key}: {e}"
+        log.exception(err)
+        abort(500, err)
+
+
+def _make_gzip_json_response(content, private=False):
+    response = make_response(content)
+    response.headers["Content-Length"] = len(content)
+    response.headers["Content-Encoding"] = "gzip"
+    response.headers["Content-Type"] = "application/json"
+    response.headers["Cache-Control"] = (
+        f"max-age={config.JSON_CACHE_MINUTES * 60}, {'private' if private else 'public'}"
+    )
+    return response
+
+
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     hash_tag = request.args.get("hashtag")
-    return jsonify(_track_map(hash_tag=hash_tag, limit=get_limit(request)))
+    limit = get_limit(request)
+
+    hash_clean = re.sub(r"\W+", "", hash_tag) if hash_tag else None
+    return _make_gzip_json_response(
+        _get_cached(
+            (
+                f"track_map/all/{hash_clean}-{limit}.json.gz"
+                if hash_clean
+                else f"track_map/all/{limit}.json.gz"
+            ),
+            lambda: gzip.compress(
+                json.dumps(_track_map(hash_tag=hash_tag, limit=limit)).encode("utf8"), 5
+            ),
+        )
+    )
 
 
 @blueprint.route("/my/trackmap.json")
 @auth.requires_auth
 def track_map_my():
     athlete_id = session.get("athlete_id")
-    return jsonify(
-        _track_map(
-            athlete_id=athlete_id, include_private=True, limit=get_limit(request)
+    limit = get_limit(request)
+
+    return _make_gzip_json_response(
+        _get_cached(
+            f"track_map/athlete/{athlete_id}-{limit}.json.gz",
+            lambda: gzip.compress(
+                json.dumps(
+                    _track_map(athlete_id=athlete_id, include_private=True, limit=limit)
+                ).encode("utf8"),
+                5,
+            ),
         ),
+        private=True,
     )
 
 
 @blueprint.route("/teams/<int:team_id>/trackmap.json")
-def track_map_team(team_id):
-    return jsonify(_track_map(team_id=team_id, limit=get_limit(request)))
+def track_map_team(team_id: int):
+    limit = get_limit(request)
+
+    return _make_gzip_json_response(
+        _get_cached(
+            f"track_map/team/{team_id}-{limit}.json.gz",
+            lambda: gzip.compress(
+                json.dumps(_track_map(team_id=team_id, limit=limit)).encode("utf8"), 5
+            ),
+        )
+    )
