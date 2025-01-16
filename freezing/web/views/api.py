@@ -410,19 +410,24 @@ def _get_cached(key: str, compute):
         return compute()
 
     cache_file = Path(cache_dir).joinpath(key).resolve()
-    if not str(cache_file).startswith(str(Path(cache_dir).resolve())):
-        raise Exception("Invalid cache file path")
-    if cache_file.is_file():
-        time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
-        age = datetime.datetime.now() - time_stamp
-        if age.total_seconds() < config.JSON_CACHE_MINUTES * 60:
-            return cache_file.read_bytes()
+    try:
+        if not str(cache_file).startswith(str(Path(cache_dir).resolve())):
+            raise Exception("Invalid cache file path")
+        if cache_file.is_file():
+            time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
+            age = datetime.datetime.now() - time_stamp
+            if age.total_seconds() < config.JSON_CACHE_MINUTES * 60:
+                return cache_file.read_bytes()
 
-    content = compute()
-    cache_file.parent.mkdir(parents=True, exist_ok=True)
-    cache_file.write_bytes(content)
+        content = compute()
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cache_file.write_bytes(content)
 
-    return content
+        return content
+    except Exception as e:
+        err = f"Error retrieving cached item {key}: {e}"
+        log.exception(err)
+        abort(500, err)
 
 
 def _make_gzip_json_response(content, private=False):
