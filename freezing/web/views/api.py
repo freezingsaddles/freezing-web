@@ -1,6 +1,7 @@
 import datetime
 import gzip
 import json
+import os
 import re
 from datetime import timedelta
 from decimal import Decimal
