@@ -10,10 +10,10 @@ from pathlib import Path
 import arrow
 import pytz
 from flask import Blueprint, abort, jsonify, make_response, request, session
-from werkzeug.utils import secure_filename
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import func, text
+from werkzeug.utils import secure_filename
 
 from freezing.web import config
 from freezing.web.autolog import log
@@ -412,9 +412,13 @@ def _get_cached(key: str, compute):
         return compute()
 
     sanitized_key = secure_filename(key)
-    cache_file = Path(os.path.normpath(Path(cache_dir).joinpath(sanitized_key))).resolve()
+    cache_file = Path(
+        os.path.normpath(Path(cache_dir).joinpath(sanitized_key))
+    ).resolve()
     try:
-        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(Path(cache_dir).resolve()):
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(
+            Path(cache_dir).resolve()
+        ):
             raise Exception("Invalid cache file path")
         if cache_file.is_file():
             time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
@@ -424,7 +428,9 @@ def _get_cached(key: str, compute):
 
         content = compute()
         cache_file.parent.mkdir(parents=True, exist_ok=True)
-        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(Path(cache_dir).resolve()):
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(
+            Path(cache_dir).resolve()
+        ):
             raise Exception("Invalid cache file path")
         cache_file.write_bytes(content)
 
