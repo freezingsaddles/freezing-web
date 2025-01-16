@@ -10,6 +10,7 @@ from pathlib import Path
 import arrow
 import pytz
 from flask import Blueprint, abort, jsonify, make_response, request, session
+from werkzeug.utils import secure_filename
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, RideTrack
 from sqlalchemy import func, text
@@ -410,7 +411,8 @@ def _get_cached(key: str, compute):
     if not cache_dir:
         return compute()
 
-    cache_file = Path(os.path.normpath(Path(cache_dir).joinpath(key))).resolve()
+    sanitized_key = secure_filename(key)
+    cache_file = Path(os.path.normpath(Path(cache_dir).joinpath(sanitized_key))).resolve()
     try:
         if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(Path(cache_dir).resolve()):
             raise Exception("Invalid cache file path")
@@ -428,7 +430,7 @@ def _get_cached(key: str, compute):
 
         return content
     except Exception as e:
-        err = f"Error retrieving cached item {key}: {e}"
+        err = f"Error retrieving cached item {sanitized_key}: {e}"
         log.exception(err)
         abort(500, err)
 
