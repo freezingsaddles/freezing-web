@@ -412,7 +412,7 @@ def _get_cached(key: str, compute):
 
     cache_file = Path(os.path.normpath(Path(cache_dir).joinpath(key))).resolve()
     try:
-        if not str(cache_file).startswith(str(Path(cache_dir).resolve()) + os.sep):
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(Path(cache_dir).resolve()):
             raise Exception("Invalid cache file path")
         if cache_file.is_file():
             time_stamp = datetime.datetime.fromtimestamp(cache_file.stat().st_mtime)
@@ -422,7 +422,7 @@ def _get_cached(key: str, compute):
 
         content = compute()
         cache_file.parent.mkdir(parents=True, exist_ok=True)
-        if not str(cache_file).startswith(str(Path(cache_dir).resolve()) + os.sep):
+        if os.path.commonpath([str(cache_file), str(Path(cache_dir).resolve())]) != str(Path(cache_dir).resolve()):
             raise Exception("Invalid cache file path")
         cache_file.write_bytes(content)
 
