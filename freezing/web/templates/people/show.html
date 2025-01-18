@@ -162,7 +162,7 @@ fieldset[disabled] .btn-impersonate.active {
         <li class="list-group-item">
             Average Ride Today: <span class="float-end">
             {% if data.todayrides > 0 %}
-                {{ (data.todaytotal / data.todayrides) | round(2) }}
+                {{ (data.todaydist / data.todayrides) | round(2) }}
             {% else %}
                 N/A
             {% endif %}
