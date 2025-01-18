@@ -614,12 +614,14 @@ def indiv_after_sunset():
 
 def competition_start():
     start_date = config.START_DATE
-    return start_date.replace(tzinfo=None)
+    return start_date.replace(
+        hour=12, tzinfo=None
+    )  # mid-day to avoid the tyranny of timezones
 
 
 def now_or_competition_end():
     end_date = config.END_DATE
-    return min(datetime.now(), end_date.replace(tzinfo=None))
+    return min(datetime.now(), end_date.replace(hour=12, tzinfo=None))
 
 
 @blueprint.route("/user_daily_points/<athlete_id>")
@@ -654,7 +656,6 @@ def user_daily_points(athlete_id):
             .timetuple()
             .tm_yday
         )
-        # these are 1-based, whereas mysql uses 0-based
         cells = [
             {
                 "v": "{0}".format(dt.strftime("%b %d")),
