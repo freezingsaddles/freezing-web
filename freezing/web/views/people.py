@@ -80,6 +80,8 @@ def people_show_person(user_id):
     today = get_today()
     week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
+    today_dist = 0
+    today_rides = 0
     weekly_dist = 0
     weekly_rides = 0
     total_rides = 0
@@ -91,6 +93,9 @@ def people_show_person(user_id):
         if week_start <= ride_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
+        if ride_date == today.date():
+            today_dist += r.distance
+            today_rides += 1
 
     tribal_groups = load_tribes()
     my_tribes = query_tribes(user_id)
@@ -102,6 +107,8 @@ def people_show_person(user_id):
             "environment": config.ENVIRONMENT,
             "my_tribes": my_tribes,
             "team": our_team,
+            "todaydist": today_dist,
+            "todayrides": today_rides,
             "totaldist": total_dist,
             "totalrides": total_rides,
             "tribal_groups": tribal_groups,

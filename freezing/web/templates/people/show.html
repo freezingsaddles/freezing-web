@@ -127,12 +127,12 @@ fieldset[disabled] .btn-impersonate.active {
                     Total Rides: <span class="float-end">{{ data.totalrides }}</span>
                 </li>
                 <li class="list-group-item">
-                    Total Mileage: <span class="float-end">{{ data.totaldist | round(1) }}</span>
+                    Total Mileage: <span class="float-end">{{ data.totaldist | round(2) }}</span>
                 </li>
                 <li class="list-group-item">
                     Average Ride: <span class="float-end">
                     {% if data.totalrides > 0 %}
-                        {{ (data.totaldist / data.totalrides) | round(1) }}
+                        {{ (data.totaldist / data.totalrides) | round(2) }}
                     {% else %}
                         N/A
                     {% endif %}
@@ -142,16 +142,22 @@ fieldset[disabled] .btn-impersonate.active {
                 Rides This Week: <span class="float-end">{{ data.weekrides }}</span>
             </li>
             <li class="list-group-item">
-                Mileage This Week: <span class="float-end">{{ data.weektotal | round(1) }}</span>
+                Mileage This Week: <span class="float-end">{{ data.weektotal | round(2) }}</span>
             </li>
             <li class="list-group-item">
                 Average Ride This Week: <span class="float-end">
                 {% if data.weekrides > 0 %}
-                    {{ (data.weektotal / data.weekrides) | round(1) }}
+                    {{ (data.weektotal / data.weekrides) | round(2) }}
                 {% else %}
                     N/A
                 {% endif %}
             </span>
+            <li class="list-group-item">
+                Rides Today: <span class="float-end">{{ data.todayrides }}</span>
+            </li>
+            <li class="list-group-item">
+                Mileage Today: <span class="float-end">{{ data.todaydist | round(2) }}</span>
+            </li>
         </li>
     </ul>
 </div>
