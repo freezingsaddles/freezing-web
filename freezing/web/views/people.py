@@ -99,7 +99,6 @@ def people_show_person(user_id):
 
     tribal_groups = load_tribes()
     my_tribes = query_tribes(user_id)
-    print(my_tribes)
 
     return render_template(
         "people/show.html",
