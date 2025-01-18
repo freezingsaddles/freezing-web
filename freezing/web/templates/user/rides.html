@@ -20,20 +20,12 @@
       // Load the Visualization API and the corechart package.
       google.load('visualization', '1.0', {'packages':['corechart']});
 
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.setOnLoadCallback(drawDailyPointsChart);
-      google.setOnLoadCallback(drawWeeklyPointsChart);
-
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-
       function drawDailyPointsChart() {
 	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-              drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points', 'Day No.');
+              drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points');
           });
 	  }
 
@@ -42,27 +34,26 @@
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-              drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points', 'Week No.');
+              drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points');
           });
 	  }
 
-      function drawPointsChart(jsonData, element, title, hAxisTitle) {
+      function drawPointsChart(jsonData, element, title) {
           // Create our data table out of JSON data loaded from server.
           var data = new google.visualization.DataTable(jsonData);
 
-          console.log(data);
-
           // Instantiate and draw our chart, passing in some options.
+          var width = $('#' + element).width();
+          var height = 320;
           var chart = new google.visualization.ColumnChart(document.getElementById(element));
 
           var options = {
               'title': title,
-              'width': 1000,
-              'height': 250,
-              'hAxis': {title: hAxisTitle},
+              'width': width,
+              'height': height,
               'vAxis': {title: "Points"},
               legend: {position: 'none'},
-              chartArea: {left: 75, top: 50}
+              chartArea: {left: 75, width: width - 100, top: 50, height: height - 110}
           };
           chart.draw(data, options);
       }
@@ -95,16 +86,18 @@
                    data-bs-toggle="tab">My Ride Map</a>
             </li>
             <li role="presentation" class="nav-item">
-                <a href="#profile"
+                <a href="#daily"
+                   id="daily-link"
                    class="nav-link"
-                   aria-controls="profile"
+                   aria-controls="daily"
                    role="tab"
                    data-bs-toggle="tab">My Daily Points</a>
             </li>
             <li role="presentation" class="nav-item">
-                <a href="#messages"
+                <a href="#weekly"
+                   id="weekly-link"
                    class="nav-link"
-                   aria-controls="messages"
+                   aria-controls="weekly"
                    role="tab"
                    data-bs-toggle="tab">My Weekly Points</a>
             </li>
@@ -115,18 +108,28 @@
                 <table id="table-rides">
                 </table>
             </div>
-            <div role="tabpanel" class="tab-pane" id="profile">
-                <div id="chart_user_daily_points">
-                    <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
+            <div role="tabpanel" class="tab-pane" id="daily">
+                <div id="chart_user_daily_points" class="g-chart">
+                    <svg width="48"
+                         height="48"
+                         viewBox="0 0 24 24"
+                         fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+                    </svg>
                     &nbsp;Loading daily points...
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="messages">
-                <div id="chart_user_weekly_points">
-                    <div id="chart_user_daily_points">
-                        <img src="/img/loading2-blue.gif" alt="" height="48" width="48">
-                        &nbsp;Loading weekly points...
-                    </div>
+            <div role="tabpanel" class="tab-pane" id="weekly">
+                <div id="chart_user_weekly_points"  class="g-chart">
+                    <svg width="48"
+                         height="48"
+                         viewBox="0 0 24 24"
+                         fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+                    </svg>
+                    &nbsp;Loading weekly points...
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="map">
@@ -277,6 +280,12 @@
 		$('#map-link').one('click', () => {
 			create_ride_map('map', '/api/my/trackmap.json', 'red', true);
 		});
+        $('#daily-link').one('click', () => {
+            drawDailyPointsChart();
+        });
+        $('#weekly-link').one('click', () => {
+            drawWeeklyPointsChart();
+        });
 	});
     </script>
 {% endblock %}
