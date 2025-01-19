@@ -51,11 +51,16 @@
                   tick: {
                     format: "%m/%d",
                   }
+                },
+                y: {
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 format: {
-                  value: (value) => Math.round(value),
+                  value: (value) => Math.round(value).toLocaleString(),
                 }
               },
               legend: {
@@ -88,11 +93,16 @@
                   tick: {
                     format: d => "Week " + d,
                   }
+                },
+                y: {
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 format: {
-                  value: (value) => Math.round(value),
+                  value: (value) => Math.round(value).toLocaleString(),
                 }
               },
               legend: {

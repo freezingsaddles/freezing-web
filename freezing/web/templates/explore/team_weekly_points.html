@@ -33,6 +33,11 @@
                 tick: {
                   format: d => "Week " + d,
                 }
+              },
+              y: {
+                tick: {
+                  format: d => d.toLocaleString()
+                }
               }
             },
             bar: {
@@ -42,7 +47,7 @@
             },
             tooltip: {
               format: {
-                value: (value) => Math.round(value),
+                value: (value) => Math.round(value).toLocaleString(),
               }
             },
             legend: {

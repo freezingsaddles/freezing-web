@@ -5,19 +5,17 @@ Created on Feb 10, 2013
 """
 
 import copy
-import json
 from collections import defaultdict
 from datetime import datetime, timedelta
 
 from dateutil import rrule
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, jsonify
 from freezing.model import meta
 from freezing.model.orm import Team
 from pytz import utc
 from sqlalchemy import text
 
 from freezing.web import config
-from freezing.web.utils import gviz_api
 from freezing.web.views.shared_sql import (
     indiv_freeze_query,
     indiv_segment_query,
@@ -858,46 +856,31 @@ def indiv_elev_dist():
                 left join teams T on T.id = A.team_id
                 where not R.manual
                 group by R.athlete_id, athlete_name, team_name
+                order by SUM(R.distance)
                 ;
             """
     )
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "ID", "label": "ID", "type": "string"},
-        {"id": "score", "label": "Distance", "type": "number"},
-        {"id": "score", "label": "Elevation", "type": "number"},
-        {"id": "ID", "label": "Team", "type": "string"},
-        {"id": "score", "label": "Average Speed", "type": "number"},
-    ]
-
-    rows = []
+    labels = []
+    elevations = []
+    distances = []
+    speeds = []
     for i, res in enumerate(indiv_q):
-        name_parts = res["athlete_name"].split(" ")
-        if len(name_parts) > 1:
-            short_name = " ".join([name_parts[0], name_parts[-1]])
-        else:
-            short_name = res["athlete_name"]
+        labels.append(res["athlete_name"])
+        elevations.append(int(res["total_elevation_gain"]))
+        distances.append(res["total_distance"])
+        speeds.append(res["avg_speed"])
 
-        if res["team_name"] is None:
-            team_name = "(No team)"
-        else:
-            team_name = res["team_name"]
-
-        cells = [
-            {"v": res["athlete_name"], "f": short(short_name)},
-            {"v": res["total_distance"], "f": "{0:.2f}".format(res["total_distance"])},
-            {
-                "v": res["total_elevation_gain"],
-                "f": "{0:.2f}".format(res["total_elevation_gain"]),
-            },
-            {"v": team_name, "f": team_name},
-            {"v": res["avg_speed"], "f": "{0:.2f}".format(res["avg_speed"])},
-        ]
-        rows.append({"c": cells})
-
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "elevations": elevations,
+            "distances": distances,
+            "speeds": speeds,
+        }
+    )
 
 
 @blueprint.route("/riders_by_lowtemp")
@@ -962,20 +945,6 @@ def distance_by_lowtemp():
         )
 
     return jsonify({"data": rows})
-
-
-def gviz_api_jsonify(*args, **kwargs):
-    """
-    Override default Flask jsonify to handle JSON for Google Chart API.
-    """
-    return current_app.response_class(
-        json.dumps(
-            dict(*args, **kwargs),
-            indent=None,
-            cls=gviz_api.DataTableJSONEncoder,
-        ),
-        mimetype="application/json",
-    )
 
 
 def short(name, max_len=17):

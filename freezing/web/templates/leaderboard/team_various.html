@@ -38,7 +38,7 @@
                   ],
                 type: 'bar',
                 labels: {
-                  format: (value) => +value.toFixed(jsonData.precision ?? 0)
+                  format: (value) => (+value.toFixed(jsonData.precision ?? 0)).toLocaleString()
                 },
               },
               axis: {
@@ -52,7 +52,10 @@
                   }
                 },
                 y: {
-                  label: jsonData.unit
+                  label: jsonData.unit,
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {

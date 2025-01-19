@@ -17,7 +17,7 @@
 	          dataType:"json",
           }).done(function(jsonData) {
             $('#chart_team_leaderboard').height(jsonData.labels.length * 23 + 35)
-            var chart = c3.generate({
+            c3.generate({
               bindto: '#chart_team_leaderboard',
               bar: {
                 width: 21,
@@ -36,7 +36,7 @@
                   ],
                 type: 'bar',
                 labels: {
-                  format: (value) => Math.round(value)
+                  format: (value) => Math.round(value).toLocaleString()
                 },
                 hide: ['rank']
               },
@@ -49,13 +49,19 @@
                     multiline: true,
                     multilineMax: 1,
                   }
+                },
+                y: {
+                  label: 'Points',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 grouped: true,
                 format: {
                   title: (i) => '#' + jsonData.ranks[i] + ': ' + jsonData.labels[i],
-                  value: (value) => Math.round(value)
+                  value: (value) => Math.round(value).toLocaleString()
                 },
               },
               legend: {
