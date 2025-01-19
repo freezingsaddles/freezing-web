@@ -404,6 +404,13 @@ def distance_by_lowtemp():
     )
 
 
+@blueprint.route("/explore/riders_by_lowtemp")
+def riders_by_lowtemp():
+    return render_template(
+        "explore/riders_by_lowtemp.html",
+    )
+
+
 @blueprint.route("/explore/team_cumul")
 def team_cumul_trend():
     return render_template(
