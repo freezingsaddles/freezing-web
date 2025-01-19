@@ -466,7 +466,10 @@ def track_map_all():
                 else f"track_map/all/{limit}.json.gz"
             ),
             lambda: gzip.compress(
-                json.dumps(_track_map(hash_tag=hash_tag, limit=limit)).encode("utf8"), 5
+                json.dumps(
+                    _track_map(hash_tag=hash_tag, limit=limit), indent=None
+                ).encode("utf8"),
+                5,
             ),
         )
     )
@@ -483,7 +486,10 @@ def track_map_my():
             f"track_map/athlete/{athlete_id}-{limit}.json.gz",
             lambda: gzip.compress(
                 json.dumps(
-                    _track_map(athlete_id=athlete_id, include_private=True, limit=limit)
+                    _track_map(
+                        athlete_id=athlete_id, include_private=True, limit=limit
+                    ),
+                    indent=None,
                 ).encode("utf8"),
                 5,
             ),
@@ -500,7 +506,10 @@ def track_map_team(team_id: int):
         _get_cached(
             f"track_map/team/{team_id}-{limit}.json.gz",
             lambda: gzip.compress(
-                json.dumps(_track_map(team_id=team_id, limit=limit)).encode("utf8"), 5
+                json.dumps(
+                    _track_map(team_id=team_id, limit=limit), indent=None
+                ).encode("utf8"),
+                5,
             ),
         )
     )

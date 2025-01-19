@@ -1,42 +1,67 @@
 {% extends "base.html" %}
-{% block head %}
+{% block foot %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
+          integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
+          crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
+            integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"
+            integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
-      // Load the Visualization API and the corechart package.
-      google.charts.load('visualization', '1.0', {'packages':['corechart']});
-
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawIndivChart);
-
-      // Callback that creates and populates a data table,
-      // instantiates the pie chart, passes in the data and
-      // draws it.
-
-	  function drawIndivChart() {
+      $(() => {
 	      $.ajax({
 	          url: "/chartdata/indiv_leaderboard",
 	          dataType:"json",
 	      }).done(function(jsonData) {
-              // Create our data table out of JSON data loaded from server.
-              var data = new google.visualization.DataTable(jsonData);
-
-              // Instantiate and draw our chart, passing in some options.
-              var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
-              var width = $('#chart_indiv_leaderboard').width();
-              var rows = jsonData.rows.length;
-
-              var options = {
-                  'title':'Individual Points',
-                  'width':width,
-                  'height':120 + rows * 24,
-                  'legend': {'position': 'none'},
-                  'chartArea': {'left':width / 4,'top':70,'width': width * 3 / 4 - 50,'height': rows * 24},
-                  'hAxis': {'minValue': 0, 'textStyle': {'fontSize': 16}},
-                  'vAxis': {'textStyle': {'fontSize': 16}}
-              };
-
-              chart.draw(data, options);
+            $('#chart_indiv_leaderboard').height(jsonData.labels.length * 19 + 35)
+            var chart = c3.generate({
+              bindto: '#chart_indiv_leaderboard',
+              height: 400,
+              bar: {
+                width: 17,
+                space: 2
+              },
+              padding: {
+                left: 200
+              },
+              data: {
+                x: 'x',
+                columns:
+                  [
+                    ['x', ...jsonData.labels],
+                    ['points', ...jsonData.values]
+                  ],
+                type: 'bar',
+                labels: {
+                  format: (value) => Math.round(value)
+                },
+              },
+              axis: {
+                rotated: true,
+                x: {
+                  type: 'category',
+                  tick: {
+                    width: 200,
+                    multiline: true,
+                    multilineMax: 1,
+                  }
+                }
+              },
+              tooltip: {
+                grouped: true,
+                format: {
+                  value: (value) => Math.round(value)
+                }
+              },
+              legend: {
+                show: false
+              }
+            });
           });
-      }
+      });
     </script>
 {% endblock %}
 {% block content %}
@@ -47,7 +72,7 @@
         This leaderboard is also available as a <a href="/leaderboard/individual_text">text-only version</a>.
     </p>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_indiv_leaderboard" class="g-chart">
+    <div id="chart_indiv_leaderboard" style="width:100%">
         <svg width="48"
              height="48"
              viewBox="0 0 24 24"

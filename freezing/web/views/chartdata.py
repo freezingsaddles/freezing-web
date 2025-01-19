@@ -40,25 +40,13 @@ def team_leaderboard_data():
 
     team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "team_name", "label": "Team", "type": "string"},
-        {"id": "score", "label": "Score", "type": "number"},
-        # {"id":"","label":"","pattern":"","type":"number","p":{"role":"interval"}},
-    ]
-
-    rows = []
+    labels = []
+    values = []
     for i, res in enumerate(team_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["team_name"],
-                "f": "{0} [{1}]".format(short(res["team_name"], 25), place),
-            },
-            {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
-        ]
-        rows.append({"c": cells})
+        values.append(res["total_score"])
+        labels.append(res["team_name"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify({"labels": labels, "values": values})
 
 
 @blueprint.route("/indiv_leaderboard")
@@ -79,25 +67,13 @@ def indiv_leaderboard_data():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Score", "type": "number"},
-        # {"id":"","label":"","pattern":"","type":"number","p":{"role":"interval"}},
-    ]
-
-    rows = []
+    labels = []
+    values = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["total_score"], "f": str(int(round(res["total_score"])))},
-        ]
-        rows.append({"c": cells})
+        values.append(res["total_score"])
+        labels.append(res["athlete_name"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify({"labels": labels, "values": values})
 
 
 @blueprint.route("/team_elev_gain")
