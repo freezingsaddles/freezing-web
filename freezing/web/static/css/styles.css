@@ -260,6 +260,11 @@ nav.bg-light {
     color: var(--bs-body-color) !important;
 }
 
+.c3-wide {
+    width: 100%;
+    aspect-ratio: 1;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
@@ -353,6 +358,10 @@ nav.bg-light {
         max-height: 85vh;
         overflow-y: auto;
     }
+
+    .c3-wide {
+        aspect-ratio: 1.5;
+    }
 }
 
 @media (min-width: 1200px) {
@@ -375,6 +384,10 @@ nav.bg-light {
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .c3-wide {
+        aspect-ratio: 2;
     }
 }
 
