@@ -621,14 +621,12 @@ def user_daily_points(athlete_id):
              """
     )
 
-    cols = [{"id": "day", "label": "Day No.", "type": "string"}]
-    cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
-
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
     day_r = rrule.rrule(
         rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
     )
-    rows = []
+    days = []
+    points = []
     for i, dt in enumerate(day_r):
         # Thanks Stack Overflow https://stackoverflow.com/a/25265611/424301
         day_no = (
@@ -640,24 +638,13 @@ def user_daily_points(athlete_id):
             .timetuple()
             .tm_yday
         )
-        cells = [
-            {
-                "v": "{0}".format(dt.strftime("%b %d")),
-                "f": "{0}".format(dt.strftime("%m/%d")),
-            },
-            # Competition always starts at day 1, regardless of isocalendar day no
-        ]
-
-        points = meta.engine.execute(
+        pts = meta.engine.execute(
             day_q, id=athlete_id, yday=day_no
         ).scalar()  # @UndefinedVariable
-        if points is None:
-            points = 0
-        cells.append({"v": points, "f": "{0:.2f}".format(points)})
+        days.append(dt.isoformat())
+        points.append(0 if pts is None else pts)
 
-        rows.append({"c": cells})
-
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify({"days": days, "points": points})
 
 
 @blueprint.route("/user_weekly_points/<athlete_id>")
@@ -672,32 +659,23 @@ def user_weekly_points(athlete_id):
              """
     )
 
-    cols = [{"id": "week", "label": "Week No.", "type": "string"}]
-    cols.append({"id": "athlete_{0}".format(athlete_id), "label": "", "type": "number"})
-
+    # Slow garbage.
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
     week_r = rrule.rrule(
         rrule.WEEKLY, dtstart=competition_start(), until=now_or_competition_end()
     )
-    rows = []
+    weeks = []
+    points = []
     for i, dt in enumerate(week_r):
         week_no = dt.date().isocalendar()[1]
-        # these are 1-based, whereas mysql uses 0-based
-        cells = [
-            {"v": "Week {0}".format(i + 1), "f": "Week {0}".format(i + 1)},
-            # Competition always starts at week 1, regardless of isocalendar week no
-        ]
 
         total_score = meta.engine.execute(
             week_q, athlete_id=athlete_id, week=week_no - 1
         ).scalar()  # @UndefinedVariable
-        if total_score is None:
-            total_score = 0
-        cells.append({"v": total_score, "f": "{0:.2f}".format(total_score)})
+        weeks.append(i + 1)
+        points.append(0 if total_score is None else total_score)
 
-        rows.append({"c": cells})
-
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify({"weeks": weeks, "points": points})
 
 
 @blueprint.route("/team_weekly_points")
@@ -729,22 +707,19 @@ def team_weekly_points():
     teams = sorted({(r["team_id"], r["team_name"]) for r in res}, key=lambda t: t[1])
     scores = {(r["week_num"], r["team_id"]): r["total_score"] for r in res}
 
-    team_cols = [
-        {"id": f"team_{id}", "label": name, "type": "number"} for id, name in teams
-    ]
-    cols = [{"id": "week", "label": "Week No.", "type": "string"}, *team_cols]
+    response = {}
+    xs = ["x"]
+    for week in weeks:
+        xs.append(week + 1)
+    response["x"] = xs
+    response["teams"] = [name for id, name in teams]
+    for id, name in teams:
+        team = [name]
+        for week in weeks:
+            team.append(scores.get((week, id), 0.0))
+        response[name] = team
 
-    def week_cells(week: int) -> [dict]:
-        def team_cell(id: int) -> dict:
-            total_score = scores.get((week, id), 0.0)
-            return {"v": total_score, "f": "{0:.2f}".format(total_score)}
-
-        team_cells = [team_cell(id) for id, _ in teams]
-        return [{"v": f"Week {week + 1}", "f": f"Week {week + 1}"}, *team_cells]
-
-    rows = [{"c": week_cells(week)} for week in weeks]
-
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(response)
 
 
 @blueprint.route("/team_cumul_points")
@@ -945,25 +920,22 @@ def riders_by_lowtemp():
             """
     )
 
-    cols = [
-        {"id": "date", "label": "Date", "type": "date"},
-        {"id": "riders", "label": "Riders", "type": "number"},
-        {"id": "day_temp_min", "label": "Low Temp", "type": "number"},
-    ]
-
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
         if res["low_temp"] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
-        cells = [
-            {"v": res["start_date"]},
-            {"v": res["riders"], "f": "{0}".format(res["riders"])},
-            {"v": res["low_temp"], "f": "{0:.1f}F".format(res["low_temp"])},
-        ]
-        rows.append({"c": cells})
+        # res['start_date']
+        dt = res["start_date"]
+        rows.append(
+            {
+                "date": {"year": dt.year, "month": dt.month, "day": dt.day},
+                "riders": res["riders"],
+                "low_temp": res["low_temp"],
+            }
+        )
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify({"data": rows})
 
 
 @blueprint.route("/distance_by_lowtemp")
