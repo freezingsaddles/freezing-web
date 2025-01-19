@@ -863,19 +863,22 @@ def indiv_elev_dist():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    labels = []
+    athletes = []
+    teams = []
     elevations = []
     distances = []
     speeds = []
     for i, res in enumerate(indiv_q):
-        labels.append(res["athlete_name"])
+        athletes.append(res["athlete_name"])
+        teams.append(res["team_name"])
         elevations.append(int(res["total_elevation_gain"]))
         distances.append(res["total_distance"])
         speeds.append(res["avg_speed"])
 
     return jsonify(
         {
-            "labels": labels,
+            "athletes": athletes,
+            "teams": teams,
             "elevations": elevations,
             "distances": distances,
             "speeds": speeds,

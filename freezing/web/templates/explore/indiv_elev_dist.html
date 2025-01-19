@@ -46,12 +46,12 @@
           }
         },
         point: {
-          r: ({index}) => jsonData.speeds[index],
+          r: ({index}) => jsonData.speeds[index] * jsonData.speeds[index] / 12,
         },
         tooltip: {
           contents: function ([{index}]) {
             return "<table class='" + this.CLASS.tooltip + "'>" +
-              "<tr><th colspan='2'>" + jsonData.labels[index] + "</th></tr>" +
+              "<tr><th colspan='2' style='text-align: center'>" + jsonData.athletes[index] + "<br />" + jsonData.teams[index] + "</th></tr>" +
               "<tr><td class='name'>distance</td><td class='value'>" + Math.round(jsonData.distances[index]).toLocaleString() + " mi</td></tr>" +
               "<tr><td class='name'>elevation</td><td class='value'>" + Math.round(jsonData.elevations[index]).toLocaleString() + " feet</td></tr>" +
               "<tr><td class='name'>speed</td><td class='value'>" + +jsonData.speeds[index]?.toFixed(1) + "mph</td></tr>" +
