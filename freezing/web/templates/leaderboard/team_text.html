@@ -1,23 +1,33 @@
 {% extends "base.html" %}
+{% block head %}
+    <style>
+    .people-list > li::marker {
+      font-size: 1.25em;
+    }
+    .my-team {
+      background-color: #ffff0020;
+    }
+    </style>
+{% endblock %}
 {% block content %}
-    <button class="float-end btn btn-primary mt-2" id="show_hide_people">
-        Show/Hide people
-    </button>
     <h1>
         Team Leaderboard (Text)
     </h1>
     <p>
         This leaderboard is also available as a <a href="/leaderboard/team">chart version</a>.
+        <button class="btn btn-primary btn-sm ms-2" id="show_hide_people">
+            Show/Hide people
+        </button>
     </p>
-    <ol>
+    <ol class="people-list">
         {% for team_row in team_rows %}
-            <li>
-                <h4>
+            <li class="mb-2{{ ' my-team' if team_row['team_id'] == my_team else '' }}">
+                <h4 class="mb-0">
                     <a href="https://www.strava.com/clubs/{{ team_row['team_id'] }}"
                        class="hover-underline">{{ team_row['team_name'] }}</a>:
                     <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
                 </h4>
-                <ol class="people">
+                <ol class="people d-none">
                     {% for member_row in team_members[team_row['team_id']] %}
                         <li>
                             <a href="/people/{{ member_row['athlete_id'] }}" class="hover-underline">{{ member_row['athlete_name'] }}</a>:

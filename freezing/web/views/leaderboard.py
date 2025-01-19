@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template, session, url_for
 from freezing.model import meta
 from sqlalchemy import text
 from werkzeug.utils import redirect
@@ -22,6 +22,8 @@ def team_leaderboard():
 
 @blueprint.route("/team_text")
 def team_leaderboard_classic():
+    athlete_id = session.get("athlete_id")
+
     # Get teams sorted by points
     q = team_leaderboard_query()
 
@@ -50,6 +52,17 @@ def team_leaderboard_classic():
     for indiv_row in meta.scoped_session().execute(q).fetchall():
         team_members.setdefault(indiv_row["team_id"], []).append(indiv_row)
 
+    my_team = next(
+        (
+            team_id
+            for team_id in team_members
+            if any(
+                member["athlete_id"] == athlete_id for member in team_members[team_id]
+            )
+        ),
+        None,
+    )
+
     for team_id in team_members:
         team_members[team_id] = reversed(
             sorted(team_members[team_id], key=lambda m: m["total_score"])
@@ -59,6 +72,7 @@ def team_leaderboard_classic():
         "leaderboard/team_text.html",
         team_rows=team_rows,
         team_members=team_members,
+        my_team=my_team,
     )
 
 
@@ -78,6 +92,8 @@ def indiv_leaderboard():
 
 @blueprint.route("/individual_text")
 def individual_leaderboard_text():
+    athlete_id = session.get("athlete_id")
+
     q = text(
         """
              select
@@ -105,6 +121,7 @@ def individual_leaderboard_text():
     return render_template(
         "leaderboard/indiv_text.html",
         indiv_rows=indiv_rows,
+        myself=athlete_id,
     )
 
 

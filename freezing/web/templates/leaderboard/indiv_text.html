@@ -1,4 +1,14 @@
 {% extends "base.html" %}
+{% block head %}
+    <style>
+  li.bigly::marker {
+    font-size: 1.25em;
+  }
+  .myself {
+    background-color: #ffff0020;
+  }
+    </style>
+{% endblock %}
 {% block content %}
     <h1>
         Individual Leaderboard (Text)
@@ -8,7 +18,7 @@
     </p>
     <ol>
         {% for indiv_row in indiv_rows[:10] %}
-            <li>
+            <li class="bigly{{ ' myself' if indiv_row['athlete_id'] == myself else '' }}">
                 <h4 class="mb-0">
                     <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                     {{ indiv_row['total_score']|round|int|groupnum }} points
@@ -17,7 +27,7 @@
             </li>
         {% endfor %}
         {% for indiv_row in indiv_rows[10:] %}
-            <li>
+            <li class="{{ 'myself' if indiv_row['athlete_id'] == myself else '' }}">
                 <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                 <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
                 ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}

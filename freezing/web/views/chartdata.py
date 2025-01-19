@@ -18,7 +18,6 @@ from sqlalchemy import text
 
 from freezing.web import config
 from freezing.web.utils import gviz_api
-from freezing.web.utils.dates import parse_competition_timestamp
 from freezing.web.views.shared_sql import (
     indiv_freeze_query,
     indiv_segment_query,
@@ -708,16 +707,10 @@ def team_weekly_points():
     scores = {(r["week_num"], r["team_id"]): r["total_score"] for r in res}
 
     response = {}
-    xs = ["x"]
-    for week in weeks:
-        xs.append(week + 1)
-    response["x"] = xs
+    response["x"] = ["x"] + [week + 1 for week in weeks]
     response["teams"] = [name for id, name in teams]
     for id, name in teams:
-        team = [name]
-        for week in weeks:
-            team.append(scores.get((week, id), 0.0))
-        response[name] = team
+        response[name] = [name] + [scores.get((week, id), 0.0) for week in weeks]
 
     return jsonify(response)
 
@@ -738,21 +731,13 @@ def team_cumul_points():
              """
     )
 
-    cols = [{"id": "date", "label": "Date", "type": "date"}]
-
-    for team in teams:
-        cols.append(
-            {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
+    dates = [
+        dt.strftime("%Y-%m-%d")
+        for dt in rrule.rrule(
+            rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
         )
-
-    tpl_dict = dict(
-        [
-            (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(
-                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
-            )
-        ]
-    )
+    ]
+    tpl_dict = dict([(dt, None) for dt in dates])
 
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)
@@ -770,20 +755,21 @@ def team_cumul_points():
 
         # Fill in any None gaps with the previous non-None value
         prev_value = 0
-        for datekey in sorted(tpl_dict.keys()):
+        for datekey in dates:
             if daily_cumul[team.id][datekey] is None:
                 daily_cumul[team.id][datekey] = prev_value
             else:
                 prev_value = daily_cumul[team.id][datekey]
 
-    rows = []
-    for datekey in sorted(tpl_dict.keys()):
-        cells = [{"v": parse_competition_timestamp(datekey).date()}]
-        for team in teams:
-            cells.append({"v": daily_cumul[team.id][datekey]})
-        rows.append({"c": cells})
+    response = {}
+    response["dates"] = ["date"] + dates
+    response["teams"] = [team.name for team in teams]
+    for team in teams:
+        response[team.name] = [team.name] + [
+            daily_cumul[team.id][date] for date in dates
+        ]
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(response)
 
 
 @blueprint.route("/team_cumul_mileage")
@@ -802,21 +788,13 @@ def team_cumul_mileage():
              """
     )
 
-    cols = [{"id": "date", "label": "Date", "type": "date"}]
-
-    for team in teams:
-        cols.append(
-            {"id": "team_{0}".format(team.id), "label": team.name, "type": "number"}
+    dates = [
+        dt.strftime("%Y-%m-%d")
+        for dt in rrule.rrule(
+            rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
         )
-
-    tpl_dict = dict(
-        [
-            (dt.strftime("%Y-%m-%d"), None)
-            for dt in rrule.rrule(
-                rrule.DAILY, dtstart=competition_start(), until=now_or_competition_end()
-            )
-        ]
-    )
+    ]
+    tpl_dict = dict([(dt, None) for dt in dates])
 
     # Query for each team, build this into a multidim array
     daily_cumul = defaultdict(dict)
@@ -834,20 +812,21 @@ def team_cumul_mileage():
 
         # Fill in any None gaps with the previous non-None value
         prev_value = 0
-        for datekey in sorted(tpl_dict.keys()):
+        for datekey in dates:
             if daily_cumul[team.id][datekey] is None:
                 daily_cumul[team.id][datekey] = prev_value
             else:
                 prev_value = daily_cumul[team.id][datekey]
 
-    rows = []
-    for datekey in sorted(tpl_dict.keys()):
-        cells = [{"v": parse_competition_timestamp(datekey).date()}]
-        for team in teams:
-            cells.append({"v": daily_cumul[team.id][datekey]})
-        rows.append({"c": cells})
+    response = {}
+    response["dates"] = ["date"] + dates
+    response["teams"] = [team.name for team in teams]
+    for team in teams:
+        response[team.name] = [team.name] + [
+            daily_cumul[team.id][date] for date in dates
+        ]
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(response)
 
 
 @blueprint.route("/indiv_elev_dist")
