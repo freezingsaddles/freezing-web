@@ -398,7 +398,7 @@ def indiv_elev_dist():
 
 
 @blueprint.route("/explore/distance_by_lowtemp")
-def riders_by_lowtemp():
+def distance_by_lowtemp():
     return render_template(
         "explore/distance_by_lowtemp.html",
     )

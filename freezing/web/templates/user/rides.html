@@ -16,16 +16,52 @@
     <link rel="stylesheet" href="/css/leaflet-gesture-handling.min.css" />
     <script src="/js/leaflet-gesture-handling.min.js"></script>
     <script src="/js/ride-map.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
+          integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
+          crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
+            integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"
+            integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
-      // Load the Visualization API and the corechart package.
-      google.load('visualization', '1.0', {'packages':['corechart']});
-
       function drawDailyPointsChart() {
 	      $.ajax({
 	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-              drawPointsChart(jsonData, 'chart_user_daily_points', 'Daily Points');
+            c3.generate({
+              bindto: '#chart_user_daily_points',
+              bar: {
+              },
+              data: {
+                x: 'x',
+                columns:
+                  [
+                    ['x', ...jsonData.days.map(d => d.slice(0, 10))],
+                    ['points', ...jsonData.points],
+                  ],
+                type: 'bar',
+              },
+              axis: {
+                x: {
+                  type: 'timeseries',
+                  tick: {
+                    format: "%m/%d",
+                  }
+                }
+              },
+              tooltip: {
+                format: {
+                  value: (value) => Math.round(value),
+                }
+              },
+              legend: {
+                show: false
+              }
+            });
           });
 	  }
 
@@ -34,30 +70,37 @@
 	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
 	          dataType: "json"
           }).done(function(jsonData) {
-              drawPointsChart(jsonData, 'chart_user_weekly_points', 'Weekly Points');
+            c3.generate({
+              bindto: '#chart_user_weekly_points',
+              bar: {
+              },
+              data: {
+                x: 'x',
+                columns:
+                  [
+                    ['x', ...jsonData.weeks],
+                    ['points', ...jsonData.points],
+                  ],
+                type: 'bar',
+              },
+              axis: {
+                x: {
+                  tick: {
+                    format: d => "Week " + d,
+                  }
+                }
+              },
+              tooltip: {
+                format: {
+                  value: (value) => Math.round(value),
+                }
+              },
+              legend: {
+                show: false
+              }
+            });
           });
 	  }
-
-      function drawPointsChart(jsonData, element, title) {
-          // Create our data table out of JSON data loaded from server.
-          var data = new google.visualization.DataTable(jsonData);
-
-          // Instantiate and draw our chart, passing in some options.
-          var width = $('#' + element).width();
-          var height = 320;
-          var chart = new google.visualization.ColumnChart(document.getElementById(element));
-
-          var options = {
-              'title': title,
-              'width': width,
-              'height': height,
-              'vAxis': {title: "Points"},
-              legend: {position: 'none'},
-              chartArea: {left: 75, width: width - 100, top: 50, height: height - 110}
-          };
-          chart.draw(data, options);
-      }
-
     </script>
 {% endblock %}
 {% block content %}
@@ -109,7 +152,7 @@
                 </table>
             </div>
             <div role="tabpanel" class="tab-pane" id="daily">
-                <div id="chart_user_daily_points" class="g-chart">
+                <div id="chart_user_daily_points" style="width:100%; height: 480px">
                     <svg width="48"
                          height="48"
                          viewBox="0 0 24 24"
@@ -121,7 +164,7 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="weekly">
-                <div id="chart_user_weekly_points"  class="g-chart">
+                <div id="chart_user_weekly_points" style="width:100%; height: 480px">
                     <svg width="48"
                          height="48"
                          viewBox="0 0 24 24"
