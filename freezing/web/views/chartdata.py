@@ -135,25 +135,25 @@ def indiv_elev_gain():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Elevation", "type": "number"},
-        # {"id":"","label":"","pattern":"","type":"number","p":{"role":"interval"}},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["cumul_elev_gain"], "f": str(int(res["cumul_elev_gain"]))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["cumul_elev_gain"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "elevation gain",
+            "suffix": " ft",
+            "unit": "feet",
+        }
+    )
 
 
 @blueprint.route("/indiv_moving_time")
@@ -171,27 +171,27 @@ def indiv_moving_time():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Moving Time", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
+    tooltips = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {
-                "v": res["total_moving_time"],
-                "f": str(timedelta(seconds=int(res["total_moving_time"]))),
-            },
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["total_moving_time"] / 60)
+        tooltips.append(str(timedelta(seconds=int(res["total_moving_time"]))))
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "tooltips": tooltips,
+            "key": "total moving time",
+            "unit": "minutes",
+        }
+    )
 
 
 @blueprint.route("/team_moving_time")
@@ -218,7 +218,7 @@ def team_moving_time():
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
         labels.append(res["team_name"])
-        values.append(int(res["total_moving_time"] / 60))
+        values.append(res["total_moving_time"] / 60)
         tooltips.append(str(timedelta(seconds=int(res["total_moving_time"]))))
 
     return jsonify(
@@ -232,30 +232,32 @@ def team_moving_time():
         }
     )
 
+
 @blueprint.route("/indiv_number_sleaze_days")
 def indiv_number_sleaze_days():
     q = indiv_sleaze_query()
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Sleaze Days", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["num_sleaze_days"], "f": str(int(res["num_sleaze_days"]))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["num_sleaze_days"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "sleaze days",
+            "suffix": "",
+            "unit": "days",
+        }
+    )
 
 
 @blueprint.route("/team_number_sleaze_days")
@@ -303,24 +305,25 @@ def indiv_kidical():
 
     indiv_q = meta.engine.execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Kidical Rides", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["kidical_rides"], "f": str(int(res["kidical_rides"]))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["kidical_rides"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "kidical rides",
+            "suffix": "",
+            "unit": "rides",
+        }
+    )
 
 
 @blueprint.route("/indiv_freeze_points")
@@ -328,27 +331,25 @@ def indiv_freeze_points():
     q = indiv_freeze_query()
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Freeze Points", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {
-                "v": res["freeze_points_total"],
-                "f": "{0:.2f}".format(res["freeze_points_total"]),
-            },
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["freeze_points_total"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "points",
+            "suffix": "",
+            "unit": "Freeze Points",
+        }
+    )
 
 
 @blueprint.route("/indiv_segment/<int:segment_id>")
@@ -361,24 +362,25 @@ def indiv_segment(segment_id):
         q, segment_id=segment_id
     ).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Times Ridden", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["segment_rides"], "f": str(int(res["segment_rides"]))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["segment_rides"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "rides",
+            "suffix": "",
+            "unit": "",
+        }
+    )
 
 
 @blueprint.route("/team_segment/<int:segment_id>")
@@ -411,6 +413,7 @@ def team_segment(segment_id):
         }
     )
 
+
 @blueprint.route("/indiv_avg_speed")
 def indiv_avg_speed():
     q = text(
@@ -427,24 +430,26 @@ def indiv_avg_speed():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Average Speed", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["avg_speed"], "f": "{0:.2f}".format(res["avg_speed"])},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["avg_speed"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "average speed",
+            "suffix": " mph",
+            "unit": "mph",
+            "precision": 1,
+        }
+    )
 
 
 @blueprint.route("/team_avg_speed")
@@ -503,24 +508,26 @@ def indiv_freezing():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Miles Below Freezing", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["distance"], "f": "{0:.2f}".format(res["distance"])},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["distance"])
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": "distance",
+            "suffix": " mi",
+            "unit": "miles",
+            "precision": 1,
+        }
+    )
 
 
 @blueprint.route("/indiv_before_sunrise")
@@ -540,24 +547,27 @@ def indiv_before_sunrise():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "Before Sunrise", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
+    tooltips = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["dark"], "f": str(timedelta(seconds=int(res["dark"])))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["dark"])
+        tooltips.append(str(timedelta(seconds=int(res["dark"]))))
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "tooltips": tooltips,
+            "key": "time",
+            "unit": "minutes",
+        }
+    )
 
 
 @blueprint.route("/indiv_after_sunset")
@@ -577,24 +587,27 @@ def indiv_after_sunset():
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": "After Sunset", "type": "number"},
-    ]
+    labels = []
+    ranks = []
+    values = []
+    tooltips = []
 
-    rows = []
     for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res["dark"], "f": str(timedelta(seconds=int(res["dark"])))},
-        ]
-        rows.append({"c": cells})
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res["dark"])
+        tooltips.append(str(timedelta(seconds=int(res["dark"]))))
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "tooltips": tooltips,
+            "key": "time",
+            "unit": "minutes",
+        }
+    )
 
 
 def competition_start():
@@ -976,27 +989,31 @@ def exec_and_jsonify_query(
     q,
     display_label,
     query_label,
+    suffix,
     hover_lambda=lambda res, query_label: str(int(round(res[query_label]))),
 ):
-    cols = [
-        {"id": "name", "label": "Athlete", "type": "string"},
-        {"id": "score", "label": display_label, "type": "number"},
-    ]
-
     indiv_q = meta.scoped_session().execute(q).fetchall()
-    rows = []
-    for i, res in enumerate(indiv_q):
-        place = i + 1
-        cells = [
-            {
-                "v": res["athlete_name"],
-                "f": "{0} [{1}]".format(short(res["athlete_name"]), place),
-            },
-            {"v": res[query_label], "f": hover_lambda(res, query_label)},
-        ]
-        rows.append({"c": cells})
 
-    return gviz_api_jsonify({"cols": cols, "rows": rows})
+    labels = []
+    ranks = []
+    values = []
+
+    for i, res in enumerate(indiv_q):
+        ranks.append(i + 1)
+        labels.append(res["athlete_name"])
+        values.append(res[query_label])
+
+    return jsonify(
+        {
+            "labels": labels,
+            "values": values,
+            "ranks": ranks,
+            "key": query_label,
+            "suffix": suffix,
+            "unit": display_label,
+            "precision": 1,
+        }
+    )
 
 
 def fmt_date(dt):
@@ -1057,7 +1074,7 @@ def indiv_coldest():
             res["loc"],
         )
 
-    return exec_and_jsonify_query(q, "Temperature", "temp_start", hover_lambda=hl)
+    return exec_and_jsonify_query(q, "", "temp_start", "º F", hover_lambda=hl)
 
 
 @blueprint.route("/indiv_snowiest")
@@ -1080,7 +1097,7 @@ def indiv_snowiest():
             res["loc"],
         )
 
-    return exec_and_jsonify_query(q, "Snowfall", "snow", hover_lambda=hl)
+    return exec_and_jsonify_query(q, "Snowfall", "snow", '"', hover_lambda=hl)
 
 
 @blueprint.route("/indiv_rainiest")
@@ -1103,4 +1120,4 @@ def indiv_rainiest():
             res["loc"],
         )
 
-    return exec_and_jsonify_query(q, "Rainfall", "rain", hover_lambda=hl)
+    return exec_and_jsonify_query(q, "Rainfall", "rain", '"', hover_lambda=hl)
