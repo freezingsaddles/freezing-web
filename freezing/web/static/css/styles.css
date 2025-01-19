@@ -11,7 +11,7 @@ div.row > div > div.row, .big-bottom {
     margin-bottom: 15px;
 }
 
-iframe, .g-chart svg {
+iframe {
     border-radius: var(--bs-border-radius);
 }
 

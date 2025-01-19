@@ -19,7 +19,6 @@
             $('#chart_indiv_leaderboard').height(jsonData.labels.length * 19 + 35)
             var chart = c3.generate({
               bindto: '#chart_indiv_leaderboard',
-              height: 400,
               bar: {
                 width: 17,
                 space: 2
@@ -37,7 +36,7 @@
                   ],
                 type: 'bar',
                 labels: {
-                  format: (value) => Math.round(value)
+                  format: (value) => Math.round(value).toLocaleString()
                 },
                 hide: ['rank']
               },
@@ -50,13 +49,19 @@
                     multiline: true,
                     multilineMax: 1,
                   }
+                },
+                y: {
+                  label: 'Points',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 grouped: true,
                 format: {
                   title: (i) => '#' + jsonData.ranks[i] + ': ' + jsonData.labels[i],
-                  value: (value) => Math.round(value),
+                  value: (value) => Math.round(value).toLocaleString(),
                 }
               },
               legend: {

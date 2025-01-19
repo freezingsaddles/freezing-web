@@ -30,12 +30,15 @@
                   type: 'timeseries',
                 },
                 y: {
-                  label: 'points'
+                  label: 'points',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 format: {
-                  value: (value) => Math.round(value) + " pts",
+                  value: (value) => Math.round(value).toLocaleString() + "&nbsp;pts",
                 }
               }
             });
@@ -59,12 +62,15 @@
                   type: 'timeseries',
                 },
                 y: {
-                  label: 'miles'
+                  label: 'miles',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
                 }
               },
               tooltip: {
                 format: {
-                  value: (value) => Math.round(value) + " mi",
+                  value: (value) => Math.round(value).toLocaleString() + "&nbsp;mi",
                 }
               }
             });
