@@ -42,11 +42,13 @@ def team_leaderboard_data():
 
     labels = []
     values = []
+    ranks = []
     for i, res in enumerate(team_q):
         values.append(res["total_score"])
         labels.append(res["team_name"])
+        ranks.append(res["rank"])
 
-    return jsonify({"labels": labels, "values": values})
+    return jsonify({"labels": labels, "values": values, "ranks": ranks})
 
 
 @blueprint.route("/indiv_leaderboard")
@@ -56,7 +58,11 @@ def indiv_leaderboard_data():
     """
     q = text(
         """
-             select A.id as athlete_id, A.display_name as athlete_name, sum(DS.points) as total_score
+             select
+               A.id as athlete_id,
+               A.display_name as athlete_name,
+               sum(DS.points) as total_score,
+               rank() over (order by sum(DS.points) desc) as "rank"
              from daily_scores DS
              join lbd_athletes A on A.id = DS.athlete_id
              group by A.id, A.display_name
@@ -69,11 +75,13 @@ def indiv_leaderboard_data():
 
     labels = []
     values = []
+    ranks = []
     for i, res in enumerate(indiv_q):
         values.append(res["total_score"])
         labels.append(res["athlete_name"])
+        ranks.append(res["rank"])
 
-    return jsonify({"labels": labels, "values": values})
+    return jsonify({"labels": labels, "values": values, "ranks": ranks})
 
 
 @blueprint.route("/team_elev_gain")

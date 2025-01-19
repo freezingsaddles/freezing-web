@@ -32,12 +32,14 @@
                 columns:
                   [
                     ['x', ...jsonData.labels],
-                    ['points', ...jsonData.values]
+                    ['points', ...jsonData.values],
+                    ['rank', ...jsonData.ranks],
                   ],
                 type: 'bar',
                 labels: {
                   format: (value) => Math.round(value)
                 },
+                hide: ['rank']
               },
               axis: {
                 rotated: true,
@@ -53,7 +55,8 @@
               tooltip: {
                 grouped: true,
                 format: {
-                  value: (value) => Math.round(value)
+                  title: (i) => '#' + jsonData.ranks[i] + ': ' + jsonData.labels[i],
+                  value: (value) => Math.round(value),
                 }
               },
               legend: {
