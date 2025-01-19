@@ -243,6 +243,23 @@ nav.bg-light {
     line-height: 1;
 }
 
+.c3 path, .c3 line {
+    stroke: var(--bs-body-color) !important;
+}
+
+.c3 text {
+    font-size: 15px;
+}
+
+.c3-axis text, .c3-legend-item text {
+    fill: var(--bs-body-color) !important;
+}
+
+.c3-tooltip-container td, .c3-tooltip-container th {
+    background: var(--bs-body-bg) !important;
+    color: var(--bs-body-color) !important;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
