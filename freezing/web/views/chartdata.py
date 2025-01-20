@@ -919,7 +919,7 @@ def riders_by_lowtemp():
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
                 "riders": res["riders"],
                 "low_temp": res["low_temp"],
-                "wind_chill": res["low_temp"],
+                "wind_chill": res["wind_chill"],
                 "raininess": res["raininess"],
                 "snowiness": res["snowiness"],
             }
@@ -957,7 +957,7 @@ def distance_by_lowtemp():
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
                 "distance": res["distance"],
                 "low_temp": res["low_temp"],
-                "wind_chill": res["low_temp"],
+                "wind_chill": res["wind_chill"],
                 "raininess": res["raininess"],
                 "snowiness": res["snowiness"],
             }
