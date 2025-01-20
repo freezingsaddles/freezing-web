@@ -15,24 +15,40 @@
         $.ajax({
             url: '/chartdata/distance_by_lowtemp',
             success: function(data) {
+              var maxDistance = 0, maxRaininess = 0, maxSnowiness = 0;
+              for (const {distance, raininess, snowiness} of data.data) {
+                if (distance > maxDistance) maxDistance = distance;
+                if (raininess > maxRaininess) maxRaininess = raininess;
+                if (snowiness > maxSnowiness) maxSnowiness = snowiness;
+              }
               c3.generate({
                 data: {
                   x: 'x',
                   columns: [
                     ['x'].concat(data.data.map(val => new Date(val.date.year, val.date.month - 1, val.date.day))),
                     ['distance'].concat(data.data.map(val => val.distance)),
-                    ['low_temp'].concat(data.data.map(val => val.low_temp))
+                    ['low_temp'].concat(data.data.map(val => val.low_temp)),
+                    ['wind_chill'].concat(data.data.map(val => val.wind_chill)),
+                    ['raininess'].concat(data.data.map(val => maxRaininess ? val.raininess * maxDistance / maxRaininess : 0)),
+                    ['snowiness'].concat(data.data.map(val => maxSnowiness ? val.snowiness * maxDistance / maxSnowiness : 0)),
                   ],
                   type: 'bar',
                   types: {
-                    low_temp: 'spline'
+                    low_temp: 'spline',
+                    wind_chill: 'spline',
+                    raininess: 'spline',
+                    snowiness: 'spline',
                   },
                   axes: {
-                    low_temp: 'y2'
+                    low_temp: 'y2',
+                    wind_chill: 'y2',
                   },
                   names: {
                     distance: 'Total Distance',
-                    low_temp: 'Temperature'
+                    low_temp: 'Low Temperature',
+                    wind_chill: 'Wind Chill',
+                    raininess: 'Raininess',
+                    snowiness: 'Snowiness',
                   },
                 },
                 axis: {
@@ -65,7 +81,11 @@
                 tooltip: {
                   format: {
                     value: (value, ratio, id) =>
-                       Math.round(value) + (id === 'distance' ? ' mi' :  '°F')
+                      id === 'raininess' ?
+                        +(value * maxRaininess / maxDistance).toFixed(2) :
+                        id === 'snowiness' ?
+                          +(value * maxSnowiness / maxDistance).toFixed(2) :
+                            Math.round(value) + (id === 'distance' ? '&nbsp;mi' : '°F')
                   }
                 }
               });
@@ -76,10 +96,10 @@
 {% endblock %}
 {% block content %}
     <div class="text-center">
-        <strong>Miles Logged vs. Avg. Low Temp</strong>
+        <strong>Distance vs Weather</strong>
     </div>
     <div class="text-center text-muted small">
-        Relationship between total number of miles logged riders and the average low daily temperatures.
+        Relationship between total number of miles logged and the ambient weather conditions.
     </div>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart" class="c3-wide">

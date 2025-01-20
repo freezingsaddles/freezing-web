@@ -15,24 +15,40 @@
     $.ajax({
       url: '/chartdata/riders_by_lowtemp',
       success: function(data) {
+        var maxRiders = 0, maxRaininess = 0, maxSnowiness = 0;
+        for (const {riders, raininess, snowiness} of data.data) {
+          if (riders > maxRiders) maxRiders = riders;
+          if (raininess > maxRaininess) maxRaininess = raininess;
+          if (snowiness > maxSnowiness) maxSnowiness = snowiness;
+        }
         c3.generate({
           data: {
             x: 'x',
             columns: [
               ['x'].concat(data.data.map(val => new Date(val.date.year, val.date.month - 1, val.date.day))),
               ['riders'].concat(data.data.map(val => val.riders)),
-              ['low_temp'].concat(data.data.map(val => val.low_temp))
+              ['low_temp'].concat(data.data.map(val => val.low_temp)),
+              ['wind_chill'].concat(data.data.map(val => val.wind_chill)),
+              ['raininess'].concat(data.data.map(val => maxRaininess ? val.raininess * maxRiders / maxRaininess : 0)),
+              ['snowiness'].concat(data.data.map(val => maxSnowiness ? val.snowiness * maxRiders / maxSnowiness : 0)),
             ],
             type: 'bar',
             types: {
-              low_temp: 'spline'
+              low_temp: 'spline',
+              wind_chill: 'spline',
+              raininess: 'spline',
+              snowiness: 'spline',
             },
             axes: {
-              low_temp: 'y2'
+              low_temp: 'y2',
+              wind_chill: 'y2',
             },
             names: {
               riders: 'Riders',
-              low_temp: 'Temperature'
+              low_temp: 'Temperature',
+              wind_chill: 'Wind Chill',
+              raininess: 'Raininess',
+              snowiness: 'Snowiness',
             },
           },
           axis: {
@@ -65,7 +81,11 @@
           tooltip: {
             format: {
               value: (value, ratio, id) =>
-                Math.round(value) + (id === 'riders' ? ' mi' :  '°F')
+                id === 'raininess' ?
+                  +(value * maxRaininess / maxRiders).toFixed(2) :
+                  id === 'snowiness' ?
+                    +(value * maxSnowiness / maxRiders).toFixed(2) :
+                      Math.round(value) + (id === 'riders' ? '' : '°F')
             }
           }
         });
@@ -76,10 +96,10 @@
 {% endblock %}
 {% block content %}
     <div class="text-center">
-        <strong>Riders vs. Avg. Low Temp</strong>
+        <strong>Riders vs Weather</strong>
     </div>
     <div class="text-center text-muted small">
-        Relationship between number of participating riders and the average low daily temperatures.
+        Relationship between number of participating riders and the ambient weather conditions.
     </div>
     <!--Div that will hold our leaderboard chart-->
     <div id="chart" class="c3-wide">
