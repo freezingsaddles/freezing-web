@@ -888,11 +888,17 @@ def indiv_elev_dist():
 
 @blueprint.route("/riders_by_lowtemp")
 def riders_by_lowtemp():
-    """ """
+    """
+    Snowiness and raininess are in the average inches per hour of snowfall during rides.
+    A better metric would probably be total rain/snow at DCA on the day, but this is the measure we have.
+    """
     q = text(
         """
             select date(start_date) as start_date,
             avg(W.day_temp_min) as low_temp,
+            avg(W.ride_windchill_avg) as wind_chill,
+            cast(sum(W.ride_rain) * 3600 / sum(R.moving_time) as float) as raininess,
+            cast(sum(W.ride_snow) * 3600 / sum(R.moving_time) as float) as snowiness,
             count(distinct R.athlete_id) as riders
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
@@ -907,11 +913,15 @@ def riders_by_lowtemp():
             continue
         # res['start_date']
         dt = res["start_date"]
+
         rows.append(
             {
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
                 "riders": res["riders"],
                 "low_temp": res["low_temp"],
+                "wind_chill": res["low_temp"],
+                "raininess": res["raininess"],
+                "snowiness": res["snowiness"],
             }
         )
 
@@ -925,6 +935,9 @@ def distance_by_lowtemp():
         """
             select date(start_date) as start_date,
             avg(W.day_temp_min) as low_temp,
+            avg(W.ride_windchill_avg) as wind_chill,
+            cast(sum(W.ride_rain) * 3600 / sum(R.moving_time) as float) as raininess,
+            cast(sum(W.ride_snow) * 3600 / sum(R.moving_time) as float) as snowiness,
             sum(R.distance) as distance
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
@@ -944,6 +957,9 @@ def distance_by_lowtemp():
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
                 "distance": res["distance"],
                 "low_temp": res["low_temp"],
+                "wind_chill": res["low_temp"],
+                "raininess": res["raininess"],
+                "snowiness": res["snowiness"],
             }
         )
 
