@@ -1,34 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Sleaze Rides
+    </h2>
+    <p>
+        If we really want to be pedantic, and <strong>of course</strong> we want to be pedantic, it's actually Sleaze <strong>Days</strong>. Two one mile rides in a day gets you no sleaze ride credit. Since no one <strong>wants</strong> sleaze ride credit, this is a good thing.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Sleaze Rides
-        </h5>
-        <div class="card-body">
-            <p>
-                If we really want to be pedantic, and <strong>of course</strong> we want to be pedantic, it's actually Sleaze <strong>Days</strong>. Two one mile rides in a day gets you no sleaze ride credit. Since no one <strong>wants</strong> sleaze ride credit, this is a good thing.
-            </p>
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
-                    <th>
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
                         Name
                     </th>
-                    <th>
+                    <th class="number">
                         Sleaze Rides
                     </th>
                 </tr>
                 {% for a, b in indiv_sleaze %}
                     <tr>
-                        <td>
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
                             {{ a }}
                         </td>
-                        <td>
+                        <td class="number">
                             {{ b }}
                         </td>
                     </tr>
