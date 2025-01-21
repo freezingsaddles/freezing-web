@@ -6,15 +6,6 @@ from flask import Blueprint, render_template
 from freezing.model import meta
 from sqlalchemy import text
 
-from freezing.web import config
-from freezing.web.views.shared_sql import (
-    indiv_freeze_query,
-    indiv_segment_query,
-    indiv_sleaze_query,
-    team_segment_query,
-    team_sleaze_query,
-)
-
 blueprint = Blueprint("alt_scoring", __name__)
 
 
@@ -67,73 +58,6 @@ def team_daily():
     return render_template(
         "alt_scoring/team_daily.html",
         team_total=team_total,
-    )
-
-
-@blueprint.route("/team_sleaze")
-def team_sleaze():
-    q = team_sleaze_query()
-    data = [
-        (x["team_name"], x["num_sleaze_days"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/team_sleaze.html",
-        team_sleaze=data,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
-    )
-
-
-@blueprint.route("/team_hains")
-def team_hains():
-    q = team_segment_query()
-    data = [
-        (x["team_name"], x["segment_rides"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/team_hains.html",
-        team_hains=data,
-    )
-
-
-@blueprint.route("/indiv_sleaze")
-def indiv_sleaze():
-    q = indiv_sleaze_query()
-    data = [
-        (x["athlete_name"], x["num_sleaze_days"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_sleaze.html",
-        indiv_sleaze=data,
-    )
-
-
-@blueprint.route("/indiv_hains")
-def indiv_hains():
-    q = indiv_segment_query(join_miles=True)
-    data = [
-        (x["athlete_name"], x["segment_rides"], x["dist"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_hains.html",
-        indiv_hains=data,
-    )
-
-
-@blueprint.route("/indiv_freeze")
-def indiv_freeze():
-    q = indiv_freeze_query()
-    data = [
-        (x["athlete_name"], x["freeze_points_total"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_freeze.html",
-        indiv_freeze=data,
     )
 
 

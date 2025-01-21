@@ -6,6 +6,10 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+@view-transition {
+    navigation: auto;
+}
+
 /* padding for the gallery */
 div.row > div > div.row, .big-bottom {
     margin-bottom: 15px;
@@ -225,17 +229,6 @@ nav.bg-light {
 .leaderboard-overflow {
     min-width: 0;
     overflow-x: auto;
-}
-
-.extra-padding {
-    padding-left: 40px;
-    padding-right: 40px;
-    margin-top: 30px;
-    margin-bottom: 20px;
-}
-
-.extra-margin {
-    margin: 15px 25px 30px 25px
 }
 
 .menu-subheading {

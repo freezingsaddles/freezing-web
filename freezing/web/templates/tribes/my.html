@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+    <span class="float-end mt-1">
+        <a href="/tribes/leaderboard">Cancel</a>
+    </span>
+    <h2 class="mb-3">
+        My Tribes
+    </h2>
     <div class="card">
-        <h5 class="card-header">
-            My Tribes
-            <span class="float-end">
-                <a href="/tribes/leaderboard">Cancel</a>
-            </span>
-        </h5>
         <div class="card-body">
             <form method="post">
                 {% for group in tribal_groups %}
@@ -27,7 +27,7 @@
                         {% endfor %}
                     </select>
                 {% endfor %}
-                <button type="submit" class="btn btn-primary center-block extra-padding">
+                <button type="submit" class="btn btn-primary px-4">
                     Submit
                 </button>
             </form>

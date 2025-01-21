@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+    <span class="float-end mt-1">
+        {% if g.logged_in %}
+            <a href="/tribes/my">My Tribes</a>
+        {% else %}
+            Log in to join tribes
+        {% endif %}
+    </span>
+    <h2 class="mb-3">
+        Bike Tribes
+    </h2>
     <div class="card">
-        <h5 class="card-header">
-            Bike Tribes
-            <span class="float-end">
-                {% if g.logged_in %}
-                    <a href="/tribes/my">My Tribes</a>
-                {% else %}
-                    Log in to join tribes
-                {% endif %}
-            </span>
-        </h5>
-        <div class="card-body">
+        <div class="card-body pb-0">
             {% for group in tribal_groups %}
                 <h4>
                     {{ group.name }}

@@ -34,20 +34,21 @@ def indiv_sleaze_query():
     )
 
 
-def indiv_freeze_query():
+def indiv_freeze_query(friends=False):
     return text(
-        """
-        select athlete_id, athlete_name, SUM(max_daily_freeze_points) as freeze_points_total
-        from (
+        f"""
+        with FP as (
+            select R.athlete_id, A.display_name as athlete_name, date(R.start_date) as ride_date, (11*(ATAN((R.distance+4)-2*PI())+1.4)-2.66)*(1.2+ATAN((32-W.ride_temp_start)/5)) as freeze_points
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            {'' if friends else 'join lbd_athletes A on A.id = R.athlete_id'}
+        ), FPMax as (
             select athlete_id, athlete_name, ride_date, MAX(freeze_points) as max_daily_freeze_points
-            from (
-                select R.athlete_id, A.display_name as athlete_name, date(R.start_date) as ride_date, (11*(ATAN((R.distance+4)-2*PI())+1.4)-2.66)*(1.2+ATAN((32-W.ride_temp_start)/5)) as freeze_points
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                join lbd_athletes A on A.id = R.athlete_id
-            ) FP
+            from FP
             group by athlete_id, athlete_name, ride_date
-        ) FPMax
+        )
+        select athlete_id, athlete_name, SUM(max_daily_freeze_points) as freeze_points_total
+        from FPMax
         group by athlete_id, athlete_name
         order by freeze_points_total desc
         ;
