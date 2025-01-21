@@ -74,7 +74,7 @@
                 </thead>
                 <tbody>
                     {% for a,b,c,dist,can_win,d,e,f,g,h,i,j,k in data.tdata %}
-                        <tr>
+                        <tr class="{{ a | myself }}">
                             <td>
                                 <a href="/people/{{ a }}"
                                    {% if not can_win %}class="hover-underline text-danger"{% else %}class="hover-underline"{% endif %}>{{ b }}</a>

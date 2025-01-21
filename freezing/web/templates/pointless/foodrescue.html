@@ -46,7 +46,7 @@
                     </th>
                 </tr>
                 {% for a, b, d, e, f in data.tdata %}
-                    <tr>
+                    <tr class="{{ a | myself }}">
                         <td class="number rank">
                             {{ f }}
                         </td>

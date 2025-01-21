@@ -60,7 +60,7 @@ def indiv_segment_query(join_miles=False):
     if join_miles:
         return text(
             """
-            select aa.id, aa.athlete_name, aa.segment_rides, bb.dist from (select A.id, A.display_name as athlete_name, count(E.id) as segment_rides
+            select aa.id as athlete_id, aa.athlete_name, aa.segment_rides, bb.dist from (select A.id, A.display_name as athlete_name, count(E.id) as segment_rides
             from lbd_athletes A
             join rides R on R.athlete_id = A.id
             join ride_efforts E on E.ride_id = R.id

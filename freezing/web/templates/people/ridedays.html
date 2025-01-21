@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Every Day Riders - Day {{ num_days }}
+    </h2>
+    {% if all_done %}
+        <p>
+            <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
+        </p>
+    {% endif %}
+    <ul>
+        <li>
+            If your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
+        </li>
+        <li>
+            <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
+        </li>
+        <li>
+            <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
+        </li>
+    </ul>
+    <p>
+        If your name is <span class="text-warning">yellow</span> or <span class="text-danger">red</span>, either you haven't ridden enough (see
+        <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Every Day Riders - Day {{ num_days }}
-        </h5>
-        <div class="card-body">
-            {% if all_done %}
-                <p>
-                    <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
-                </p>
-            {% endif %}
-            <ul>
-                <li>
-                    If your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
-                </li>
-                <li>
-                    <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
-                </li>
-                <li>
-                    <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
-                </li>
-            </ul>
-            <p>
-                If your name is <span class="text-warning">yellow</span> or <span class="text-danger">red</span>, either you haven't ridden enough (see
-                <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
-            </p>
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
                     <th class="number rank">
@@ -48,7 +48,7 @@
                     {% else %}
                         {% set class = "text-danger" %}
                     {% endif %}
-                    <tr>
+                    <tr class="{{ a | myself }}">
                         <td class="number rank">
                             {{ c }}
                         </td>

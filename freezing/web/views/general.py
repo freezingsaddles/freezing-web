@@ -5,7 +5,7 @@ Created on Feb 10, 2013
 """
 
 from datetime import datetime, timedelta
-from re import findall, fullmatch
+from re import findall, fullmatch, sub
 
 from flask import (
     Blueprint,
@@ -70,6 +70,13 @@ def groupnum(number):
 @app.template_filter("ess")
 def ess(number):
     return "" if groupnum(number) == "1" else "s"
+
+
+@app.template_filter("myself")
+def myself(number):
+    # generic board formats the PK into a fancy string so unformat it
+    id = int(sub(",", "", number)) if isinstance(number, str) else number
+    return "myself" if session.get("athlete_id") == id else ""
 
 
 @blueprint.route("/")

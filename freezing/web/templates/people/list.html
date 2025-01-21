@@ -54,7 +54,7 @@
                 </thead>
                 <tbody>
                     {% for u in users %}
-                        <tr>
+                        <tr class="{{ u.id | myself }}">
                             <td>
                                 <a href="/people/{{ u.id }}" class="hover-underline">{{ u.name }}</a>
                             </td>

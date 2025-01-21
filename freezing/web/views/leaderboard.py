@@ -172,7 +172,7 @@ def team_hains():
 def indiv_sleaze():
     q = indiv_sleaze_query()
     data = [
-        (x["athlete_name"], x["num_sleaze_days"])
+        (x["athlete_id"], x["athlete_name"], x["num_sleaze_days"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
@@ -185,7 +185,7 @@ def indiv_sleaze():
 def indiv_hains():
     q = indiv_segment_query(join_miles=True)
     data = [
-        (x["athlete_name"], x["segment_rides"], x["dist"])
+        (x["athlete_id"], x["athlete_name"], x["segment_rides"], x["dist"])
         for x in meta.engine.execute(q, segment_id=1081507).fetchall()
     ]
     return render_template(
@@ -199,7 +199,7 @@ def indiv_freeze():
     friends = request.args.get("friends", "false") == "true"
     q = indiv_freeze_query(friends)
     data = [
-        (x["athlete_name"], x["freeze_points_total"])
+        (x["athlete_id"], x["athlete_name"], x["freeze_points_total"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(

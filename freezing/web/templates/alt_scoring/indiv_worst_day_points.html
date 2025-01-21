@@ -47,8 +47,8 @@
                             </th>
                         </tr>
                     </thead>
-                    {% for a, b, c, d, e, f in data %}
-                        <tr>
+                    {% for id, a, b, c, d, e, f in data %}
+                        <tr class="{{ id | myself }}">
                             <td class="number">
                                 {{ loop.index }}
                             </td>

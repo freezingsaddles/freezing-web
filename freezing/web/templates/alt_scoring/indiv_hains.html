@@ -41,13 +41,13 @@
                             </th>
                         </tr>
                     </thead>
-                    {% for a, b, c in indiv_hains %}
-                        <tr>
+                    {% for id, a, b, c in indiv_hains %}
+                        <tr class="{{ id | myself }}">
                             <td>
                                 {{ loop.index }}
                             </td>
                             <td>
-                                {{ a }}
+                                <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
                             </td>
                             <td>
                                 {{ b }}

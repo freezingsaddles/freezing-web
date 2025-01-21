@@ -7,18 +7,18 @@ description: |
 url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/  # yamllint disable-line
 sponsor: spelter
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: total_rides
     label: Total Rides
     rank_by: true
     type: number
 query: |
   select
-    A.id,
+    A.id as athlete_id,
     A.display_name as athlete_name,
     count(E.id) as total_rides
   from
