@@ -18,7 +18,8 @@ def team_riders():
         """
     )
     team_riders = [
-        (x["name"], x["ride_days"]) for x in meta.scoped_session().execute(q).fetchall()
+        (x._mapping["name"], x._mapping["ride_days"])
+        for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
         "alt_scoring/team_riders.html",
@@ -34,7 +35,7 @@ def team_daily():
         group by a.ride_date, b.name order by a.ride_date, team_score;"""
     )
     temp = [
-        (x["ride_date"], x["team_name"])
+        (x._mapping["ride_date"], x._mapping["team_name"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     temp = groupby(temp, lambda x: x[0])
@@ -68,7 +69,9 @@ def indiv_worst_day_points():
     select count(distinct(athlete_id)) as riders from rides group by date(start_date)
     """
     )
-    riders = [x["riders"] for x in meta.scoped_session().execute(ridersq).fetchall()]
+    riders = [
+        x._mapping["riders"] for x in meta.scoped_session().execute(ridersq).fetchall()
+    ]
     median_riders = 0 if len(riders) == 0 else median(riders)
     q = text(
         f"""
@@ -85,13 +88,13 @@ def indiv_worst_day_points():
     )
     data = [
         (
-            x["athlete_id"],
-            x["athlete_name"],
-            x["team_name"],
-            x["total_distance"],
-            x["total_score"],
-            x["total_adjusted"],
-            x["days_ridden"],
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["team_name"],
+            x._mapping["total_distance"],
+            x._mapping["total_score"],
+            x._mapping["total_adjusted"],
+            x._mapping["days_ridden"],
         )
         for x in meta.scoped_session().execute(q).fetchall()
     ]

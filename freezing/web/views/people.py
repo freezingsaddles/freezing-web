@@ -152,10 +152,16 @@ def ridedays():
     )
     all_done = competition_done(loc_time)
     ride_days = [
-        (x["id"], x["display_name"], x["rides"], x["miles"], x["contender"])
-        for x in meta.engine.execute(
-            q, today=loc_time.date(), total=loc_total_days
-        ).fetchall()
+        (
+            x._mapping["id"],
+            x._mapping["display_name"],
+            x._mapping["rides"],
+            x._mapping["miles"],
+            x._mapping["contender"],
+        )
+        for x in meta.scoped_session()
+        .execute(q.bindparams(today=loc_time.date(), total=loc_total_days))
+        .fetchall()
     ]
     return render_template(
         "people/ridedays.html",

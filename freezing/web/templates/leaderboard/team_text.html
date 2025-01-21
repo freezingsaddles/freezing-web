@@ -23,17 +23,18 @@
     </p>
     <ol class="people-list">
         {% for team_row in team_rows %}
-            <li class="mb-2{{ ' my-team' if team_row['team_id'] == my_team else '' }}">
+            <li class="mb-2{{ ' my-team' if team_row._mapping['team_id'] == my_team else '' }}">
                 <h4 class="mb-0">
-                    <a href="https://www.strava.com/clubs/{{ team_row['team_id'] }}"
-                       class="hover-underline">{{ team_row['team_name'] }}</a>:
-                    <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
+                    <a href="https://www.strava.com/clubs/{{ team_row._mapping['team_id'] }}"
+                       class="hover-underline">{{ team_row._mapping['team_name'] }}</a>:
+                    <strong>{{ team_row._mapping['total_score']|round|int|groupnum }}</strong> points ({{ team_row._mapping['total_distance']|round|int|groupnum }} miles)
                 </h4>
                 <ol class="people d-none">
-                    {% for member_row in team_members[team_row['team_id']] %}
+                    {% for member_row in team_members[team_row._mapping['team_id']] %}
                         <li>
-                            <a href="/people/{{ member_row['athlete_id'] }}" class="hover-underline">{{ member_row['athlete_name'] }}</a>:
-                            {{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} miles)
+                            <a href="/people/{{ member_row._mapping['athlete_id'] }}"
+                               class="hover-underline">{{ member_row._mapping['athlete_name'] }}</a>:
+                            {{ member_row._mapping['total_score']|round|int|groupnum }} points ({{ member_row._mapping['days_ridden'] }} days, {{ member_row._mapping['total_distance']|round|int|groupnum }} miles)
                         </li>
                     {% endfor %}
                 </ol>

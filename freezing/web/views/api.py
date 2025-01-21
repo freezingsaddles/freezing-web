@@ -49,7 +49,7 @@ def stats_general():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
 
     indiv_count_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    contestant_count = indiv_count_res["num_contestants"]
+    contestant_count = indiv_count_res._mapping["num_contestants"]
 
     q = text(
         """
@@ -61,9 +61,9 @@ def stats_general():
     )
 
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    total_miles = int(all_res["distance"])
-    total_hours = int(all_res["moving_time"]) / 3600
-    total_rides = all_res["num_rides"]
+    total_miles = int(all_res._mapping["distance"])
+    total_hours = int(all_res._mapping["moving_time"]) / 3600
+    total_rides = all_res._mapping["num_rides"]
 
     q = text(
         """
@@ -76,7 +76,7 @@ def stats_general():
     )
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    sub_freezing_hours = int(sub32_res["moving_time"]) / 3600
+    sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
@@ -89,7 +89,7 @@ def stats_general():
     )
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    rain_hours = int(rain_res["moving_time"]) / 3600
+    rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
@@ -102,7 +102,7 @@ def stats_general():
     )
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    snow_hours = int(snow_res["moving_time"]) / 3600
+    snow_hours = int(snow_res._mapping["moving_time"]) / 3600
 
     return jsonify(
         team_count=len(config.COMPETITION_TEAMS),
@@ -189,15 +189,15 @@ def team_leaderboard():
                 "total_distance": member["total_distance"],
                 "days_ridden": member["days_ridden"],
             }
-            for member in team_members.get(res["team_id"], [])
+            for member in team_members.get(res._mapping["team_id"], [])
         ]
 
         rows.append(
             {
-                "team_name": res["team_name"],
-                "total_score": res["total_score"],
-                "total_distance": res["total_distance"],
-                "team_id": res["team_id"],
+                "team_name": res._mapping["team_name"],
+                "total_score": res._mapping["total_score"],
+                "total_distance": res._mapping["total_distance"],
+                "team_id": res._mapping["team_id"],
                 "rank": place,
                 "team_members": members,
             }

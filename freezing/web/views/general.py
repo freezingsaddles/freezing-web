@@ -84,7 +84,7 @@ def index():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
 
     indiv_count_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    contestant_count = indiv_count_res["num_contestants"]
+    contestant_count = indiv_count_res._mapping["num_contestants"]
 
     q = text(
         """
@@ -96,9 +96,9 @@ def index():
     )
 
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    total_miles = int(all_res["distance"])
-    total_hours = int(all_res["moving_time"]) / 3600
-    total_rides = all_res["num_rides"]
+    total_miles = int(all_res._mapping["distance"])
+    total_hours = int(all_res._mapping["moving_time"]) / 3600
+    total_rides = all_res._mapping["num_rides"]
 
     q = text(
         """
@@ -111,7 +111,7 @@ def index():
     )
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    sub_freezing_hours = int(sub32_res["moving_time"]) / 3600
+    sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
@@ -124,7 +124,7 @@ def index():
     )
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    rain_hours = int(rain_res["moving_time"]) / 3600
+    rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
@@ -137,7 +137,7 @@ def index():
     )
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    snow_hours = int(snow_res["moving_time"]) / 3600
+    snow_hours = int(snow_res._mapping["moving_time"]) / 3600
 
     # Grab some recent photos
     photos = (
@@ -165,7 +165,7 @@ def index():
     original_tag = {}
     for res in meta.scoped_session().execute(q).fetchall():
         ride_tags = {}  # Prevent double-tagging
-        for hash in findall(r"(?<=#)\w+", res["name"]):
+        for hash in findall(r"(?<=#)\w+", res._mapping["name"]):
             desuffix = fullmatch(r"(?i)(withkid|foodrescue).*", hash)
             hash = desuffix[1] if desuffix else hash
             if not fullmatch(
@@ -203,9 +203,9 @@ def index():
         )
     )
     today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    today_riders = int(today_res["riders"])
-    today_hours = int(today_res["moving_time"]) / 3600
-    today_miles = int(today_res["distance"])
+    today_riders = int(today_res._mapping["riders"])
+    today_hours = int(today_res._mapping["moving_time"]) / 3600
+    today_miles = int(today_res._mapping["distance"])
 
     # Get teams sorted by points
     q = team_leaderboard_query()

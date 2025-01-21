@@ -20,19 +20,21 @@
     </p>
     <ol>
         {% for indiv_row in indiv_rows[:10] %}
-            <li class="bigly {{ indiv_row['athlete_id'] | myself }}">
+            <li class="bigly {{ indiv_row._mapping['athlete_id'] | myself }}">
                 <h4 class="mb-0">
-                    <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
-                    {{ indiv_row['total_score']|round|int|groupnum }} points
+                    <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
+                       class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
+                    {{ indiv_row._mapping['total_score']|round|int|groupnum }} points
                 </h4>
-                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
+                ({{ indiv_row._mapping['days_ridden'] }} days, {{ indiv_row._mapping['total_distance']|round|int|groupnum }} miles) {{ indiv_row._mapping['team_name'] }}
             </li>
         {% endfor %}
         {% for indiv_row in indiv_rows[10:] %}
-            <li class="{{ indiv_row['athlete_id'] | myself }}">
-                <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
-                <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
-                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
+            <li class="{{ indiv_row._mapping['athlete_id'] | myself }}">
+                <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
+                   class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
+                <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong> points
+                ({{ indiv_row._mapping['days_ridden'] }} days, {{ indiv_row._mapping['total_distance']|round|int|groupnum }} miles) {{ indiv_row._mapping['team_name'] }}
             </li>
         {% endfor %}
     </ol>
