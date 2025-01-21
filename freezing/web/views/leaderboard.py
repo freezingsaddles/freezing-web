@@ -197,7 +197,7 @@ def indiv_hains():
 @blueprint.route("/indiv_freeze")
 def indiv_freeze():
     friends = request.args.get("friends", "false") == "true"
-    q = indiv_freeze_query()
+    q = indiv_freeze_query(friends)
     data = [
         (x["athlete_name"], x["freeze_points_total"])
         for x in meta.scoped_session().execute(q).fetchall()

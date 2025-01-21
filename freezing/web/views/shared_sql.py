@@ -41,7 +41,7 @@ def indiv_freeze_query(friends=False):
             select R.athlete_id, A.display_name as athlete_name, date(R.start_date) as ride_date, (11*(ATAN((R.distance+4)-2*PI())+1.4)-2.66)*(1.2+ATAN((32-W.ride_temp_start)/5)) as freeze_points
             from rides R
             join ride_weather W on W.ride_id = R.id
-            {'' if friends else 'join lbd_athletes A on A.id = R.athlete_id'}
+            join {'athletes' if friends else 'lbd_athletes'} A on A.id = R.athlete_id
         ), FPMax as (
             select athlete_id, athlete_name, ride_date, MAX(freeze_points) as max_daily_freeze_points
             from FP
