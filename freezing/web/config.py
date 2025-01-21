@@ -72,6 +72,9 @@ class Config:
     )
     VERSION_NUM: str = version("freezing-web")
     VERSION_STRING: str = f"{VERSION_NUM}+{branch}.{commit}.{build_date}"
+    SEND_FILE_MAX_AGE_DEFAULT: int = (
+        84600  # let the browser cache static files for 24 hours
+    )
 
 
 config = Config()
