@@ -85,6 +85,7 @@ def indiv_worst_day_points():
     )
     data = [
         (
+            x["athlete_id"],
             x["athlete_name"],
             x["team_name"],
             x["total_distance"],

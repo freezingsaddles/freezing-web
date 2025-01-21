@@ -20,7 +20,7 @@
     </p>
     <ol>
         {% for indiv_row in indiv_rows[:10] %}
-            <li class="bigly{{ ' myself' if indiv_row['athlete_id'] == myself else '' }}">
+            <li class="bigly {{ indiv_row['athlete_id'] | myself }}">
                 <h4 class="mb-0">
                     <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                     {{ indiv_row['total_score']|round|int|groupnum }} points
@@ -29,7 +29,7 @@
             </li>
         {% endfor %}
         {% for indiv_row in indiv_rows[10:] %}
-            <li class="{{ 'myself' if indiv_row['athlete_id'] == myself else '' }}">
+            <li class="{{ indiv_row['athlete_id'] | myself }}">
                 <a href="/people/{{ indiv_row['athlete_id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
                 <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
                 ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}

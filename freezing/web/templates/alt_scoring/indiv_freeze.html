@@ -17,19 +17,19 @@
                         Rank
                     </th>
                     <th>
-                        Team
+                        Rider
                     </th>
                     <th class="number">
                         Points
                     </th>
                 </tr>
-                {% for a, b in indiv_freeze %}
-                    <tr>
+                {% for id, a, b in indiv_freeze %}
+                    <tr class="{{ id | myself }}">
                         <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            {{ a }}
+                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
                         </td>
                         <td class="number">
                             {{ '%0.1f' % b }}

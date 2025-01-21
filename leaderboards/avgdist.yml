@@ -2,11 +2,11 @@
 title: Average Distance (Shortest Rides)
 description: Rider average distance per ride, minimum ten days with a ride.
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: dist
     label: Average Distance
     rank_by: true
@@ -16,7 +16,7 @@ fields:
     type: number
 query: |
   select
-          a.id,
+          a.id as athlete_id,
           a.display_name as athlete_name,
           avg(r.distance) as dist,
           count(distinct(date(r.start_date))) as num_ride_days

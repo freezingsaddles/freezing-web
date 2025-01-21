@@ -6,18 +6,18 @@ description: |
   Capital Bikeshare rides tagged with <code>#CABI</code> automatically count as 2" tyre rides,
   see also <a href="/pointless/hashtag/cabi">CABI rides</a>
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: supple_score
     label: Supple Mile Score
     rank_by: true
     type: number
 query: |
   select
-    T.id,
+    T.id as athlete_id,
     T.athlete_name,
     sum(T.distance * T.tyre_width) as supple_score
   from (

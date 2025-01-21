@@ -258,6 +258,14 @@ nav.bg-light {
     aspect-ratio: 1;
 }
 
+.table tr.myself {
+    background-color: transparent !important;
+}
+
+.table tr.myself td {
+    background-color: #ffff0020;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;

@@ -99,7 +99,7 @@ def points_per_mile():
     query = text(
         """
         select
-            A.id,
+            A.id as athlete_id,
             A.display_name as athlete_name,
             sum(B.distance) as dist,
             sum(B.points) as pnts,
@@ -109,6 +109,7 @@ def points_per_mile():
     )
     ppm = [
         (
+            x["athlete_id"],
             x["athlete_name"],
             x["pnts"],
             x["dist"],
@@ -404,7 +405,7 @@ def arlington():
             cw is not None and cw["segment_rides"] < ccw["segment_rides"]
         )
         return {
-            "id": cw["id"] if cw else ccw["id"],
+            "athlete_id": cw["athlete_id"] if cw else ccw["athlete_id"],
             "athlete_name": cw["athlete_name"] if cw else ccw["athlete_name"],
             "segment_id": cw["segment_id"] if cw_worse else ccw["segment_id"],
             "segment_name": cw["segment_name"] if cw_worse else ccw["segment_name"],
@@ -414,10 +415,12 @@ def arlington():
 
     board = load_board("arlington")
     data_cw = {
-        d["id"]: d for d in load_multisegment_board_data(load_board("arlington-cw"))
+        d["athlete_id"]: d
+        for d in load_multisegment_board_data(load_board("arlington-cw"))
     }
     data_ccw = {
-        d["id"]: d for d in load_multisegment_board_data(load_board("arlington-ccw"))
+        d["athlete_id"]: d
+        for d in load_multisegment_board_data(load_board("arlington-ccw"))
     }
     data = [
         combine(data_cw.get(id), data_ccw.get(id))
@@ -441,10 +444,11 @@ def load_multisegment_board_data(board):
     # segment_id -> segment_name
     segments = {ride["segment_id"]: ride["segment_name"] for ride in rides}
     # athlete_id -> athlete_name
-    athletes = {ride["id"]: ride["athlete_name"] for ride in rides}
+    athletes = {ride["athlete_id"]: ride["athlete_name"] for ride in rides}
     # (athlete_id, segment_id) -> segment_rides
     segment_rides = {
-        (ride["id"], ride["segment_id"]): ride["segment_rides"] for ride in rides
+        (ride["athlete_id"], ride["segment_id"]): ride["segment_rides"]
+        for ride in rides
     }
     # athlete_id -> segment_id
     worst_segments = {
@@ -453,13 +457,13 @@ def load_multisegment_board_data(board):
     }
     data = [
         {
-            "id": id,
-            "athlete_name": athletes[id],
+            "athlete_id": athlete_id,
+            "athlete_name": athletes[athlete_id],
             "segment_id": segment,
             "segment_name": segments[segment],
-            "segment_rides": segment_rides.get((id, segment), 0),
+            "segment_rides": segment_rides.get((athlete_id, segment), 0),
         }
-        for id, segment in worst_segments.items()
+        for athlete_id, segment in worst_segments.items()
     ]
     return data
 

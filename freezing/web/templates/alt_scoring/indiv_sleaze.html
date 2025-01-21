@@ -20,13 +20,13 @@
                         Sleaze Rides
                     </th>
                 </tr>
-                {% for a, b in indiv_sleaze %}
-                    <tr>
+                {% for id, a, b in indiv_sleaze %}
+                    <tr class="{{ id | myself }}">
                         <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            {{ a }}
+                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
                         </td>
                         <td class="number">
                             {{ b }}

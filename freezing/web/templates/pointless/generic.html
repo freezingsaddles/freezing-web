@@ -38,7 +38,7 @@
                 </thead>
                 <tbody>
                     {% for row in data %}
-                        <tr>
+                        <tr class="{{ row.athlete_id | myself }}">
                             <td class="number rank">
                                 {{ row.rank }}
                             </td>

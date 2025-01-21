@@ -7,11 +7,11 @@ description: |
 sponsor: obscurerichard
 url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-decasleaze/
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: days
     label: Decasleaze Days
     rank_by: true
@@ -20,7 +20,7 @@ fields:
     label: Decasleaze Points
     type: number
 query: |
-  select a.id,
+  select a.id as athlete_id,
          a.display_name as athlete_name,
          count(*) as days,
          sum(s.points) as points

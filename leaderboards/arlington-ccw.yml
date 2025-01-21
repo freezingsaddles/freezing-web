@@ -5,11 +5,11 @@ description: |
   Part of <a href="../arlington">Loopy for Arlington</a>.
 url: https://www.bikearlingtonforum.com/forums/topic/bafs-2020-pointless-prizes-loopy-for-arlington/
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: segment_name
     label: Least-Ridden Segment
     format: "<a href=\"https://www.strava.com/segments/{segment_id}\" class=\"hover-underline\">{segment_name}</a>"
@@ -19,7 +19,7 @@ fields:
     type: number
 query: |
   select
-    A.id,
+    A.id as athlete_id,
     A.display_name as athlete_name,
     E.segment_id,
     E.segment_name,
