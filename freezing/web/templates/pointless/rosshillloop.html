@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Ross Hill Loop Rides
+    </h2>
+    <p>
+        Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
+        <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
+        double dips.
+    </p>
+    {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024" %}
+    {% set sponsor = "" %}
+    <p>
+        See: <a href="{{ url }}">{{ url }}</a>
+    </p>
+    {% if sponsor %}
+        <p>
+            Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+        </p>
+    {% else %}
+        <p class="text-muted">
+            This ride has no sponsor and is completely pointless.
+        </p>
+    {% endif %}
     <div class="card">
-        <h5 class="card-header">
-            Ross Hill Loop Rides
-        </h5>
-        <div class="card-body">
-            <p>
-                Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
-                <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
-                double dips.
-            </p>
-            {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024" %}
-            {% set sponsor = "" %}
-            <p>
-                See: <a href="{{ url }}">{{ url }}</a>
-            </p>
-            {% if sponsor %}
-                <p>
-                    Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
-                </p>
-            {% else %}
-                <p class="text-muted">
-                    This ride has no sponsor and is completely pointless.
-                </p>
-            {% endif %}
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
                     <th class="number rank">
