@@ -17,54 +17,52 @@
     </p>
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
-                <table id="hamster" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>
-                                Rank
-                            </th>
-                            <th>
-                                Hamster
-                            </th>
-                            <th>
-                                Times Hamstered
-                            </th>
-                            <th>
-                                Segment Miles
-                            </th>
-                            <th>
-                                Total Miles
-                            </th>
-                            <th>
-                                Hamster %
-                            </th>
-                        </tr>
-                    </thead>
-                    {% for id, a, b, c in indiv_hains %}
-                        <tr class="{{ id | myself }}">
-                            <td>
-                                {{ loop.index }}
-                            </td>
-                            <td>
-                                <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
-                            </td>
-                            <td>
-                                {{ b }}
-                            </td>
-                            <td>
-                                {{ b * 2.5 }}
-                            </td>
-                            <td>
-                                {{ c|round(1) }}
-                            </td>
-                            <td>
-                                {{ ((b*250)/c)|round(1) }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
+            <table id="hamster" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>
+                            Rank
+                        </th>
+                        <th>
+                            Hamster
+                        </th>
+                        <th>
+                            Times Hamstered
+                        </th>
+                        <th>
+                            Segment Miles
+                        </th>
+                        <th>
+                            Total Miles
+                        </th>
+                        <th>
+                            Hamster %
+                        </th>
+                    </tr>
+                </thead>
+                {% for id, a, b, c in indiv_hains %}
+                    <tr class="{{ id | myself }}">
+                        <td>
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
+                        </td>
+                        <td>
+                            {{ b }}
+                        </td>
+                        <td>
+                            {{ b * 2.5 }}
+                        </td>
+                        <td>
+                            {{ c|round(1) }}
+                        </td>
+                        <td>
+                            {{ ((b*250)/c)|round(1) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 {% endblock %}

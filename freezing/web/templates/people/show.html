@@ -102,10 +102,12 @@ fieldset[disabled] .btn-impersonate.active {
         {# djlint:on #}
         <div class="d-flex flex-column ms-3">
             <h5 class="card-title">
-                <a href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>
+                <a class="hover-underline"
+                   href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>
             </h5>
             <h6 class="card-subtitle text-body-secondary mb-3">
-                <a href="https://www.strava.com/clubs/{{ data.team.id }}">{{ data.team.name }}</a>
+                <a class="hover-underline"
+                   href="https://www.strava.com/clubs/{{ data.team.id }}">{{ data.team.name }}</a>
             </h6>
             <div class="d-flex">
                 <a class="btn btn-strava btn-sm"

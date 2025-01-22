@@ -1,35 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Food Rescue Rides
+    </h2>
+    <p>
+        BikeArlington and Food Rescue DC are partnering on a pointless prize
+        to encourage Freezing Saddlers to get some miles while doing some
+        good. Food Rescue is a nonprofit coordinates volunteers who pick-up
+        excess healthy food from local food donors and deliver it directly
+        to local social service agencies that feed the food insecure.
+    </p>
+    <p>
+        Sign up on the
+        <a target="_blank"
+           rel="noreferrer"
+           href="https://app.foodrescue.us/signup">Food Rescue DC</a> website.
+        Make food rescue rides, tag them with <code>#foodrescue</code>. If
+        you make multiple rescues on one ride, append the number of rescues
+        to the tag with an <code>x</code> like so:
+        <code>#foodrescue<strong>x2</strong></code>.
+    </p>
+    {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-rpize-food-rescues-by-bike/" %}
+    {% set sponsor = "Henry" %}
+    <p>
+        See: <a href="{{ url }}">{{ url }}</a>
+    </p>
+    <p>
+        Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Food Rescue Rides
-        </h5>
-        <div class="card-body">
-            <p>
-                BikeArlington and Food Rescue DC are partnering on a pointless prize
-                to encourage Freezing Saddlers to get some miles while doing some
-                good. Food Rescue is a nonprofit coordinates volunteers who pick-up
-                excess healthy food from local food donors and deliver it directly
-                to local social service agencies that feed the food insecure.
-            </p>
-            <p>
-                Sign up on the
-                <a target="_blank"
-                   rel="noreferrer"
-                   href="https://app.foodrescue.us/signup">Food Rescue DC</a> website.
-                Make food rescue rides, tag them with <code>#foodrescue</code>. If
-                you make multiple rescues on one ride, append the number of rescues
-                to the tag with an <code>x</code> like so:
-                <code>#foodrescue<strong>x2</strong></code>.
-            </p>
-            {% set url = "https://www.bikearlingtonforum.com/forums/topic/pointless-rpize-food-rescues-by-bike/" %}
-            {% set sponsor = "Henry" %}
-            <p>
-                See: <a href="{{ url }}">{{ url }}</a>
-            </p>
-            <p>
-                Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
-            </p>
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
                     <th class="number rank">

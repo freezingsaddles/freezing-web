@@ -1,20 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Team Wins by Day
+    </h2>
+    <p>
+        For each day, the team with the highest daily total gets {{ team_total|length }} points. Second gets {{ team_total|length - 1 }}, down to 1 for the last place team.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Team Points by Day
-        </h5>
-        <div class="card-body">
-            <p>
-                For each day, the team with the highest daily total gets {{ team_total|length }} points. Second gets {{ team_total|length - 1 }}, down to 1 for the last place team.
-            </p>
-            <ol>
-                {% for a,b in team_total %}
-                    <li>
-                        <strong>{{ b }}</strong> {{ a }}
-                    </li>
+        <div class="card-body py-1">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Team
+                    </th>
+                    <th class="number">
+                        Points
+                    </th>
+                </tr>
+                {% for a, b in team_total %}
+                    <tr>
+                        <td class="number rank">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            {{ b }}
+                        </td>
+                        <td class="number">
+                            {{ a| round(1) }}
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ol>
+            </table>
         </div>
     </div>
 {% endblock %}

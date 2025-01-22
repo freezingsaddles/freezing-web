@@ -1,82 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Steve O's Worst Day Points Proposal
+    </h2>
+    <p>
+        Take the median number of riders per day and then, for each day, your Adjusted Points are
+        your points in the old system (1 point per mile, 10 points per day for riding at least 1 mile) multiplied
+        by 1.025^(median-[total number of riders today]).
+        At this moment in time, the median number of riders is {{ median }}.
+    </p>
+    <p>
+        NOTE: This is calculated at the time you view the chart. This means that today's points will
+        change as more people ride. If you are the first rider of the day, you will get literally a
+        bajillion points (A sleaze ride of exactly one mile is worth almost 1500 points if you're
+        the only rider of the day). As more people ride, your points go down.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Steve O's Worst Day Points Proposal
-        </h5>
         <div class="card-body">
-            <p>
-                Take the median number of riders per day and then, for each day, your Adjusted Points are
-                your points in the old system (1 point per mile, 10 points per day for riding at least 1 mile) multiplied
-                by 1.025^(median-[total number of riders today]).
-                At this moment in time, the median number of riders is {{ median }}.
-            </p>
-            <p>
-                NOTE: This is calculated at the time you view the chart. This means that today's points will
-                change as more people ride. If you are the first rider of the day, you will get literally a
-                bajillion points (A sleaze ride of exactly one mile is worth almost 1500 points if you're
-                the only rider of the day). As more people ride, your points go down.
-            </p>
-            <div class="table-responsive">
-                <table id="steve-o" class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="number">
-                                Rank
-                            </th>
-                            <th>
-                                Rider
-                            </th>
-                            <th>
-                                Team
-                            </th>
-                            <th class="number">
-                                Miles
-                            </th>
-                            <th class="number">
-                                Old Points
-                            </th>
-                            <th class="number">
-                                Adjusted Points
-                            </th>
-                            <th class="number">
-                                Bump %
-                            </th>
-                            <th class="number">
-                                Days Ridden
-                            </th>
-                        </tr>
-                    </thead>
-                    {% for id, a, b, c, d, e, f in data %}
-                        <tr class="{{ id | myself }}">
-                            <td class="number">
-                                {{ loop.index }}
-                            </td>
-                            <td>
-                                {{ a }}
-                            </td>
-                            <td>
-                                {{ b }}
-                            </td>
-                            <td class="number">
-                                {{ c|round(1) }}
-                            </td>
-                            <td class="number">
-                                {{ d|round(1) }}
-                            </td>
-                            <td class="number">
-                                {{ e|round(1) }}
-                            </td>
-                            <td class="number">
-                                {{ (100*(e-d)/d)|round(1) if d > 0 else 0}}%
-                            </td>
-                            <td class="number">
-                                {{ f }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
+            <table id="steve-o" class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="number">
+                            Rank
+                        </th>
+                        <th>
+                            Rider
+                        </th>
+                        <th>
+                            Team
+                        </th>
+                        <th class="number">
+                            Miles
+                        </th>
+                        <th class="number">
+                            Old Points
+                        </th>
+                        <th class="number">
+                            Adjusted Points
+                        </th>
+                        <th class="number">
+                            Bump %
+                        </th>
+                        <th class="number">
+                            Days Ridden
+                        </th>
+                    </tr>
+                </thead>
+                {% for id, a, b, c, d, e, f in data %}
+                    <tr class="{{ id | myself }}">
+                        <td class="number">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            {{ a }}
+                        </td>
+                        <td>
+                            {{ b }}
+                        </td>
+                        <td class="number">
+                            {{ c|round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ d|round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ e|round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ (100*(e-d)/d)|round(1) if d > 0 else 0}}%
+                        </td>
+                        <td class="number">
+                            {{ f }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 {% endblock %}

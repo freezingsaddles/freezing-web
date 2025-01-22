@@ -3,24 +3,24 @@
     FS: {{ title }}
 {% endblock %}
 {% block content %}
+    <h2 class="mb-3">
+        {{ title }}
+    </h2>
+    <p>
+        {{ description | safe }}
+    </p>
+    {% if url %}
+        <p>
+            See: <a href="{{ url }}">{{ url }}</a>
+        </p>
+    {% endif %}
+    {% if sponsor %}
+        <p>
+            Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+        </p>
+    {% endif %}
     <div class="card">
-        <h5 class="card-header">
-            {{ title }}
-        </h5>
-        <div class="card-body">
-            <p>
-                {{ description | safe }}
-            </p>
-            {% if url %}
-                <p>
-                    See: <a href="{{ url }}">{{ url }}</a>
-                </p>
-            {% endif %}
-            {% if sponsor %}
-                <p>
-                    Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
-                </p>
-            {% endif %}
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <thead>
                     <tr>

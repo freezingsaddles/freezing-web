@@ -111,6 +111,7 @@ def team_leaderboard_query():
           T.name as team_name,
           sum(DS.points) as total_score,
           sum(DS.distance) as total_distance,
+          count(DS.points) as total_days,
           rank() over (order by sum(DS.points) desc) as "rank"
         from
           daily_scores DS join teams T on T.id = DS.team_id
