@@ -41,9 +41,9 @@ def team_leaderboard_data():
     values = []
     ranks = []
     for i, res in enumerate(team_q):
-        values.append(res["total_score"])
-        labels.append(res["team_name"])
-        ranks.append(res["rank"])
+        values.append(res._mapping["total_score"])
+        labels.append(res._mapping["team_name"])
+        ranks.append(res._mapping["rank"])
 
     return jsonify({"labels": labels, "values": values, "ranks": ranks})
 
@@ -74,9 +74,9 @@ def indiv_leaderboard_data():
     values = []
     ranks = []
     for i, res in enumerate(indiv_q):
-        values.append(res["total_score"])
-        labels.append(res["athlete_name"])
-        ranks.append(res["rank"])
+        values.append(res._mapping["total_score"])
+        labels.append(res._mapping["athlete_name"])
+        ranks.append(res._mapping["rank"])
 
     return jsonify({"labels": labels, "values": values, "ranks": ranks})
 
@@ -103,8 +103,8 @@ def team_elev_gain():
 
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
-        labels.append(res["team_name"])
-        values.append(res["cumul_elev_gain"])
+        labels.append(res._mapping["team_name"])
+        values.append(res._mapping["cumul_elev_gain"])
 
     return jsonify(
         {
@@ -139,8 +139,8 @@ def indiv_elev_gain():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["cumul_elev_gain"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["cumul_elev_gain"])
 
     return jsonify(
         {
@@ -176,9 +176,9 @@ def indiv_moving_time():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["total_moving_time"] / 60)
-        tooltips.append(str(timedelta(seconds=int(res["total_moving_time"]))))
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["total_moving_time"] / 60)
+        tooltips.append(str(timedelta(seconds=int(res._mapping["total_moving_time"]))))
 
     return jsonify(
         {
@@ -215,9 +215,9 @@ def team_moving_time():
 
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
-        labels.append(res["team_name"])
-        values.append(res["total_moving_time"] / 60)
-        tooltips.append(str(timedelta(seconds=int(res["total_moving_time"]))))
+        labels.append(res._mapping["team_name"])
+        values.append(res._mapping["total_moving_time"] / 60)
+        tooltips.append(str(timedelta(seconds=int(res._mapping["total_moving_time"]))))
 
     return jsonify(
         {
@@ -243,8 +243,8 @@ def indiv_number_sleaze_days():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["num_sleaze_days"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["num_sleaze_days"])
 
     return jsonify(
         {
@@ -270,8 +270,8 @@ def team_number_sleaze_days():
 
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
-        labels.append(res["team_name"])
-        values.append(res["num_sleaze_days"])
+        labels.append(res._mapping["team_name"])
+        values.append(res._mapping["num_sleaze_days"])
 
     return jsonify(
         {
@@ -301,7 +301,7 @@ def indiv_kidical():
             """
     )
 
-    indiv_q = meta.engine.execute(q).fetchall()  # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
     labels = []
     ranks = []
@@ -309,8 +309,8 @@ def indiv_kidical():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["kidical_rides"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["kidical_rides"])
 
     return jsonify(
         {
@@ -335,8 +335,8 @@ def indiv_freeze_points():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["freeze_points_total"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["freeze_points_total"])
 
     return jsonify(
         {
@@ -354,11 +354,9 @@ def indiv_freeze_points():
 def indiv_segment(segment_id):
     # an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
-    q = indiv_segment_query()
+    q = indiv_segment_query().bindparams(segment_id=segment_id)
 
-    indiv_q = meta.engine.execute(
-        q, segment_id=segment_id
-    ).fetchall()  # @UndefinedVariable
+    indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
     labels = []
     ranks = []
@@ -366,8 +364,8 @@ def indiv_segment(segment_id):
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["segment_rides"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["segment_rides"])
 
     return jsonify(
         {
@@ -385,11 +383,9 @@ def indiv_segment(segment_id):
 def team_segment(segment_id):
     # an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
-    q = team_segment_query()
+    q = team_segment_query().bindparams(segment_id=segment_id)
 
-    team_q = meta.engine.execute(
-        q, segment_id=segment_id
-    ).fetchall()  # @UndefinedVariable
+    team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
     labels = []
     ranks = []
@@ -397,8 +393,8 @@ def team_segment(segment_id):
 
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
-        labels.append(res["team_name"])
-        values.append(res["segment_rides"])
+        labels.append(res._mapping["team_name"])
+        values.append(res._mapping["segment_rides"])
 
     return jsonify(
         {
@@ -434,8 +430,8 @@ def indiv_avg_speed():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["avg_speed"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["avg_speed"])
 
     return jsonify(
         {
@@ -473,8 +469,8 @@ def team_avg_speed():
 
     for i, res in enumerate(team_q):
         ranks.append(i + 1)
-        labels.append(res["team_name"])
-        values.append(res["avg_speed"])
+        labels.append(res._mapping["team_name"])
+        values.append(res._mapping["avg_speed"])
 
     return jsonify(
         {
@@ -512,8 +508,8 @@ def indiv_freezing():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["distance"])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["distance"])
 
     return jsonify(
         {
@@ -552,9 +548,9 @@ def indiv_before_sunrise():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["dark"])
-        tooltips.append(str(timedelta(seconds=int(res["dark"]))))
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["dark"])
+        tooltips.append(str(timedelta(seconds=int(res._mapping["dark"]))))
 
     return jsonify(
         {
@@ -592,9 +588,9 @@ def indiv_after_sunset():
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res["dark"])
-        tooltips.append(str(timedelta(seconds=int(res["dark"]))))
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping["dark"])
+        tooltips.append(str(timedelta(seconds=int(res._mapping["dark"]))))
 
     return jsonify(
         {
@@ -650,9 +646,11 @@ def user_daily_points(athlete_id):
             .timetuple()
             .tm_yday
         )
-        pts = meta.engine.execute(
-            day_q, id=athlete_id, yday=day_no
-        ).scalar()  # @UndefinedVariable
+        pts = (
+            meta.scoped_session()
+            .execute(day_q.bindparams(id=athlete_id, yday=day_no))
+            .scalar()
+        )  # @UndefinedVariable
         days.append(dt.isoformat())
         points.append(0 if pts is None else pts)
 
@@ -681,9 +679,11 @@ def user_weekly_points(athlete_id):
     for i, dt in enumerate(week_r):
         week_no = dt.date().isocalendar()[1]
 
-        total_score = meta.engine.execute(
-            week_q, athlete_id=athlete_id, week=week_no - 1
-        ).scalar()  # @UndefinedVariable
+        total_score = (
+            meta.scoped_session()
+            .execute(week_q.bindparams(athlete_id=athlete_id, week=week_no - 1))
+            .scalar()
+        )  # @UndefinedVariable
         weeks.append(i + 1)
         points.append(0 if total_score is None else total_score)
 
@@ -715,9 +715,15 @@ def team_weekly_points():
 
     res = meta.scoped_session().execute(q).fetchall()
 
-    weeks = sorted({r["week_num"] for r in res})
-    teams = sorted({(r["team_id"], r["team_name"]) for r in res}, key=lambda t: t[1])
-    scores = {(r["week_num"], r["team_id"]): r["total_score"] for r in res}
+    weeks = sorted({r._mapping["week_num"] for r in res})
+    teams = sorted(
+        {(r._mapping["team_id"], r._mapping["team_name"]) for r in res},
+        key=lambda t: t[1],
+    )
+    scores = {
+        (r._mapping["week_num"], r._mapping["team_id"]): r._mapping["total_score"]
+        for r in res
+    }
 
     response = {}
     response["x"] = ["x"] + [week + 1 for week in weeks]
@@ -759,9 +765,9 @@ def team_cumul_points():
         daily_cumul[team.id] = copy.copy(
             tpl_dict
         )  # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in meta.engine.execute(
-            q, team_id=team.id
-        ).fetchall():  # @UndefinedVariable
+        for row in (
+            meta.scoped_session().execute(q.bindparams(team_id=team.id)).fetchall()
+        ):  # @UndefinedVariable
             daily_cumul[team.id][row["ride_date"].strftime("%Y-%m-%d")] = row[
                 "cumulative_points"
             ]
@@ -816,9 +822,9 @@ def team_cumul_mileage():
         daily_cumul[team.id] = copy.copy(
             tpl_dict
         )  # Ensure that we have keys for every day (even if there were no rides for that day)
-        for row in meta.engine.execute(
-            q, team_id=team.id
-        ).fetchall():  # @UndefinedVariable
+        for row in (
+            meta.scoped_session().execute(q.bindparams(team_id=team.id)).fetchall()
+        ):  # @UndefinedVariable
             daily_cumul[team.id][row["ride_date"].strftime("%Y-%m-%d")] = row[
                 "cumulative_distance"
             ]
@@ -869,11 +875,11 @@ def indiv_elev_dist():
     distances = []
     speeds = []
     for i, res in enumerate(indiv_q):
-        athletes.append(res["athlete_name"])
-        teams.append(res["team_name"])
-        elevations.append(int(res["total_elevation_gain"]))
-        distances.append(res["total_distance"])
-        speeds.append(res["avg_speed"])
+        athletes.append(res._mapping["athlete_name"])
+        teams.append(res._mapping["team_name"])
+        elevations.append(int(res._mapping["total_elevation_gain"]))
+        distances.append(res._mapping["total_distance"])
+        speeds.append(res._mapping["avg_speed"])
 
     return jsonify(
         {
@@ -908,20 +914,20 @@ def riders_by_lowtemp():
 
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
-        if res["low_temp"] is None:
+        if res._mapping["low_temp"] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
         # res['start_date']
-        dt = res["start_date"]
+        dt = res._mapping["start_date"]
 
         rows.append(
             {
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
-                "riders": res["riders"],
-                "low_temp": res["low_temp"],
-                "wind_chill": res["wind_chill"],
-                "raininess": res["raininess"],
-                "snowiness": res["snowiness"],
+                "riders": res._mapping["riders"],
+                "low_temp": res._mapping["low_temp"],
+                "wind_chill": res._mapping["wind_chill"],
+                "raininess": res._mapping["raininess"],
+                "snowiness": res._mapping["snowiness"],
             }
         )
 
@@ -947,19 +953,19 @@ def distance_by_lowtemp():
 
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
-        if res["low_temp"] is None:
+        if res._mapping["low_temp"] is None:
             # This probably only happens for *today* since that isn't looked up yet.
             continue
         # res['start_date']
-        dt = res["start_date"]
+        dt = res._mapping["start_date"]
         rows.append(
             {
                 "date": {"year": dt.year, "month": dt.month, "day": dt.day},
-                "distance": res["distance"],
-                "low_temp": res["low_temp"],
-                "wind_chill": res["wind_chill"],
-                "raininess": res["raininess"],
-                "snowiness": res["snowiness"],
+                "distance": res._mapping["distance"],
+                "low_temp": res._mapping["low_temp"],
+                "wind_chill": res._mapping["wind_chill"],
+                "raininess": res._mapping["raininess"],
+                "snowiness": res._mapping["snowiness"],
             }
         )
 
@@ -988,8 +994,8 @@ def exec_and_jsonify_query(
 
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
-        labels.append(res["athlete_name"])
-        values.append(res[query_label])
+        labels.append(res._mapping["athlete_name"])
+        values.append(res._mapping[query_label])
 
     return jsonify(
         {
@@ -1056,10 +1062,10 @@ def indiv_coldest():
 
     def hl(res, ql):
         "%.2f F for %s on %s in %s" % (
-            res["temp_start"],
-            fmt_dur(res["moving"]),
-            fmt_date(res["date"]),
-            res["loc"],
+            res._mapping["temp_start"],
+            fmt_dur(res._mapping["moving"]),
+            fmt_date(res._mapping["date"]),
+            res._mapping["loc"],
         )
 
     return exec_and_jsonify_query(q, "", "temp_start", "º F", hover_lambda=hl)
@@ -1079,10 +1085,10 @@ def indiv_snowiest():
 
     def hl(res, ql):
         "%.2f in for %s on %s in %s" % (
-            res["snow"],
-            fmt_dur(res["moving"]),
-            fmt_date(res["date"]),
-            res["loc"],
+            res._mapping["snow"],
+            fmt_dur(res._mapping["moving"]),
+            fmt_date(res._mapping["date"]),
+            res._mapping["loc"],
         )
 
     return exec_and_jsonify_query(q, "Snowfall", "snow", '"', hover_lambda=hl)
@@ -1102,10 +1108,10 @@ def indiv_rainiest():
 
     def hl(res, ql):
         "%.2f in for %s on %s in %s" % (
-            res["rain"],
-            fmt_dur(res["moving"]),
-            fmt_date(res["date"]),
-            res["loc"],
+            res._mapping["rain"],
+            fmt_dur(res._mapping["moving"]),
+            fmt_date(res._mapping["date"]),
+            res._mapping["loc"],
         )
 
     return exec_and_jsonify_query(q, "Rainfall", "rain", '"', hover_lambda=hl)

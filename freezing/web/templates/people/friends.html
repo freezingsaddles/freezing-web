@@ -28,21 +28,21 @@
                     </th>
                 </tr>
                 {% for indiv_row in indiv_rows %}
-                    <tr class="{{ indiv_row['id'] | myself }}">
+                    <tr class="{{ indiv_row._mapping['id'] | myself }}">
                         <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            <a href="/people/{{ indiv_row['id'] }}" class="hover-underline">{{ indiv_row['athlete_name'] }}</a>
+                            <a href="/people/{{ indiv_row._mapping['id'] }}" class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
                         </td>
                         <td class="number">
-                            {{ indiv_row['total_score']|round|int|groupnum }}
+                            {{ indiv_row._mapping['total_score']|round|int|groupnum }}
                         </td>
                         <td class="number">
-                            {{ indiv_row['days_ridden']|round|int|groupnum }}
+                            {{ indiv_row._mapping['days_ridden']|round|int|groupnum }}
                         </td>
                         <td class="number">
-                            {{ indiv_row['total_distance']|round|int|groupnum }}
+                            {{ indiv_row._mapping['total_distance']|round|int|groupnum }}
                         </td>
                     </tr>
                 {% endfor %}

@@ -58,14 +58,15 @@ def team_leaderboard_classic():
     team_members = {}
     # @UndefinedVariable
     for indiv_row in meta.scoped_session().execute(q).fetchall():
-        team_members.setdefault(indiv_row["team_id"], []).append(indiv_row)
+        team_members.setdefault(indiv_row._mapping["team_id"], []).append(indiv_row)
 
     my_team = next(
         (
             team_id
             for team_id in team_members
             if any(
-                member["athlete_id"] == athlete_id for member in team_members[team_id]
+                member._mapping["athlete_id"] == athlete_id
+                for member in team_members[team_id]
             )
         ),
         None,
@@ -73,7 +74,7 @@ def team_leaderboard_classic():
 
     for team_id in team_members:
         team_members[team_id] = reversed(
-            sorted(team_members[team_id], key=lambda m: m["total_score"])
+            sorted(team_members[team_id], key=lambda m: m._mapping["total_score"])
         )
 
     return render_template(
@@ -144,7 +145,7 @@ def indiv_leaderboard_various():
 def team_sleaze():
     q = team_sleaze_query()
     data = [
-        (x["team_name"], x["num_sleaze_days"])
+        (x._mapping["team_name"], x._mapping["num_sleaze_days"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
@@ -159,8 +160,10 @@ def team_sleaze():
 def team_hains():
     q = team_segment_query()
     data = [
-        (x["team_name"], x["segment_rides"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
+        (x._mapping["team_name"], x._mapping["segment_rides"])
+        for x in meta.scoped_session()
+        .execute(q.bindparams(segment_id=1081507))
+        .fetchall()
     ]
     return render_template(
         "alt_scoring/team_hains.html",
@@ -172,7 +175,11 @@ def team_hains():
 def indiv_sleaze():
     q = indiv_sleaze_query()
     data = [
-        (x["athlete_id"], x["athlete_name"], x["num_sleaze_days"])
+        (
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["num_sleaze_days"],
+        )
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
@@ -185,8 +192,15 @@ def indiv_sleaze():
 def indiv_hains():
     q = indiv_segment_query(join_miles=True)
     data = [
-        (x["athlete_id"], x["athlete_name"], x["segment_rides"], x["dist"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
+        (
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["segment_rides"],
+            x._mapping["dist"],
+        )
+        for x in meta.scoped_session()
+        .execute(q.bindparams(segment_id=1081507))
+        .fetchall()
     ]
     return render_template(
         "alt_scoring/indiv_hains.html",
@@ -199,7 +213,11 @@ def indiv_freeze():
     friends = request.args.get("friends", "false") == "true"
     q = indiv_freeze_query(friends)
     data = [
-        (x["athlete_id"], x["athlete_name"], x["freeze_points_total"])
+        (
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["freeze_points_total"],
+        )
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
