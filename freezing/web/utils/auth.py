@@ -11,7 +11,8 @@ from werkzeug.exceptions import Forbidden
 
 
 def login_athlete(strava_athlete):
-    session.permanent = True
+    # mobile devices delete transient cookies frequently so prefer a persistent cookie
+    session.permanent = True  # 128-day (see config) cookie instead of transient
     session["athlete_id"] = strava_athlete.id
     session["athlete_avatar"] = strava_athlete.profile_medium
     session["athlete_fname"] = strava_athlete.firstname
