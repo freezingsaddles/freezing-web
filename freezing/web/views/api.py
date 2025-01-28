@@ -322,29 +322,27 @@ def _track_map(
     hash_tag=None,
     limit=None,
 ):
+    teamsq = text("select id, name from teams order by id asc")
+    teams = [
+        {"id": id, "name": name}
+        for [id, name] in meta.scoped_session().execute(teamsq).fetchall()
+    ]
+
     q = text(
-        """
-             with team_idx(team_id, team_index) as (
-                 select id, row_number() over(order by id) from teams
-             )
-             select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), X.team_index
+        f"""
+             select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), A.team_id
              from ride_tracks T
              join ride_geo G on G.ride_id = T.ride_id
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
-             join team_idx X on X.team_id = A.team_id
              where
-             {0} and {1} and {2} and {3}
+               {'true' if include_private else 'not(R.private)'}
+               and {'A.id = :athlete_id' if athlete_id else 'true'}
+               and {'A.team_id = :team_id' if team_id else 'true'}
+               and {'R.name like :hash_tag' if hash_tag else 'true'}
              order by R.start_date DESC
-             {4}
-             ;
-             """.format(
-            "true" if include_private else "not(R.private)",
-            "A.id = :athlete_id" if athlete_id else "true",
-            "A.team_id = :team_id" if team_id else "true",
-            "R.name like :hash_tag" if hash_tag else "true",
-            "limit :limit" if limit is not None else "",
-        )
+             {'limit :limit' if limit else ''}
+             """
     )
 
     if team_id:
@@ -353,7 +351,7 @@ def _track_map(
         q = q.bindparams(athlete_id=athlete_id)
     if hash_tag:
         q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
-    if limit is not None:
+    if limit:
         q = q.bindparams(limit=limit)
 
     # Be warned, the terms "lon" and lat" in the following code should not be read as longitude and
@@ -403,7 +401,7 @@ def _track_map(
             track.append(point)
     tracks.reverse()
 
-    return {"tracks": tracks}
+    return {"tracks": tracks, "teams": teams}
 
 
 def _get_cached(key: str, compute):
