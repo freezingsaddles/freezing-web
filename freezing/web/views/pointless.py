@@ -1,6 +1,4 @@
 import operator
-import re
-from collections import defaultdict
 from datetime import datetime, timezone
 
 from flask import Blueprint, abort, render_template
@@ -28,64 +26,10 @@ def generic(leaderboard):
             title=board.title,
             description=board.description,
             sponsor=board.sponsor,
-            show_rides=[f for f in board.fields if f.name == 'ride_ids'],
+            show_rides=[f for f in board.fields if f.name == "ride_ids"],
             url=board.url,
             data=data,
         )
-
-
-@blueprint.route("/avgspeed")
-def averagespeed():
-    return generic("avgspeed")
-
-
-@blueprint.route("/avgdist")
-def shortride():
-    return generic("avgdist")
-
-
-@blueprint.route("/dirtybiker")
-def dirtybiker():
-    return generic("dirtybiker")
-
-
-@blueprint.route("/billygoat-team")
-def billygoat_team():
-    return generic("billygoat-team")
-
-
-@blueprint.route("/billygoat-indiv")
-def billygoat_invid():
-    return generic("billygoat-indiv")
-
-
-@blueprint.route("/tortoiseteam")
-def tortoiseteam():
-    return generic("tortoiseteam")
-
-
-@blueprint.route("/weekend")
-def weekendwarrior():
-    return generic("weekend")
-
-
-@blueprint.route("/avgtemp")
-def avgtemp():
-    """sum of ride distance * ride avg temp divided by total distance"""
-    return generic("/avgtemp")
-
-
-@blueprint.route("/kidmiles")
-def kidmiles():
-    return generic("kidmiles")
-
-
-@blueprint.route("/opmdays")
-def opmdays():
-    """
-    If OPM doesn't close this year, just use Michigan's birthday for Kitty's prize
-    """
-    return generic("opmdays")
 
 
 @blueprint.route("/points_per_mile")
@@ -288,57 +232,6 @@ def ross_hill_loop():
     )
 
 
-def _get_food_rescue_tdata():
-    sess = meta.scoped_session()
-    q = text(
-        """
-        with results as (
-            select
-                A.id as id,
-                A.display_name as athlete_name,
-                sum(
-                    case when R.name like '%#foodrescuex%' then
-                        cast(regexp_replace(R.name, '.*#foodrescuex(\\\\d+).*', '$1') as unsigned)
-                    else 1
-                    end
-                ) AS rescues,
-                sum(R.distance) AS distance
-            from lbd_athletes A
-            join rides R on R.athlete_id = A.id
-            where R.name like '%#foodrescue%'
-            group by A.id, A.display_name
-        )
-        select
-            R.*,
-            rank() over (order by R.rescues desc) AS "rank"
-        from results R
-        order by R.rescues desc, R.athlete_name asc
-        """
-    )
-    rs = sess.execute(q)
-    retval = [
-        (
-            x._mapping["id"],
-            x._mapping["athlete_name"],
-            x._mapping["rescues"],
-            x._mapping["distance"],
-            x._mapping["rank"],
-        )
-        for x in rs.fetchall()
-    ]
-    return retval
-
-
-@blueprint.route("/foodrescue")
-def food_rescue():
-    tdata = _get_food_rescue_tdata()
-    return render_template(
-        "pointless/foodrescue.html",
-        data={"tdata": tdata},
-        meta=meta,
-    )
-
-
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
@@ -346,11 +239,6 @@ def coffeeride():
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )
-
-
-@blueprint.route("/pointlesskids")
-def pointlesskids():
-    return generic("pointlesskids")
 
 
 @blueprint.route("/kidsathlon")

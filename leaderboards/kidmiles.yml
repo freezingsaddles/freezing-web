@@ -14,6 +14,7 @@ fields:
     label: Kidical Miles
     rank_by: true
     type: number
+    format: "{0:.2f} mi"
   - name: kidical_rides
     label: Kidical Rides
     type: number

@@ -11,10 +11,14 @@ sponsor: chill-dad
 fields:
   - name: pointless_kid
     label: Pointless Kid
+  - name: rides
+    label: Rides
+    type: number
   - name: distance
     label: Distance
     rank_by: true
     type: number
+    format: "{0:.2f} mi"
   - name: ride_ids
     visible: false
 query: |
@@ -32,6 +36,7 @@ query: |
   )
   select
     pointless_kid,
+    count(id) as rides,
     sum(distance) as distance,
     group_concat(hex(id)) as ride_ids
   from pointless_kid_rides

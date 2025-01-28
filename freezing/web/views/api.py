@@ -462,7 +462,9 @@ def track_map_all():
     limit = get_limit(request)
 
     key_str = hash_tag or ride_ids
-    key = hashlib.md5(key_str.encode('utf-8'), usedforsecurity=False) if key_str else None
+    key = (
+        hashlib.md5(key_str.encode("utf-8"), usedforsecurity=False) if key_str else None
+    )
     return _make_gzip_json_response(
         _get_cached(
             (
@@ -472,10 +474,8 @@ def track_map_all():
             ),
             lambda: gzip.compress(
                 json.dumps(
-                    _track_map(
-                        hash_tag=hash_tag, limit=limit,
-                        ride_ids=ride_ids
-                    ), indent=None
+                    _track_map(hash_tag=hash_tag, limit=limit, ride_ids=ride_ids),
+                    indent=None,
                 ).encode("utf8"),
                 5,
             ),

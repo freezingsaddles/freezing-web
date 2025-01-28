@@ -1,0 +1,58 @@
+---
+title: Food Rescue Rides
+description: |
+  BikeArlington and Food Rescue DC are partnering on a pointless prize
+  to encourage Freezing Saddlers to get some miles while doing some
+  good. Food Rescue is a nonprofit coordinates volunteers who pick-up
+  excess healthy food from local food donors and deliver it directly
+  to local social service agencies that feed the food insecure.
+  <p>
+  Sign up on the
+  <a target="_blank"
+     rel="noreferrer"
+     href="https://app.foodrescue.us/signup">Food Rescue DC</a> website.
+  Make food rescue rides, tag them with <code>#foodrescue</code>. If
+  you make multiple rescues on one ride, append the number of rescues
+  to the tag with an <code>x</code> like so:
+  <code>#foodrescue<strong>x2</strong></code>.
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-rpize-food-rescues-by-bike/  # yamllint disable-line
+sponsor: Henry
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+  - name: rescues
+    label: Rescues
+    rank_by: true
+    type: number
+    format: "{0:.0f}"
+  - name: distance
+    label: Distance
+    type: number
+    format: "{0:.2f} mi"
+  - name: ride_ids
+    visible: false
+query: |
+  with results as (
+      select
+          A.id as athlete_id,
+          A.display_name as athlete_name,
+          sum(
+              case when R.name like '%#foodrescuex%' then
+                  cast(regexp_replace(R.name, '.*#foodrescuex(\\\\d+).*', '$1') as unsigned)
+              else 1
+              end
+          ) AS rescues,
+          sum(R.distance) AS distance,
+          group_concat(hex(R.id)) as ride_ids
+      from lbd_athletes A
+      join rides R on R.athlete_id = A.id
+      where R.name like '%#foodrescue%'
+      group by A.id, A.display_name
+  )
+  select
+      R.*
+  from results R
+  order by R.rescues desc, R.athlete_name asc
