@@ -3,7 +3,6 @@ import gzip
 import hashlib
 import json
 import os
-import re
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -462,9 +461,14 @@ def track_map_all():
     limit = get_limit(request)
 
     key_str = hash_tag or ride_ids
-    key = (
-        hashlib.md5(key_str.encode("utf-8"), usedforsecurity=False) if key_str else None
-    )
+    # bandit in github curses this as insecure, but not locally, so just go wild to suppress
+    key = (  # nosec
+        hashlib.md5(  # nosec
+            key_str.encode("utf-8"), usedforsecurity=False  # nosec
+        )  # nosec
+        if key_str
+        else None
+    )  # nosec
     return _make_gzip_json_response(
         _get_cached(
             (
