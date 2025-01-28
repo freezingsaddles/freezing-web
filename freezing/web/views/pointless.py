@@ -28,6 +28,7 @@ def generic(leaderboard):
             title=board.title,
             description=board.description,
             sponsor=board.sponsor,
+            show_rides=[f for f in board.fields if f.name == 'ride_ids'],
             url=board.url,
             data=data,
         )
@@ -349,20 +350,7 @@ def coffeeride():
 
 @blueprint.route("/pointlesskids")
 def pointlesskids():
-    q = text(
-        """
-        select name, distance from rides where upper(name) like '%WITHKID%';
-    """
-    )
-    rs = meta.scoped_session().execute(q)
-    d = defaultdict(int)
-    for x in rs.fetchall():
-        for match in re.findall(r"(#withkid\w+)", x._mapping["name"]):
-            d[match.replace("#withkid", "")] += x._mapping["distance"]
-    return render_template(
-        "pointless/pointlesskids.html",
-        data={"tdata": sorted(d.items(), key=lambda v: v[1], reverse=True)},
-    )
+    return generic("pointlesskids")
 
 
 @blueprint.route("/kidsathlon")

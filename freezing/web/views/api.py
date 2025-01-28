@@ -1,5 +1,6 @@
 import datetime
 import gzip
+import hashlib
 import json
 import os
 import re
@@ -320,6 +321,7 @@ def _track_map(
     athlete_id=None,
     include_private=False,
     hash_tag=None,
+    ride_ids=None,
     limit=None,
 ):
     teamsq = text("select id, name from teams order by id asc")
@@ -340,6 +342,7 @@ def _track_map(
                and {'A.id = :athlete_id' if athlete_id else 'true'}
                and {'A.team_id = :team_id' if team_id else 'true'}
                and {'R.name like :hash_tag' if hash_tag else 'true'}
+               and {'FIND_IN_SET(hex(R.id), :ride_ids) > 0' if ride_ids else 'true'}
              order by R.start_date DESC
              {'limit :limit' if limit else ''}
              """
@@ -351,6 +354,8 @@ def _track_map(
         q = q.bindparams(athlete_id=athlete_id)
     if hash_tag:
         q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
+    if ride_ids:
+        q = q.bindparams(ride_ids=ride_ids)
     if limit:
         q = q.bindparams(limit=limit)
 
@@ -453,19 +458,24 @@ def _make_gzip_json_response(content, private=False):
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     hash_tag = request.args.get("hashtag")
+    ride_ids = request.args.get("rides")
     limit = get_limit(request)
 
-    hash_clean = re.sub(r"\W+", "", hash_tag) if hash_tag else None
+    key_str = hash_tag or ride_ids
+    key = hashlib.md5(key_str.encode('utf-8'), usedforsecurity=False) if key_str else None
     return _make_gzip_json_response(
         _get_cached(
             (
-                f"track_map/all/{hash_clean}-{limit}.json.gz"
-                if hash_clean
+                f"track_map/all/{key}-{limit}.json.gz"
+                if key
                 else f"track_map/all/{limit}.json.gz"
             ),
             lambda: gzip.compress(
                 json.dumps(
-                    _track_map(hash_tag=hash_tag, limit=limit), indent=None
+                    _track_map(
+                        hash_tag=hash_tag, limit=limit,
+                        ride_ids=ride_ids
+                    ), indent=None
                 ).encode("utf8"),
                 5,
             ),
