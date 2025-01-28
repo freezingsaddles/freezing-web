@@ -14,13 +14,13 @@
         <p>
             <div class="radio">
                 <label>
-                    <input type="radio" name="scope" id="public-scope" checked="checked">
+                    <input type="radio" name="scope" id="public-scope">
                     Only allow Freezing Saddles to read my public activities.
                 </label>
             </div>
             <div class="radio">
                 <label>
-                    <input type="radio" name="scope" id="private-scope">
+                    <input type="radio" name="scope" id="private-scope" checked="checked">
                     Allow Freezing Saddles to also read (and count points for) activities marked "private".
                 </label>
             </div>
@@ -28,7 +28,7 @@
         <p>
             {# djlint:off H006,H021 #}
             <a class="btn btn-lg p-0"
-               href="{{ public_authorize_url }}"
+               href="{{ private_authorize_url }}"
                role="button"
                id="connect-strava"
                style="margin-left: -.35rem;
