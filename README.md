@@ -365,7 +365,7 @@ mysql> select a.name, sum(ds.distance), sum(ds.points) from daily_scores ds inne
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
 
 * Copyright 2015 Ian Will
-* Copyright 2019 Hans Lillelid
+* Copyright 2019 Hans Lellelid
 * Copyright 2020 Jon Renaut
 * Copyright 2020 Merlin Hughes
 * Copyright 2020 Richard Bullington-McGuire
