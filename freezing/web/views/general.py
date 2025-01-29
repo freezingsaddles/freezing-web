@@ -330,23 +330,25 @@ def authorization():
         )
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
-        athlete_model = data.register_athlete(strava_athlete, token_dict)
-        if not athlete_model:
-            return render_template(
-                "authorization_error.html",
-                error="ATHLETE_NOT_FOUND",
-            )
         try:
+            athlete = data.register_athlete(strava_athlete, token_dict)
             team = data.register_athlete_team(
                 strava_athlete=strava_athlete,
-                athlete_model=athlete_model,
+                athlete_model=athlete,
             )
+            # We autocommit at teardown_request, but we really want to commit
+            # before rendering success in case transaction commit fails.
+            meta.scoped_session().commit()
         except MultipleTeamsError as multx:
+            meta.scoped_session().rollback()
             multiple_teams = multx.teams
             message = multx
         except NoTeamsError as noteamx:
+            meta.scoped_session().rollback()
             no_teams = True
             message = noteamx
+        # All other exceptions will go to the default error handler and
+        # teardown_request will roll the transaction back.
     if not no_teams:
         auth.login_athlete(strava_athlete)
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
