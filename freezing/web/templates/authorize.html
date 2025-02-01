@@ -12,23 +12,31 @@
             Login via <em>Connect with Strava</em> and you can also view personalized competition information.
         </p>
         <p>
-            <div class="radio">
-                <label>
-                    <input type="radio" name="scope" id="public-scope" checked="checked">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="scope" id="public-scope">
+                <label for="public-scope" class="form-check-label">
                     Only allow Freezing Saddles to read my public activities.
                 </label>
             </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" name="scope" id="private-scope">
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="radio"
+                       name="scope"
+                       id="private-scope"
+                       checked="checked">
+                <label for="private-scope" class="form-check-label">
                     Allow Freezing Saddles to also read (and count points for) activities marked "private".
+                    <div class="small text-muted">
+                        We don't share details of these activities with anyone, we just use them for
+                        leaderboard statistics.
+                    </div>
                 </label>
             </div>
         </p>
         <p>
             {# djlint:off H006,H021 #}
             <a class="btn btn-lg p-0"
-               href="{{ public_authorize_url }}"
+               href="{{ private_authorize_url }}"
                role="button"
                id="connect-strava"
                style="margin-left: -.35rem;
