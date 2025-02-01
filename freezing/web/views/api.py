@@ -1,8 +1,8 @@
 import datetime
 import gzip
+import hashlib
 import json
 import os
-import re
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -320,31 +320,31 @@ def _track_map(
     athlete_id=None,
     include_private=False,
     hash_tag=None,
+    ride_ids=None,
     limit=None,
 ):
+    teamsq = text("select id, name from teams order by id asc")
+    teams = [
+        {"id": id, "name": name}
+        for [id, name] in meta.scoped_session().execute(teamsq).fetchall()
+    ]
+
     q = text(
-        """
-             with team_idx(team_id, team_index) as (
-                 select id, row_number() over(order by id) from teams
-             )
-             select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), X.team_index
+        f"""
+             select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), A.team_id
              from ride_tracks T
              join ride_geo G on G.ride_id = T.ride_id
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
-             join team_idx X on X.team_id = A.team_id
              where
-             {0} and {1} and {2} and {3}
+               {'true' if include_private else 'not(R.private)'}
+               and {'A.id = :athlete_id' if athlete_id else 'true'}
+               and {'A.team_id = :team_id' if team_id else 'true'}
+               and {'R.name like :hash_tag' if hash_tag else 'true'}
+               and {'FIND_IN_SET(hex(R.id), :ride_ids) > 0' if ride_ids else 'true'}
              order by R.start_date DESC
-             {4}
-             ;
-             """.format(
-            "true" if include_private else "not(R.private)",
-            "A.id = :athlete_id" if athlete_id else "true",
-            "A.team_id = :team_id" if team_id else "true",
-            "R.name like :hash_tag" if hash_tag else "true",
-            "limit :limit" if limit is not None else "",
-        )
+             {'limit :limit' if limit else ''}
+             """
     )
 
     if team_id:
@@ -353,7 +353,9 @@ def _track_map(
         q = q.bindparams(athlete_id=athlete_id)
     if hash_tag:
         q = q.bindparams(hash_tag="%#{}%".format(hash_tag))
-    if limit is not None:
+    if ride_ids:
+        q = q.bindparams(ride_ids=ride_ids)
+    if limit:
         q = q.bindparams(limit=limit)
 
     # Be warned, the terms "lon" and lat" in the following code should not be read as longitude and
@@ -403,7 +405,7 @@ def _track_map(
             track.append(point)
     tracks.reverse()
 
-    return {"tracks": tracks}
+    return {"tracks": tracks, "teams": teams}
 
 
 def _get_cached(key: str, compute):
@@ -455,19 +457,29 @@ def _make_gzip_json_response(content, private=False):
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     hash_tag = request.args.get("hashtag")
+    ride_ids = request.args.get("rides")
     limit = get_limit(request)
 
-    hash_clean = re.sub(r"\W+", "", hash_tag) if hash_tag else None
+    key_str = hash_tag or ride_ids
+    # bandit in github curses this as insecure, but not locally, so just go wild to suppress
+    key = (  # nosec
+        hashlib.md5(  # nosec
+            key_str.encode("utf-8"), usedforsecurity=False  # nosec
+        )  # nosec
+        if key_str
+        else None
+    )  # nosec
     return _make_gzip_json_response(
         _get_cached(
             (
-                f"track_map/all/{hash_clean}-{limit}.json.gz"
-                if hash_clean
+                f"track_map/all/{key}-{limit}.json.gz"
+                if key
                 else f"track_map/all/{limit}.json.gz"
             ),
             lambda: gzip.compress(
                 json.dumps(
-                    _track_map(hash_tag=hash_tag, limit=limit), indent=None
+                    _track_map(hash_tag=hash_tag, limit=limit, ride_ids=ride_ids),
+                    indent=None,
                 ).encode("utf8"),
                 5,
             ),
