@@ -114,6 +114,14 @@ nav.bg-light {
     border-bottom: 1px solid #8884;
     margin: .5rem 0;
     width: 100%;
+
+    &.vertical {
+        border-bottom: none;
+        border-right: 1px solid #8888;
+        margin: 0 .5rem;
+        width: 0;
+        height: 1em;
+    }
 }
 
 .badge-group {

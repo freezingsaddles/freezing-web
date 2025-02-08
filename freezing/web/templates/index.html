@@ -19,6 +19,10 @@ h1 {
     font-size: 1.5rem;
 }
 
+.your-counts {
+  font-size: 1.25rem;
+}
+
 .front-page-leaderboard {
     font-size: 1.1rem;
 }
@@ -153,6 +157,18 @@ body.map-expanded {
                 frameborder="0"
                 scrolling="no"></iframe>
     {% else %}
+        {% if yourself.missed_today %}
+            {% if yourself.missed_yesterday %}
+                <div class="my-3 my-lg-4 alert alert-danger text-center">
+                    <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
+                    day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
+                </div>
+            {% else %}
+                <div class="my-3 my-lg-4 alert alert-info text-center">
+                    <strong>You haven't ridden today!</strong> It's a beautiful day to go for a ride!
+                </div>
+            {% endif %}
+        {% endif %}
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
@@ -258,6 +274,62 @@ body.map-expanded {
                                     <span class="flex-shrink-1 text-muted text-nowrap">({{ winner[2]|groupnum }} points)</span>
                                 </div>
                             {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if yourself.rides %}
+                    <div class="d-flex align-items-stretch card bg-light stats-card your-counts">
+                        <div class="text-black vertical-header">
+                            <a class="tag-link block-link" href="/my/rides">you</a>
+                        </div>
+                        <div class="d-grid grid-2 flex-grow-1">
+                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2"
+                                 style="border-right: 1px solid #8888">
+                                {% if yourself.rank %}
+                                    <div>
+                                        <a class="tag-link"
+                                           href="/leaderboard/individual_text"
+                                           title="Individual rank">
+                                            👤 {{ yourself.rank }}<sup>{{ yourself.rank|ord }}</sup>
+                                        </a>
+                                        {% if yourself.team_rank %}
+                                            <span class="stat-divider vertical mb-2 mx-md-3"></span>
+                                            <a class="tag-link" href="/leaderboard/team_text" title="Team rank">
+                                                👥 {{ yourself.team_rank }}<sup>{{ yourself.team_rank|ord }}</sup>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-muted">
+                                        –
+                                    </div>
+                                {% endif %}
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.hours|groupnum }} hour{{ yourself.hours|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.miles|groupnum }} mile{{ yourself.miles|ess }}
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2">
+                                <div>
+                                    {{ yourself.rides }} ride{{ yourself.rides|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.days }} day{{ yourself.days|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {% if yourself.every_day %}
+                                        <span class="d-none d-md-inline">❄️</span> every day rider <span class="d-none d-md-inline">❄️</span>
+                                    {% else %}
+                                        {{ yourself.streak }} day streak
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endif %}
