@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import datetime, tzinfo
+from datetime import datetime, timedelta, tzinfo
 from importlib.metadata import version
 from typing import List
 
@@ -77,6 +77,8 @@ class Config:
         if ENVIRONMENT == "localdev"
         else 84600  # let the browser cache static files for 24 hours
     )
+    # From registration start (Thanksgiving) until shortly after the competition ends.
+    PERMANENT_SESSION_LIFETIME: timedelta = timedelta(days=128)
 
 
 config = Config()
