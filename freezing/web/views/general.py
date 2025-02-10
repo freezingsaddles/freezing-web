@@ -25,7 +25,7 @@ from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
 from freezing.web.utils import auth
-from freezing.web.views.people import get_today
+from freezing.web.views.chartdata import competition_start, now_or_competition_end
 from freezing.web.views.shared_sql import team_leaderboard_query
 
 blueprint = Blueprint("general", __name__)
@@ -70,6 +70,18 @@ def groupnum(number):
 @app.template_filter("ess")
 def ess(number):
     return "" if groupnum(number) == "1" else "s"
+
+
+@app.template_filter("ord")
+def ord(number):
+    if number % 10 == 0 or number % 10 > 3 or number // 10 == 1:
+        return "th"
+    elif number % 10 == 1:
+        return "st"
+    elif number % 10 == 2:
+        return "nd"
+    else:  # if number % 10 == 3:
+        return "rd"
 
 
 @app.template_filter("myself")
@@ -150,7 +162,58 @@ def index():
 
     after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
 
-    # Find the top 16 trending tags from the most recent 250 tagged rides
+    tags = _trending_tags()
+
+    today = now_or_competition_end().date()
+    q = text(
+        """
+            select
+                count(distinct athlete_id) as riders,
+                coalesce(sum(R.moving_time),0) as moving_time,
+                coalesce(sum(R.distance),0) as distance
+            from rides R
+            where date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) >= '{1}'
+            ;
+        """.format(
+            config.TIMEZONE, today
+        )
+    )
+    today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    today_riders = int(today_res._mapping["riders"])
+    today_hours = round(today_res._mapping["moving_time"]) / 3600
+    today_miles = int(today_res._mapping["distance"])
+
+    # Get teams sorted by points
+    q = team_leaderboard_query()
+    team_rows = meta.scoped_session().execute(q).fetchall()
+
+    athlete_id = session.get("athlete_id")
+    yourself = _rider_stats(athlete_id) if athlete_id else {}
+
+    return render_template(
+        "index.html",
+        year=config.START_DATE.year,
+        team_count=len(config.COMPETITION_TEAMS),
+        contestant_count=contestant_count,
+        total_rides=total_rides,
+        total_hours=total_hours,
+        total_miles=total_miles,
+        rain_hours=rain_hours,
+        snow_hours=snow_hours,
+        sub_freezing_hours=sub_freezing_hours,
+        today_riders=today_riders,
+        today_hours=today_hours,
+        today_miles=today_miles,
+        bafs_is_live=after_competition_start,
+        photos=[photo for photo in photos],
+        tags=tags,
+        winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
+        yourself=yourself,
+    )
+
+
+# Find the top 16 trending tags from the most recent 250 tagged rides
+def _trending_tags():
     q = text(
         """
                 select name
@@ -181,55 +244,103 @@ def index():
         min_count = top_tags[-1][1]
         scale = max(1, top_tags[0][1] - min_count)
         alpha_tags = sorted(top_tags, key=lambda t: t[0])
-        tags = (
+        return (
             [original_tag[t[0]], 1 + (t[1] - min_count) / scale, tag_page(t[0])]
             for t in alpha_tags
         )
     else:
-        tags = []
+        return []
 
-    today = min(get_today(), config.END_DATE - timedelta(days=1)).date()
-    q = text(
-        """
-            select
-                count(distinct athlete_id) as riders,
-                coalesce(sum(R.moving_time),0) as moving_time,
-                coalesce(sum(R.distance),0) as distance
-            from rides R
-            where date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) >= '{1}'
-            ;
-        """.format(
-            config.TIMEZONE, today
+
+# Get rider stats
+def _rider_stats(athlete_id):
+    rank = (
+        meta.scoped_session()
+        .execute(
+            text(
+                """
+                with scores as (
+                  select A.id, sum(DS.points) as score
+                  from daily_scores DS join lbd_athletes A on A.id = DS.athlete_id
+                  group by A.id
+                ), ranked_scores as (
+                  select id, rank() over (order by score desc) as place from scores
+                )
+                select place from ranked_scores where id = :athlete_id
+                """
+            ).bindparams(athlete_id=athlete_id)
+        )
+        .fetchone()
+    )
+    team_rank = (
+        meta.scoped_session()
+        .execute(
+            text(
+                """
+                with scores as (
+                  select T.id, sum(DS.points) as score
+                  from daily_scores DS join teams T on T.id = DS.team_id where not T.leaderboard_exclude
+                  group by T.id
+                ), ranked_scores as (
+                  select id, rank() over (order by score desc) as place from scores
+                )
+                select RS.place from ranked_scores RS join lbd_athletes A on RS.id = A.team_id where A.id = :athlete_id
+                """
+            ).bindparams(athlete_id=athlete_id)
+        )
+        .fetchone()
+    )
+    ride_stats = (
+        meta.scoped_session()
+        .execute(
+            text(
+                """
+                select
+                  count(id) as rides,
+                  coalesce(sum(moving_time), 0) as time,
+                  coalesce(sum(distance), 0) as distance
+                from rides R
+                where R.athlete_id = :athlete_id
+                """
+            ).bindparams(athlete_id=athlete_id)
+        )
+        .fetchone()
+    )
+    ride_days = set(
+        res[0]
+        for res in (
+            meta.scoped_session()
+            .execute(
+                text(
+                    """
+                select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
+                """
+                ).bindparams(athlete_id=athlete_id)
+            )
+            .fetchall()
         )
     )
-    today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
-    today_riders = int(today_res._mapping["riders"])
-    today_hours = int(today_res._mapping["moving_time"]) / 3600
-    today_miles = int(today_res._mapping["distance"])
+    start = competition_start().date()
+    today = now_or_competition_end().date()
+    yesterday = today - timedelta(days=1)
+    total_days = 1 + (today - start).days
+    streak = next(
+        r for r in range(total_days) if (yesterday - timedelta(days=r)) not in ride_days
+    ) + (1 if today in ride_days else 0)
+    game_on = datetime.now().date() <= today
 
-    # Get teams sorted by points
-    q = team_leaderboard_query()
-    team_rows = meta.scoped_session().execute(q).fetchall()
-
-    return render_template(
-        "index.html",
-        year=config.START_DATE.year,
-        team_count=len(config.COMPETITION_TEAMS),
-        contestant_count=contestant_count,
-        total_rides=total_rides,
-        total_hours=total_hours,
-        total_miles=total_miles,
-        rain_hours=rain_hours,
-        snow_hours=snow_hours,
-        sub_freezing_hours=sub_freezing_hours,
-        today_riders=today_riders,
-        today_hours=today_hours,
-        today_miles=today_miles,
-        bafs_is_live=after_competition_start,
-        photos=[photo for photo in photos],
-        tags=tags,
-        winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
-    )
+    return {
+        "rank": rank[0] if rank else None,
+        "team_rank": team_rank[0] if team_rank else None,
+        "rides": int(ride_stats[0]),
+        "hours": round(ride_stats[1] / 3600),
+        "miles": int(ride_stats[2]),
+        "days": len(ride_days),
+        "missed_today": game_on and today not in ride_days,
+        "missed_yesterday": yesterday >= start and yesterday not in ride_days,
+        "streak": streak,
+        "every_day": streak == total_days,
+    }
 
 
 @blueprint.route("/logout")
