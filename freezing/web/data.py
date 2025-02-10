@@ -18,7 +18,7 @@ def register_athlete(strava_athlete, token_dict):
     :return: The added athlete model object.
     :rtype: :class:`bafs.orm.Athlete`
     """
-    athlete = meta.scoped_session().query(Athlete).get(strava_athlete.id)
+    athlete = meta.scoped_session().get(Athlete, strava_athlete.id)
     if athlete is None:
         athlete = Athlete()
     athlete.id = strava_athlete.id
@@ -114,7 +114,7 @@ def register_athlete_team(strava_athlete, athlete_model):
     else:
         club = matches[0]
         # create the team row if it does not exist
-        team = meta.scoped_session().query(Team).get(club.id)
+        team = meta.scoped_session().get(Team, club.id)
         if team is None:
             team = Team()
         team.id = club.id

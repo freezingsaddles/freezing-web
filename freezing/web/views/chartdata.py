@@ -768,9 +768,9 @@ def team_cumul_points():
         for row in (
             meta.scoped_session().execute(q.bindparams(team_id=team.id)).fetchall()
         ):  # @UndefinedVariable
-            daily_cumul[team.id][row["ride_date"].strftime("%Y-%m-%d")] = row[
-                "cumulative_points"
-            ]
+            daily_cumul[team.id][row._mapping["ride_date"].strftime("%Y-%m-%d")] = (
+                row._mapping["cumulative_points"]
+            )
 
         # Fill in any None gaps with the previous non-None value
         prev_value = 0
@@ -825,9 +825,9 @@ def team_cumul_mileage():
         for row in (
             meta.scoped_session().execute(q.bindparams(team_id=team.id)).fetchall()
         ):  # @UndefinedVariable
-            daily_cumul[team.id][row["ride_date"].strftime("%Y-%m-%d")] = row[
-                "cumulative_distance"
-            ]
+            daily_cumul[team.id][row._mapping["ride_date"].strftime("%Y-%m-%d")] = (
+                row._mapping["cumulative_distance"]
+            )
 
         # Fill in any None gaps with the previous non-None value
         prev_value = 0
