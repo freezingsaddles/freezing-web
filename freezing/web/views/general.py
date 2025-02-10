@@ -160,7 +160,9 @@ def index():
         .limit(12)
     )
 
-    after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
+    now_tz = datetime.now(config.START_DATE.tzinfo)
+    after_competition_start = now_tz >= config.START_DATE
+    before_competition_end = now_tz < config.END_DATE
 
     tags = _trending_tags()
 
@@ -188,7 +190,11 @@ def index():
     team_rows = meta.scoped_session().execute(q).fetchall()
 
     athlete_id = session.get("athlete_id")
-    yourself = _rider_stats(athlete_id) if athlete_id else {}
+    yourself = (
+        _rider_stats(athlete_id)
+        if athlete_id
+        else {"not_logged_in": after_competition_start and before_competition_end}
+    )
 
     return render_template(
         "index.html",
@@ -338,6 +344,7 @@ def _rider_stats(athlete_id):
         "days": len(ride_days),
         "missed_today": game_on and today not in ride_days,
         "missed_yesterday": yesterday >= start and yesterday not in ride_days,
+        "hour": datetime.now(config.START_DATE.tzinfo).hour,
         "streak": streak,
         "every_day": streak == total_days,
     }
@@ -365,10 +372,12 @@ def join():
         approval_prompt="auto",
         scope=["read_all", "activity:read_all", "profile:read_all"],
     )
+    now_tz = datetime.now(config.START_DATE.tzinfo)
     return render_template(
         "authorize.html",
         public_authorize_url=public_url,
         private_authorize_url=private_url,
+        after_competition_start=now_tz >= config.START_DATE,
     )
 
 

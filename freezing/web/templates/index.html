@@ -159,13 +159,13 @@ body.map-expanded {
     {% else %}
         {% if yourself.missed_today %}
             {% if yourself.missed_yesterday %}
-                <div class="my-3 my-lg-4 alert alert-danger text-center">
+                <div class="my-3 my-lg-4 py-2 alert alert-danger text-center">
                     <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
                     day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
                 </div>
-            {% else %}
-                <div class="my-3 my-lg-4 alert alert-info text-center">
-                    <strong>You haven't ridden today!</strong> It's a beautiful day to go for a ride!
+            {% elif yourself.hour >= 12 %}
+                <div class="my-3 my-lg-4 py-2 alert alert-info text-center">
+                    <strong>You haven't ridden yet today!</strong> It's a beautiful {{ "day" if 20 > yourself.hour else "night" }} to go for a ride.
                 </div>
             {% endif %}
         {% endif %}
@@ -332,6 +332,11 @@ body.map-expanded {
                             </div>
                         </div>
                     </div>
+                {% elif yourself.not_logged_in %}
+                    <a class="tag-link d-flex justify-content-center card bg-light stats-card px-3 py-2"
+                       href="/login">
+                        Log in to see your own stats!
+                    </a>
                 {% endif %}
             </div>
             <div id="map">

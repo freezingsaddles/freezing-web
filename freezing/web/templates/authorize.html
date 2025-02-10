@@ -2,7 +2,11 @@
 {% block content %}
     <div class="jumbotron">
         <h1>
-            Join the Competition!
+            {% if after_competition_start %}
+                Login
+            {% else %}
+                Join the Competition!
+            {% endif %}
         </h1>
         <p class="lead">
             In order to count your ride statistics, we need you to authorize the Freezing Saddles application
