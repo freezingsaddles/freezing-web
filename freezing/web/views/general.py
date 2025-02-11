@@ -166,7 +166,7 @@ def index():
 
     tags = _trending_tags()
 
-    today = now_or_competition_end().date()
+    today = min(now_tz, config.END_DATE)
     q = text(
         """
             select
@@ -177,7 +177,7 @@ def index():
             where date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) >= '{1}'
             ;
         """.format(
-            config.TIMEZONE, today
+            config.TIMEZONE, today.date()
         )
     )
     today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
