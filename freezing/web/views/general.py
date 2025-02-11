@@ -25,7 +25,6 @@ from freezing.web import app, config, data
 from freezing.web.autolog import log
 from freezing.web.exc import MultipleTeamsError, NoTeamsError
 from freezing.web.utils import auth
-from freezing.web.views.chartdata import competition_start, now_or_competition_end
 from freezing.web.views.shared_sql import team_leaderboard_query
 
 blueprint = Blueprint("general", __name__)
@@ -160,7 +159,7 @@ def index():
         .limit(12)
     )
 
-    now_tz = datetime.now(config.START_DATE.tzinfo)
+    now_tz = datetime.now(config.TIMEZONE)
     after_competition_start = now_tz >= config.START_DATE
     before_competition_end = now_tz < config.END_DATE
 
@@ -326,8 +325,9 @@ def _rider_stats(athlete_id):
             .fetchall()
         )
     )
-    start = competition_start().date()
-    today = now_or_competition_end().date()
+    start = config.START_DATE.date()
+    now_tz = datetime.now(config.TIMEZONE)
+    today = min(now_tz, config.END_DATE).date()
     yesterday = today - timedelta(days=1)
     total_days = 1 + (today - start).days
     streak = next(
@@ -472,7 +472,7 @@ def authorization():
     if not no_teams:
         auth.login_athlete(strava_athlete)
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
-    after_competition_start = datetime.now(config.START_DATE.tzinfo) > config.START_DATE
+    after_competition_start = datetime.now(config.TIMEZONE) > config.START_DATE
     return render_template(
         "authorization_success.html",
         after_competition_start_start=after_competition_start,
