@@ -18,7 +18,7 @@ from flask import (
 )
 from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto
-from sqlalchemy import text
+from sqlalchemy import func, text
 from stravalib import Client
 
 from freezing.web import app, config, data
@@ -155,7 +155,7 @@ def index():
         meta.scoped_session()
         .query(RidePhoto)
         .join(Ride)
-        .order_by(Ride.start_date.desc())
+        .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
         .limit(12)
     )
 

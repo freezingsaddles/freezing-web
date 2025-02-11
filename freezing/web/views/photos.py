@@ -3,6 +3,7 @@ import math
 from flask import Blueprint, render_template, request, send_file
 from freezing.model import meta
 from freezing.model.orm import Ride, RidePhoto
+from sqlalchemy import func
 
 from freezing.web.autolog import log
 from freezing.web.utils import insta
@@ -38,7 +39,7 @@ def index():
         meta.scoped_session()
         .query(RidePhoto)
         .join(Ride)
-        .order_by(Ride.start_date.desc())
+        .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
     )
     num_photos = total_q.count()
 
