@@ -37,7 +37,7 @@ dependencies = [
     "python-dateutil==2.9.0.post0",
     "envparse==0.2.0",
     "freezing-model @ https://github.com/freezingsaddles/freezing-model/archive/0.12.0.tar.gz",
-    "marshmallow==3.23.2",
+    "marshmallow==3.26.1",
     "python-instagram==1.3.2",
     "pytz==2025.1",
     "stravalib==1.2.0",
