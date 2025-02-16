@@ -326,7 +326,7 @@ Miles = Points
 
 The scores are rounded to the nearest integer point for display, but the system uses precise floating point calculations of points to determine rank. This can lead to some counterintuitive results at first glance, such as a whole-number points tie with the person in the lead having fewer miles recorded.
 
-In 2024, this happened as of Jan 7 between Paul Wilson and Steve Szibler. Check out this detail
+In 2024, this happened as of Jan 7 between Paul Wilson and Steve Szibler. Check out these details from a database query session:
 
 ```sql
 mysql> select a.name, ds.distance, ds.points, ds.ride_date from daily_scores ds inner join athletes a on (ds.athlete_id = a.id) where a.name  like 'Steve S%' or name like 'Paul Wilson' order by name, ride_date;
