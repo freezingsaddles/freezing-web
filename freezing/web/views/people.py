@@ -175,7 +175,7 @@ def ridedays():
 def friends():
     q = text(
         """
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
+             select A.id, A.team_id, A.display_name as athlete_name, T.name as team_name,
              sum(DS.distance) as total_distance, sum(DS.points) as total_score,
              count(DS.points) as days_ridden
              from daily_scores DS
