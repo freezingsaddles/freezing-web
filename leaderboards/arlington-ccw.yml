@@ -3,7 +3,8 @@ title: Counter-Clockwise Loopy for Arlington
 description: |
   Number of counter-clockwise rides of the Arlington loop (ArLoopCCW1 through ArLoopCCW8).
   Part of <a href="../arlington">Loopy for Arlington</a>.
-url: https://www.bikearlingtonforum.com/forums/topic/bafs-2020-pointless-prizes-loopy-for-arlington/
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-loopy-for-arlington/
+sponsor: bentbike33
 fields:
   - name: athlete_id
     visible: false
