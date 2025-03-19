@@ -339,6 +339,7 @@ def arlington():
         fields=board.fields,
         title=board.title,
         description=board.description,
+        sponsor=board.sponsor,
         url=board.url,
         data=formatted,
     )
