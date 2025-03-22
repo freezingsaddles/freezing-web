@@ -8,21 +8,28 @@
             <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
         </p>
     {% endif %}
-    <ul>
-        <li>
-            If your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
+    <ul style="padding-left: 1em">
+        <li style="list-style: none">
+            <strong>{{ every_day_riders }} rider{{ every_day_riders|ess }}:</strong>
+            Your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
         </li>
-        <li>
-            <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
-        </li>
-        <li>
+        {% if contenders %}
+            <li style="list-style: none">
+                <strong>{{ contenders }} rider{{ contenders|ess }}:</strong>
+                <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
+            </li>
+        {% endif %}
+        <li style="list-style: none">
+            <strong>{{ remainders }} rider{{ remainders|ess }}:</strong>
             <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
         </li>
     </ul>
-    <p>
-        If your name is <span class="text-warning">yellow</span> or <span class="text-danger">red</span>, either you haven't ridden enough (see
-        <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
-    </p>
+    {% if not all_done %}
+        <p>
+            If your name is <span class="text-warning">yellow</span> or <span class="text-danger">red</span>, either you haven't ridden enough (see
+            <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
+        </p>
+    {% endif %}
     <div class="card">
         <div class="card-body py-1">
             <table class="table table-condensed">
@@ -43,7 +50,7 @@
                 {% for a, b, c, d, e in ride_days %}
                     {% if c >= num_days %}
                         {% set class = "text-success" %}
-                    {% elif c == (num_days - 1) and e == 0 and not all_done %}
+                    {% elif e %}
                         {% set class = "text-warning" %}
                     {% else %}
                         {% set class = "text-danger" %}
@@ -61,7 +68,7 @@
                         <td class="emoji">
                             {% if c >= num_days %}
                                 🏆
-                            {% elif c == (num_days - 1) and e == 0 and not all_done %}
+                            {% elif e %}
                                 ⚠️
                             {% endif %}
                         </td>
