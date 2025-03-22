@@ -162,6 +162,9 @@ def index():
     now_tz = datetime.now(config.TIMEZONE)
     after_competition_start = now_tz >= config.START_DATE
     before_competition_end = now_tz < config.END_DATE
+    delta_after_end = now_tz - config.END_DATE
+    # Meh, close enough...
+    post_autumnal_equinox = now_tz.month > 9 or (now_tz.month == 9 and now_tz.day >= 22)
 
     tags = _trending_tags()
 
@@ -198,6 +201,7 @@ def index():
     return render_template(
         "index.html",
         year=config.START_DATE.year,
+        winter_is_coming=post_autumnal_equinox,
         team_count=len(config.COMPETITION_TEAMS),
         contestant_count=contestant_count,
         total_rides=total_rides,
@@ -210,6 +214,8 @@ def index():
         today_hours=today_hours,
         today_miles=today_miles,
         bafs_is_live=after_competition_start,
+        bafs_is_over=not before_competition_end,
+        bafs_days_over=delta_after_end.days,
         photos=[photo for photo in photos],
         tags=tags,
         winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
