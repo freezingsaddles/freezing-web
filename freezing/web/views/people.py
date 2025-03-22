@@ -132,13 +132,13 @@ def ridedays():
                     a.display_name,
                     count(b.ride_date) as rides,
                     sum(b.distance) as miles,
-                    sum(case when b.ride_date = :today then 1 else 0 end) as contender
+                    sum(case when b.ride_date = :today then 1 else 0 end) as today
                 FROM
                     lbd_athletes a,
                     daily_scores b where a.id = b.athlete_id
                 group by b.athlete_id
                 order by
-                    case when rides = :total then 0 when rides = :total - 1 and contender = 0 then 1 else 2 end,
+                    case when rides = :total then 0 when rides = :total - 1 and today = 0 then 1 else 2 end,
                     rides desc,
                     display_name
                 ;
@@ -151,13 +151,17 @@ def ridedays():
         + 1
     )
     all_done = competition_done(loc_time)
+
+    def contender(rides: int, today: int) -> bool:
+        return rides == loc_total_days - 1 and today == 0 and not all_done
+
     ride_days = [
         (
             x._mapping["id"],
             x._mapping["display_name"],
             x._mapping["rides"],
             x._mapping["miles"],
-            x._mapping["contender"],
+            contender(x._mapping["rides"], x._mapping["today"]),
         )
         for x in meta.scoped_session()
         .execute(q.bindparams(today=loc_time.date(), total=loc_total_days))
@@ -168,6 +172,9 @@ def ridedays():
         ride_days=ride_days,
         num_days=loc_total_days,
         all_done=all_done,
+        every_day_riders=sum(x[2] == loc_total_days for x in ride_days),
+        contenders=sum(x[4] for x in ride_days),
+        remainders=sum(x[2] < loc_total_days and not x[4] for x in ride_days),
     )
 
 

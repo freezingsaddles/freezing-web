@@ -46,6 +46,7 @@ custom_tag_pages = {
     "kidical": "generic/kidmiles",
     "rosshillloop": "rosshillloop",
     "withkid": "generic/pointlesskids",
+    "poggio": "generic/poggio-indiv",
 }
 
 
