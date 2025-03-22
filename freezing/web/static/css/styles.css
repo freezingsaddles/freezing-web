@@ -93,6 +93,7 @@ table.dataTable.no-footer {
 .more-images-link:hover {
     text-decoration: none;
 }
+
 .more-images-link {
     font-size: 50px;
     padding-top: 25px;
@@ -274,6 +275,24 @@ nav.bg-light {
     background-color: #ffff0020;
 }
 
+.sprout {
+    font-size: 1.5rem;
+    line-height: 1;
+    position: absolute;
+    top: -1.5rem;
+    left: 1rem;
+}
+
+#snow-animation-container {
+    position: fixed;
+    left: 0;
+    top: 3.5rem;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
@@ -285,6 +304,7 @@ nav.bg-light {
         writing-mode: vertical-lr; /* chrome does not support sideways-lr */
         border-bottom: none;
         border-right: 1px solid var(--bs-border-color-translucent);
+
         > a {
             display: block;
             transform: rotate(180deg);

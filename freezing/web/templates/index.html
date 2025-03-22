@@ -1,74 +1,75 @@
 {% extends "base.html" %}
 {% block head %}
     <style>
-h1 {
+  h1 {
     font-size: 4rem;
-}
-#cal, #map {
+  }
+
+  #cal, #map {
     border-radius: var(--bs-border-radius);
     width: 100%;
     border: 1px solid #ced4da;
     aspect-ratio: 1;
-}
+  }
 
-#cal {
+  #cal {
     aspect-ratio: .75;
-}
+  }
 
-.front-page-counts {
+  .front-page-counts {
     font-size: 1.5rem;
-}
+  }
 
-.your-counts {
-  font-size: 1.25rem;
-}
+  .your-counts {
+    font-size: 1.25rem;
+  }
 
-.front-page-leaderboard {
+  .front-page-leaderboard {
     font-size: 1.1rem;
-}
-
-body.map-expanded {
-  #map {
-    aspect-ratio: 1.333;
   }
 
-  #sect-stats {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
+  body.map-expanded {
+    #map {
+      aspect-ratio: 1.333;
+    }
 
-@media (min-width: 768px) {
+    #sect-stats {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 768px) {
     #map, #cal {
-        aspect-ratio: 1.333;
+      aspect-ratio: 1.333;
     }
-}
+  }
 
-@media (min-width: 1200px) {
+  @media (min-width: 1200px) {
     #cal:not(.bigly) {
-        aspect-ratio: 2;
+      aspect-ratio: 2;
     }
 
     #map {
-        aspect-ratio: initial;
+      aspect-ratio: initial;
     }
-}
+  }
 
-@media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
     #map {
-        border-color: #495057;
+      border-color: #495057;
     }
 
     #cal {
-        border-color: #a8a19a;
-      }
-}
+      border-color: #a8a19a;
+    }
+  }
 
-.mini-img {
+  .mini-img {
     border-radius: .5rem;
     max-width: 100%;
     max-height: 12rem;
     margin-bottom: .5rem;
-}
+  }
     </style>
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -124,7 +125,7 @@ body.map-expanded {
 {% endblock %}
 {% block content %}
     <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
-        <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center">
+        <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center ">
             <div class="d-flex flex-column align-items-center me-lg-5">
                 <img src="/img/logo-blue.png"
                      height="160"
@@ -145,11 +146,31 @@ body.map-expanded {
             </div>
         </div>
     </div>
+    {% if winter_is_coming %}
+        <div class="{{ 'my-3 my-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
+            Freezing Saddles is a game organized by friends in the
+            <a class="text-info text-decoration-none"
+               href="https://www.bikearlingtonforum.com/">Washington Area Bike Forum</a>.
+            It is a convivial and good-humored competition in which participants are randomly assigned to teams.
+            The teams then compete for points by riding their bikes all winter, in the cold, in the dark and in the snow,
+            and by engaging in pointless challenges.
+            The winners win and, well, so does everyone else. You should join! Read more on the Forum link at the top,
+            and sign up by following the Register link. Registration opens around Thanksgiving;
+            the competition starts on January 1<sup>st</sup>, and ends on the last full day of astronomical winter,
+            usually March 19<sup>th</sup>.
+        </div>
+    {% elif bafs_is_over %}
+        <div class="my-3 my-lg-4 py-2 alert alert-success text-center position-relative">
+            Winter is over. The game is done. The reindeer have been put to pasture. Time to clean your bike, wax your chain,
+            and go for a ride.
+            <span class="sprout">🌱</span>
+        </div>
+    {% endif %}
     {% if not bafs_is_live %}
-        <div class="my-4 my-lg-5 alert alert-info">
+        <div class="my-4 mb-lg-5 alert alert-info">
             The shiny new Freezing Saddles competition for the upcoming winter hasn't
             started yet, although there are currently <strong>{{ contestant_count }}</strong>
-            contestants registered. There are still bike rides going on, you should go for a bike ride.
+            contestants registered. There are still bike rides going on, you should go for a ride.
         </div>
         <iframe id="cal"
                 class="bigly mb-lg-4"
@@ -399,7 +420,7 @@ body.map-expanded {
 {% endblock %}
 {% block foot %}
     <script>
-$(() => {
+  $(() => {
     const map = create_ride_map('map', '/api/all/trackmap.json');
     $('#expand-map').click(e => {
       e.preventDefault();
@@ -407,6 +428,16 @@ $(() => {
       map.invalidateSize();
       $('#map')[0].scrollIntoView({block: 'center'});
     })
-});
+  });
     </script>
+    {% if bafs_is_over and bafs_days_over < 14 %}
+        <!-- show some snow for two weeks -->
+        <div id="snow-animation-container">
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"
+                integrity="sha512-B8ruywf8mKA4fm0K8SrrNhO5DTokuipFEo7rEnI0RVTt9p29MJKfg8TfOVwMAFZxgI+zOF4iwOA/ByvyJ/sslw=="
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"></script>
+        <script src="/js/snow.js"></script>
+    {% endif %}
 {% endblock %}
