@@ -4,6 +4,8 @@
 $(document).ready(() => {
   var MAX_SNOW_SIZE = 7;
   var MAX_SNOW_SPEED = 1;
+  var container = $("#snow-animation-container");
+
   snowStart();
 
   function snowStart() {
@@ -11,7 +13,6 @@ $(document).ready(() => {
   }
 
   function createSnows() {
-    var container = $("#snow-animation-container");
     var MAX_SNOW = Math.round(Math.sqrt(
       container.width() * container.height() / 150
     ));
@@ -20,7 +21,7 @@ $(document).ready(() => {
       var appendItem = getRandomItem(i);
       container.append(appendItem);
       var animateItem = $(".snow" + String(i));
-      var randomTime = Math.random() * MAX_SNOW_SPEED;
+      var randomTime = .5 + Math.random() * MAX_SNOW_SPEED;
       goAnimate(animateItem, i, randomTime);
       goAnimate2(animateItem);
     }
@@ -31,9 +32,9 @@ $(document).ready(() => {
     TweenMax.to(item, randomTime, {
       css: {marginTop: "+=100"}, ease: Linear.easeNone, onComplete: function () {
         var topPosition = item.css("margin-top").replace("px", "");
-        if (topPosition > $(window).height()) {
+        if (topPosition > container.height()) {
           changePosition(item);
-          randomTime = Math.random() * MAX_SNOW_SPEED;
+          randomTime = .3 + Math.random() * MAX_SNOW_SPEED;
           goAnimate(item, id, randomTime);
         } else {
           goAnimate(item, id, randomTime);
@@ -85,8 +86,8 @@ $(document).ready(() => {
     var _width = Math.floor(Math.random() * MAX_SNOW_SIZE);
     var _height = _width;
     var _blur = Math.floor(Math.random() * 5 + 2);
-    var _left = Math.floor(Math.random() * ($(window).width() - _width));
-    var _top = -$(window).height() + Math.floor(Math.random() * ($(window).height() - _height));
+    var _left = Math.floor(Math.random() * (container.width() - _width));
+    var _top = -container.height() + Math.floor(Math.random() * (container.height() - _height));
     item.css("width", _width);
     item.css("height", _height);
     item.css("margin-left", _left);
@@ -102,8 +103,8 @@ $(document).ready(() => {
     var _width = Math.floor(Math.random() * MAX_SNOW_SIZE);
     var _height = _width;
     var _blur = Math.floor(Math.random() * 5 + 2);
-    var _left = Math.floor(Math.random() * ($(window).width() - _width));
-    var _top = -$(window).height() + Math.floor(Math.random() * ($(window).height() - _height));
+    var _left = Math.floor(Math.random() * (container.width() - _width));
+    var _top = -container.height() + Math.floor(Math.random() * (container.height() - _height));
     var _id = id;
     return getSmallSnow(_width, _height, _blur, _left, _top, _id);
   }
