@@ -3,7 +3,6 @@ from freezing.model import meta
 from sqlalchemy import text
 from werkzeug.utils import redirect
 
-from freezing.web import config
 from freezing.web.views.shared_sql import (
     indiv_freeze_query,
     indiv_segment_query,
@@ -151,8 +150,6 @@ def team_sleaze():
     return render_template(
         "alt_scoring/team_sleaze.html",
         team_sleaze=data,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
     )
 
 
