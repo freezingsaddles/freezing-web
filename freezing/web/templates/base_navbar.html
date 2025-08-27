@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-light sticky-top">
+<nav class="navbar navbar-expand-xl bg-light sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex ps-2" href="/" title="Freezing Saddles">
             {# djlint:off H006,H021 #}
@@ -431,10 +431,77 @@
      tabindex="-1"
      aria-labelledby="aboutModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="overflow: hidden">
         <div class="modal-content">
+            <div class="snowflakes" aria-hidden="true">
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+            </div>
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="aboutModalLabel">
+                <img src="/img/logo-blue-sm.png"
+                     style="width: 1.875rem;
+                            height: 1.875rem;
+                            margin: -0.4375rem 0"
+                     alt="logo" />
+                <h1 class="modal-title fs-5 ps-2" id="aboutModalLabel">
                     About Freezing Saddles
                 </h1>
                 <button type="button"
@@ -457,11 +524,11 @@
                     <cite style="margin-left: 0.125rem; white-space: nowrap">&mdash; Steve O</cite>
                 </blockquote>
                 <p>
-                    Freezing Saddles runs from January 1 through 1 second before midnight
-                    on the last <em>full</em> day of Winter ({{ end_date.strftime("%B %d") 
-                    }} in {{ end_date.year }}). We divide contestants into teams of 10 or
-                    so people, striving for competitive parity. Each team is a mix of
-                    riders who typically ride enough to qualify as insane, people who ride
+                    Freezing Saddles runs from January 1 through the last
+                    <em>full</em> day of Winter ({{ end_date.strftime("%B %d") }} in {{
+                    end_date.year }}). We divide contestants into teams of 10 or so
+                    people, striving for competitive parity. Each team is a mix of riders
+                    who typically ride enough to qualify as insane, people who ride
                     regularly but like sane people, people who ride occasionally, and
                     people who have never ridden through a winter before.
                 </p>
@@ -471,8 +538,7 @@
                     <a href="/leaderboard/individual_various?api=indiv_freezing">in the cold</a>,
                     <a href="/leaderboard/individual_various?api=indiv_after_sunset">in the dark</a>
                     and
-                    <a href="/leaderboard/individual_various?api=indiv_snowiest">in the snow</a>.
-                    The <a href="/explore/indiv_elev_dist">farther you ride</a>, the
+                    <a href="/leaderboard/individual_various?api=indiv_snowiest">in the snow</a>. The <a href="/explore/indiv_elev_dist">farther you ride</a>, the
                     <a href="/leaderboard/individual_text">more points</a> you earn. The
                     colder it is, the colder you'll be. Not everyone can ride every day,
                     but <a href="/people/ridedays">many do</a>, and everyone is encouraged
@@ -481,7 +547,7 @@
                 <p>
                     In addition to the points competition, teams and individuals compete
                     and play for Pointless Prizes, of which there are many, both serious
-                    and silly. For many, these &quot;reindeer games&quot; are the primary
+                    and silly. For many, these <em>reindeer games</em> are the primary
                     reason they join and play Freezing Saddles.
                 </p>
                 <p>
