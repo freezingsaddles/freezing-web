@@ -9,20 +9,24 @@ on:
 jobs:
 
   build:
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.5.6
+    permissions:
+      contents: read
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@881e148b972aea05878675367129720dee55e87e # 1.5.6
     concurrency: build-deploy-and-teset
     with:
       tag: latest
     secrets: inherit
 
   deploy:
+    permissions:
+      contents: read
     concurrency: build-deploy-and-test
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: install
-        uses: appleboy/ssh-action@v1.1.0
+        uses: appleboy/ssh-action@25ce8cbbcb08177468c7ff7ec5cbfa236f9341e1 # v1.1.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -35,18 +39,20 @@ jobs:
             docker compose pull freezing-web
             docker compose up -d freezing-web
       - name: wait
-        uses: iFaxity/wait-on-action@v1.2.1
+        uses: iFaxity/wait-on-action@a7d13170ec542bdca4ef8ac4b15e9c6aa00a6866 # v1.2.1
         with:
           resource: https-get://freezingsaddles.org
           timeout: 5000
 
   test:
+    permissions:
+      contents: read
     concurrency: build-deploy-and-test
     needs: [build, deploy]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: test-wget-spider
         run: "URL=https://freezingsaddles.org test/wget-spider.sh"
