@@ -61,8 +61,9 @@ def register_athlete_team(strava_athlete, athlete_model):
 
     Updates the passed-in Athlete model object with created/updated team.
 
-    :param strava_athlete: The Strava model object for the athlete.
-    :type strava_athlete: :class:`stravalib.orm.Athlete`
+    :param strava_athlete: The Strava athlete object returned by
+        ``Client.get_athlete()``. (Type path changed in stravalib 2.x; the
+        old ``stravalib.orm.Athlete`` reference is deprecated.)
 
     :param athlete_model: The athlete model object.
     :type athlete_model: :class:`bafs.orm.Athlete`
