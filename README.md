@@ -360,6 +360,29 @@ mysql> select a.name, sum(ds.distance), sum(ds.points) from daily_scores ds inne
 2 rows in set (0.02 sec)
 ```
 
+## Security
+
+### Bandit
+
+To scan for common security problems in the code, this uses [Bandit](https://bandit.readthedocs.io/en/latest/). To run the security linter, use this command:
+
+```bash
+bandit -s B101 -r freezing tests
+```
+
+This is integrated in GitHub Actions with the [PyCQA/bandit-action](https://github.com/PyCQA/bandit-action) which integrates with [GitHub Advanced Security](https://docs.github.com/en/code-security/secure-coding/automatically-scanning-your-code-for-vulnerabilities-and-errors/about-github-code-scanning).
+
+### GitHub actions version pinning
+
+Best security practices recommend [pinning versions of GitHub actions used in workflows to specific commit SHAs, to avoid supply chain attacks](https://github.blog/changelog/2025-08-15-github-actions-policy-now-supports-blocking-and-sha-pinning-actions/). This project follows that practice.
+
+To make this easy, we use [mheap/pin-github-action](https://github.com/mheap/pin-github-action) via Docker to pin the versions of actions used in the workflows.
+
+```bash
+alias pin-github-action='docker run --rm -v $(pwd):/workflows -e GITHUB_TOKEN mheap/pin-github-action'
+pin-github-action .github/workflows
+```
+
 ## Legal
 
 This software is a community-driven effort, and as such the contributions are owned by the individual contributors:
