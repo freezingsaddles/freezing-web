@@ -70,6 +70,12 @@
     max-height: 12rem;
     margin-bottom: .5rem;
   }
+    .frontpage-alert-high {
+        z-index: 1001;
+    }
+    .border-right-muted {
+        border-right: 1px solid #8888;
+    }
     </style>
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -160,8 +166,7 @@
             usually March 19<sup>th</sup>.
         </div>
     {% elif bafs_is_over %}
-        <div class="my-3 my-lg-4 py-2 alert alert-success text-center position-relative"
-             style="z-index: 1001">
+        <div class="my-3 my-lg-4 py-2 alert alert-success text-center position-relative frontpage-alert-high">
             Winter is over. The game is done. The reindeer have been put out to pasture. Time to clean your bike, wax your chain,
             and go for a ride.
             <span class="sprout">🌱</span>
@@ -183,7 +188,7 @@
             {% if yourself.missed_yesterday %}
                 <div class="my-3 my-lg-4 py-2 alert alert-danger text-center">
                     <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
-                    day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
+                    day. Even just <a class="text-reset" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
                 </div>
             {% elif yourself.hour >= 12 %}
                 <div class="my-3 my-lg-4 py-2 alert alert-info text-center">
@@ -305,8 +310,7 @@
                             <a class="tag-link block-link" href="/my/rides">you</a>
                         </div>
                         <div class="d-grid grid-2 flex-grow-1">
-                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2"
-                                 style="border-right: 1px solid #8888">
+                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2 border-right-muted">
                                 {% if yourself.rank %}
                                     <div>
                                         <a class="tag-link"
@@ -357,7 +361,7 @@
                 {% elif yourself.not_logged_in %}
                     <a class="tag-link d-flex justify-content-center card bg-light stats-card px-3 py-2"
                        href="/login">
-                        <span style="text-decoration: underline">Log in</span>&nbsp;to see your own stats.
+                        <span class="text-decoration-underline">Log in</span>&nbsp;to see your own stats.
                     </a>
                 {% endif %}
             </div>
