@@ -10,7 +10,7 @@ jobs:
   build:
     permissions:
       contents: read
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.5.6
+    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@881e148b972aea05878675367129720dee55e87e # 1.5.6
     with:
       tag: ${{ github.ref_name }}
     secrets: inherit
