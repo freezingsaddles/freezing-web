@@ -338,7 +338,12 @@ def _rider_stats(athlete_id):
     yesterday = today - timedelta(days=1)
     total_days = 1 + (today - start).days
     streak = next(
-        r for r in range(total_days) if (yesterday - timedelta(days=r)) not in ride_days
+        (
+            r
+            for r in range(total_days)
+            if (yesterday - timedelta(days=r)) not in ride_days
+        ),
+        0,
     ) + (1 if today in ride_days else 0)
     game_on = datetime.now().date() <= today
 
@@ -353,7 +358,7 @@ def _rider_stats(athlete_id):
         "missed_yesterday": yesterday >= start and yesterday not in ride_days,
         "hour": datetime.now(config.START_DATE.tzinfo).hour,
         "streak": streak,
-        "every_day": streak == total_days,
+        "every_day": total_days > 0 and streak == total_days,
     }
 
 

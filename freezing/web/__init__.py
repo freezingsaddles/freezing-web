@@ -97,6 +97,7 @@ def inject_config():
         "registration_site": config.REGISTRATION_SITE,
         "forum_site": config.FORUM_SITE,
         "version_string": config.VERSION_STRING,
+        "end_date": config.END_DATE,
     }
 
 
