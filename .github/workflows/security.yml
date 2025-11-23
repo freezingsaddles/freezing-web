@@ -14,7 +14,7 @@ jobs:
       - name: Check out source repository
         uses: actions/checkout@v4
       - name: bandit
-        uses: mdegis/bandit-action@v1.0
+        uses: mdegis/bandit-action@851671cb116c1d3638de86975006bddf2619362a # version 1.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           level: medium
