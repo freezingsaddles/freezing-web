@@ -5,17 +5,16 @@ on: pull_request
 
 jobs:
 
-  # Thanks for inspiration:
-  # https://black.readthedocs.io/en/stable/integrations/github_actions.html
-  bandit:
-    name: Bandit
+  analyze:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Check out source repository
         uses: actions/checkout@v4
-      - name: bandit
-        uses: mdegis/bandit-action@851671cb116c1d3638de86975006bddf2619362a # version 1.1
+
+      - name: Perform Bandit Analysis
+        uses: PyCQA/bandit-action@67a458d90fa11fb1463e91e7f4c8f068b5863c7f # version v1.0.1
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          level: medium
-          confidence: medium
+          severity: "medium"
+          confidence: "medium"
