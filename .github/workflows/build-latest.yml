@@ -9,6 +9,8 @@ on:
 jobs:
 
   build:
+    permissions:
+      contents: read
     uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@1.5.6
     concurrency: build-deploy-and-teset
     with:
@@ -16,6 +18,8 @@ jobs:
     secrets: inherit
 
   deploy:
+    permissions:
+      contents: read
     concurrency: build-deploy-and-test
     needs: build
     runs-on: ubuntu-latest
@@ -41,6 +45,8 @@ jobs:
           timeout: 5000
 
   test:
+    permissions:
+      contents: read
     concurrency: build-deploy-and-test
     needs: [build, deploy]
     runs-on: ubuntu-latest

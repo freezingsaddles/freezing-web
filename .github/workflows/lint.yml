@@ -8,6 +8,8 @@ jobs:
   # https://black.readthedocs.io/en/stable/integrations/github_actions.html
   python:
     name: Python Lint
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
@@ -35,6 +37,8 @@ jobs:
 
   templates:
     name: Templates Lint
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
