@@ -1,78 +1,113 @@
 {% extends "base.html" %}
-{% block head %}
+{% block foot %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
+          integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
+          crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
+            integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"
+            integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
-	  // Load the Visualization API and the corechart package.
-	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
-
-	  // Set a callback to run when the Google Visualization API is loaded.
-	  google.charts.setOnLoadCallback(drawPointsChart);
-	  google.charts.setOnLoadCallback(drawMileageChart);
-
-	  // Callback that creates and populates a data table,
-	  // instantiates the pie chart, passes in the data and
-	  // draws it.
-	  
-	  function drawPointsChart() {
-		  
+      $(() => {
 		  $.ajax({
 			  url: "/chartdata/team_cumul_points",
 			  dataType: "json"
 		  }).done(function(jsonData) {
-
-			  // Create our data table out of JSON data loaded from server.
-			  var data = new google.visualization.DataTable(jsonData);
-
-			  // Instantiate and draw our chart, passing in some options.
-			  var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_points'));
-
-			  var options = {
-				  'title': 'Team Cumulative Points',
-				  'width': 1000,
-				  'height': 600,
-				  'chartArea': { 'width': '60%', 'height': '80%'} 
-			  };
-
-			  chart.draw(data, options);
+            c3.generate({
+              bindto: '#chart_team_cumul_points',
+              data: {
+                x: 'date',
+                columns: [
+                  jsonData.dates,
+                  ...jsonData.teams.map(id => jsonData[id])
+                ],
+              },
+              axis: {
+                x: {
+                  type: 'timeseries',
+                },
+                y: {
+                  label: 'points',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
+                }
+              },
+              tooltip: {
+                format: {
+                  value: (value) => Math.round(value).toLocaleString() + "&nbsp;pts",
+                }
+              }
+            });
 		  });
-	  }
-	  
-	  function drawMileageChart() {
-		  
+
 		  $.ajax({
 			  url: "/chartdata/team_cumul_mileage",
 			  dataType: "json"
 		  }).done(function(jsonData) {
-
-			  // Create our data table out of JSON data loaded from server.
-			  var data = new google.visualization.DataTable(jsonData);
-
-			  // Instantiate and draw our chart, passing in some options.
-			  var chart = new google.visualization.LineChart(document.getElementById('chart_team_cumul_mileage'));
-
-			  var options = {
-				  'title': 'Team Cumulative Mileage',
-				  'width': 1000,
-				  'height': 600,
-				  'chartArea': { 'width': '60%', 'height': '80%'} 
-			  };
-
-			  chart.draw(data, options);
+            c3.generate({
+              bindto: '#chart_team_cumul_mileage',
+              data: {
+                x: 'date',
+                columns: [
+                  jsonData.dates,
+                  ...jsonData.teams.map(id => jsonData[id])
+                ],
+              },
+              axis: {
+                x: {
+                  type: 'timeseries',
+                },
+                y: {
+                  label: 'miles',
+                  tick: {
+                    format: d => d.toLocaleString()
+                  }
+                }
+              },
+              tooltip: {
+                format: {
+                  value: (value) => Math.round(value).toLocaleString() + "&nbsp;mi",
+                }
+              }
+            });
 		  });
-	  }
-	  
+	  });
     </script>
 {% endblock %}
 {% block content %}
     <h1>
         Team Cumulative
     </h1>
+    <div class="text-center">
+        <strong>Points over Time</strong>
+    </div>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_team_cumul_points">
-        <img src="/img/loading2-blue.gif" alt="">
+    <div id="chart_team_cumul_points" class="c3-wide">
+        <svg width="48"
+             height="48"
+             viewBox="0 0 24 24"
+             fill="currentColor"
+             xmlns="http://www.w3.org/2000/svg">
+            <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+        </svg>
         &nbsp;Loading team cumulative points...
     </div>
-    <div id="chart_team_cumul_mileage">
-        <img src="/img/loading2-blue.gif" alt="">
-        &nbsp;Loading team cumulative mileage....
+    <br />
+    <div class="text-center">
+        <strong>Mileage over Time</strong>
+    </div>
+    <div id="chart_team_cumul_mileage" class="c3-wide">
+        <svg width="48"
+             height="48"
+             viewBox="0 0 24 24"
+             fill="currentColor"
+             xmlns="http://www.w3.org/2000/svg">
+            <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+        </svg>
+        &nbsp;Loading team cumulative mileage...
     </div>
 {% endblock %}

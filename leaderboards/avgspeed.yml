@@ -2,17 +2,17 @@
 title: Tortoise and Hare (Average Speed)
 description: Rider average speed.
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
-    label: Athlete
-    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+    label: Rider
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: speed
     label: Average Speed
     rank_by: true
     type: number
 query: |
-  select a.id,
+  select a.id as athlete_id,
          a.display_name as athlete_name,
          sum(r.distance) / (sum(r.moving_time) / 3600) as speed
   from lbd_athletes a

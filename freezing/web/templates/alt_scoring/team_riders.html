@@ -1,16 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Ride Days by Team
+    </h2>
     <div class="card">
-        <h5 class="card-header">
-            Team Riders
-        </h5>
-        <div class="card-body">
-            <p>
-                Ride days per team
-            </p>
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
-                    <th class="number">
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
@@ -22,7 +19,7 @@
                 </tr>
                 {% for a, b in team_riders %}
                     <tr>
-                        <td class="number">
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>

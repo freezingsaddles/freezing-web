@@ -1,61 +1,110 @@
 {% extends "base.html" %}
-{% block head %}
-    <script type="text/javascript">
-	  // Load the Visualization API and the corechart package.
-	  google.charts.load('visualization', '1.0', {'packages':['corechart']});
-
-	  // Set a callback to run when the Google Visualization API is loaded.
-	  // google.charts.setOnLoadCallback(drawIndivChart);
-
-
-	  function drawIndivChart(api_method, label) {
-		  
-		  $.ajax({
-			  url: "/chartdata/"+api_method,
-			  dataType:"json"
-		  }).done(function(jsonData) {
-
-			  // Create our data table out of JSON data loaded from server.
-			  var data = new google.visualization.DataTable(jsonData);
-
-			  // Instantiate and draw our chart, passing in some options.
-			  var chart = new google.visualization.BarChart(document.getElementById('chart_indiv_leaderboard'));
-			  var rows = jsonData.rows.length;
-
-			  var options = {
-				  'title': "Individual " + label,
-				  'width': 800,
-				  'height': 100 + rows * 24,
-				  'legend': {'position': 'none'},
-				  'chartArea': {'left': 200, 'top': 70, 'width': 550, 'height': rows * 24},
-				  'hAxis': {'textStyle': {'fontSize': 16}},
-				  'vAxis': {'textStyle': {'fontSize': 16}},
-			  };
-
-			  chart.draw(data, options);
-		  });
-	  }
-	  
-
-    </script>
-{% endblock %}
 {% block foot %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
+          integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
+          crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
+            integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"
+            integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
-	$(function(){
-	  $("#choose_api").submit(function(event) { event.preventDefault(); });	
-	});
-	function redraw() {
-		drawIndivChart($("#api_method").val(), $('#api_method option:selected').text());
-		$("#title").val($('#api_method option:selected').text());
-	}  		
+  var chart;
+  function drawIndivChart(api_method, label) {
+    $.ajax({
+      url: "/chartdata/" + api_method,
+      dataType: "json",
+    }).done(function (jsonData) {
+      if (chart) chart.destroy();
+      $("#title").text("Individual " + label);
+      $("#chart_indiv_leaderboard").height(jsonData.labels.length * 19 + 35);
+      chart = c3.generate({
+        bindto: "#chart_indiv_leaderboard",
+        bar: {
+          width: 17,
+          space: 2,
+        },
+        padding: {
+          left: 200,
+        },
+        data: {
+          x: "x",
+          columns: [
+            ["x", ...jsonData.labels],
+            [jsonData.key, ...jsonData.values],
+          ],
+          type: "bar",
+          labels: {
+            format: (value) =>
+              (+value.toFixed(jsonData.precision ?? 0)).toLocaleString(),
+          },
+        },
+        axis: {
+          rotated: true,
+          x: {
+            type: "category",
+            tick: {
+              width: 200,
+              multiline: true,
+              multilineMax: 1,
+            },
+          },
+          y: {
+            label: jsonData.unit,
+            tick: {
+              format: (d) => d.toLocaleString(),
+            },
+          },
+        },
+        tooltip: {
+          grouped: true,
+          format: {
+            title: (i) => "#" + jsonData.ranks[i] + ": " + jsonData.labels[i],
+            value: (value, ratio, id, index) =>
+              jsonData.tooltips
+                ? jsonData.tooltips[index]
+                : (+value.toFixed(jsonData.precision ?? 0)).toLocaleString() +
+                  jsonData.suffix,
+          },
+        },
+        legend: {
+          show: false,
+        },
+      });
+    });
+  }
+
+  $(function () {
+    $("#choose_api").submit(function (event) {
+      event.preventDefault();
+    });
+    const api = document.location.search.match(/api=(\w+)/);
+    if (api) {
+      $("#api_method").val(api[1]);
+      redraw();
+    }
+  });
+
+  function redraw() {
+    drawIndivChart(
+      $("#api_method").val(),
+      $("#api_method option:selected").text()
+    );
+  }
+
+  function nav() {
+    document.location.search = "?api=" + $("#api_method").val();
+  }
     </script>
 {% endblock %}
 {% block content %}
-    <h1 id="title">
+    <h2 class="mb-3">
         Individual Leaderboards
-    </h1>
-    <form action="#" id="choose_api">
-        <select name="api_method" id="api_method">
+    </h2>
+    <form action="#" id="choose_api" class="d-flex">
+        <select class="form-select" name="api_method" id="api_method">
             <option value="indiv_elev_gain" selected="selected">
                 Elevation Gain
             </option>
@@ -96,11 +145,14 @@
                 Freeze Points
             </option>
         </select>
-        <button onclick="redraw();">
+        <button class="btn btn-primary flex-shrink-0 ms-1" onclick="nav();">
             Draw Chart
         </button>
     </form>
+    <div class="text-center mt-3">
+        <strong id="title"></strong>
+    </div>
     <!--Div that will hold our leaderboard chart-->
-    <div id="chart_indiv_leaderboard">
+    <div id="chart_indiv_leaderboard" style="width: 100%">
     </div>
 {% endblock %}

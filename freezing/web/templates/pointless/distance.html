@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card">
-	<h5 class="card-header">Average Distance</h5>
-	<div class="card-body">
-		<p>Rider average distance per ride, minimum ten days with a ride for CPTJohnC's Pointless Prize</p>
-<table class="table table-condensed">
-	<tr><th class="number">Rank</th><th>Rider</th><th class="number">Average Distance</th></tr>
-{% for a, b, c in avg %}
-	<tr {% if loop.index==7 %} class="success" {%endif %}>
-		<td class="number">{{loop.index}}</td>
-		<td><a href="/people/{{a}}">{{b}}</a></td>
-		<td class="number">{{c | round(2)}}</td>
-	</tr>
-{% endfor %}
-</table>
-</div>
-</div>
+<h2 class="mb-3">
+    Average Distance
+</h2>
+<p>
+    Rider average distance per ride, minimum ten days with a ride for CPTJohnC's Pointless Prize
+</p>
+    <div class="card">
+        <div class="card-body py-1">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Rider
+                    </th>
+                    <th class="number">
+                        Average Distance
+                    </th>
+                </tr>
+                {% for a, b, c in avg %}
+                    <tr {% if loop.index==7 %} class="success" {% endif %}>
+                        <td class="number rank">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                        </td>
+                        <td class="number">
+                            {{ c | round(2) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}

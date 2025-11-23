@@ -1,61 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Kidsathlon
+    </h2>
+    <p class="lead">
+        Leaderboard for Kidsathlon
+    </p>
+    <p>
+        Your Kidsathlon score is miles <code>#withkid</code> plus miles <code>#kidical</code>, provided both are non-zero. If you've only done one or the other, you get no kidsathlon score. Sorry.
+    </p>
+    <p>
+        Questions can go to the <a href="https://www.bikearlingtonforum.com/forums/topic/fs2020-kid-related-prizes/">forum post for the prize</a>
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Kidsathlon
-        </h5>
-        <div class="card-body">
-            <p class="lead">
-                Leaderboard for Kidsathlon
-            </p>
-            <p>
-                Your Kidsathlon score is miles #withkid plus miles #kidical, provided both are non-zero. If you've only done one or the other, you get no kidsathlon score. Sorry.
-            </p>
-            <p>
-                Questions can go to the <a href="https://www.bikearlingtonforum.com/forums/topic/fs2020-kid-related-prizes/">forum post for the prize</a>
-                <p>
-                    <table class="table table-condensed">
-                        <tr>
-                            <th class="number">
-                                Rank
-                            </th>
-                            <th>
-                                Athlete
-                            </th>
-                            <th class="number">
-                                Kidical
-                            </th>
-                            <th class="number">
-                                Withkid
-                            </th>
-                            <th class="number">
-                                Kidsathlon Score
-                            </th>
-                        </tr>
-                        {% for a, b, c, d, e in data.tdata %}
-                            <tr {% if a==1873089 %}class="danger"{% endif %}>
-                                <td class="number">
-                                    {{ loop.index }}
-                                </td>
-                                <td>
-                                    <a href="/people/{{ a }}">
-                                        {% if a==1873089 %}
-                                            Ineligible Former Champion
-                                        {% endif %}
-                                    {{ b }}</a>
-                                </td>
-                                <td class="number">
-                                    {{ c| round(1) }}
-                                </td>
-                                <td class="number">
-                                    {{ d| round(1) }}
-                                </td>
-                                <td class="number">
-                                    {{ e| round(1) }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        {% endblock %}
+        <div class="card-body py-1">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Rider
+                    </th>
+                    <th class="number">
+                        Kidical
+                    </th>
+                    <th class="number">
+                        Withkid
+                    </th>
+                    <th class="number">
+                        Kidsathlon Score
+                    </th>
+                </tr>
+                {% for a, b, c, d, e in data.tdata %}
+                    <tr>
+                        <td class="number rank">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ a }}">
+                                {% if a==1873089 %}
+                                    Ineligible Former Champion
+                                {% endif %}
+                            {{ b }}</a>
+                        </td>
+                        <td class="number">
+                            {{ c| round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ d| round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ e| round(1) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

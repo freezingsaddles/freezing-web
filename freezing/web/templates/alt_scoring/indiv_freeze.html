@@ -1,34 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Freeze Points{{' with Friends' if friends else ''}}
+    </h2>
+    <p>
+        Thanks to VVill for coming up with this, (<a href="https://www.bikearlingtonforum.com/forums/topic/freeze-points-metric/">explained here</a>). Basically you get more points for riding in the cold, but distance doesn't matter so much.
+    </p>
+    <p>
+        See also <a href="/leaderboard/indiv_freeze{{'' if friends else '?friends=true'}}">Freeze Points {{'without' if friends else 'with'}} Friends</a>.
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Freeze Points
-        </h5>
-        <div class="card-body">
-            <p>
-                Thanks to VVill for coming up with this, (<a href="https://www.bikearlingtonforum.com/forums/topic/freeze-points-metric/">explained here</a>). Basically you get more points for riding in the cold, but distance doesn't matter so much.
-            </p>
+        <div class="card-body py-1">
             <table class="table table-condensed">
                 <tr>
-                    <th>
+                    <th class="number rank">
                         Rank
                     </th>
                     <th>
-                        Team
+                        Rider
                     </th>
-                    <th>
+                    <th class="number">
                         Points
                     </th>
                 </tr>
-                {% for a, b in indiv_freeze %}
-                    <tr>
-                        <td>
+                {% for id, a, b in indiv_freeze %}
+                    <tr class="{{ id | myself }}">
+                        <td class="number rank">
                             {{ loop.index }}
                         </td>
                         <td>
-                            {{ a }}
+                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
                         </td>
-                        <td>
+                        <td class="number">
                             {{ '%0.1f' % b }}
                         </td>
                     </tr>

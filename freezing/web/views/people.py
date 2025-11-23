@@ -22,7 +22,7 @@ def get_today() -> datetime:
     Sometimes you have an old database for testing and you need to set today to be something that is not actually today
     """
     if False:
-        return datetime(2019, 3, 20, tzinfo=config.TIMEZONE)
+        return datetime(2024, 3, 18, tzinfo=config.TIMEZONE)
     return get_local_datetime()
 
 
@@ -80,6 +80,8 @@ def people_show_person(user_id):
     today = get_today()
     week_start = today.date() - timedelta(days=(today.weekday()) % 7)
     week_end = week_start + timedelta(days=6)
+    today_dist = 0
+    today_rides = 0
     weekly_dist = 0
     weekly_rides = 0
     total_rides = 0
@@ -91,22 +93,27 @@ def people_show_person(user_id):
         if week_start <= ride_date <= week_end:
             weekly_dist += r.distance
             weekly_rides += 1
+        if ride_date == today.date():
+            today_dist += r.distance
+            today_rides += 1
 
     tribal_groups = load_tribes()
     my_tribes = query_tribes(user_id)
-    print(my_tribes)
 
     return render_template(
         "people/show.html",
         data={
-            "user": our_user,
+            "environment": config.ENVIRONMENT,
+            "my_tribes": my_tribes,
             "team": our_team,
-            "weekrides": weekly_rides,
-            "weektotal": weekly_dist,
+            "todaydist": today_dist,
+            "todayrides": today_rides,
             "totaldist": total_dist,
             "totalrides": total_rides,
             "tribal_groups": tribal_groups,
-            "my_tribes": my_tribes,
+            "user": our_user,
+            "weekrides": weekly_rides,
+            "weektotal": weekly_dist,
         },
     )
 
@@ -125,41 +132,49 @@ def ridedays():
                     a.display_name,
                     count(b.ride_date) as rides,
                     sum(b.distance) as miles,
-                    max(b.ride_date) < :today as contender
+                    sum(case when b.ride_date = :today then 1 else 0 end) as today
                 FROM
                     lbd_athletes a,
                     daily_scores b where a.id = b.athlete_id
                 group by b.athlete_id
                 order by
+                    case when rides = :total then 0 when rides = :total - 1 and today = 0 then 1 else 2 end,
                     rides desc,
-                    contender desc,
-                    miles desc,
                     display_name
                 ;
                 """
     )
     loc_time = get_today()
-    start_yday = config.START_DATE.timetuple().tm_yday
-    end_yday = config.END_DATE.timetuple().tm_yday
-    current_yday = loc_time.timetuple().tm_yday
-    loc_total_days = min(current_yday, end_yday) - start_yday + 1
+    loc_total_days = (
+        min(loc_time.toordinal(), config.END_DATE.toordinal())
+        - config.START_DATE.toordinal()
+        + 1
+    )
     all_done = competition_done(loc_time)
-    # once the competition is over, even if you're a day short you are no longer a contender
-    contender_date = config.END_DATE.date() if all_done else loc_time.date()
+
+    def contender(rides: int, today: int) -> bool:
+        return rides == loc_total_days - 1 and today == 0 and not all_done
+
     ride_days = [
         (
-            x["id"],
-            x["display_name"],
-            x["rides"],
-            x["miles"],
+            x._mapping["id"],
+            x._mapping["display_name"],
+            x._mapping["rides"],
+            x._mapping["miles"],
+            contender(x._mapping["rides"], x._mapping["today"]),
         )
-        for x in meta.engine.execute(q, today=contender_date).fetchall()
+        for x in meta.scoped_session()
+        .execute(q.bindparams(today=loc_time.date(), total=loc_total_days))
+        .fetchall()
     ]
     return render_template(
         "people/ridedays.html",
         ride_days=ride_days,
         num_days=loc_total_days,
         all_done=all_done,
+        every_day_riders=sum(x[2] == loc_total_days for x in ride_days),
+        contenders=sum(x[4] for x in ride_days),
+        remainders=sum(x[2] < loc_total_days and not x[4] for x in ride_days),
     )
 
 
@@ -167,7 +182,7 @@ def ridedays():
 def friends():
     q = text(
         """
-             select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
+             select A.id, A.team_id, A.display_name as athlete_name, T.name as team_name,
              sum(DS.distance) as total_distance, sum(DS.points) as total_score,
              count(DS.points) as days_ridden
              from daily_scores DS

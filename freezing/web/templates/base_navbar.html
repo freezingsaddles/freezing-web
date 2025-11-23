@@ -1,0 +1,568 @@
+<nav class="navbar navbar-expand-xl bg-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex ps-2" href="/" title="Freezing Saddles">
+            {# djlint:off H006,H021 #}
+            <img src="/img/logo-blue-sm.png"
+                 style="width: 1.875rem;
+                        height: 1.875rem"
+                 alt="logo" />
+            {# djlint:on H021 #}
+        </a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link{% if request.path.startswith('/photos') %} active{% endif %}"
+                       href="/photos/">Photos</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/leaderboard') or request.path.startswith('/tribes') %} active{% endif %}"
+                       href="#"
+                       id="leaderboardDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Leaderboards <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="leaderboardDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/team">Team Points (Chart)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/team_text">Team Points (Text)</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/team_hains">Team Hains Point Laps</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/team_various">Team Pointless (Various)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/team_sleaze">Team Sleaze Rides</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/individual">Individual Points (Chart)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/individual_text">Individual Points (Text)</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/indiv_hains">Individual Hains Point Laps</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/indiv_freeze">Individual Freeze Points</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/individual_various">Individual Pointless (Various)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/leaderboard/indiv_sleaze">Individual Sleaze Rides</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/tribes/leaderboard">Bike Tribes</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/explore') %} active{% endif %}"
+                       href="#"
+                       id="exploredDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Data Exploration <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="exploreDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/explore/distance_by_lowtemp">Distance vs Weather</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/riders_by_lowtemp">Riders vs Weather</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_cumul">Team Cumulative</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_weekly">Team Weekly Points</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/pointless') %} active{% endif %}"
+                       href="#"
+                       id="pointlessDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Pointless <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu pointless-menu"
+                        aria-labelledby="pointlessDropdown">
+                        <li class="px-3 text-center small text-muted menu-subheading">
+                            Active Pointless Prizes
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/bob">Baby on Board</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/bingo">Bicycle Bingo</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/cabi">Capital Bikeshare</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/civilwarforts">Civil War Forts</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/decasleaze">Decasleaze</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="https://www.bikearlingtonforum.com/forums/topic/extra-mile-pointless-prize-2/">Extra Mile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/foodrescue">Food Rescue</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/groupridegroupie">Group Ride Groupie</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/grouprideguru">Group Ride Guru</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/arlington">Loopy for Arlington</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/parks">Park Finder</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/scavhunt">Photo Scavenger Hunt</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/poggio-indiv">POGGIO (Individual)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/publicartfinder">Public Art Finder</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/singlespeed">Singlespeed</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/tandem">Tandem Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/tandemVI">Tandem Rides - Visually Impaired</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li class="px-3 text-center small text-muted menu-subheading">
+                            Children are our Future
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/kidmiles">Kidical</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="https://www.bikearlingtonforum.com/forums/topic/fs-2025-pointless-kids-prizes/">Kidathon</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/pointlesskids">Pointless Kids</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/withkid">Riding with Kids</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/tandemKid">Tandem Rides - With a Kid</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li class="px-3 text-center small text-muted menu-subheading">
+                            Completely Pointless
+                            <br />
+                            unsponsored but fun!
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/biathlon">Biathlon</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="https://www.bikearlingtonforum.com/forums/topic/return-of-calvinball/">Calvinball</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/billygoat-indiv">Climbing per Mile (Individual)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/billygoat-team">Climbing per Mile (Team)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/Deflated">Deflated Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/donut">Doughnut Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/adulting">Errandeering</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/420">Expand Your Horizons</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/fire">Fire</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/FirstTimeFS">First Time Riders</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/flag">Flag</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/goldenspike">Golden Spike</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/lakefinder">Lake Finder</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/daily_variance">Least Daily Variance</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/fsbooks">Little Free Library</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/londonbridge">London Bridge Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="https://www.bikearlingtonforum.com/forums/topic/meh-diocrity-pointless-prize-2/">Meh-diocrity</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/opmdays">Michigander Snow Day Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/monuments">Monuments and Memorials</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/oldGeorge">Old Georgetown Bike Lane</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/phoneride">Phone Ride</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/pizza">Pizzaneuring</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/poggio-team">POGGIO (Team)</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/points_per_mile">Points per Mile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/po">Post Office</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/rosshillloop">Ross Hill Loop</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/avgdist">Shortest Rides</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/socks">Socks</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/stem">STEM</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/treats">Street Treats</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/suppleride">Supple Ride</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/thetacoride">The Taco Ride</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/avgspeed">Tortoise and Hare</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/abc">Vehicle ABCs</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/">Wandrer' About</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/generic/weekend">Weekend Warrior</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/pointless/hashtag/fswormhole">Wormholes</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/alt_scoring') %} active{% endif %}"
+                       href="#"
+                       id="alternateDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Alternate Scoring <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="alternateDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/alt_scoring/team_riders">Ride Days by Team</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/alt_scoring/indiv_worst_day_points">Steve O's Crazy Idea</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/alt_scoring/team_daily">Team Wins by Day</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/people') %} active{% endif %}"
+                       href="#"
+                       id="peopleDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        People <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="peopleDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/people/">People</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/people/ridedays">Every Day Riders</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/people/friends">Friends of BAFS</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <button type="button"
+                            class="nav-link"
+                            data-bs-toggle="modal"
+                            data-bs-target="#aboutModal">
+                        About
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/">
+                        Forum
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ registration_site }}">Register</a>
+                </li>
+                {% if g.logged_in %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="userDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            {{ session.athlete_fname }} <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/tribes/my">My Bike Tribes</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/my/rides">My Rides</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.path.startswith('/login') %} active{% endif %}"
+                           href="/login">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+<div class="modal fade"
+     id="aboutModal"
+     tabindex="-1"
+     aria-labelledby="aboutModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="overflow: hidden">
+        <div class="modal-content">
+            <div class="snowflakes" aria-hidden="true">
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+                <div class="snowflake">
+                    <div class="inner">
+                        ❅
+                    </div>
+                </div>
+            </div>
+            <div class="modal-header">
+                <img src="/img/logo-blue-sm.png"
+                     style="width: 1.875rem;
+                            height: 1.875rem;
+                            margin: -0.4375rem 0"
+                     alt="logo" />
+                <h1 class="modal-title fs-5 ps-2" id="aboutModalLabel">
+                    About Freezing Saddles
+                </h1>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Freezing Saddles is a winter riding competition for bike riders in the
+                    general DC area, organized by random people who talk to each other on
+                    the Washington Area/BikeArlington Bike Forum.
+                </p>
+                <blockquote style="border-left: 4px solid gray;
+                                   padding: 0.5rem 1rem;
+                                   background-color: #ffffff08">
+                    [BAFS] probably most closely resembles organizing a game of freeze tag
+                    on the grade-school playground
+                    <cite style="margin-left: 0.125rem; white-space: nowrap">&mdash; Steve O</cite>
+                </blockquote>
+                <p>
+                    Freezing Saddles runs from January 1 through the last
+                    <em>full</em> day of Winter ({{ end_date.strftime("%B %d") }} in {{
+                    end_date.year }}). We divide contestants into teams of 10 or so
+                    people, striving for competitive parity. Each team is a mix of riders
+                    who typically ride enough to qualify as insane, people who ride
+                    regularly but like sane people, people who ride occasionally, and
+                    people who have never ridden through a winter before.
+                </p>
+                <p>
+                    The competition is for contestants to ride their bikes outside all
+                    winter,
+                    <a href="/leaderboard/individual_various?api=indiv_freezing">in the cold</a>,
+                    <a href="/leaderboard/individual_various?api=indiv_after_sunset">in the dark</a>
+                    and
+                    <a href="/leaderboard/individual_various?api=indiv_snowiest">in the snow</a>. The <a href="/explore/indiv_elev_dist">farther you ride</a>, the
+                    <a href="/leaderboard/individual_text">more points</a> you earn. The
+                    colder it is, the colder you'll be. Not everyone can ride every day,
+                    but <a href="/people/ridedays">many do</a>, and everyone is encouraged
+                    to ride more than they would otherwise.
+                </p>
+                <p>
+                    In addition to the points competition, teams and individuals compete
+                    and play for Pointless Prizes, of which there are many, both serious
+                    and silly. For many, these <em>reindeer games</em> are the primary
+                    reason they join and play Freezing Saddles.
+                </p>
+                <p>
+                    Registration typically opens around Thanksgiving and closes on
+                    Christmas Eve, and/or when we have reached the participation limit. We
+                    use Strava for data collection and team organization, which means that
+                    to play, you will need a Strava account and some sort of GPS device or
+                    smartphone to track your rides. We have in-person happy hours near the
+                    start of the game to formally announce teams and after the end of the
+                    game to hand out prizes.
+                </p>
+                <p class="mb-0">
+                    Come join us, it'll be <s>freezing</s>fun.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<div id="credits"
+     class="container d-flex flex-column flex-md-row justify-content-between align-items-center my-3 my-lg-4 gap-3">
+    <div>
+        <div class="text-center text-md-start">
+            <a href="https://github.com/freezingsaddles/" rel="noreferrer">Freezing Saddles software is available on Github</a>
+            <br>
+            under an <a href="https://github.com/freezingsaddles/freezing-web/blob/main/LICENSE"
+    rel="noreferrer">Apache 2.0 open source license</a>.
+            <br>
+            Inspired by <a href="https://github.com/ronwalf/ba-winter-challenge"
+    rel="noreferrer">the original scoreboard by ronwalf</a>.
+        </div>
+    </div>
+    {# djlint:off #}
+    <div>
+        <a href="https://strava.com" rel="noreferrer">
+            <img src="/img/api_logo_pwrdBy_strava_stack_light.svg"
+                 alt="Powered by Strava"
+                 style="height: 5.5rem;
+                                margin: -.5rem 0" />
+        </a>
+    </div>
+    <div>
+        <a class="vc-logo"
+           href="https://www.visualcrossing.com/"
+           rel="noreferrer">
+            <img alt="Powered by Visual Crossing Weather"
+                 src="/img/PoweredByVC-WeatherLogo-RoundedRect.png"
+                 style="height: 4rem" />
+        </a>
+    </div>
+    {# djlint:on #}
+</div>
+<div class="version-footer text-muted text-center mb-3 mb-lg-4 small">
+    freezing-web version {{ version_string }} {{ environment }}
+</div>

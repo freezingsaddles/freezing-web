@@ -52,6 +52,12 @@ def load_hashtag(hashtag) -> HashtagBoardTag:
     schema = HashtagBoardSchema()
     board: HashtagBoard = schema.load(doc)
 
-    matches = [tag for tag in board.tags if tag.tag == hashtag or tag.alt == hashtag]
+    matches = [
+        tag
+        for tag in board.tags
+        if tag.tag.lower() == hashtag.lower()
+        or tag.alt
+        and tag.alt.lower() == hashtag.lower()
+    ]
 
     return None if len(matches) == 0 else matches[0]

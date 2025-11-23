@@ -1,0 +1,36 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+  - repo: https://github.com/jackdewinter/pymarkdown
+    rev: v0.9.26
+    hooks:
+      - id: pymarkdown
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-reformat
+      - id: djlint
+  - repo: https://github.com/tweag/FawltyDeps
+    rev: v0.18.0
+    hooks:
+      - id: check-undeclared
+      - id: check-unused
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.1
+    hooks:
+      - id: bandit
+        # Skip B101 (assert_used) so tests can use bare asserts;
+        #   treat asserts as acceptable in test code.
+        # Provide args as separate tokens,
+        #   pre-commit does not split a single string.
+        args: ["--exit-zero", "-s", "B101", "-r", "src", "tests"]

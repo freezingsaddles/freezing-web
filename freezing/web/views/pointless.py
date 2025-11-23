@@ -1,6 +1,4 @@
 import operator
-import re
-from collections import defaultdict
 from datetime import datetime, timezone
 
 from flask import Blueprint, abort, render_template
@@ -28,63 +26,10 @@ def generic(leaderboard):
             title=board.title,
             description=board.description,
             sponsor=board.sponsor,
+            show_rides=[f for f in board.fields if f.name == "ride_ids"],
             url=board.url,
             data=data,
         )
-
-
-@blueprint.route("/avgspeed")
-def averagespeed():
-    return generic("avgspeed")
-
-
-@blueprint.route("/avgdist")
-def shortride():
-    return generic("avgdist")
-
-
-@blueprint.route("/dirtybiker")
-def dirtybiker():
-    return generic("dirtybiker")
-
-
-@blueprint.route("/billygoat-team")
-def billygoat_team():
-    return generic("billygoat-team")
-
-
-@blueprint.route("/billygoat-indiv")
-def billygoat_invid():
-    return generic("billygoat-indiv")
-
-
-@blueprint.route("/tortoiseteam")
-def tortoiseteam():
-    return generic("tortoiseteam")
-
-
-@blueprint.route("/weekend")
-def weekendwarrior():
-    return generic("weekend")
-
-
-@blueprint.route("/avgtemp")
-def avgtemp():
-    """sum of ride distance * ride avg temp divided by total distance"""
-    return generic("/avgtemp")
-
-
-@blueprint.route("/kidmiles")
-def kidmiles():
-    return generic("kidmiles")
-
-
-@blueprint.route("/opmdays")
-def opmdays():
-    """
-    If OPM doesn't close this year, just use Michigan's birthday for Kitty's prize
-    """
-    return generic("opmdays")
 
 
 @blueprint.route("/points_per_mile")
@@ -99,7 +44,7 @@ def points_per_mile():
     query = text(
         """
         select
-            A.id,
+            A.id as athlete_id,
             A.display_name as athlete_name,
             sum(B.distance) as dist,
             sum(B.points) as pnts,
@@ -109,11 +54,12 @@ def points_per_mile():
     )
     ppm = [
         (
-            x["athlete_name"],
-            x["pnts"],
-            x["dist"],
-            (x["pnts"] / x["dist"]) if x["dist"] > 0 else 0,
-            x["ridedays"],
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["pnts"],
+            x._mapping["dist"],
+            (x._mapping["pnts"] / x._mapping["dist"]) if x._mapping["dist"] > 0 else 0,
+            x._mapping["ridedays"],
         )
         for x in meta.scoped_session().execute(query).fetchall()
     ]
@@ -151,7 +97,12 @@ def _get_hashtag_tdata(hashtag, alttag, orderby=1):
     )
     rs = sess.execute(q, params=dict(hashtag=hashtag, alttag=alttag or hashtag))
     retval = [
-        (x["id"], x["athlete_name"], x["hashtag_rides"], x["hashtag_miles"])
+        (
+            x._mapping["id"],
+            x._mapping["athlete_name"],
+            x._mapping["hashtag_rides"],
+            x._mapping["hashtag_miles"],
+        )
         for x in rs.fetchall()
     ]
     return sorted(retval, key=operator.itemgetter(*sortkeyidx), reverse=True)
@@ -196,11 +147,11 @@ def _get_segment_tdata(segment):
     rs = sess.execute(q, params=dict(segment=segment))
     retval = [
         (
-            x["id"],
-            x["athlete_name"],
-            x["segment_name"],
-            x["segment_rides"],
-            x["total_time"],
+            x._mapping["id"],
+            x._mapping["athlete_name"],
+            x._mapping["segment_name"],
+            x._mapping["segment_rides"],
+            x._mapping["total_time"],
         )
         for x in rs.fetchall()
     ]
@@ -260,7 +211,12 @@ def _get_ross_hill_loop_tdata():
     )
     rs = sess.execute(q)
     retval = [
-        (x["id"], x["athlete_name"], x["segment_rides"], x["total_time"])
+        (
+            x._mapping["id"],
+            x._mapping["athlete_name"],
+            x._mapping["segment_rides"],
+            x._mapping["total_time"],
+        )
         for x in rs.fetchall()
     ]
     return sorted(retval, key=operator.itemgetter(2), reverse=True)
@@ -276,75 +232,12 @@ def ross_hill_loop():
     )
 
 
-def _get_food_rescue_tdata():
-    sess = meta.scoped_session()
-    q = text(
-        """
-        with results as (
-            select
-                A.id as id,
-                A.display_name as athlete_name,
-                sum(
-                    case when R.name like '%#foodrescuex%' then
-                        cast(regexp_replace(R.name, '.*#foodrescuex(\\\\d+).*', '$1') as unsigned)
-                    else 1
-                    end
-                ) AS rescues,
-                sum(R.distance) AS distance
-            from lbd_athletes A
-            join rides R on R.athlete_id = A.id
-            where R.name like '%#foodrescue%'
-            group by A.id, A.display_name
-        )
-        select
-            R.*,
-            rank() over (order by R.rescues desc) AS "rank"
-        from results R
-        order by R.rescues desc, R.athlete_name asc
-        """
-    )
-    rs = sess.execute(q)
-    retval = [
-        (x["id"], x["athlete_name"], x["rescues"], x["distance"], x["rank"])
-        for x in rs.fetchall()
-    ]
-    return retval
-
-
-@blueprint.route("/foodrescue")
-def food_rescue():
-    tdata = _get_food_rescue_tdata()
-    return render_template(
-        "pointless/foodrescue.html",
-        data={"tdata": tdata},
-        meta=meta,
-    )
-
-
 @blueprint.route("/coffeeride")
 def coffeeride():
     year = datetime.now().year
     tdata = _get_hashtag_tdata("coffeeride{}".format(year), "coffeeride", 2)
     return render_template(
         "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
-    )
-
-
-@blueprint.route("/pointlesskids")
-def pointlesskids():
-    q = text(
-        """
-        select name, distance from rides where upper(name) like '%WITHKID%';
-    """
-    )
-    rs = meta.scoped_session().execute(q)
-    d = defaultdict(int)
-    for x in rs.fetchall():
-        for match in re.findall(r"(#withkid\w+)", x["name"]):
-            d[match.replace("#withkid", "")] += x["distance"]
-    return render_template(
-        "pointless/pointlesskids.html",
-        data={"tdata": sorted(d.items(), key=lambda v: v[1], reverse=True)},
     )
 
 
@@ -366,18 +259,32 @@ def kidsathlon():
     )
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
-        miles_both = float(x["miles_both"])
-        kidical = miles_both + float(x["kidical"])
-        withkid = miles_both + float(x["withkid"])
+        miles_both = float(x._mapping["miles_both"])
+        kidical = miles_both + float(x._mapping["kidical"])
+        withkid = miles_both + float(x._mapping["withkid"])
         if kidical > 0 and withkid > 0:
             kidsathlon = kidical + withkid - miles_both
         else:
             kidsathlon = float(0)
-        data.append((x["athlete_id"], x["athlete_name"], kidical, withkid, kidsathlon))
+        data.append(
+            (
+                x._mapping["athlete_id"],
+                x._mapping["athlete_name"],
+                kidical,
+                withkid,
+                kidsathlon,
+            )
+        )
     return render_template(
         "pointless/kidsathlon.html",
         data={"tdata": sorted(data, key=lambda v: v[4], reverse=True)},
     )
+
+
+# to make a dict look more like a sqlalchemy 2.0 row
+class FakeRow:
+    def __init__(self, mapping):
+        self._mapping = mapping
 
 
 @blueprint.route("/multisegment/<string:leaderboard>")
@@ -385,7 +292,7 @@ def multisegment(leaderboard):
     board = load_board(leaderboard)
     data = load_multisegment_board_data(board)
     data.sort(key=lambda d: (-d["segment_rides"], d["athlete_name"]))
-    formatted = format_rows(data, board)
+    formatted = format_rows([FakeRow(d) for d in data], board)
     return render_template(
         "pointless/generic.html",
         fields=board.fields,
@@ -404,7 +311,7 @@ def arlington():
             cw is not None and cw["segment_rides"] < ccw["segment_rides"]
         )
         return {
-            "id": cw["id"] if cw else ccw["id"],
+            "athlete_id": cw["athlete_id"] if cw else ccw["athlete_id"],
             "athlete_name": cw["athlete_name"] if cw else ccw["athlete_name"],
             "segment_id": cw["segment_id"] if cw_worse else ccw["segment_id"],
             "segment_name": cw["segment_name"] if cw_worse else ccw["segment_name"],
@@ -414,22 +321,25 @@ def arlington():
 
     board = load_board("arlington")
     data_cw = {
-        d["id"]: d for d in load_multisegment_board_data(load_board("arlington-cw"))
+        d["athlete_id"]: d
+        for d in load_multisegment_board_data(load_board("arlington-cw"))
     }
     data_ccw = {
-        d["id"]: d for d in load_multisegment_board_data(load_board("arlington-ccw"))
+        d["athlete_id"]: d
+        for d in load_multisegment_board_data(load_board("arlington-ccw"))
     }
     data = [
         combine(data_cw.get(id), data_ccw.get(id))
         for id in set(data_cw.keys()).union(data_ccw.keys())
     ]
     data.sort(key=lambda d: (-d["segment_rides"], d["athlete_name"]))
-    formatted = format_rows(data, board)
+    formatted = format_rows([FakeRow(d) for d in data], board)
     return render_template(
         "pointless/generic.html",
         fields=board.fields,
         title=board.title,
         description=board.description,
+        sponsor=board.sponsor,
         url=board.url,
         data=formatted,
     )
@@ -437,14 +347,21 @@ def arlington():
 
 def load_multisegment_board_data(board):
     # include anyone who has ridden on any segment, but count as zero any segment they've missed
-    rides = meta.scoped_session().execute(board.query).fetchall()
+    rides = meta.scoped_session().execute(text(board.query)).fetchall()
     # segment_id -> segment_name
-    segments = {ride["segment_id"]: ride["segment_name"] for ride in rides}
+    segments = {
+        ride._mapping["segment_id"]: ride._mapping["segment_name"] for ride in rides
+    }
     # athlete_id -> athlete_name
-    athletes = {ride["id"]: ride["athlete_name"] for ride in rides}
+    athletes = {
+        ride._mapping["athlete_id"]: ride._mapping["athlete_name"] for ride in rides
+    }
     # (athlete_id, segment_id) -> segment_rides
     segment_rides = {
-        (ride["id"], ride["segment_id"]): ride["segment_rides"] for ride in rides
+        (ride._mapping["athlete_id"], ride._mapping["segment_id"]): ride._mapping[
+            "segment_rides"
+        ]
+        for ride in rides
     }
     # athlete_id -> segment_id
     worst_segments = {
@@ -453,13 +370,13 @@ def load_multisegment_board_data(board):
     }
     data = [
         {
-            "id": id,
-            "athlete_name": athletes[id],
+            "athlete_id": athlete_id,
+            "athlete_name": athletes[athlete_id],
             "segment_id": segment,
             "segment_name": segments[segment],
-            "segment_rides": segment_rides.get((id, segment), 0),
+            "segment_rides": segment_rides.get((athlete_id, segment), 0),
         }
-        for id, segment in worst_segments.items()
+        for athlete_id, segment in worst_segments.items()
     ]
     return data
 
@@ -480,30 +397,32 @@ def daily_variance():
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
         days_raw = [
-            x["mon_var_pop"],
-            x["tue_var_pop"],
-            x["wed_var_pop"],
-            x["thu_var_pop"],
-            x["fri_var_pop"],
-            x["sat_var_pop"],
-            x["sun_var_pop"],
+            x._mapping["mon_var_pop"],
+            x._mapping["tue_var_pop"],
+            x._mapping["wed_var_pop"],
+            x._mapping["thu_var_pop"],
+            x._mapping["fri_var_pop"],
+            x._mapping["sat_var_pop"],
+            x._mapping["sun_var_pop"],
         ]
         days = [x for x in days_raw if x is not None]
         avg = round(sum(days) / len(days), 2)
         qualified = (
-            x["ride_days"] + days_left >= min_days
+            x._mapping["ride_days"] + days_left >= min_days
         )  # Either you've ridden enough days or you still can ride enough days
-        if qualified and float(x["ride_days"]) > 0:
-            qualified = float(x["total_miles"]) / float(x["ride_days"]) > float(
+        if qualified and float(x._mapping["ride_days"]) > 0:
+            qualified = float(x._mapping["total_miles"]) / float(
+                x._mapping["ride_days"]
+            ) > float(
                 2.00
             )  # you're averaging more than 2 miles per day you ride
         days_clean = [round(x, 2) if x is not None else "-" for x in days_raw]
         data.append(
             (
-                x["athlete_id"],
-                x["name"],
-                x["ride_days"],
-                round(x["total_miles"], 1),
+                x._mapping["athlete_id"],
+                x._mapping["name"],
+                x._mapping["ride_days"],
+                round(x._mapping["total_miles"], 1),
                 qualified,
                 avg,
             )
@@ -532,13 +451,13 @@ def civilwarhistory():
 
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
-        markers = x["markers"]
-        streets = x["streets"]
+        markers = x._mapping["markers"]
+        streets = x._mapping["streets"]
         total = (markers * 5) + (streets * 2)
         data.append(
             (
-                x["athlete_id"],
-                x["athlete_name"],
+                x._mapping["athlete_id"],
+                x._mapping["athlete_name"],
                 markers,
                 markers * 5,
                 streets,

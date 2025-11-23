@@ -14,19 +14,45 @@ const track_colors = [
   'rgb(0, 137, 255)', 'rgb(33, 119, 255)', 'rgb(112, 101, 255)', 'rgb(153, 83, 255)', 'rgb(185, 65, 255)',
   'rgb(212, 44, 252)', 'rgb(234, 10, 218)', 'rgb(252, 0, 179)', 'rgb(255, 0, 136)', 'rgb(255, 0, 87)',
 ];
-function create_ride_map(id, url, ride_color = null) {
-  const map = L.map(id, { scrollWheelZoom: false }).setView([38.9072, -77.0369], 9);
+
+function create_ride_map(id, url, ride_color = null, recenter = false) {
+  const map = L.map(id, {gestureHandling: true}).setView([38.9072, -77.0369], 9);
   const colorMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  var tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
+  const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/' + colorMode + '_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 20,
   }).addTo(map);
   fetch(url).then(r => r.json()).then(data => {
-    data.tracks.forEach(({ team, track}, index) => {
-      const color = ride_color ?? track_colors[team % track_colors.length];
-      const opacity = .2 + .4 * (index + 1) / data.tracks.length;
-      var polyline = L.polyline([track], { color, opacity, weight: 2 }).addTo(map);
+    if (recenter) {
+      let minlat = 90, maxlat = -90, minlon = 180, maxlon = -180;
+      for (const {track} of data.tracks) {
+        for (const [lat, lon] of track) {
+          if (lat < minlat) minlat = lat;
+          if (lat > maxlat) maxlat = lat;
+          if (lon < minlon) minlon = lon;
+          if (lon > maxlon) maxlon = lon;
+        }
+      }
+      if (minlat < maxlat) {
+        const bounds = new L.LatLngBounds([[maxlat, maxlon], [minlat, minlon]]);
+        map.fitBounds(bounds, {padding: [20, 20]});
+      }
+    }
+    // the absence of teams is for legacy cached responses that will rapidly expire.
+    const teams = {};
+    data.teams?.forEach(({id, name}, index) => teams[id] = {name, index});
+    data.tracks.forEach(({team, track}, index) => {
+      const team_info = teams[team];
+      const polyline = L.polyline([track], {
+        color: ride_color ?? track_colors[(team_info?.index ?? team) % track_colors.length],
+        opacity: .2 + .4 * (index + 1) / data.tracks.length,
+        weight: 2
+      });
+      if (team_info && !ride_color)
+        polyline.bindTooltip(team_info.name);
+      polyline.addTo(map);
     });
   });
+  return map;
 }

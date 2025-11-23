@@ -46,22 +46,77 @@ fieldset[disabled] .btn-strava.active {
   color: #FC4C02;
   background-color: #ffffff;
 }
+.btn-impersonate {
+  color: #ffffff;
+  background-color: #022CA2;
+  border-color: #3C3CA2;
+}
+
+.btn-impersonate:hover,
+.btn-impersonate:focus,
+.btn-impersonate:active,
+.btn-impersonate.active,
+.open .dropdown-toggle.btn-impersonate {
+  color: #ffffff;
+  background-color: #100640;
+  border-color: #3C3CA2;
+}
+
+.btn-impersonate:active,
+.btn-impersonate.active,
+.open .dropdown-toggle.btn-impersonate {
+  background-image: none;
+}
+
+.btn-impersonate.disabled,
+.btn-impersonate[disabled],
+fieldset[disabled] .btn-impersonate,
+.btn-impersonate.disabled:hover,
+.btn-impersonate[disabled]:hover,
+fieldset[disabled] .btn-impersonate:hover,
+.btn-impersonate.disabled:focus,
+.btn-impersonate[disabled]:focus,
+fieldset[disabled] .btn-impersonate:focus,
+.btn-impersonate.disabled:active,
+.btn-impersonate[disabled]:active,
+fieldset[disabled] .btn-impersonate:active,
+.btn-impersonate.disabled.active,
+.btn-impersonate[disabled].active,
+fieldset[disabled] .btn-impersonate.active {
+  background-color: #022CA2;
+  border-color: #FC3CA2;
+}
+
+.btn-impersonate .badge {
+  color: #022CA2;
+  background-color: #ffffff;
+}
     </style>
 {% endblock %}
 {% block content %}
     <div class="card flex-row align-items-center">
+        {# djlint:off H006 #}
         <img class="user-profile"
              src="{{ data.user.profile_photo }}"
              alt="photo of {{ data.user.display_name }}">
+        {# djlint:on #}
         <div class="d-flex flex-column ms-3">
             <h5 class="card-title">
-                <a href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>
+                <a class="hover-underline"
+                   href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>
             </h5>
             <h6 class="card-subtitle text-body-secondary mb-3">
-                <a href="https://www.strava.com/clubs/{{ data.team.id }}">{{ data.team.name }}</a>
+                <a class="hover-underline"
+                   href="https://www.strava.com/clubs/{{ data.team.id }}">{{ data.team.name }}</a>
             </h6>
-            <a class="btn btn-strava btn-sm"
-               href="https://www.strava.com/athletes/{{ data.user.id }}">View on Strava</a>
+            <div class="d-flex">
+                <a class="btn btn-strava btn-sm"
+                   href="https://www.strava.com/athletes/{{ data.user.id }}">View on Strava</a>
+                {% if data.environment == 'localdev' %}
+                    <a class="btn btn-impersonate btn-sm ms-3"
+                       href="/authorization?athlete_id={{ data.user.id }}">🕵 Impersonate 👀</a>
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="mt-3 mt-lg-4 d-grid grid-gap-3 grid-gap-lg-4 grid-lg-2">
@@ -74,12 +129,12 @@ fieldset[disabled] .btn-strava.active {
                     Total Rides: <span class="float-end">{{ data.totalrides }}</span>
                 </li>
                 <li class="list-group-item">
-                    Total Mileage: <span class="float-end">{{ data.totaldist | round(1) }}</span>
+                    Total Mileage: <span class="float-end">{{ data.totaldist | round(2) }}</span>
                 </li>
                 <li class="list-group-item">
                     Average Ride: <span class="float-end">
                     {% if data.totalrides > 0 %}
-                        {{ (data.totaldist / data.totalrides) | round(1) }}
+                        {{ (data.totaldist / data.totalrides) | round(2) }}
                     {% else %}
                         N/A
                     {% endif %}
@@ -89,18 +144,33 @@ fieldset[disabled] .btn-strava.active {
                 Rides This Week: <span class="float-end">{{ data.weekrides }}</span>
             </li>
             <li class="list-group-item">
-                Mileage This Week: <span class="float-end">{{ data.weektotal | round(1) }}</span>
+                Mileage This Week: <span class="float-end">{{ data.weektotal | round(2) }}</span>
             </li>
             <li class="list-group-item">
                 Average Ride This Week: <span class="float-end">
                 {% if data.weekrides > 0 %}
-                    {{ (data.weektotal / data.weekrides) | round(1) }}
+                    {{ (data.weektotal / data.weekrides) | round(2) }}
                 {% else %}
                     N/A
                 {% endif %}
             </span>
         </li>
-    </ul>
+        <li class="list-group-item">
+            Rides Today: <span class="float-end">{{ data.todayrides }}</span>
+        </li>
+        <li class="list-group-item">
+            Mileage Today: <span class="float-end">{{ data.todaydist | round(2) }}</span>
+        </li>
+        <li class="list-group-item">
+            Average Ride Today: <span class="float-end">
+            {% if data.todayrides > 0 %}
+                {{ (data.todaydist / data.todayrides) | round(2) }}
+            {% else %}
+                N/A
+            {% endif %}
+        </span>
+    </li>
+</ul>
 </div>
 <div>
     <h5 class="ps-2">

@@ -1,26 +1,38 @@
 {% extends "base.html" %}
+{% block head %}
+    <style>
+  li.large a {
+    font-size: 1.25rem
+  }
+  li.large::marker {
+    font-size: 1.125rem;
+  }
+  li:nth-of-type(11) {
+    margin-top: .25rem;
+  }
+  .myself {
+    background-color: #ffff0020;
+    outline: 3px solid #ffff0020;
+    border-radius: 4px;
+  }
+    </style>
+{% endblock %}
 {% block content %}
-    <h1>
+    <h2 class="mb-3">
         Individual Leaderboard (Text)
-    </h1>
+    </h2>
     <p>
-        This leaderboard is also available as a <a href="/leaderboard/individual">Google-charts version</a>.
+        This leaderboard is also available as a <a href="/leaderboard/individual">chart version</a>.
     </p>
     <ol>
-        {% for indiv_row in indiv_rows[:10] %}
-            <li>
-                <h4>
-                    <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
-                    {{ indiv_row['total_score']|round|int|groupnum }} points
-                </h4>
-                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
-            </li>
-        {% endfor %}
-        {% for indiv_row in indiv_rows[10:] %}
-            <li>
-                <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
-                <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
-                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles) {{ indiv_row['team_name'] }}
+        {% for indiv_row in indiv_rows %}
+            <li class="{{ 'large' if loop.index <= 10 else '' }} {{ indiv_row._mapping['athlete_id'] | myself }}">
+                <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
+                   class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a> –
+                <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong> points
+                ({{ indiv_row._mapping['days_ridden'] }} days,
+                {{ indiv_row._mapping['total_distance']|round|int|groupnum }} miles) –
+                {{ indiv_row._mapping['team_name'] }}
             </li>
         {% endfor %}
     </ol>

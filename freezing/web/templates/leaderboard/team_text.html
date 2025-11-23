@@ -1,37 +1,64 @@
 {% extends "base.html" %}
+{% block head %}
+    <style>
+    .people-list ol.people {
+      display: none;
+      margin-bottom: .25rem;
+    }
+    .people-list.expanded ol.people {
+      display: inherit;
+    }
+    .my-team {
+      background-color: #ffff0020;
+      outline: 4px solid #ffff0020;
+      border-radius: 3px;
+    }
+    li.large a {
+      font-size: 1.25rem;
+    }
+    li.large::marker {
+      font-size: 1.125rem;
+    }
+    li.team:nth-of-type(4) {
+      margin-top: .25rem;
+    }
+    </style>
+{% endblock %}
 {% block content %}
-    <button class="float-end btn btn-primary mt-2" id="show_hide_people">
-        Show/Hide people
-    </button>
-    <h1>
+    <h2 class="mb-3">
         Team Leaderboard (Text)
-    </h1>
+    </h2>
     <p>
-        This leaderboard is also available as a <a href="/leaderboard/team">Google-charts version</a>.
+        This leaderboard is also available as a <a href="/leaderboard/team">chart version</a>.
+        <button class="btn btn-primary btn-sm ms-2" id="show_hide_people">
+            Show/Hide people
+        </button>
     </p>
-    <ol>
+    <ol class="people-list">
         {% for team_row in team_rows %}
-            <li>
-                <h4>
-                    <a href="http://www.strava.com/clubs/{{ team_row['team_id'] }}">{{ team_row['team_name'] }}</a>:
-                    <strong>{{ team_row['total_score']|round|int|groupnum }}</strong> points ({{ team_row['total_distance']|round|int|groupnum }} miles)
-                </h4>
-                <ol class="people">
-                    {% for member_row in team_members[team_row['team_id']] %}
-                        <li>
-                            <a href="/people/{{ member_row['athlete_id'] }}">{{ member_row['athlete_name'] }}</a>:
-                            {{ member_row['total_score']|round|int|groupnum }} points ({{ member_row['days_ridden'] }} days, {{ member_row['total_distance']|round|int|groupnum }} miles)
-                        </li>
-                    {% endfor %}
-                </ol>
+            <li class="team {{ 'large' if loop.index <= 3 else '' }}{{ 'my-team' if team_row._mapping['team_id'] == my_team else '' }}">
+                <a href="https://www.strava.com/clubs/{{ team_row._mapping['team_id'] }}"
+                   class="hover-underline">{{ team_row._mapping['team_name'] }}</a> –
+                <strong>{{ team_row._mapping['total_score']|round|int|groupnum }}</strong> points
+                ({{ team_row._mapping['total_days']|round|int|groupnum }} days,
+                {{ team_row._mapping['total_distance']|round|int|groupnum }} miles)
             </li>
+            <ol class="people">
+                {% for member_row in team_members[team_row._mapping['team_id']] %}
+                    <li>
+                        <a href="/people/{{ member_row._mapping['athlete_id'] }}"
+                           class="hover-underline">{{ member_row._mapping['athlete_name'] }}</a>:
+                        {{ member_row._mapping['total_score']|round|int|groupnum }} points ({{ member_row._mapping['days_ridden'] }} days, {{ member_row._mapping['total_distance']|round|int|groupnum }} miles)
+                    </li>
+                {% endfor %}
+            </ol>
         {% endfor %}
     </ol>
 {% endblock %}
 {% block foot %}
     <script type="text/javascript">
 $( "#show_hide_people" ).click(function() {
-$(".people").toggleClass("d-none");
+$(".people-list").toggleClass("expanded");
 });
     </script>
 {% endblock %}

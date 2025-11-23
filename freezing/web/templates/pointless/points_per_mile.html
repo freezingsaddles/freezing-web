@@ -1,59 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2 class="mb-3">
+        Points per Mile
+    </h2>
+    <p>
+        Most points per mile, minimum {{ data.days }} ride days (by the end of the competition)
+    </p>
     <div class="card">
-        <h5 class="card-header">
-            Points per Mile
-        </h5>
-        <div class="card-body">
-            <p>
-                Most points per mile, minimum {{ data.days }} ride days (by the end of the competition)
-            </p>
-            <div class="table-responsive">
-                <table class="table table-condensed">
-                    <tr>
-                        <th class="number">
-                            Rank
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th class="number">
-                            Points
-                        </th>
-                        <th class="number">
-                            Miles
-                        </th>
-                        <th class="number">
-                            Points per Mile
-                        </th>
-                        <th class="number">
-                            Ride Days
-                        </th>
+        <div class="card-body py-1">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th class="number">
+                        Points
+                    </th>
+                    <th class="number">
+                        Miles
+                    </th>
+                    <th class="number">
+                        Points per Mile
+                    </th>
+                    <th class="number">
+                        Ride Days
+                    </th>
+                </tr>
+                {% for id, a, b, c, d, e in data.riders %}
+                    <tr class="{{ id | myself }}">
+                        <td class="number rank">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a class="hover-underline {{ 'text-danger' if e < data.days else '' }} href="/people/{{ id }}">{{ a }}</a>
+                        </td>
+                        <td class="number">
+                            {{ b|round(1) }}
+                        </td>
+                        <td class="number">
+                            {{ c|round(1) }}
+                        </td>
+                        <td class="number important">
+                            {{ d|round(2) }}
+                        </td>
+                        <td class="number">
+                            {{ e }}
+                        </td>
                     </tr>
-                    {% for a, b, c, d, e in data.riders %}
-                        <tr {% if e>=data.days %}class="success"{% endif %}>
-                            <td class="number">
-                                {{ loop.index }}
-                            </td>
-                            <td>
-                                {{ a }}
-                            </td>
-                            <td class="number">
-                                {{ b|round(1) }}
-                            </td>
-                            <td class="number">
-                                {{ c|round(1) }}
-                            </td>
-                            <td class="number" style="font-weight:bold;">
-                                {{ d|round(2) }}
-                            </td>
-                            <td class="number">
-                                {{ e }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
+                {% endfor %}
+            </table>
         </div>
     </div>
 {% endblock %}

@@ -8,37 +8,52 @@ jobs:
   # https://black.readthedocs.io/en/stable/integrations/github_actions.html
   python:
     name: Python Lint
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out source repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Set up Python environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: black Lint
-        uses: psf/black@24.1.1
-      - name: isort Lint
-        uses: isort/isort-action@v1
-        with:
-          requirements-files: "requirements.txt requirements-test.txt"
-      - name: flake8 Lint
-        uses: py-actions/flake8@v2
-
-  templates:
-    name: Templates Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out source repository
-        uses: actions/checkout@v4
-      - name: Set up Python environment
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.10"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-test.txt
+          pip install '.[dev]'
+      - name: black Lint
+        uses: psf/black@e026c93888f91a47a9c9f4e029f3eb07d96375e6 # 24.1.1
+      - name: isort Lint
+        uses: isort/isort-action@24d8a7a51d33ca7f36c3f23598dafa33f7071326 # v1
+        with:
+          requirements-files: "pyproject.toml"
+      - name: flake8 Lint
+        uses: py-actions/flake8@84ec6726560b6d5bd68f2a5bed83d62b52bb50ba # v2
+        with:
+          plugins: "flake8-pyproject"
+      - name: lint - FawltyDeps
+        uses: tweag/FawltyDeps-action@608c1d70b1855183d84d3a3628f0ce8aa0005f46 # 608c1d70b1855183d84d3a3628f0ce8aa0005f46
+
+  templates:
+    name: Templates Lint
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Set up Python environment
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install '.[dev]'
       - name: djlint Lint
         run: |
           djlint --check freezing/web/templates
+      - name: PyMarkdown Lint
+        run: |
+          pymarkdown scan .

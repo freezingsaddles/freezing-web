@@ -1,52 +1,75 @@
 {% extends "base.html" %}
 {% block head %}
     <style>
-#cal, #map {
-	border-radius: var(--bs-border-radius);
-	width: 100%;
-	border: 1px solid #ced4da;
-}
+  h1 {
+    font-size: 4rem;
+  }
 
-#cal {
-	aspect-ratio: 1.333;
-}
+  #cal, #map {
+    border-radius: var(--bs-border-radius);
+    width: 100%;
+    border: 1px solid #ced4da;
+    aspect-ratio: 1;
+  }
 
-#map {
-	aspect-ratio: 1;
-}
+  #cal {
+    aspect-ratio: .75;
+  }
 
-@media (min-width: 768px) {
-	#map {
-		aspect-ratio: 1.333;
-	}
-}
+  .front-page-counts {
+    font-size: 1.5rem;
+  }
 
-@media (min-width: 1200px) {
-	#cal:not(.bigly) {
-		aspect-ratio: 2.667;
-	}
+  .your-counts {
+    font-size: 1.25rem;
+  }
 
-	#map {
-		aspect-ratio: initial;
-	}
-}
+  .front-page-leaderboard {
+    font-size: 1.1rem;
+  }
 
-@media (prefers-color-scheme: dark) {
-	#map {
-		border-color: #495057;
-	}
+  body.map-expanded {
+    #map {
+      aspect-ratio: 1.333;
+    }
 
-	#cal {
-		border-color: #a8a19a;
-  	}
-}
+    #sect-stats {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
 
-.mini-img {
-	border-radius: .5rem;
-	max-width: 100%;
-	max-height: 12rem;
-	margin-bottom: .5rem;
-}
+  @media (min-width: 768px) {
+    #map, #cal {
+      aspect-ratio: 1.333;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #cal:not(.bigly) {
+      aspect-ratio: 2;
+    }
+
+    #map {
+      aspect-ratio: initial;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #map {
+      border-color: #495057;
+    }
+
+    #cal {
+      border-color: #a8a19a;
+    }
+  }
+
+  .mini-img {
+    border-radius: .5rem;
+    max-width: 100%;
+    max-height: 12rem;
+    margin-bottom: .5rem;
+  }
     </style>
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
@@ -55,6 +78,9 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
             integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
             crossorigin=""></script>
+    <!-- https://github.com/elmarquis/Leaflet.GestureHandling -->
+    <link rel="stylesheet" href="/css/leaflet-gesture-handling.min.css" />
+    <script src="/js/leaflet-gesture-handling.min.js"></script>
     <script src="/js/ride-map.js"></script>
 {% endblock %}
 {% block beforenav %}
@@ -77,12 +103,14 @@
                         </button>
                     </div>
                     <div class="modal-body d-flex flex-column align-items-center ekko-lightbox-container">
+                        {# djlint:off H006 #}
                         <img src="{{ photo.img_l }}"
-                             class="img-responsive center-block"
+                             class="img-responsive"
                              alt="{{ photo.caption }}">
+                        {# djlint:on #}
                     </div>
                     <div class="modal-footer">
-                        Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a>.
+                        Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>
                         {% if photo.ref %}
                             <a href='{{ photo.ref }}'>View in Instagram</a>
                         {% endif %}
@@ -97,12 +125,15 @@
 {% endblock %}
 {% block content %}
     <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
-        <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center">
+        <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center ">
             <div class="d-flex flex-column align-items-center me-lg-5">
-                <img src="/img/logo-blue-sm.png" />
+                <img src="/img/logo-blue.png"
+                     height="160"
+                     width="160"
+                     alt="Snowflake made of bike chain parts" />
             </div>
             <div class="d-flex flex-column align-items-center align-items-lg-stretch text-center text-lg-start flex-grow-1 minw-0">
-                <h1 style="font-size: 4rem;">
+                <h1>
                     Freezing Saddles
                 </h1>
                 <h3>
@@ -115,11 +146,32 @@
             </div>
         </div>
     </div>
+    {% if winter_is_coming %}
+        <div class="{{ 'my-3 my-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
+            Freezing Saddles is a game organized by friends in the
+            <a class="text-info text-decoration-none"
+               href="https://www.bikearlingtonforum.com/">Washington Area Bike Forum</a>.
+            It is a convivial and good-humored competition in which participants are randomly assigned to teams.
+            The teams then compete for points by riding their bikes all winter, in the cold, in the dark and in the snow,
+            and by engaging in pointless challenges.
+            The winners win and, well, so does everyone else. You should join! Read more on the Forum link at the top,
+            and sign up by following the Register link. Registration opens around Thanksgiving;
+            the competition starts on January 1<sup>st</sup>, and ends on the last full day of astronomical winter,
+            usually March 19<sup>th</sup>.
+        </div>
+    {% elif bafs_is_over %}
+        <div class="my-3 my-lg-4 py-2 alert alert-success text-center position-relative"
+             style="z-index: 1001">
+            Winter is over. The game is done. The reindeer have been put out to pasture. Time to clean your bike, wax your chain,
+            and go for a ride.
+            <span class="sprout">🌱</span>
+        </div>
+    {% endif %}
     {% if not bafs_is_live %}
-        <div class="my-4 my-lg-5 alert alert-info">
+        <div class="my-4 mb-lg-5 alert alert-info">
             The shiny new Freezing Saddles competition for the upcoming winter hasn't
             started yet, although there are currently <strong>{{ contestant_count }}</strong>
-            contestants registered. There are still bike rides going on, you should go for a bike ride.
+            contestants registered. There are still bike rides going on, you should go for a ride.
         </div>
         <iframe id="cal"
                 class="bigly mb-lg-4"
@@ -127,35 +179,43 @@
                 frameborder="0"
                 scrolling="no"></iframe>
     {% else %}
+        {% if yourself.missed_today %}
+            {% if yourself.missed_yesterday %}
+                <div class="my-3 my-lg-4 py-2 alert alert-danger text-center">
+                    <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
+                    day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
+                </div>
+            {% elif yourself.hour >= 12 %}
+                <div class="my-3 my-lg-4 py-2 alert alert-info text-center">
+                    <strong>You haven't ridden yet today!</strong> It's a beautiful {{ "day" if 20 > yourself.hour else "night" }} to go for a ride.
+                </div>
+            {% endif %}
+        {% endif %}
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
-                <div class="card bg-light d-flex flex-row" style="font-size: 1.5rem">
+                <div class="card bg-light d-flex flex-row front-page-counts important">
                     <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/team_text">{{ team_count }} team
-                        {% if team_count != 1 %}
-                            s
-                        {% endif %}
+                       href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
                     </a>
                     <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/individual_text">{{ contestant_count }} contestants</a>
+                       href="/leaderboard/individual_text">{{ contestant_count }} contestant{{ contestant_count|ess }}</a>
                 </div>
-                <div class="d-grid grid-2 grid-gap-3 grid-gap-lg-4"
-                     style="font-size: 1.4rem">
+                <div class="d-grid grid-2 grid-gap-3 grid-gap-lg-4 front-page-counts">
                     <div class="d-flex align-items-stretch card bg-light stats-card">
                         <div class="text-black vertical-header">
                             <a class="tag-link block-link" href="/people/">{{ year }}</a>
                         </div>
                         <div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
                             <div>
-                                {{ total_rides|groupnum }} rides
+                                {{ total_rides|groupnum }} ride{{ total_rides|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ total_hours|groupnum }} hours
+                                {{ total_hours|groupnum }} hour{{ total_hours|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ total_miles|groupnum }} miles
+                                {{ total_miles|groupnum }} mile{{ total_miles|ess }}
                             </div>
                         </div>
                     </div>
@@ -165,18 +225,15 @@
                         </div>
                         <div class="d-flex flex-column flex-grow-1 text-nowrap text-center px-3 py-2">
                             <div>
-                                {{ today_riders }} rider
-                                {% if today_riders != 1 %}
-                                    s
-                                {% endif %}
+                                {{ today_riders }} rider{{ today_riders|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ today_hours|groupnum }} hours
+                                {{ today_hours|groupnum }} hour{{ today_hours|ess }}
                             </div>
                             <span class="stat-divider horizontal my-1"></span>
                             <div>
-                                {{ today_miles|groupnum }} miles
+                                {{ today_miles|groupnum }} mile{{ today_miles|ess }}
                             </div>
                         </div>
                     </div>
@@ -190,7 +247,7 @@
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours below freezing
+                            hour{{ sub_freezing_hours|ess }} below freezing
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -201,7 +258,7 @@
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours in the rain
+                            hour{{ rain_hours|ess }} in the rain
                         </div>
                     </div>
                     <div class="card bg-light hour-card">
@@ -212,7 +269,7 @@
                             </div>
                         </div>
                         <div class="text-center text-muted text-truncate hour-label">
-                            hours in the snow
+                            hour{{ snow_hours|ess }} in the snow
                         </div>
                     </div>
                 </div>
@@ -222,7 +279,7 @@
                            href="/leaderboard/team_text">leaderboard</a>
                         <div class="px-3 py-2">
                             {% for winner in winners %}
-                                <div class="d-flex gap-2" style="font-size: 1.1rem">
+                                <div class="d-flex gap-2 front-page-leaderboard">
                                     <span class="flex-shrink-0">
                                         {% if loop.first %}
                                             🥇
@@ -242,10 +299,83 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if yourself.rides %}
+                    <div class="d-flex align-items-stretch card bg-light stats-card your-counts">
+                        <div class="text-black vertical-header">
+                            <a class="tag-link block-link" href="/my/rides">you</a>
+                        </div>
+                        <div class="d-grid grid-2 flex-grow-1">
+                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2"
+                                 style="border-right: 1px solid #8888">
+                                {% if yourself.rank %}
+                                    <div>
+                                        <a class="tag-link"
+                                           href="/leaderboard/individual_text"
+                                           title="Individual rank">
+                                            👤 {{ yourself.rank }}<sup>{{ yourself.rank|ord }}</sup>
+                                        </a>
+                                        {% if yourself.team_rank %}
+                                            <span class="stat-divider vertical mb-2 mx-md-3"></span>
+                                            <a class="tag-link" href="/leaderboard/team_text" title="Team rank">
+                                                👥 {{ yourself.team_rank }}<sup>{{ yourself.team_rank|ord }}</sup>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-muted">
+                                        –
+                                    </div>
+                                {% endif %}
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.hours|groupnum }} hour{{ yourself.hours|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.miles|groupnum }} mile{{ yourself.miles|ess }}
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2">
+                                <div>
+                                    {{ yourself.rides }} ride{{ yourself.rides|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {{ yourself.days }} day{{ yourself.days|ess }}
+                                </div>
+                                <span class="stat-divider horizontal my-1"></span>
+                                <div>
+                                    {% if yourself.every_day %}
+                                        <span class="d-none d-md-inline">❄️</span> every day rider <span class="d-none d-md-inline">❄️</span>
+                                    {% else %}
+                                        {{ yourself.streak }} day streak
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif yourself.not_logged_in %}
+                    <a class="tag-link d-flex justify-content-center card bg-light stats-card px-3 py-2"
+                       href="/login">
+                        <span style="text-decoration: underline">Log in</span>&nbsp;to see your own stats.
+                    </a>
+                {% endif %}
             </div>
             <div id="map">
+                <div class="leaflet-control-container d-none d-xl-block">
+                    <div class="leaflet-top leaflet-right">
+                        <div class="leaflet-bar leaflet-control">
+                            <a id="expand-map"
+                               class="leaflet-control-expand"
+                               href="#"
+                               role="button"
+                               title="Toggle full size">↹</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        {# djlint:off H021 #}
         {% if tags %}
             <div class="badge text-wrap my-3 my-lg-4 card bg-light px-3 py-2"
                  style="font-size: 1.25rem">
@@ -253,9 +383,6 @@
                     <span class="small text-muted">#</span><a href="/pointless/{{ tag[2] }}"
    class="tag-link"
    style="font-size: {{ tag[1] }}em">{{ tag[0] }}</a>
-                    {% if not loop.last %}
-                        ,
-                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
@@ -273,10 +400,15 @@
                            class="photo-thumbnail"
                            data-bs-toggle="modal"
                            data-bs-target=".pop-up-{{ photo.id }}"
-                           style="background-image: url('{{ photo.img_l }}')"></a>
+                           style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png')"></a>
                         <!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
                     {% endif %}
                 {% endfor %}
+            </div>
+        {% endif %}
+        {# djlint:on #}
+        {% if not photos and not tags %}
+            <div class="mb-3 mb-lg-4">
             </div>
         {% endif %}
         <div id="sect-cal" class="mb-lg-4">
@@ -286,16 +418,27 @@
                     scrolling="no"></iframe>
         </div>
     {% endif %}
-</div>
 {% endblock %}
 {% block foot %}
     <script>
-$(() => {
-    // script src="/js/leaflet-heat.js"
-    // var points = data.tracks.flatMap(({track}) => track.map(([lon, lat]) => [lon, lat, 20]));
-    // var heatMap = L.heatLayer(points, { radius: 1, blur: 1, maxZoom: 13});
-    // map.addLayer(heatMap);
-    create_ride_map('map', '/api/all/trackmap.json');
-});
+  $(() => {
+    const map = create_ride_map('map', '/api/all/trackmap.json');
+    $('#expand-map').click(e => {
+      e.preventDefault();
+      $('body').toggleClass('map-expanded');
+      map.invalidateSize();
+      $('#map')[0].scrollIntoView({block: 'center'});
+    })
+  });
     </script>
+    {% if bafs_is_over and bafs_days_over < 14 %}
+        <!-- show some snow for two weeks -->
+        <div id="snow-animation-container">
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"
+                integrity="sha512-B8ruywf8mKA4fm0K8SrrNhO5DTokuipFEo7rEnI0RVTt9p29MJKfg8TfOVwMAFZxgI+zOF4iwOA/ByvyJ/sslw=="
+                crossorigin="anonymous"
+                referrerpolicy="no-referrer"></script>
+        <script src="/js/snow.js"></script>
+    {% endif %}
 {% endblock %}

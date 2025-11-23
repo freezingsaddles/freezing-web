@@ -7,13 +7,46 @@
         This "leaderboard" is for the those riders who are not currently on a competitive team, either by choice or by late registration. These riders are encouraged to ride,
         to participate in reindeer games, and to show up at gatherings, but their rides will be ineligible for any and all leaderboards.
     </p>
-    <ul>
-        {% for indiv_row in indiv_rows %}
-            <li>
-                <a href="/people/{{ indiv_row['athlete_id'] }}">{{ indiv_row['athlete_name'] }}</a>
-                <strong>{{ indiv_row['total_score']|round|int|groupnum }}</strong> points
-                ({{ indiv_row['days_ridden'] }} days, {{ indiv_row['total_distance']|round|int|groupnum }} miles)
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="card">
+        <div class="card-body py-1">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Rider
+                    </th>
+                    <th class="number">
+                        Points
+                    </th>
+                    <th class="number">
+                        Days
+                    </th>
+                    <th class="number">
+                        Miles
+                    </th>
+                </tr>
+                {% for indiv_row in indiv_rows %}
+                    <tr class="{{ indiv_row._mapping['id'] | myself }}">
+                        <td class="number rank">
+                            {{ loop.index }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ indiv_row._mapping['id'] }}" class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
+                        </td>
+                        <td class="number">
+                            {{ indiv_row._mapping['total_score']|round|int|groupnum }}
+                        </td>
+                        <td class="number">
+                            {{ indiv_row._mapping['days_ridden']|round|int|groupnum }}
+                        </td>
+                        <td class="number">
+                            {{ indiv_row._mapping['total_distance']|round|int|groupnum }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}

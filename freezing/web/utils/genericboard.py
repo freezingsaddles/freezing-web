@@ -7,6 +7,7 @@ import yaml
 from freezing.model import meta
 from freezing.model.msg import BaseMessage, BaseSchema
 from marshmallow import fields
+from sqlalchemy import text
 
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
@@ -23,7 +24,7 @@ class GenericBoardField(BaseMessage):
     def format_value(self, v, row):
         if isinstance(v, str):
             if self.format:
-                return self.format.format(**dict(row))
+                return self.format.format(**dict(row._mapping))
             else:
                 return v
 
@@ -89,7 +90,7 @@ def load_board_and_data(leaderboard) -> Tuple[GenericBoard, List[Dict[str, Any]]
     board = load_board(leaderboard)
 
     with meta.transaction_context(read_only=True) as session:
-        rs = session.execute(board.query)
+        rs = session.execute(text(board.query))
 
         if not board.fields:
             board.fields = [GenericBoardField(name=k, label=k) for k in rs.keys()]
@@ -118,7 +119,7 @@ def load_board(leaderboard) -> GenericBoard:
 def format_rows(rows, board) -> List[Dict[str, Any]]:
     try:
         formatted = [
-            {f.name: f.format_value(row[f.name], row) for f in board.fields}
+            {f.name: f.format_value(row._mapping[f.name], row) for f in board.fields}
             for row in rows
         ]
         rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)

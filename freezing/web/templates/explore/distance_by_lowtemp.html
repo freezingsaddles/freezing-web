@@ -1,77 +1,115 @@
 {% extends "base.html" %}
 {% block foot %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css" integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js" integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js" integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
+          integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
+          crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
+            integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"
+            integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
+            crossorigin="anonymous"></script>
     <script type="text/javascript">
-    $(function () {
-        function requestData() {
-            $.ajax({
-                url: '/chartdata/distance_by_lowtemp',
-                success: function(data) {
-                  var chart = c3.generate({
-                    data: {
-                      x: 'x',
-                      columns: [
-                        ['x'].concat(data.data.map(val => new Date(val.date.year, val.date.month - 1, val.date.day))),
-                        ['distance'].concat(data.data.map(val => val.distance)),
-                        ['low_temp'].concat(data.data.map(val => val.low_temp))
-                      ],
-                      type: 'bar',
-                      types: {
-                        low_temp: 'spline'
-                      },
-                      axes: {
-                        low_temp: 'y2'
-                      },
-                      names: {
-                        distance: 'Total Distance',
-                        low_temp: 'Temperature'
-                      },
-                    },
-                    axis: {
-                      x: {
-                        type: 'timeseries',
-                        tick: {
-                          format: '%-m/%-d'
-                        }
-                      },
-                      y: {
-                        label: {
-                          text: 'Total Distance',
-                          position: 'outer-middle'
-                        },
-                        tick: {
-                          format: (d) => Math.round(d) + ' mi'
-                        }
-                      },
-                      y2: {
-                        show: true,
-                        label: {
-                          text: 'Temperature',
-                          position: 'outer-middle'
-                        },
-                        tick: {
-                          format: (d) => d + '°F'
-                        }
-                      }
-                    }
-                  });
+    $(() => {
+        $.ajax({
+            url: '/chartdata/distance_by_lowtemp',
+            success: function(data) {
+              var maxDistance = 0, maxRaininess = 0, maxSnowiness = 0;
+              for (const {distance, raininess, snowiness} of data.data) {
+                if (distance > maxDistance) maxDistance = distance;
+                if (raininess > maxRaininess) maxRaininess = raininess;
+                if (snowiness > maxSnowiness) maxSnowiness = snowiness;
+              }
+              c3.generate({
+                data: {
+                  x: 'x',
+                  columns: [
+                    ['x'].concat(data.data.map(val => new Date(val.date.year, val.date.month - 1, val.date.day))),
+                    ['distance'].concat(data.data.map(val => val.distance)),
+                    ['low_temp'].concat(data.data.map(val => val.low_temp)),
+                    ['wind_chill'].concat(data.data.map(val => val.wind_chill)),
+                    ['raininess'].concat(data.data.map(val => maxRaininess ? val.raininess * maxDistance / maxRaininess : 0)),
+                    ['snowiness'].concat(data.data.map(val => maxSnowiness ? val.snowiness * maxDistance / maxSnowiness : 0)),
+                  ],
+                  type: 'bar',
+                  types: {
+                    low_temp: 'spline',
+                    wind_chill: 'spline',
+                    raininess: 'spline',
+                    snowiness: 'spline',
+                  },
+                  axes: {
+                    low_temp: 'y2',
+                    wind_chill: 'y2',
+                  },
+                  names: {
+                    distance: 'Total Distance',
+                    low_temp: 'Low Temperature',
+                    wind_chill: 'Wind Chill',
+                    raininess: 'Raininess',
+                    snowiness: 'Snowiness',
+                  },
                 },
-                cache: false
-            });
-        }
-
-        requestData();
+                axis: {
+                  x: {
+                    type: 'timeseries',
+                    tick: {
+                      format: '%-m/%-d'
+                    }
+                  },
+                  y: {
+                    label: {
+                      text: 'Total Distance',
+                      position: 'outer-middle'
+                    },
+                    tick: {
+                      format: (d) => Math.round(d) + ' mi'
+                    }
+                  },
+                  y2: {
+                    show: true,
+                    label: {
+                      text: 'Temperature',
+                      position: 'outer-middle'
+                    },
+                    tick: {
+                      format: (d) => d + '°F'
+                    }
+                  }
+                },
+                tooltip: {
+                  format: {
+                    value: (value, ratio, id) =>
+                      id === 'raininess' ?
+                        +(value * maxRaininess / maxDistance).toFixed(2) :
+                        id === 'snowiness' ?
+                          +(value * maxSnowiness / maxDistance).toFixed(2) :
+                            Math.round(value) + (id === 'distance' ? '&nbsp;mi' : '°F')
+                  }
+                }
+              });
+            }
+        });
 });
     </script>
 {% endblock %}
-
 {% block content %}
-
+    <div class="text-center">
+        <strong>Distance vs Weather</strong>
+    </div>
+    <div class="text-center text-muted small">
+        Relationship between total number of miles logged and the ambient weather conditions.
+    </div>
     <!--Div that will hold our leaderboard chart-->
-    <div class="text-center"><strong>Miles Logged vs. Avg. Low Temp</strong></div>
-    <div class="text-center text-muted small">Relationship between total number of miles logged riders and the average low daily temperatures.</div>
-    <div id="chart" style="width:100%; height:400px;"></div>
-
+    <div id="chart" class="c3-wide">
+        <svg width="48"
+             height="48"
+             viewBox="0 0 24 24"
+             fill="currentColor"
+             xmlns="http://www.w3.org/2000/svg">
+            <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+        </svg>
+        &nbsp;Loading chart data...
+    </div>
 {% endblock %}

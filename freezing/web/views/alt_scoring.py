@@ -6,15 +6,6 @@ from flask import Blueprint, render_template
 from freezing.model import meta
 from sqlalchemy import text
 
-from freezing.web import config
-from freezing.web.views.shared_sql import (
-    indiv_freeze_query,
-    indiv_segment_query,
-    indiv_sleaze_query,
-    team_segment_query,
-    team_sleaze_query,
-)
-
 blueprint = Blueprint("alt_scoring", __name__)
 
 
@@ -27,7 +18,8 @@ def team_riders():
         """
     )
     team_riders = [
-        (x["name"], x["ride_days"]) for x in meta.scoped_session().execute(q).fetchall()
+        (x._mapping["name"], x._mapping["ride_days"])
+        for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
         "alt_scoring/team_riders.html",
@@ -43,7 +35,7 @@ def team_daily():
         group by a.ride_date, b.name order by a.ride_date, team_score;"""
     )
     temp = [
-        (x["ride_date"], x["team_name"])
+        (x._mapping["ride_date"], x._mapping["team_name"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     temp = groupby(temp, lambda x: x[0])
@@ -70,73 +62,6 @@ def team_daily():
     )
 
 
-@blueprint.route("/team_sleaze")
-def team_sleaze():
-    q = team_sleaze_query()
-    data = [
-        (x["team_name"], x["num_sleaze_days"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/team_sleaze.html",
-        team_sleaze=data,
-        competition_title=config.COMPETITION_TITLE,
-        registration_site=config.REGISTRATION_SITE,
-    )
-
-
-@blueprint.route("/team_hains")
-def team_hains():
-    q = team_segment_query()
-    data = [
-        (x["team_name"], x["segment_rides"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/team_hains.html",
-        team_hains=data,
-    )
-
-
-@blueprint.route("/indiv_sleaze")
-def indiv_sleaze():
-    q = indiv_sleaze_query()
-    data = [
-        (x["athlete_name"], x["num_sleaze_days"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_sleaze.html",
-        indiv_sleaze=data,
-    )
-
-
-@blueprint.route("/indiv_hains")
-def indiv_hains():
-    q = indiv_segment_query(join_miles=True)
-    data = [
-        (x["athlete_name"], x["segment_rides"], x["dist"])
-        for x in meta.engine.execute(q, segment_id=1081507).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_hains.html",
-        indiv_hains=data,
-    )
-
-
-@blueprint.route("/indiv_freeze")
-def indiv_freeze():
-    q = indiv_freeze_query()
-    data = [
-        (x["athlete_name"], x["freeze_points_total"])
-        for x in meta.scoped_session().execute(q).fetchall()
-    ]
-    return render_template(
-        "alt_scoring/indiv_freeze.html",
-        indiv_freeze=data,
-    )
-
-
 @blueprint.route("/indiv_worst_day_points")
 def indiv_worst_day_points():
     ridersq = text(
@@ -144,7 +69,9 @@ def indiv_worst_day_points():
     select count(distinct(athlete_id)) as riders from rides group by date(start_date)
     """
     )
-    riders = [x["riders"] for x in meta.scoped_session().execute(ridersq).fetchall()]
+    riders = [
+        x._mapping["riders"] for x in meta.scoped_session().execute(ridersq).fetchall()
+    ]
     median_riders = 0 if len(riders) == 0 else median(riders)
     q = text(
         f"""
@@ -161,12 +88,13 @@ def indiv_worst_day_points():
     )
     data = [
         (
-            x["athlete_name"],
-            x["team_name"],
-            x["total_distance"],
-            x["total_score"],
-            x["total_adjusted"],
-            x["days_ridden"],
+            x._mapping["athlete_id"],
+            x._mapping["athlete_name"],
+            x._mapping["team_name"],
+            x._mapping["total_distance"],
+            x._mapping["total_score"],
+            x._mapping["total_adjusted"],
+            x._mapping["days_ridden"],
         )
         for x in meta.scoped_session().execute(q).fetchall()
     ]

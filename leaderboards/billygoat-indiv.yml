@@ -2,11 +2,11 @@
 title: Billy Goat, Individual (Elevation Gain)
 description: Elevation gain per mile by individuals.
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
-    label: Athlete
-    format: "<a href=\"/people/{id}\">{athlete_name}</a>"
+    label: Rider
+    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
   - name: elev
     label: Elevation (ft)
     type: number
@@ -19,7 +19,7 @@ fields:
     type: number
 query: |
   select
-    A.id,
+    A.id as athlete_id,
     A.display_name as athlete_name,
     sum(R.elevation_gain) as elev,
     sum(R.distance) as dist,
