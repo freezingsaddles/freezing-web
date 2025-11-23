@@ -336,9 +336,14 @@ def _rider_stats(athlete_id):
     now_tz = datetime.now(config.TIMEZONE)
     today = min(now_tz, config.END_DATE).date()
     yesterday = today - timedelta(days=1)
-    total_days = max(0, 1 + (today - start).days)
+    total_days = 1 + (today - start).days
     streak = next(
-        r for r in range(total_days) if (yesterday - timedelta(days=r)) not in ride_days
+        (
+            r
+            for r in range(total_days)
+            if (yesterday - timedelta(days=r)) not in ride_days
+        ),
+        0,
     ) + (1 if today in ride_days else 0)
     game_on = datetime.now().date() <= today
 
