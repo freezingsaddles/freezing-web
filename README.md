@@ -159,6 +159,14 @@ bin/fmt.sh
 
 This project also has _optional_ support for [pre-commit](https://pre-commit.org) to run these checks automatically before you commit. To install pre-commit, run `pip install pre-commit` and then `pre-commit install` in the root of the repository.
 
+### Stravalib 2.x Upgrade Notes
+
+The project now pins `stravalib==2.4`, a major upgrade from the Stravalib 1.x previously used.
+
+* Client method stability: we still rely on `exchange_code_for_token`, `get_athlete`, and `handle_subscription_callback` – all present in 2.4.
+
+Migration impact here was minimal: only dependency pin updated and an outdated docstring path corrected.
+
 ## Production deployment
 
 See [freezing-compose](https://github.com/freezingsaddles/freezing-compose) for a guide to deploying this in production along
