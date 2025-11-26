@@ -16,6 +16,12 @@
     aspect-ratio: .75;
   }
 
+  #team-warning-close {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+  }
+
   .front-page-counts {
     font-size: 1.5rem;
   }
@@ -179,6 +185,18 @@
                 frameborder="0"
                 scrolling="no"></iframe>
     {% else %}
+        {% if yourself.no_team and not request.cookies.get('team-warning') %}
+            <div id="team-warning"
+                 class="my-3 my-lg-4 py-2 alert alert-warning text-center">
+                <button class="btn btn-close" id="team-warning-close" aria-label="Close">
+                </button>
+                <strong>Not on the leaderboard?</strong>
+                <br />
+                If you are an active participant you must now join your competition team on Strava to appear on the leaderboard.
+                Please check the forum or reach out to your team captain to find your team and join it.
+                If you are playing as a Friend of BAFS, you may ignore this message.
+            </div>
+        {% endif %}
         {% if yourself.missed_today %}
             {% if yourself.missed_yesterday %}
                 <div class="my-3 my-lg-4 py-2 alert alert-danger text-center">
@@ -428,7 +446,13 @@
       $('body').toggleClass('map-expanded');
       map.invalidateSize();
       $('#map')[0].scrollIntoView({block: 'center'});
-    })
+    });
+    $('#team-warning-close').click(e => {
+      $('#team-warning').remove();
+      const date = new Date();
+      date.setDate(date.getDate() + 30);
+      document.cookie = "team-warning=hide; expires=" + date.toUTCString() + "; path=/";
+    });
   });
     </script>
     {% if bafs_is_over and bafs_days_over < 14 %}

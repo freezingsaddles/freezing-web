@@ -17,7 +17,7 @@ from flask import (
     url_for,
 )
 from freezing.model import meta
-from freezing.model.orm import Athlete, Ride, RidePhoto
+from freezing.model.orm import Athlete, Ride, RidePhoto, Team
 from sqlalchemy import func, text
 from stravalib import Client
 
@@ -316,7 +316,7 @@ def _rider_stats(athlete_id):
                 """
             ).bindparams(athlete_id=athlete_id)
         )
-        .fetchone()
+        .one()
     )
     ride_days = set(
         res[0]
@@ -325,12 +325,15 @@ def _rider_stats(athlete_id):
             .execute(
                 text(
                     """
-                select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
-                """
+                    select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
+                    """
                 ).bindparams(athlete_id=athlete_id)
             )
             .fetchall()
         )
+    )
+    team = (
+        meta.scoped_session().query(Team).join(Athlete).filter_by(id=athlete_id).one()
     )
     start = config.START_DATE.date()
     now_tz = datetime.now(config.TIMEZONE)
@@ -346,6 +349,8 @@ def _rider_stats(athlete_id):
         0,
     ) + (1 if today in ride_days else 0)
     game_on = datetime.now().date() <= today
+    # if within the first month you are not on a team then explain
+    no_team = total_days <= 31 and team.leaderboard_exclude and config.COMPETITION_TEAMS
 
     return {
         "rank": rank[0] if rank else None,
@@ -359,6 +364,8 @@ def _rider_stats(athlete_id):
         "hour": datetime.now(config.START_DATE.tzinfo).hour,
         "streak": streak,
         "every_day": total_days > 0 and streak == total_days,
+        "team_name": team.name if not team.leaderboard_exclude else None,
+        "no_team": no_team,
     }
 
 
