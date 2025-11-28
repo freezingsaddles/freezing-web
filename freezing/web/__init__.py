@@ -95,6 +95,7 @@ def inject_config():
         "competition_title": config.COMPETITION_TITLE,
         "environment": config.ENVIRONMENT,
         "registration_site": config.REGISTRATION_SITE,
+        "discord_invitation": config.DISCORD_INVITATION,
         "forum_site": config.FORUM_SITE,
         "version_string": config.VERSION_STRING,
         "end_date": config.END_DATE,

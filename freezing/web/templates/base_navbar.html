@@ -389,9 +389,6 @@
                         Forum
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ registration_site }}">Register</a>
-                </li>
                 {% if g.logged_in %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
@@ -416,6 +413,9 @@
                         </ul>
                     </li>
                 {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ registration_site }}">Register</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link{% if request.path.startswith('/login') %} active{% endif %}"
                            href="/login">Login</a>

@@ -16,7 +16,7 @@
     aspect-ratio: .75;
   }
 
-  #team-warning-close {
+  .alert .btn-close {
     position: absolute;
     right: .5rem;
     top: .5rem;
@@ -152,7 +152,7 @@
             </div>
         </div>
     </div>
-    {% if winter_is_coming %}
+    {% if winter_is_coming and not g.logged_in %}
         <div class="{{ 'my-3 my-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
             Freezing Saddles is a game organized by friends in the
             <a class="text-info text-decoration-none"
@@ -209,6 +209,19 @@
                 </div>
             {% endif %}
         {% endif %}
+    {% endif %}
+    {% if g.logged_in and yourself.total_days < 15 and not request.cookies.get('discord-invite') %}
+        <div id="discord-invite"
+             class="my-3 my-lg-4 py-2 alert alert-success text-center">
+            <button class="btn btn-close" id="discord-invite-close" aria-label="Close">
+            </button>
+            <strong>We're on Discord!</strong>
+            <br />
+            Freezing Saddles is using Discord to organize some group rides and pointless prizes.
+            <a rel="noreferrer" target="_blank" href="{{ discord_invitation }}">Join our Discord Server</a> to stay in touch.
+        </div>
+    {% endif %}
+    {% if bafs_is_live %}
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
@@ -439,6 +452,14 @@
 {% endblock %}
 {% block foot %}
     <script>
+  function initAlert(id, days) {
+    $(`#${id}-close`).click(e => {
+      $(`#${id}`).remove();
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      document.cookie = `${id}=hide; expires=${date.toUTCString()}; path=/`;
+    });
+  }
   $(() => {
     const map = create_ride_map('map', '/api/all/trackmap.json');
     $('#expand-map').click(e => {
@@ -447,12 +468,8 @@
       map.invalidateSize();
       $('#map')[0].scrollIntoView({block: 'center'});
     });
-    $('#team-warning-close').click(e => {
-      $('#team-warning').remove();
-      const date = new Date();
-      date.setDate(date.getDate() + 30);
-      document.cookie = "team-warning=hide; expires=" + date.toUTCString() + "; path=/";
-    });
+    initAlert('team-warning', 30);
+    initAlert('discord-invite', 60);
   });
     </script>
     {% if bafs_is_over and bafs_days_over < 14 %}
