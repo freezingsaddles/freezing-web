@@ -1,7 +1,6 @@
 ---
 tags:
-
-  - tag: '420'
+  - tag: "420"
     name: Expand Your Horizons
     description: |
       Ride to a cannabis dispensary and take a picture of it. Tag rides with <code>#420</code> (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
@@ -10,7 +9,7 @@ tags:
   - tag: abc
     name: Vehicle ABCs
     description: |
-       find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
+      find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
     rank_by_rides: True
 
   - tag: adulting
@@ -27,8 +26,6 @@ tags:
     name: Baby on Board
     description: |
       Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with <code>#BoB</code>.
-    url: https://www.bikearlingtonforum.com/forums/topic/2025-pointless-prize-baby-on-board-bob/
-    sponsor: bigredboiler
     rank_by_rides: True
 
   - tag: biathlon
@@ -47,16 +44,12 @@ tags:
     name: Bicycle Bingo
     description: |
       Ride your bike and play Bingo!
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2025-sign-up-now/
-    sponsor: cvcalhoun
     rank_by_rides: True
 
   - tag: cabi
     name: Capital Bikeshare Rides
     description: |
       Tag your rides on Capital Bikeshare (CaBi) with <code>#cabi</code> (eBike or red bike!) and whoever does the most miles will get a prize. The prize is likely to either be a CaBi embroidery or whatever I have in my bag at the final happy hour (up to and including trivial cash amounts or random stickers). Get riding!
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-cabi/
-    sponsor: veleau_monica
     rank_by_rides: False
 
   - tag: civilwarforts
@@ -64,8 +57,6 @@ tags:
     description: |
       During the American Civil War (1861-1865) Washington was surrounded by a chain of fortifications. Mostly in DC and northern Virginia, I think maybe a couple in Maryland.
       Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag <code>#civilwarforts</code> on Strava.
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-civilwarforts/
-    sponsor: lordofthemark
     rank_by_rides: True
 
   - tag: Deflated
@@ -80,7 +71,6 @@ tags:
     name: Fire bad!
     description: |
       Ride your bike and take photo of the fire stations.
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-fire-bad/
     rank_by_rides: True
 
   - tag: donut
@@ -93,21 +83,20 @@ tags:
   - tag: FirstTimeFS
     name: First Time Riders
     description: |
-       Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
+      Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
     rank_by_rides: True
 
   - tag: flag
     name: Flag
     description: |
       Take a photo of a flag on your ride.
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2024-flag/
     rank_by_rides: True
 
   - tag: freezingerrands
     name: Errandeering
     description: |
-       Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
-       Tag with <code>#FreezingErrands</code>.
+      Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
+      Tag with <code>#FreezingErrands</code>.
     rank_by_rides: True
 
   - tag: fswormhole
@@ -127,16 +116,12 @@ tags:
     name: Group Ride Groupie
     description: |
       The person who joins the most group rides.
-    sponsor: drevil
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-grouprideguru-groupridegroupie/
     rank_by_rides: True
 
   - tag: grouprideguru
     name: Group Ride Guru
     description: |
       The person who organizes and leads the most amount of Freezing Saddles group rides.
-    sponsor: drevil
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-grouprideguru-groupridegroupie/
     rank_by_rides: True
 
   - tag: heroesworkhere
@@ -163,7 +148,7 @@ tags:
   - tag: oldGeorge
     name: Old Georgetown Bike Lane
     description: |
-       Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
+      Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
     rank_by_rides: True
 
   - tag: parks
@@ -172,15 +157,12 @@ tags:
       Ride a bike to a park, post the ride to Strava with <code>#parks</code> in the title. Each park is one point.
       No daily limit, but you’ll have to break your ride into multiple Strava rides with <code>#parks</code>
       in the title to tabulate correctly. Must be a unique park to qualify in the scoring–no repeats.
-    sponsor: arlcxrider
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-parks/
     rank_by_rides: True
 
   - tag: pizza
     name: Pizzaneuring
     description: |
       Ride for pizza, eat pizza, and post a photo.
-    url: https://www.bikearlingtonforum.com/forums/topic/pizzaneuring/
     rank_by_rides: True
 
   - tag: publicartfinder
@@ -188,31 +170,26 @@ tags:
     description: |
       Rules TBD. Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
       Post to the forum on the linked thread.
-    sponsor: karenbikes
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-public-art-finder/
     rank_by_rides: True
 
   - tag: singlespeed
     name: Singlespeed
     description: |
-      Riding singlespeed fell out of fashion years ago, but I still enjoy it. Does anyone else? Let's find out with a singlespeed pointless prize. See the linked forum post for complete rules and details.
+      Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
     sponsor: jlamb
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-singlespeed-3/
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
     rank_by_rides: False
 
   - tag: scavhunt
     name: Photo Scavenger Hunt
     description: |
       Ride your bike to find the word of the day and post its photo on the forum.
-    sponsor: kbikeva
-    url: https://www.bikearlingtonforum.com/forums/topic/2025-photo-scavenger-hunt/
     rank_by_rides: True
 
   - tag: socks
     name: Socks
     description: |
       Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-socks/
     rank_by_rides: False
 
   - tag: stem
@@ -240,24 +217,18 @@ tags:
     name: Tandem
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    sponsor: shirag,NoVaNoobGA
-    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
   - tag: tandemVI
     name: Tandem - Visually Impaired
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    sponsor: shirag,NoVaNoobGA
-    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
   - tag: tandemKid
     name: Tandem Kid
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    sponsor: shirag,NoVaNoobGA
-    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2025/
     rank_by_rides: True
 
   - tag: treats
@@ -271,5 +242,3 @@ tags:
     name: Riding with Kids
     description: |
       For the Saddlero who rides the most miles accompanying kids who are riding under their own power.
-    url: https://www.bikearlingtonforum.com/forums/topic/fs-2025-pointless-kids-prizes/
-    sponsor: chill-dad

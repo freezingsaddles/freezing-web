@@ -1,14 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
     <h2 class="mb-3">
-        {{ data.segment_name }} Rides
+        {% if meta %}
+            {{ meta.name }}
+        {% else %}
+            {{ data.segment_name }} Rides
+        {% endif %}
     </h2>
     <p>
         Leaderboard for all rides of the <a href="https://www.strava.com/segments/{{ data.segment_id }}">{{ data.segment_name }}</a> segment on Strava.
     </p>
-    <p>
-        To see another segment, simply edit the URL and replace <em>{{ data.segment_id }}</em> with the identifier of the segment you want. The identifier of the segment is the number in the URL when you view the segment on Strava. If no one has yet ridden the segment in this competition, the name will not show up here.
-    </p>
+    {% if meta %}
+        {% if meta.description %}
+            <p>
+                {{ meta.description | safe }}
+            </p>
+        {% endif %}
+        {% if meta.url %}
+            <p>
+                See: <a href="{{ meta.url }}">{{ meta.url }}</a>
+            </p>
+        {% endif %}
+        {% if meta.sponsor %}
+            {% set sponsors = meta.sponsor.split(',') %}
+            <p>
+                Sponsored by
+                {% for sp in sponsors %}
+                    {# djlint:off #}<em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sp }}/">{{ sp }}</a></em>{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
+                {% endfor %}
+            </p>
+        {% else %}
+            <p class="text-muted">
+                This ride has no sponsor and is completely pointless.
+            </p>
+        {% endif %}
+    {% else %}
+        <p>
+            To see another segment, simply edit the URL and replace <em>{{ data.segment_id }}</em> with the identifier of the segment you want. The identifier of the segment is the number in the URL when you view the segment on Strava. If no one has yet ridden the segment in this competition, the name will not show up here.
+        </p>
+    {% endif %}
     <div class="card">
         <div class="card-body py-1">
             <table class="table table-condensed">

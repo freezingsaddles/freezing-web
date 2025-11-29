@@ -148,7 +148,7 @@ def team_sleaze():
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
-        "alt_scoring/team_sleaze.html",
+        "leaderboard/team_sleaze.html",
         team_sleaze=data,
     )
 
@@ -163,7 +163,7 @@ def team_hains():
         .fetchall()
     ]
     return render_template(
-        "alt_scoring/team_hains.html",
+        "leaderboard/team_hains.html",
         team_hains=data,
     )
 
@@ -180,7 +180,7 @@ def indiv_sleaze():
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
-        "alt_scoring/indiv_sleaze.html",
+        "leaderboard/indiv_sleaze.html",
         indiv_sleaze=data,
     )
 
@@ -200,7 +200,7 @@ def indiv_hains():
         .fetchall()
     ]
     return render_template(
-        "alt_scoring/indiv_hains.html",
+        "leaderboard/indiv_hains.html",
         indiv_hains=data,
     )
 
@@ -218,7 +218,7 @@ def indiv_freeze():
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
-        "alt_scoring/indiv_freeze.html",
+        "leaderboard/indiv_freeze.html",
         indiv_freeze=data,
         friends=friends,
     )

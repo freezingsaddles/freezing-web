@@ -42,9 +42,9 @@ def _get_app():
 def _register_blueprints(app):
     # This needs to be after the app is created, unfortunately.
     from freezing.web.views import (
-        alt_scoring,
         api,
         chartdata,
+        explore,
         general,
         leaderboard,
         people,
@@ -56,7 +56,7 @@ def _register_blueprints(app):
 
     app.register_blueprint(general.blueprint)
     app.register_blueprint(leaderboard.blueprint, url_prefix="/leaderboard")
-    app.register_blueprint(alt_scoring.blueprint, url_prefix="/alt_scoring")
+    app.register_blueprint(explore.blueprint, url_prefix="/explore")
     app.register_blueprint(chartdata.blueprint, url_prefix="/chartdata")
     app.register_blueprint(people.blueprint, url_prefix="/people")
     app.register_blueprint(pointless.blueprint, url_prefix="/pointless")
