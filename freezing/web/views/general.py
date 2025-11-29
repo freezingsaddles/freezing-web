@@ -370,6 +370,11 @@ def _rider_stats(athlete_id):
     }
 
 
+@blueprint.route("/discord")
+def discord():
+    return render_template("discord.html") if session.get("athlete_id") else join()
+
+
 @blueprint.route("/logout")
 def logout():
     session.clear()
