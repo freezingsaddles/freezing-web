@@ -359,6 +359,7 @@ def _rider_stats(athlete_id):
         "hours": round(ride_stats[1] / 3600),
         "miles": int(ride_stats[2]),
         "days": len(ride_days),
+        "total_days": total_days,
         "missed_today": game_on and today not in ride_days,
         "missed_yesterday": yesterday >= start and yesterday not in ride_days,
         "hour": datetime.now(config.START_DATE.tzinfo).hour,
@@ -367,6 +368,11 @@ def _rider_stats(athlete_id):
         "team_name": team.name if not team.leaderboard_exclude else None,
         "no_team": no_team,
     }
+
+
+@blueprint.route("/discord")
+def discord():
+    return render_template("discord.html") if session.get("athlete_id") else join()
 
 
 @blueprint.route("/logout")
