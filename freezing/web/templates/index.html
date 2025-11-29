@@ -173,17 +173,23 @@
             <span class="sprout">🌱</span>
         </div>
     {% endif %}
+    {% if g.logged_in and yourself.total_days < 15 and not request.cookies.get('discord-invite') %}
+        <div id="discord-invite"
+             class="my-3 my-lg-4 my-2 alert alert-success text-center">
+            <button class="btn btn-close" id="discord-invite-close" aria-label="Close">
+            </button>
+            <strong>We're on Discord!</strong>
+            <br />
+            Freezing Saddles is using Discord to organize some group rides and pointless prizes.
+            <a rel="noreferrer" target="_blank" href="{{ discord_invitation }}">Join our Discord Server</a> to stay in touch.
+        </div>
+    {% endif %}
     {% if not bafs_is_live %}
         <div class="my-4 mb-lg-5 alert alert-info">
             The shiny new Freezing Saddles competition for the upcoming winter hasn't
             started yet, although there are currently <strong>{{ contestant_count }}</strong>
             contestants registered. There are still bike rides going on, you should go for a ride.
         </div>
-        <iframe id="cal"
-                class="bigly mb-lg-4"
-                src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York"
-                frameborder="0"
-                scrolling="no"></iframe>
     {% else %}
         {% if yourself.no_team and not request.cookies.get('team-warning') %}
             <div id="team-warning"
@@ -210,18 +216,13 @@
             {% endif %}
         {% endif %}
     {% endif %}
-    {% if g.logged_in and yourself.total_days < 15 and not request.cookies.get('discord-invite') %}
-        <div id="discord-invite"
-             class="my-3 my-lg-4 py-2 alert alert-success text-center">
-            <button class="btn btn-close" id="discord-invite-close" aria-label="Close">
-            </button>
-            <strong>We're on Discord!</strong>
-            <br />
-            Freezing Saddles is using Discord to organize some group rides and pointless prizes.
-            <a rel="noreferrer" target="_blank" href="{{ discord_invitation }}">Join our Discord Server</a> to stay in touch.
-        </div>
-    {% endif %}
-    {% if bafs_is_live %}
+    {% if not bafs_is_live %}
+        <iframe id="cal"
+                class="bigly mb-lg-4"
+                src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York"
+                frameborder="0"
+                scrolling="no"></iframe>
+    {% else %}
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
@@ -461,13 +462,15 @@
     });
   }
   $(() => {
-    const map = create_ride_map('map', '/api/all/trackmap.json');
-    $('#expand-map').click(e => {
-      e.preventDefault();
-      $('body').toggleClass('map-expanded');
-      map.invalidateSize();
-      $('#map')[0].scrollIntoView({block: 'center'});
-    });
+    if ($('#map').length) {
+        const map = create_ride_map('map', '/api/all/trackmap.json');
+        $('#expand-map').click(e => {
+            e.preventDefault();
+            $('body').toggleClass('map-expanded');
+            map.invalidateSize();
+            $('#map')[0].scrollIntoView({block: 'center'});
+        });
+    }
     initAlert('team-warning', 30);
     initAlert('discord-invite', 60);
   });
