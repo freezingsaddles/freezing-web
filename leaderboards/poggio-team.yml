@@ -4,8 +4,7 @@ description: |
   Number of team rides of the
   <a href="https://www.strava.com/segments/650024">POGGIO</a>
   segment.
-  There is no <em>team</em> prize for this pointless contest, just for the <a href="poggio-indiv">individual POGGIO leaderboard</a> winner.
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/  # yamllint disable-line
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/ # yamllint disable-line
 fields:
   - name: id
     visible: false

@@ -1,12 +1,56 @@
+"""
+Created on Feb 10, 2013
+
+@author: hans
+"""
+
 from collections import defaultdict
 from itertools import groupby
 from statistics import median
 
-from flask import Blueprint, render_template
+from flask import (
+    Blueprint,
+    render_template,
+)
 from freezing.model import meta
 from sqlalchemy import text
 
-blueprint = Blueprint("alt_scoring", __name__)
+blueprint = Blueprint("explore", __name__)
+
+
+@blueprint.route("/team_weekly")
+def team_weekly_points():
+    return render_template(
+        "explore/team_weekly_points.html",
+    )
+
+
+@blueprint.route("/indiv_elev_dist")
+def indiv_elev_dist():
+    return render_template(
+        "explore/indiv_elev_dist.html",
+    )
+
+
+@blueprint.route("/distance_by_lowtemp")
+def distance_by_lowtemp():
+    return render_template(
+        "explore/distance_by_lowtemp.html",
+    )
+
+
+@blueprint.route("/riders_by_lowtemp")
+def riders_by_lowtemp():
+    return render_template(
+        "explore/riders_by_lowtemp.html",
+    )
+
+
+@blueprint.route("/team_cumul")
+def team_cumul_trend():
+    return render_template(
+        "explore/team_cumul.html",
+    )
 
 
 @blueprint.route("/team_riders")
@@ -22,7 +66,7 @@ def team_riders():
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
-        "alt_scoring/team_riders.html",
+        "explore/team_riders.html",
         team_riders=team_riders,
     )
 
@@ -57,7 +101,7 @@ def team_daily():
     team_total = [(b, a) for a, b in team_total.items()]
     team_total = sorted(team_total, reverse=True)
     return render_template(
-        "alt_scoring/team_daily.html",
+        "explore/team_daily.html",
         team_total=team_total,
     )
 
@@ -99,7 +143,7 @@ def indiv_worst_day_points():
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
-        "alt_scoring/indiv_worst_day_points.html",
+        "explore/indiv_worst_day_points.html",
         data=data,
         median=median_riders,
     )

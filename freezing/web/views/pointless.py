@@ -9,6 +9,7 @@ from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data
 from freezing.web.utils.hashboard import load_hashtag
+from freezing.web.utils.segboard import load_segment
 
 blueprint = Blueprint("pointless", __name__)
 
@@ -160,6 +161,7 @@ def _get_segment_tdata(segment):
 
 @blueprint.route("/segment/<int:segment>")
 def segment_leaderboard(segment):
+    meta = load_segment(segment)
     tdata = _get_segment_tdata(
         segment=segment,
     )
@@ -168,7 +170,11 @@ def segment_leaderboard(segment):
         data={
             "tdata": tdata,
             "segment_id": segment,
-            "segment_name": tdata[0][2] if tdata else "Unknown Segment",
+            "segment_name": (
+                meta.segment_name
+                if meta
+                else tdata[0][2] if tdata else "Unknown Segment"
+            ),
         },
         meta=meta,
     )
