@@ -127,6 +127,10 @@ Here is an example of editing the file and starting the webserver using settings
 
 Doing this will start the server on port 5000. You can access the site at [http://localhost:5000/](http://localhost:5000/) and if you make changes to the code and save the file, the server will automatically restart.
 
+#### macOS notes
+
+On macOS you may have issues because AirPlay steals port 5000. To disable this, search in Settings for `airplay` and turn off `AirPlay Receiver`. Or else switch out the development port.
+
 ### Development setup to work with `freezing-model`
 
 During development, you may find you need to make changes to the database. Because this suite of projects uses SQLAlchemy and Alembic, and multiple projects depend on the model, it is in a [separate git repo](https://github.com/freezingsaddles/freezing-model).
