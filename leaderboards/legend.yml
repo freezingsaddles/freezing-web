@@ -1,0 +1,40 @@
+---
+title: Locally Legendary
+description: Number of local legends achieved during the competition (approximately).
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
+  - name: legends
+    label: Local Legends
+    rank_by: true
+    type: number
+query: |
+  with unlegends as (
+      select
+          R.athlete_id, RE.segment_id, MIN(RE.id) as id
+      from rides R
+      join ride_efforts RE on RE.ride_id = R.id
+      where not RE.local_legend
+      group by R.athlete_id, RE.segment_id
+  ), legends as (
+      select
+          R.athlete_id, RE.segment_id, MAX(RE.id) as id
+      from rides R
+      join ride_efforts RE on RE.ride_id = R.id
+      where RE.local_legend
+      group by R.athlete_id, RE.segment_id
+  )
+  select
+      L.athlete_id,
+      A.name as athlete_name,
+      count(*) as legends
+  from legends L
+  join unlegends U on U.athlete_id = L.athlete_id 
+                  and U.segment_id = L.segment_id
+  join athletes A on A.id = L.athlete_id
+  where L.id > U.id
+  group by L.athlete_id, A.name
+  order by legends desc
