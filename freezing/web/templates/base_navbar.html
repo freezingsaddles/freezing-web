@@ -84,48 +84,6 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/explore') %} active{% endif %}"
-                       href="#"
-                       id="exploredDropdown"
-                       role="button"
-                       data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Data Exploration <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="exploreDropdown">
-                        <li>
-                            <a class="dropdown-item" href="/explore/distance_by_lowtemp">Distance vs Weather</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/riders_by_lowtemp">Riders vs Weather</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider" />
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/team_cumul">Team Cumulative</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/team_weekly">Team Weekly Points</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/team_riders">Ride Days by Team</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/team_daily">Team Wins by Day</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider" />
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/explore/indiv_worst_day_points">Steve O's Crazy Idea</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle{% if request.path.startswith('/pointless') %} active{% endif %}"
                        href="#"
                        id="pointlessDropdown"
@@ -277,6 +235,9 @@
                             <a class="dropdown-item" href="/pointless/hashtag/fsbooks">Little Free Library</a>
                         </li -->
                         <li>
+                            <a class="dropdown-item" href="/pointless/generic/legend">Locally Legendary</a>
+                        </li>
+                        <li>
                             <a class="dropdown-item" href="/pointless/hashtag/londonbridge">London Bridge Rides</a>
                         </li>
                         <li>
@@ -383,6 +344,48 @@
                         </li>
                         <li>
                             <a class="dropdown-item" href="/people/friends">Friends of BAFS</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle{% if request.path.startswith('/explore') %} active{% endif %}"
+                       href="#"
+                       id="exploredDropdown"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Data Exploration <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="exploreDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/explore/distance_by_lowtemp">Distance vs Weather</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/riders_by_lowtemp">Riders vs Weather</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/indiv_elev_dist">Individual Dist/Elev/Speed</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_cumul">Team Cumulative</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_weekly">Team Weekly Points</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_riders">Ride Days by Team</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/team_daily">Team Wins by Day</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/explore/indiv_worst_day_points">Steve O's Crazy Idea</a>
                         </li>
                     </ul>
                 </li>

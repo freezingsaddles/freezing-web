@@ -6,6 +6,7 @@ It also sets up a fault handler with a signal early to ensure stack traces happe
 """
 
 import freezing.web._faulthandler  # noqa isort: skip
+import freezing.web.utils.sqlog  # noqa isort: skip
 
 from socket import gethostbyname
 from time import sleep
