@@ -8,18 +8,18 @@
             <strong>The competiton for this year is complete after {{ num_days }} days of riding!</strong>
         </p>
     {% endif %}
-    <ul style="padding-left: 1em">
-        <li style="list-style: none">
+    <ul class="list-unstyled ps-3">
+        <li>
             <strong>{{ every_day_riders }} rider{{ every_day_riders|ess }}:</strong>
             Your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
         </li>
         {% if contenders %}
-            <li style="list-style: none">
+            <li>
                 <strong>{{ contenders }} rider{{ contenders|ess }}:</strong>
                 <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
             </li>
         {% endif %}
-        <li style="list-style: none">
+        <li>
             <strong>{{ remainders }} rider{{ remainders|ess }}:</strong>
             <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
         </li>
