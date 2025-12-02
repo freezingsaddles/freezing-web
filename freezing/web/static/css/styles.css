@@ -129,6 +129,15 @@ nav.bg-light {
     }
 }
 
+.achievements-row {
+    font-size: 1.2rem;
+
+    .achievements {
+        border-right: 1px solid #8888;
+        font-weight: bold;
+    }
+}
+
 .badge-group {
     display: flex;
     flex-direction: column;

@@ -95,60 +95,60 @@ def myself(number):
 def index():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
 
-    indiv_count_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    indiv_count_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     contestant_count = indiv_count_res._mapping["num_contestants"]
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
-                  coalesce(sum(R.distance),0) as distance
-                from rides R
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
+                coalesce(sum(R.distance),0) as distance
+            from rides R
+            ;
+        """
     )
 
-    all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    all_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     total_miles = int(all_res._mapping["distance"])
     total_hours = int(all_res._mapping["moving_time"]) / 3600
     total_rides = all_res._mapping["num_rides"]
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_temp_avg < 32
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_temp_avg < 32
+            ;
+        """
     )
 
-    sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    sub32_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_rain = 1
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_rain = 1
+            ;
+        """
     )
 
-    rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    rain_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_snow = 1
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_snow = 1
+            ;
+        """
     )
 
-    snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    snow_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     snow_hours = int(snow_res._mapping["moving_time"]) / 3600
 
     # Grab some recent photos
@@ -183,10 +183,58 @@ def index():
             config.TIMEZONE, today.date()
         )
     )
-    today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    today_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     today_riders = int(today_res._mapping["riders"])
     today_hours = round(today_res._mapping["moving_time"]) / 3600
     today_miles = int(today_res._mapping["distance"])
+
+    q = text(
+        """
+            select
+                RE.personal_record as pr,
+                count(RE.personal_record) as count
+            from ride_efforts RE
+            where RE.personal_record is not null
+            group by personal_record
+            ;
+        """
+    )
+    pr_res = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
+    prs = {res._mapping["pr"]: res._mapping["count"] for res in pr_res}
+
+    # We will need to watch the performance of this query. You became a
+    # legend in this competition if we have an earlier ride of the segment
+    # where you were not the legend. We use the ride effort id for ordering
+    # rather than ride start date, because that lets you achieve legendary
+    # status on one ride repeating the same segment.
+    q = text(
+        """
+            with unlegends as (
+                select
+                    R.athlete_id, RE.segment_id, MIN(RE.id) as id
+                from rides R
+                join ride_efforts RE on RE.ride_id = R.id
+                where not RE.local_legend
+                group by R.athlete_id, RE.segment_id
+            ), legends as (
+                select
+                    R.athlete_id, RE.segment_id, MAX(RE.id) as id
+                from rides R
+                join ride_efforts RE on RE.ride_id = R.id
+                where RE.local_legend
+                group by R.athlete_id, RE.segment_id
+            )
+            select
+                count(*) as legends
+            from legends L
+            join unlegends U on U.athlete_id = L.athlete_id
+                            and U.segment_id = L.segment_id
+            where L.id > U.id
+            ;
+        """
+    )
+    ll_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
+    legends = int(ll_res._mapping["legends"])
 
     # Get teams sorted by points
     q = team_leaderboard_query()
@@ -217,6 +265,10 @@ def index():
         bafs_is_live=after_competition_start,
         bafs_is_over=not before_competition_end,
         bafs_days_over=delta_after_end.days,
+        pr_gold=prs.get(1, 0),
+        pr_silver=prs.get(2, 0),
+        pr_bronze=prs.get(3, 0),
+        legend=legends,
         photos=[photo for photo in photos],
         tags=tags,
         winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
