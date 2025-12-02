@@ -337,7 +337,7 @@ def _track_map(
              join rides R on R.id = T.ride_id
              join athletes A on A.id = R.athlete_id
              where
-               {'true' if include_private else 'not(R.private)'}
+               {'true' if include_private else "not(R.private) and R.visibility = 'everyone'"}
                and {'A.id = :athlete_id' if athlete_id else 'true'}
                and {'A.team_id = :team_id' if team_id else 'true'}
                and {'R.name like :hash_tag' if hash_tag else 'true'}
@@ -465,7 +465,7 @@ def track_map_all():
     key = (  # nosec
         hashlib.md5(  # nosec
             key_str.encode("utf-8"), usedforsecurity=False  # nosec
-        )  # nosec
+        ).hexdigest()  # nosec
         if key_str
         else None
     )  # nosec
