@@ -207,6 +207,20 @@ def index():
     # where you were not the legend. We use the ride effort id for ordering
     # rather than ride start date, because that lets you achieve legendary
     # status on one ride repeating the same segment.
+    # consider...
+    # CREATE EVENT refresh_legend_view
+    # ON SCHEDULE EVERY 4 HOURS STARTS '2026-01-01' ENDS '2026-03-21'
+    # DO
+    # BEGIN
+    #     TRUNCATE TABLE legend_view;
+    #     INSERT INTO legend_view (athlete_id, segment_id)
+    #     WITH unlegends as ..., legends as ...
+    #     SELECT L.athlete_id, L.segment_id
+    #     FROM legends L
+    #     JOIN unlegends U ON U.athlete_id = L.athlete_id
+    #                     AND U.segment_id = L.segment_id
+    #                     AND L.id > U.id;
+    # END;
     q = text(
         """
             with unlegends as (
