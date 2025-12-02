@@ -108,6 +108,14 @@ nav.bg-light {
     box-shadow: 0 2px 4px #ffffff80;
 }
 
+a.dropdown-item[href^="http"]::after {
+    content: '⤴';
+    margin-left: .25rem;
+    color: #ffffff80;
+    font-size: .66rem;
+    vertical-align: .25rem;
+}
+
 .user-profile {
     border-radius: var(--bs-border-radius) 0 0 var(--bs-border-radius);
     max-height: 10rem;
