@@ -207,7 +207,8 @@ def index():
     # where you were not the legend. We use the ride effort id for ordering
     # rather than ride start date, because that lets you achieve legendary
     # status on one ride repeating the same segment.
-    # consider...
+    # consider a materialized view...
+    #
     # CREATE EVENT refresh_legend_view
     # ON SCHEDULE EVERY 4 HOURS STARTS '2026-01-01' ENDS '2026-03-21'
     # DO
@@ -221,6 +222,13 @@ def index():
     #                     AND U.segment_id = L.segment_id
     #                     AND L.id > U.id;
     # END;
+    #
+    # Using lag is much slower:
+    # SELECT segment_id, athlete_id
+    # FROM (SELECT E.segment_id, R.athlete_id, E.local_legend,
+    #              LAG(local_legend) OVER (PARTITION BY E.segment_id, R.athlete_id ORDER BY E.id) AS previous_legend
+    #       FROM ride_efforts E join rides R on R.id = E.ride_id) AS subquery
+    # WHERE local_legend = TRUE AND previous_legend = FALSE;
     q = text(
         """
             with unlegends as (
