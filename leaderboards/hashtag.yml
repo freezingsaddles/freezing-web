@@ -22,6 +22,15 @@ tags:
       Tag rides with <code>#adulting</code> or <code>#freezingerrands</code>.
     rank_by_rides: True
 
+  - tag: beerneuring
+    name: Beerneuring
+    description: |
+      You must ride a bike (per contest rules – outdoors, no ELFs, etc) at least one mile to a brewing establishment and taste one beer that was brewed on site.
+      Tag your ride with with <code>#beerneuring</code>.
+    url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-bringing-back-beerneuring/
+    rank_by_rides: True
+    sponsor: jrenaut
+
   - tag: bob
     name: Baby on Board
     description: |
@@ -168,8 +177,10 @@ tags:
   - tag: publicartfinder
     name: Public Art Finder
     description: |
-      Rules TBD. Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
+      Rules in the forum post. Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
       Post to the forum on the linked thread.
+    url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-publicartfinder/
+    sponsor: karenbikes2
     rank_by_rides: True
 
   - tag: singlespeed
@@ -217,18 +228,24 @@ tags:
     name: Tandem
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
+    sponsor: shirag,greta
     rank_by_rides: True
 
   - tag: tandemVI
     name: Tandem - Visually Impaired
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
+    sponsor: shirag,greta
     rank_by_rides: True
 
   - tag: tandemKid
     name: Tandem Kid
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
+    url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
+    sponsor: shirag,greta
     rank_by_rides: True
 
   - tag: treats
@@ -237,6 +254,15 @@ tags:
       Find a street treat out in the wild while riding your bike.
     url: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
     rank_by_rides: True
+
+  - tag: UnderCon
+    name: Under Construction
+    description: |
+      Post a picture taken while on a bike ride of new transportation infrastructure under construction.
+      Tag your ride with with <code>#UnderCon</code>.
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-under-construction-prize/
+    rank_by_rides: True
+    sponsor: lordofthemark
 
   - tag: withkid
     name: Riding with Kids
