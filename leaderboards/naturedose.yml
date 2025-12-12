@@ -1,8 +1,10 @@
 ---
-title: Nature Rides
+title: NatureDose
 description: |
-  No, not that kind of nature ride. Number of minutes spent in nature, as measured by
+  Number of minutes spent in nature, as measured by
   <a href="https://www.naturequant.com/naturedose/" target="_blank" rel="noreferrer">NatureDose®</a>.
+sponsor: jlamb
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-naturedose/
 fields:
   - name: id
     visible: false
