@@ -18,6 +18,7 @@ class GenericBoardField(BaseMessage):
     label = None
     type = None  # Do we need this ...?  Yes, for formatting, for alignment.
     format = None
+    formatx = None
     visible: bool = True
     rank_by: bool = False
 
@@ -31,6 +32,8 @@ class GenericBoardField(BaseMessage):
         elif isinstance(v, (float, decimal.Decimal)):
             # '{number:.{digits}f}'.format(number=p, digits=n)
             # {:,}
+            if self.formatx:
+                return self.formatx.format(**dict(row._mapping))
             if self.format:
                 return self.format.format(v)
             else:
@@ -61,6 +64,7 @@ class GenericBoardFieldSchema(BaseSchema):
     label = fields.Str()
     type = fields.Str()
     format = fields.Str()
+    formatx = fields.Str()
     sponsor = fields.Str()
     visible = fields.Bool()
     rank_by = fields.Bool()
