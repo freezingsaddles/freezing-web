@@ -40,7 +40,7 @@ query: |
     lbd_athletes A join
     nature_rides R on R.athlete_id = A.id
   where
-    R.nature_minutes_tm < R.elapsed_time
+    R.nature_minutes_tm < R.elapsed_time / 60
   group by
     A.id
   having
