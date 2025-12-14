@@ -342,6 +342,10 @@ ul.pointless-menu {
     }
 }
 
+body:not(.logged-in) ul.pointless-menu li:has(.discord) a:last-child {
+    display: none;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
