@@ -31,6 +31,18 @@ tags:
     rank_by_rides: True
     sponsor: jrenaut
 
+  - tag: bikeshare
+    alt: cabi
+    name: Sharing is Caring
+    description: |
+      Use a bikeshare bike and log the ride with <code>#bikeshare</code> on strava
+      Whoever gets the most mileage wins!
+      Any bike that actually requires pedaling counts.
+      Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
+    rank_by_rides: False
+    sponsor: Thomas Esch
+
   - tag: bob
     name: Baby on Board
     description: |
@@ -55,7 +67,7 @@ tags:
       Ride your bike and play Bingo!
     rank_by_rides: True
 
-  - tag: cabi
+  - tag: cabixxx
     name: Capital Bikeshare Rides
     description: |
       Tag your rides on Capital Bikeshare (CaBi) with <code>#cabi</code> (eBike or red bike!) and whoever does the most miles will get a prize. The prize is likely to either be a CaBi embroidery or whatever I have in my bag at the final happy hour (up to and including trivial cash amounts or random stickers). Get riding!
@@ -149,6 +161,7 @@ tags:
 
   - tag: lolfunny
     alt: lolfunny26
+    name: LOL Funny
     description: |
       Ride 1+ miles and post a photo of something you find that is laugh-out-loud funny to YOU.
       Post the photo with the date of the post to the forum by midnight the same day along with what about it struck you as funny (unless it is obvious).
