@@ -67,7 +67,7 @@
         {% block head %}
         {% endblock %}
     </head>
-    <body>
+    <body class="{{'logged-in' if g.logged_in else ''}}">
         {% block beforenav %}
             {# put modal windows before the navbar, see: #}
             {# https://stackoverflow.com/a/13368485/217080 #}
