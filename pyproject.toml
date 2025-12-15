@@ -29,7 +29,7 @@ dependencies = [
     "Flask==3.1.2",
     "PyMySQL[rsa]==1.1.2",
     "PyYAML==6.0.3",
-    "SQLAlchemy==2.0.44",
+    "SQLAlchemy==2.0.45",
     # Thanks https://stackoverflow.com/a/77214086/424301 - Flask did not pin Werkzeug dep
     "Werkzeug==3.1.4",
     "arrow==1.4.0",
