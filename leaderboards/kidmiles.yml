@@ -2,14 +2,14 @@
 title: Kidical Rides & Miles
 description: |
   For the Saddlero who carries or tows kids the farthest.
-url: https://www.bikearlingtonforum.com/forums/topic/fs-2025-pointless-kids-prizes/
+url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
 sponsor: chill-dad
 fields:
   - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: kidical_miles
     label: Kidical Miles
     rank_by: true

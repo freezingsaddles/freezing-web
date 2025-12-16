@@ -572,6 +572,8 @@ def authorization():
         auth.login_athlete(strava_athlete)
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
     after_competition_start = datetime.now(config.TIMEZONE) > config.START_DATE
+    if message:
+        log.info("Authorization message: {}".format(message))
     return render_template(
         "authorization_success.html",
         after_competition_start_start=after_competition_start,
