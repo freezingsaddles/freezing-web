@@ -20,6 +20,7 @@ from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, Team
 from sqlalchemy import func, text
 from stravalib import Client
+from stravalib.exc import Fault
 
 from freezing.web import app, config, data
 from freezing.web.autolog import log
@@ -541,6 +542,9 @@ def authorization():
         message = "Local development enabled"
     else:
         code = request.args.get("code")
+        scope = request.args.get("scope")
+        state = request.args.get("state")
+        log.info("Auth code: {}, scope: {}, state: {}".format(code, scope, state))
         client = Client()
         token_dict = client.exchange_code_for_token(
             client_id=config.STRAVA_CLIENT_ID,
