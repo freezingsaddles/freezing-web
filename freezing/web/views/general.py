@@ -20,7 +20,6 @@ from freezing.model import meta
 from freezing.model.orm import Athlete, Ride, RidePhoto, Team
 from sqlalchemy import func, text
 from stravalib import Client
-from stravalib.exc import Fault
 
 from freezing.web import app, config, data
 from freezing.web.autolog import log
