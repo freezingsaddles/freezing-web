@@ -551,6 +551,15 @@ def authorization():
         strava_athlete = client.get_athlete()
         try:
             athlete = data.register_athlete(strava_athlete, token_dict)
+            log.info(
+                "Received athlete auth [id: {}, name: {}] [at: {}, rt: {}, exp: {}]".format(
+                    athlete.id,
+                    athlete.name,
+                    athlete.access_token,
+                    athlete.refresh_token,
+                    athlete.expires_at,
+                )
+            )
             team = data.register_athlete_team(
                 strava_athlete=strava_athlete,
                 athlete_model=athlete,
