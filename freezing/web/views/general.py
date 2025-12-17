@@ -553,6 +553,7 @@ def authorization():
         )
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
+        log.info("Strava athlete: {}", str(strava_athlete))
         try:
             athlete = data.register_athlete(strava_athlete, token_dict)
             log.info(
