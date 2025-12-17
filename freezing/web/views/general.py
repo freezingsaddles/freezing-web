@@ -541,6 +541,9 @@ def authorization():
         message = "Local development enabled"
     else:
         code = request.args.get("code")
+        scope = request.args.get("scope")
+        state = request.args.get("state")
+        log.info("Auth code: {}, scope: {}, state: {}".format(code, scope, state))
         client = Client()
         token_dict = client.exchange_code_for_token(
             client_id=config.STRAVA_CLIENT_ID,
@@ -549,6 +552,7 @@ def authorization():
         )
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
+        log.info("Strava athlete: {}", str(strava_athlete))
         try:
             athlete = data.register_athlete(strava_athlete, token_dict)
             log.info(
