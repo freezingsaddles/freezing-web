@@ -1,9 +1,11 @@
+import math
 import operator
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, render_template, request
 from freezing.model import meta
-from sqlalchemy import text
+from freezing.model.orm import Ride, RidePhoto
+from sqlalchemy import func, text
 
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
@@ -122,6 +124,57 @@ def hashtag_leaderboard(hashtag):
         "pointless/hashtag.html",
         data={"tdata": tdata, "hashtag": "#" + ht, "hashtag_notag": ht},
         meta=meta,
+    )
+
+
+@blueprint.route("/phototag/<string:hashtag>")
+def phototag_leaderboard(hashtag):
+    hmeta = load_hashtag(hashtag)
+    ht = hmeta.tag if hmeta else "".join(ch for ch in hashtag if ch.isalnum())
+
+    page = int(request.args.get("page", 1))
+    if page < 1:
+        page = 1
+    date = request.args.get("date")
+
+    page_size = 60
+    offset = page_size * (page - 1)
+    limit = page_size
+
+    total_q = (
+        meta.scoped_session()
+        .query(RidePhoto)
+        .join(Ride)
+        .filter(Ride.name.like("%#{}%".format(ht)))
+        .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
+    )
+    if date:
+        total_q = total_q.filter(
+            func.date(func.convert_tz(Ride.start_date, Ride.timezone, config.TIMEZONE))
+            == date
+        )
+
+    num_photos = total_q.count()
+
+    page_q = total_q.limit(limit).offset(offset)
+
+    if num_photos < offset:
+        page = 1
+
+    total_pages = int(math.ceil((1.0 * num_photos) / page_size))
+
+    if page > total_pages:
+        page = total_pages
+
+    return render_template(
+        "pointless/phototag.html",
+        data={"hashtag": "#" + ht, "hashtag_notag": ht},
+        meta=hmeta,
+        photos=[photo for photo in page_q],
+        page=page,
+        total_pages=total_pages,
+        date=datetime.fromisoformat(date) if date else "",
+        datestr=date,
     )
 
 

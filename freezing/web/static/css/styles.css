@@ -342,6 +342,11 @@ ul.pointless-menu {
     }
 }
 
+.title-date {
+    font-size: 1rem;
+    margin-top: .375rem;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
