@@ -160,7 +160,7 @@ def phototag_leaderboard(hashtag):
                 P.id, P.caption, P.img_l, R.*
             from
                 tagged_rides R join
-                ride_photos P ON p.ride_id = R.ride_id
+                ride_photos P ON P.ride_id = R.ride_id
             where
                 P.primary
         ), tagged_photos as (

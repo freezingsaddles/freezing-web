@@ -65,8 +65,8 @@
                     {# djlint:off #}
                     data-footer='<p class="caption">{{ photo.caption or '' | safe }}</p><p>Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a></p>'
                     style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');"
-                  >
                     {# djlint:on #}
+                    >
                 </a>
             {% endfor %}
         </div>
