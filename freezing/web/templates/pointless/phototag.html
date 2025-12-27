@@ -29,8 +29,11 @@
                 Sponsored by
                 {% for sp in sponsors %}
                     {# djlint:off #}
-                      <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sp }}/">{{ sp }}</a></em>{% if loop.last %}.{% else %}, {% endif %}
-                    {# djlint:on #}
+  <em
+    ><a href="https://www.bikearlingtonforum.com/forums/users/{{ sp }}/"
+      >{{ sp }}</a
+    ></em
+                    >{% if loop.last %}.{% else %}, {% endif %} {# djlint:on #}
                 {% endfor %}
             </p>
         {% else %}
@@ -50,15 +53,21 @@
         </p>
     {% endif %}
     {% if photos %}
-        <div class="photo-grid my-4 gap-lg-4">
+        <div class="photo-grid my-4 gap-lg-4 gallery-wrapper">
             {% for photo in photos %}
-                <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+                <a
+                    href="{{ photo.img_l }}"
+                    data-toggle="lightbox"
+                    data-gallery="multiimages"
                     class="photo-thumbnail"
-                    data-title="{{ photo.caption | default(photo.ride.name, true) }}"
+                    data-title="{{ photo.name }}"
                     data-parent=".gallery-wrapper"
-                    {# djlint:off #}
-                data-footer='<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
-                style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
+                    {#
+    djlint:off
+    #}
+                        data-footer='<p class="caption">{{ photo.caption or '' | safe }}</p><p>Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a></p>'
+                        style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');"
+                      >
                     {# djlint:on #}
                 </a>
             {% endfor %}
@@ -88,11 +97,11 @@
 {% endblock %}
 {% block foot %}
     <script type="text/javascript">
-$(function() {
-	$('#date-picker').on('change', (e) => {
-    const date = e.target.value;
-    document.location.search = date ? `?date=${date}` : '';
-	});
-});
+  $(function () {
+    $("#date-picker").on("change", (e) => {
+      const date = e.target.value;
+      document.location.search = date ? `?date=${date}` : "";
+    });
+  });
     </script>
 {% endblock %}

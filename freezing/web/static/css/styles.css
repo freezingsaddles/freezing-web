@@ -84,6 +84,20 @@ table.dataTable.no-footer {
     }
 }
 
+.ekko-lightbox .modal-footer {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    white-space: nowrap;
+    gap: .5rem;
+
+    .caption {
+      min-width: 0;
+      flex-shrink: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+}
+
 .ekko-lightbox-container .img-responsive {
     border-radius: .25rem;
     max-width: 100%;
@@ -345,6 +359,23 @@ ul.pointless-menu {
 .title-date {
     font-size: 1rem;
     margin-top: .375rem;
+}
+
+.glyphicon::after {
+    display: block;
+    transform: translateY(-1rem);
+    position: absolute;
+    text-decoration: none !important;
+}
+
+.glyphicon.glyphicon-chevron-left::after {
+    content: '◀';
+    left: 1rem;
+}
+
+.glyphicon.glyphicon-chevron-right::after {
+    content: '▶';
+    right: 1rem;
 }
 
 @media (min-width: 576px) {

@@ -137,26 +137,87 @@ def phototag_leaderboard(hashtag):
         page = 1
     date = request.args.get("date")
 
-    page_size = 60
+    page_size = 24
     offset = page_size * (page - 1)
     limit = page_size
 
-    total_q = (
-        meta.scoped_session()
-        .query(RidePhoto)
-        .join(Ride)
-        .filter(Ride.name.like("%#{}%".format(ht)))
-        .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
-    )
-    if date:
-        total_q = total_q.filter(
-            func.date(func.convert_tz(Ride.start_date, Ride.timezone, config.TIMEZONE))
-            == date
+    # clunky query so if a tagged ride has tagged photos then include
+    # those, else include its primary photo.
+    with_union_photos = """
+        with tagged_rides as (
+            select
+                R.id AS ride_id,
+                R.name,
+                R.athlete_id,
+                convert_tz(R.start_date, R.timezone, :tz) AS start_date,
+                A.display_name
+            from
+                rides R join athletes A on A.id = R.athlete_id
+            where
+                R.name like :tag and
+                (:date is null or date(R.start_date) = :date)
+        ), primary_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON p.ride_id = R.ride_id
+            where
+                P.primary
+        ), tagged_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON P.ride_id = R.ride_id
+            where
+                P.caption like :tag
+        ), union_photos as (
+            select
+                P.*
+            from
+                tagged_photos P
+            union all
+            select
+                P.*
+            from
+                primary_photos P
+            where
+                P.ride_id not in (select ride_id from tagged_photos)
         )
+        """
 
-    num_photos = total_q.count()
+    total_q = text(
+        f"""
+        {with_union_photos}
+        select
+            count(P.id)
+        from
+            union_photos P
+        """
+    ).bindparams(tz=config.TIMEZONE, tag="%#{}%".format(ht), date=date)
+    num_photos = meta.scoped_session().execute(total_q).scalar_one()
 
-    page_q = total_q.limit(limit).offset(offset)
+    photo_q = text(
+        f"""
+        {with_union_photos}
+        select
+            P.*
+        from
+            union_photos P
+        order by
+            P.start_date desc
+        limit :limit
+        offset :offset
+        """
+    ).bindparams(
+        tz=config.TIMEZONE,
+        tag="%#{}%".format(ht),
+        date=date,
+        offset=offset,
+        limit=limit,
+    )
+    photos = meta.scoped_session().execute(photo_q)
 
     if num_photos < offset:
         page = 1
@@ -170,7 +231,7 @@ def phototag_leaderboard(hashtag):
         "pointless/phototag.html",
         data={"hashtag": "#" + ht, "hashtag_notag": ht},
         meta=hmeta,
-        photos=[photo for photo in page_q],
+        photos=[photo for photo in photos],
         page=page,
         total_pages=total_pages,
         date=datetime.fromisoformat(date) if date else "",
