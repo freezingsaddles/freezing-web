@@ -4,8 +4,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, abort, render_template, request
 from freezing.model import meta
-from freezing.model.orm import Ride, RidePhoto
-from sqlalchemy import func, text
+from sqlalchemy import text
 
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
