@@ -1,19 +1,17 @@
 {% extends "base.html" %}
-{% block head %}
-{% endblock %}
 {% block content %}
     <div class="gallery-wrapper">
-        <h1 class="page-header mb-4">
+        <h2 class="page-header mb-4">
             Competition Photos
-        </h1>
-        <div class="photo-grid mb-4 gap-lg-4">
+        </h2>
+        <div class="photo-grid mb-4 gap-lg-4 gallery-wrapper">
             {% for photo in photos %}
                 <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
                     class="photo-thumbnail"
-                    data-title="{{ photo.caption | default(photo.ride.name, true) }}"
+                    data-title="{{ photo.ride.name }}"
                     data-parent=".gallery-wrapper"
                     {# djlint:off #}
-                    data-footer='<p>Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
+                    data-footer='<p class="caption">{{ photo.caption or '' | safe }}</p><p>Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
                     style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
                     {# djlint:on #}
                 </a>
@@ -25,6 +23,9 @@
                 <li class="page-item {% if page == 1 %}disabled{% endif %}">
                     <a class="page-link"
                        href="{% if page > 1 %}{{ url_for('photos.index', page=page-1) }}{% else %}#{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">Page {{ page }} of {{ total_pages }}</a>
                 </li>
                 <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
                     <a class="page-link"

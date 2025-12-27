@@ -215,7 +215,8 @@ tags:
   - tag: scavhunt
     name: Photo Scavenger Hunt
     description: |
-      Ride your bike to find the word of the day and post its photo on the forum.
+      Ride your bike to find the word of the day, photograph it, tag your ride <code>#scavhunt</code>
+      and add the photo to the ride in Strava.
     rank_by_rides: True
 
   - tag: socks

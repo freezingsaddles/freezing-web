@@ -47,6 +47,8 @@ custom_tag_pages = {
     "rosshillloop": "rosshillloop",
     "withkid": "generic/pointlesskids",
     "poggio": "segment/650024",
+    "scavhunt": "phototag/scavhunt",
+    "lolfunny": "phototag/lolfunny",
 }
 
 

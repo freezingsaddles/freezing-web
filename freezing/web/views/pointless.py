@@ -1,7 +1,8 @@
+import math
 import operator
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, render_template, request
 from freezing.model import meta
 from sqlalchemy import text
 
@@ -122,6 +123,118 @@ def hashtag_leaderboard(hashtag):
         "pointless/hashtag.html",
         data={"tdata": tdata, "hashtag": "#" + ht, "hashtag_notag": ht},
         meta=meta,
+    )
+
+
+@blueprint.route("/phototag/<string:hashtag>")
+def phototag_leaderboard(hashtag):
+    hmeta = load_hashtag(hashtag)
+    ht = hmeta.tag if hmeta else "".join(ch for ch in hashtag if ch.isalnum())
+
+    page = int(request.args.get("page", 1))
+    if page < 1:
+        page = 1
+    date = request.args.get("date")
+
+    page_size = 24
+    offset = page_size * (page - 1)
+    limit = page_size
+
+    # clunky query so if a tagged ride has tagged photos then include
+    # those, else include its primary photo.
+    with_union_photos = """
+        with tagged_rides as (
+            select
+                R.id AS ride_id,
+                R.name,
+                R.athlete_id,
+                convert_tz(R.start_date, R.timezone, :tz) AS start_date,
+                A.display_name
+            from
+                rides R join athletes A on A.id = R.athlete_id
+            where
+                R.name like :tag and
+                (:date is null or date(R.start_date) = :date)
+        ), primary_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON p.ride_id = R.ride_id
+            where
+                P.primary
+        ), tagged_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON P.ride_id = R.ride_id
+            where
+                P.caption like :tag
+        ), union_photos as (
+            select
+                P.*
+            from
+                tagged_photos P
+            union all
+            select
+                P.*
+            from
+                primary_photos P
+            where
+                P.ride_id not in (select ride_id from tagged_photos)
+        )
+        """
+
+    total_q = text(
+        f"""
+        {with_union_photos}
+        select
+            count(P.id)
+        from
+            union_photos P
+        """
+    ).bindparams(tz=config.TIMEZONE, tag="%#{}%".format(ht), date=date)
+    num_photos = meta.scoped_session().execute(total_q).scalar_one()
+
+    photo_q = text(
+        f"""
+        {with_union_photos}
+        select
+            P.*
+        from
+            union_photos P
+        order by
+            P.start_date desc
+        limit :limit
+        offset :offset
+        """
+    ).bindparams(
+        tz=config.TIMEZONE,
+        tag="%#{}%".format(ht),
+        date=date,
+        offset=offset,
+        limit=limit,
+    )
+    photos = meta.scoped_session().execute(photo_q)
+
+    if num_photos < offset:
+        page = 1
+
+    total_pages = int(math.ceil((1.0 * num_photos) / page_size))
+
+    if page > total_pages:
+        page = total_pages
+
+    return render_template(
+        "pointless/phototag.html",
+        data={"hashtag": "#" + ht, "hashtag_notag": ht},
+        meta=hmeta,
+        photos=[photo for photo in photos],
+        page=page,
+        total_pages=total_pages,
+        date=datetime.fromisoformat(date) if date else "",
+        datestr=date,
     )
 
 
