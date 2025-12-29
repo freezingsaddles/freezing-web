@@ -76,11 +76,11 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
     orderby 'miles', 'rides' or 'days'
     """
     sess = meta.scoped_session()
-    rank_by = 'hashtag_miles'
-    if orderby == 'days':
-        rank_by = 'hashtag_days'
-    elif orderby == 'rides':
-        rank_by = 'hashtag_rides'
+    rank_by = "hashtag_miles"
+    if orderby == "days":
+        rank_by = "hashtag_days"
+    elif orderby == "rides":
+        rank_by = "hashtag_rides"
     q = text(
         f"""
         with htdata as (
@@ -108,7 +108,9 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
             H.{rank_by} desc, lower(H.athlete_name) asc
         """
     )
-    rs = sess.execute(q, params=dict(hashtag=hashtag, alttag=alttag or hashtag, tz = config.TIMEZONE))
+    rs = sess.execute(
+        q, params=dict(hashtag=hashtag, alttag=alttag or hashtag, tz=config.TIMEZONE)
+    )
     retval = [
         (
             x._mapping["id"],
@@ -127,7 +129,7 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
     ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
-    rank_by = meta.rank_by if meta else 'miles'
+    rank_by = meta.rank_by if meta else "miles"
     tdata = _get_hashtag_tdata(
         hashtag=ht,
         alttag=meta.alt if meta else None,
