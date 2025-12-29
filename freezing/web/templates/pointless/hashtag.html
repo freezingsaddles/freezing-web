@@ -93,23 +93,29 @@
                             <th>
                                 Rider
                             </th>
+                            {% if meta and meta.rank_by == 'days' %}
+                            <th class="number">
+                                Ride Days
+                            </th>
+                            {% else %}
                             <th class="number">
                                 Rides
                             </th>
+                            {% endif %}
                             <th class="number">
                                 Distance
                             </th>
                         </tr>
-                        {% for a, b, c, d in data.tdata %}
+                        {% for a, b, c, d, e, f in data.tdata %}
                             <tr class="{{ a | myself }}">
                                 <td class="number rank">
-                                    {{ loop.index }}
+                                    {{ f }}
                                 </td>
                                 <td>
                                     <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
                                 </td>
                                 <td class="number">
-                                    {{ c }}
+                                    {{ e if meta and meta.rank_by == 'days' else c }}
                                 </td>
                                 <td class="number">
                                     {{ d | round(1) }} mi
