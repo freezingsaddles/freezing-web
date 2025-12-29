@@ -168,6 +168,7 @@ tags:
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-lolfunny26-is-back/
     sponsor: bikingjenn
     rank_by: days
+    default_view: photos
 
   - tag: londonbridge
     name: London Bridge
@@ -205,14 +206,6 @@ tags:
     sponsor: karenbikes2
     rank_by: rides
 
-  - tag: singlespeed
-    name: Singlespeed
-    description: |
-      Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
-    sponsor: jlamb
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
-    rank_by: miles
-
   - tag: scavhunt
     name: Photo Scavenger Hunt
     description: |
@@ -220,6 +213,15 @@ tags:
       and add the photo to the ride in Strava. If you have multiple photos, tag just one of them
       with <code>#scavhunt</code> in the photo description.
     rank_by: days
+    default_view: photos
+
+  - tag: singlespeed
+    name: Singlespeed
+    description: |
+      Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
+    sponsor: jlamb
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
+    rank_by: miles
 
   - tag: socks
     name: Socks

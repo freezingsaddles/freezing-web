@@ -122,31 +122,10 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
         )
         for x in rs.fetchall()
     ]
-    return retval
+    return {"tdata": retval}
 
 
-@blueprint.route("/hashtag/<string:hashtag>")
-def hashtag_leaderboard(hashtag):
-    meta = load_hashtag(hashtag)
-    ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
-    rank_by = meta.rank_by if meta else "miles"
-    tdata = _get_hashtag_tdata(
-        hashtag=ht,
-        alttag=meta.alt if meta else None,
-        orderby=rank_by,
-    )
-    return render_template(
-        "pointless/hashtag.html",
-        data={"tdata": tdata, "hashtag": "#" + ht, "hashtag_notag": ht},
-        meta=meta,
-    )
-
-
-@blueprint.route("/phototag/<string:hashtag>")
-def phototag_leaderboard(hashtag):
-    hmeta = load_hashtag(hashtag)
-    ht = hmeta.tag if hmeta else "".join(ch for ch in hashtag if ch.isalnum())
-
+def _get_phototag_tdata(request, hashtag):
     page = int(request.args.get("page", 1))
     if page < 1:
         page = 1
@@ -210,7 +189,7 @@ def phototag_leaderboard(hashtag):
         from
             union_photos P
         """
-    ).bindparams(tz=config.TIMEZONE, tag="%#{}%".format(ht), date=date)
+    ).bindparams(tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date)
     num_photos = meta.scoped_session().execute(total_q).scalar_one()
 
     photo_q = text(
@@ -227,7 +206,7 @@ def phototag_leaderboard(hashtag):
         """
     ).bindparams(
         tz=config.TIMEZONE,
-        tag="%#{}%".format(ht),
+        tag=f"%#{hashtag}%",
         date=date,
         offset=offset,
         limit=limit,
@@ -242,15 +221,42 @@ def phototag_leaderboard(hashtag):
     if page > total_pages:
         page = total_pages
 
+    return {
+        "photos": [photo for photo in photos],
+        "page": page,
+        "total_pages": total_pages,
+        "date": datetime.fromisoformat(date) if date else "",
+        "datestr": date,
+    }
+
+
+@blueprint.route("/hashtag/<string:hashtag>")
+def hashtag_leaderboard(hashtag):
+    meta = load_hashtag(hashtag)
+    ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
+    rank_by = meta.rank_by if meta else "miles"
+    default_view = meta.default_view if meta else None
+    view = request.args.get("view", default_view or "leaderboard")
+
+    args = {}
+    if view == "leaderboard":
+        args = _get_hashtag_tdata(
+            hashtag=ht,
+            alttag=meta.alt if meta else None,
+            orderby=rank_by,
+        )
+    elif view == "photos":
+        args = _get_phototag_tdata(request=request, hashtag=ht)
+
     return render_template(
-        "pointless/phototag.html",
-        data={"hashtag": "#" + ht, "hashtag_notag": ht},
-        meta=hmeta,
-        photos=[photo for photo in photos],
-        page=page,
-        total_pages=total_pages,
-        date=datetime.fromisoformat(date) if date else "",
-        datestr=date,
+        "pointless/hashtag.html",
+        **{
+            "hashtag": f"#{ht}",
+            "hashtag_notag": ht,
+            "meta": meta,
+            "view": view,
+            **args,
+        },
     )
 
 

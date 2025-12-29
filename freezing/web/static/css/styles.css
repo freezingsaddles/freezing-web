@@ -356,9 +356,9 @@ ul.pointless-menu {
     }
 }
 
-.title-date {
-    font-size: 1rem;
-    margin-top: .375rem;
+.photo-date-picker {
+    align-self: center;
+    margin-left: auto;
 }
 
 .glyphicon::after {
