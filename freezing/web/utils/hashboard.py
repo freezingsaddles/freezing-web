@@ -17,6 +17,7 @@ class HashtagBoardTag(BaseMessage):
     sponsor = None
     url = None
     rank_by = None
+    default_view = None
 
 
 class HashtagBoardTagSchema(BaseSchema):
@@ -29,6 +30,7 @@ class HashtagBoardTagSchema(BaseSchema):
     sponsor = fields.Str()
     url = fields.Str()
     rank_by = fields.Str()
+    default_view = fields.Str()
 
 
 class HashtagBoard(BaseMessage):
