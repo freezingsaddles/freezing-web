@@ -71,53 +71,69 @@ def points_per_mile():
     )
 
 
-def _get_hashtag_tdata(hashtag, alttag, orderby=1):
+def _get_hashtag_tdata(hashtag, alttag, orderby):
     """
-    if orderby = 1 then order by mileage. Else by #rides
+    orderby 'miles', 'rides' or 'days'
     """
     sess = meta.scoped_session()
-    if orderby == 1:
-        sortkeyidx = (3, 2)
-    else:
-        sortkeyidx = (2, 3)
+    rank_by = "hashtag_miles"
+    if orderby == "days":
+        rank_by = "hashtag_days"
+    elif orderby == "rides":
+        rank_by = "hashtag_rides"
     q = text(
-        """
+        f"""
+        with htdata as (
+            select
+                A.id,
+                A.display_name as athlete_name,
+                count(R.id) as hashtag_rides,
+                sum(R.distance) as hashtag_miles,
+                count(distinct date(convert_tz(R.start_date, R.timezone, :tz))) as hashtag_days
+            from
+                athletes A join
+                rides R on R.athlete_id = A.id
+            where
+                R.name like concat('%', '#', :hashtag, '%') or
+                R.name like concat('%', '#', :alttag, '%')
+            group by
+                A.id, A.display_name
+        )
         select
-            A.id,
-            A.display_name as athlete_name,
-            count(R.id) as hashtag_rides,
-            sum(R.distance) as hashtag_miles
+            H.*,
+            rank() over (order by H.{rank_by} desc) as hashtag_rank
         from
-            athletes A join
-            rides R on R.athlete_id = A.id
-        where
-            R.name like concat('%', '#', :hashtag, '%') or
-            R.name like concat('%', '#', :alttag, '%')
-        group by
-            A.id, A.display_name;
+            htdata H
+        order by
+            H.{rank_by} desc, lower(H.athlete_name) asc
         """
     )
-    rs = sess.execute(q, params=dict(hashtag=hashtag, alttag=alttag or hashtag))
+    rs = sess.execute(
+        q, params=dict(hashtag=hashtag, alttag=alttag or hashtag, tz=config.TIMEZONE)
+    )
     retval = [
         (
             x._mapping["id"],
             x._mapping["athlete_name"],
             x._mapping["hashtag_rides"],
             x._mapping["hashtag_miles"],
+            x._mapping["hashtag_days"],
+            x._mapping["hashtag_rank"],
         )
         for x in rs.fetchall()
     ]
-    return sorted(retval, key=operator.itemgetter(*sortkeyidx), reverse=True)
+    return retval
 
 
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
     ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
+    rank_by = meta.rank_by if meta else "miles"
     tdata = _get_hashtag_tdata(
         hashtag=ht,
         alttag=meta.alt if meta else None,
-        orderby=1 if meta is None or not meta.rank_by_rides else 2,
+        orderby=rank_by,
     )
     return render_template(
         "pointless/hashtag.html",

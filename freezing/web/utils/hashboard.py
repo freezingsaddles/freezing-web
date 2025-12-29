@@ -16,7 +16,7 @@ class HashtagBoardTag(BaseMessage):
     description = None
     sponsor = None
     url = None
-    rank_by_rides = False
+    rank_by = None
 
 
 class HashtagBoardTagSchema(BaseSchema):
@@ -28,7 +28,7 @@ class HashtagBoardTagSchema(BaseSchema):
     description = fields.Str(required=True)
     sponsor = fields.Str()
     url = fields.Str()
-    rank_by_rides = fields.Bool()
+    rank_by = fields.Str()
 
 
 class HashtagBoard(BaseMessage):

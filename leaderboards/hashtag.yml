@@ -4,13 +4,13 @@ tags:
     name: Expand Your Horizons
     description: |
       Ride to a cannabis dispensary and take a picture of it. Tag rides with <code>#420</code> (or whatever, man). Limit one dispensary per day. All participants must be 21 years old or older!
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: abc
     name: Vehicle ABCs
     description: |
       find and photograph the vehicles WHILE on a bike ride. Use the hashtag <code>#abc</code> and post to the forum.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: adulting
     alt: freezingerrands
@@ -20,7 +20,7 @@ tags:
       Grocery store, post office, pharmacy dentist, manicurist, gym, farmers market, dry cleaning, bike shop, library, etc.
       Commutes, coffee rides, kid pick up / drop off do not count.
       Tag rides with <code>#adulting</code> or <code>#freezingerrands</code>.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: beerneuring
     name: Beerneuring
@@ -28,7 +28,7 @@ tags:
       You must ride a bike (per contest rules – outdoors, no ELFs, etc) at least one mile to a brewing establishment and taste one beer that was brewed on site.
       Tag your ride with with <code>#beerneuring</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-bringing-back-beerneuring/
-    rank_by_rides: True
+    rank_by: rides
     sponsor: jrenaut
 
   - tag: bikeshare
@@ -40,45 +40,45 @@ tags:
       Any bike that actually requires pedaling counts.
       Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
-    rank_by_rides: False
+    rank_by: miles
     sponsor: Thomas Esch
-
-  - tag: bob
-    name: Baby on Board
-    description: |
-      Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with <code>#BoB</code>.
-    rank_by_rides: True
 
   - tag: biathlon
     name: Biathlon
     description: |
       No not skiing plus target shooting - let's do a different kind of sports duo. Ride your bike to a WINTER sport - post the story here. Whoever has the best story of riding to ice skating or skiing or whatever will win some kind of prize. Maybe there will be more than one prize. We shall see.
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: bikeinfrastructure
     name: Bike Infrastructure
     description: |
       Find publicly accessible cool infrastructure that makes our cycling lives easier. Tag with <code>#BikeInfrastructure</code>.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: bingo
     name: Bicycle Bingo
     description: |
       Ride your bike and play Bingo!
-    rank_by_rides: True
+    rank_by: days
+
+  - tag: bob
+    name: Baby on Board
+    description: |
+      Remember the ubiquitous yellow caution sign “Baby of Board” signs of the 1980s?  Well, this year, snap a photo each time to see a unique design/style of one during a ride, share it on your Strava ride and hashtag your Strava ride title with <code>#BoB</code>.
+    rank_by: rides
 
   - tag: cabixxx
     name: Capital Bikeshare Rides
     description: |
       Tag your rides on Capital Bikeshare (CaBi) with <code>#cabi</code> (eBike or red bike!) and whoever does the most miles will get a prize. The prize is likely to either be a CaBi embroidery or whatever I have in my bag at the final happy hour (up to and including trivial cash amounts or random stickers). Get riding!
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: civilwarforts
     name: Civil War Forts
     description: |
       During the American Civil War (1861-1865) Washington was surrounded by a chain of fortifications. Mostly in DC and northern Virginia, I think maybe a couple in Maryland.
       Your mission, should you choose to accept it, is to ride to as many of them as possible, take a photo of your bike there, and post the hashtag <code>#civilwarforts</code> on Strava.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: Deflated
     name: Don’t be deflated this prize is for you!
@@ -86,18 +86,18 @@ tags:
       Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code>, the person with
       the most flats wins! Well, loses.
     url: https://www.bikearlingtonforum.com/forums/topic/deflated-pointless-prize/
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: fire
     name: Fire bad!
     description: |
       Ride your bike and take photo of the fire stations.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: donut
     name: Doughnut Rides
     description: Eat doughnuts, tag <code>#donut</code>, intrinsically win?
-    rank_by_rides: True
+    rank_by: rides
 
   # This is a first cut of an implementation for this, to really hew to the rules would be much more
   # complicated - involving excluding rides that are < 5 miles (per day maybe?) and geofencing rides to the DMV.
@@ -105,59 +105,59 @@ tags:
     name: First Time Riders
     description: |
       Ride your bike outside at least 5 miles every day from February 1 to the end of Freezing Saddles. Use the hashtag  <code>#FirstTimeFS</code> on each ride.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: flag
     name: Flag
     description: |
       Take a photo of a flag on your ride.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: freezingerrands
     name: Errandeering
     description: |
       Use your bike to run errands - not commuting, not fun stuff. Sometimes pronounced Errandaneuring.
       Tag with <code>#FreezingErrands</code>.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: fswormhole
     name: Wormholes
     description: |
       Find clever connections between places or tears in spacetime (tagged with <code>#FSWormhole</code>).
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: goldenspike
     name: Golden Spike
     description: |
       Ride your bike to a metro or train station and post a photo.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-golden-spike-award/
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: groupridegroupie
     name: Group Ride Groupie
     description: |
       The person who joins the most group rides.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: grouprideguru
     name: Group Ride Guru
     description: |
       The person who organizes and leads the most amount of Freezing Saddles group rides.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: heroesworkhere
     name: Heroes Work Here
     description: |
       Heroes can be anywhere -- a hospital, school, grocery store, or police station. Find a sign
       that thanks them, take a picture, and tag your ride <code>#HeroesWorkHere</code>.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: lakefinder
     name: Lake Finder
     description: |
       Ride your bike a least a mile to any lake, pond or massive impounded body of water (loosely defined) that is freely accessible
       to the public. Tag with <code>#LakeFinder</code>.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: lolfunny
     alt: lolfunny26
@@ -167,19 +167,20 @@ tags:
       Post the photo with the date of the post to the forum by midnight the same day along with what about it struck you as funny (unless it is obvious).
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-lolfunny26-is-back/
     sponsor: bikingjenn
+    rank_by: days
 
   - tag: londonbridge
     name: London Bridge
     description: |
       Number of rides where you fell 😨🚲😱 (tagged with <code>#londonbridge</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/ww-london-bridge-pointless-prize-log/
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: oldGeorge
     name: Old Georgetown Bike Lane
     description: |
       Ride some or all part from Cedar Lane to Pike & Rose in Bethesda - and tag your ride with <code>#oldGeorge</code> to show your support for the bike lane on that stretch of road.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: parks
     name: Park Finder
@@ -187,13 +188,13 @@ tags:
       Ride a bike to a park, post the ride to Strava with <code>#parks</code> in the title. Each park is one point.
       No daily limit, but you’ll have to break your ride into multiple Strava rides with <code>#parks</code>
       in the title to tabulate correctly. Must be a unique park to qualify in the scoring–no repeats.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: pizza
     name: Pizzaneuring
     description: |
       Ride for pizza, eat pizza, and post a photo.
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: publicartfinder
     name: Public Art Finder
@@ -202,7 +203,7 @@ tags:
       Post to the forum on the linked thread.
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-publicartfinder/
     sponsor: karenbikes2
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: singlespeed
     name: Singlespeed
@@ -210,20 +211,21 @@ tags:
       Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
     sponsor: jlamb
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: scavhunt
     name: Photo Scavenger Hunt
     description: |
       Ride your bike to find the word of the day, photograph it, tag your ride <code>#scavhunt</code>
-      and add the photo to the ride in Strava.
-    rank_by_rides: True
+      and add the photo to the ride in Strava. If you have multiple photos, tag just one of them
+      with <code>#scavhunt</code> in the photo description.
+    rank_by: days
 
   - tag: socks
     name: Socks
     description: |
       Show off your socks! Use the #SOCKS hashtag in your Strava titles, or drop photos in the linked forum thread.
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: stem
     name: STEM
@@ -231,20 +233,20 @@ tags:
       Ride your bike, at least a mile, to any site related to
       Science, Technology, Engineering, or Mathematics (STEM) and take a picture with your bike.
       Tag with <code>#STEM</code>.
-    rank_by_rides: False
+    rank_by: miles
 
   - tag: thetacoride
     name: The Taco Ride
     description: |
       Of course, you know there are lots of taco places in the DMV area. And there is no better way re-energize during a ride or end a long ride with some tacos! For this pointless prize, simply ride your bike at least 5 miles round trip and snap a pic of your bike in front of the establishment, along with a pic of your meal. <strong>A BONUS POINT WILL BE GIVEN FOR A VEGAN OR VEGGIE TACO!</strong>
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: tandemstyle
     name: Tandem Style
     description: |
       If you see a tandem, snap a picture, put it in your Strava, and tag with <code>#tandemstyle</code>.
       If you see Russ @DCA & Elizabeth I Like Wheels on Miss MoneyPenny, snap that picture for 5 points extra!
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: tandem
     name: Tandem
@@ -252,7 +254,7 @@ tags:
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     sponsor: shirag,greta
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: tandemVI
     name: Tandem - Visually Impaired
@@ -260,7 +262,7 @@ tags:
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     sponsor: shirag,greta
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: tandemKid
     name: Tandem Kid
@@ -268,14 +270,14 @@ tags:
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     sponsor: shirag,greta
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: treats
     name: Street Treats
     description: |
       Find a street treat out in the wild while riding your bike.
     url: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
-    rank_by_rides: True
+    rank_by: rides
 
   - tag: UnderCon
     name: Under Construction
@@ -283,7 +285,7 @@ tags:
       Post a picture taken while on a bike ride of new transportation infrastructure under construction.
       Tag your ride with with <code>#UnderCon</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-under-construction-prize/
-    rank_by_rides: True
+    rank_by: rides
     sponsor: lordofthemark
 
   - tag: withkid
