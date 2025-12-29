@@ -89,7 +89,7 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
                 A.display_name as athlete_name,
                 count(R.id) as hashtag_rides,
                 sum(R.distance) as hashtag_miles,
-                count(distinct date(convert_tz(R.start_date, R.timezone, :tz))) as hashtag_days 
+                count(distinct date(convert_tz(R.start_date, R.timezone, :tz))) as hashtag_days
             from
                 athletes A join
                 rides R on R.athlete_id = A.id
