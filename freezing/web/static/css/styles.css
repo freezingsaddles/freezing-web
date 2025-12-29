@@ -259,10 +259,6 @@ nav.bg-light {
     font-weight: bold;
 }
 
-.wide-aspect {
-    aspect-ratio: 1.333;
-}
-
 .leaderboard-overflow {
     min-width: 0;
     overflow-x: auto;
@@ -358,7 +354,8 @@ ul.pointless-menu {
 
 .photo-date-picker {
     align-self: center;
-    margin-left: auto;
+    display: flex;
+    justify-content: end;
 }
 
 .glyphicon::after {
@@ -436,6 +433,10 @@ ul.pointless-menu {
     .grid-gap-lg-4 {
         column-gap: 1.5rem;
         row-gap: 1.5rem;
+    }
+
+    .photo-date-picker {
+        width: 0;
     }
 
     .badge-group:not(.vertical) {
