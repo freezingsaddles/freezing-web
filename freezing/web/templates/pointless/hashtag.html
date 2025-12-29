@@ -12,13 +12,12 @@
     <script src="/js/leaflet-gesture-handling.min.js"></script>
     <script src="/js/ride-map.js"></script>
 {% endblock %}
+{% block title %}
+    {{ meta.name if meta else hashtag + " Ride Miles" }}
+{% endblock %}
 {% block content %}
     <h2 class="mb-3">
-        {% if meta %}
-            {{ meta.name }}
-        {% else %}
-            {{ hashtag }} Ride Miles
-        {% endif %}
+        {{ meta.name if meta else hashtag + " Ride Miles" }}
     </h2>
     {% if meta %}
         <p>
@@ -57,7 +56,7 @@
             ILoveKittens will generate <em>the same</em> results).
         </p>
     {% endif %}
-    <ul class="nav nav-tabs mt-lg-4 mb-lg-3">
+    <ul class="nav nav-tabs mt-lg-4 mb-0">
         <li class="nav-item">
             <a class="nav-link {{ 'active' if view == 'leaderboard' }}"
                aria-current="{{'page' if view == 'leaderboard' else 'false'}}"
@@ -73,59 +72,51 @@
                aria-current="{{'page' if view == 'map' else 'false'}}"
                href="{{ hashtag_notag }}?view=map">Ride Map</a>
         </li>
-        {% if view == 'photos' %}
-            <input id="date-picker"
-                   type="date"
-                   class="photo-date-picker"
-                   value="{{ datestr or '' }}" />
-        {% endif %}
     </ul>
     {% if view == 'leaderboard' %}
-        <div id="leader-board">
-            <div class="leaderboard-overflow">
-                <table class="table table-condensed">
-                    <tr>
-                        <th class="number rank">
-                            Rank
-                        </th>
-                        <th>
-                            Rider
-                        </th>
-                        {% if meta and meta.rank_by == 'days' %}
-                            <th class="number">
-                                Ride Days
-                            </th>
-                        {% else %}
-                            <th class="number">
-                                Rides
-                            </th>
-                        {% endif %}
+        <div class="leaderboard-overflow mt-2">
+            <table class="table table-condensed">
+                <tr>
+                    <th class="number rank">
+                        Rank
+                    </th>
+                    <th>
+                        Rider
+                    </th>
+                    {% if meta and meta.rank_by == 'days' %}
                         <th class="number">
-                            Distance
+                            Ride Days
                         </th>
+                    {% else %}
+                        <th class="number">
+                            Rides
+                        </th>
+                    {% endif %}
+                    <th class="number">
+                        Distance
+                    </th>
+                </tr>
+                {% for a, b, c, d, e, f in tdata %}
+                    <tr class="{{ a | myself }}">
+                        <td class="number rank">
+                            {{ f }}
+                        </td>
+                        <td>
+                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                        </td>
+                        <td class="number">
+                            {{ e if meta and meta.rank_by == 'days' else c }}
+                        </td>
+                        <td class="number">
+                            {{ d | round(1) }} mi
+                        </td>
                     </tr>
-                    {% for a, b, c, d, e, f in tdata %}
-                        <tr class="{{ a | myself }}">
-                            <td class="number rank">
-                                {{ f }}
-                            </td>
-                            <td>
-                                <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
-                            </td>
-                            <td class="number">
-                                {{ e if meta and meta.rank_by == 'days' else c }}
-                            </td>
-                            <td class="number">
-                                {{ d | round(1) }} mi
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
+                {% endfor %}
+            </table>
         </div>
     {% elif view == 'photos' %}
         {% if photos %}
-            <div class="photo-grid my-4 gap-lg-4 gallery-wrapper">
+            <div class="photo-grid my-3 my-lg-4 gap-lg-4 gallery-wrapper">
                 {% for photo in photos %}
                     <a
                         href="{{ photo.img_l }}"
@@ -142,9 +133,11 @@
                     </a>
                 {% endfor %}
             </div>
-            <nav class="d-flex justify-content-center">
+            <nav class="d-flex flex-column-reverse flex-lg-row gap-3 justify-content-between align-items-center">
+                <div>
+                </div>
                 {# djlint:off H023#}
-                <ul class="pagination">
+                <ul class="pagination mb-0">
                     <li class="page-item {% if page < 2 %}disabled{% endif %}">
                         <a class="page-link"
                            href="{{ hashtag_notag }}?view=photos&page={{ page-1 }}{% if datestr %}&date={{ datestr }}{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
@@ -158,6 +151,9 @@
                     </li>
                 </ul>
                 {# djlint:on #}
+                <div class="photo-date-picker">
+                    <input id="date-picker" type="date"  value="{{ datestr or '' }}" />
+                </div>
             </nav>
         {% else %}
             <div class="my-4 text-muted alert alert-info">
@@ -165,7 +161,7 @@
             </div>
         {% endif %}
     {% elif view == 'map' %}
-        <div class="wide-aspect" id="map">
+        <div class="c3-wide my-3 my-lg-4" id="map">
         </div>
     {% endif %}
 {% endblock %}
