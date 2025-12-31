@@ -155,6 +155,7 @@ def index():
     photos = (
         meta.scoped_session()
         .query(RidePhoto)
+        .filter_by(primary=True)
         .join(Ride)
         .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
         .limit(12)
