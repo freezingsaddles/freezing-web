@@ -157,7 +157,8 @@ def _get_phototag_tdata(request, hashtag):
                 tagged_rides R join
                 ride_photos P ON P.ride_id = R.ride_id
             where
-                P.primary
+                P.primary and
+                (P.caption like :tag or coalesce(P.caption, '') not like '%#%')
         ), tagged_photos as (
             select
                 P.id, P.caption, P.img_l, R.*
