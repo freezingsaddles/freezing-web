@@ -2,7 +2,7 @@ import math
 import operator
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, render_template, request
+from flask import Blueprint, abort, redirect, render_template, request
 from freezing.model import meta
 from sqlalchemy import text
 
@@ -258,6 +258,12 @@ def hashtag_leaderboard(hashtag):
             **args,
         },
     )
+
+
+# Junk but someone posted the wrong url everywhere
+@blueprint.route("/phototag/<string:hashtag>")
+def phototag_leaderboard(hashtag):
+    return redirect(f"/pointless/hashtag/{hashtag}?view=photos")
 
 
 def _get_segment_tdata(segment):
