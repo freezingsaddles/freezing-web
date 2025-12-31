@@ -31,18 +31,6 @@ tags:
     rank_by: rides
     sponsor: jrenaut
 
-  - tag: bikeshare
-    alt: cabi
-    name: Sharing is Caring
-    description: |
-      Use a bikeshare bike and log the ride with <code>#bikeshare</code> on strava
-      Whoever gets the most mileage wins!
-      Any bike that actually requires pedaling counts.
-      Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
-    rank_by: miles
-    sponsor: Thomas Esch
-
   - tag: biathlon
     name: Biathlon
     description: |
@@ -55,11 +43,26 @@ tags:
       Find publicly accessible cool infrastructure that makes our cycling lives easier. Tag with <code>#BikeInfrastructure</code>.
     rank_by: rides
 
+  - tag: bikeshare
+    alt: cabi
+    name: Sharing is Caring
+    description: |
+      Use a bikeshare bike and log the ride with <code>#bikeshare</code> on strava
+      Whoever gets the most mileage wins!
+      Any bike that actually requires pedaling counts.
+      Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
+    rank_by: miles
+    sponsor: Thomas Esch
+
   - tag: bingo
     name: Bicycle Bingo
     description: |
       Ride your bike and play Bingo!
     rank_by: days
+    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2026-sign-up-now/
+    sponsor: cvcalhoun
+    default_view: photos
 
   - tag: bob
     name: Baby on Board
@@ -214,6 +217,8 @@ tags:
       with <code>#scavhunt</code> in the photo description.
     rank_by: days
     default_view: photos
+    url: https://www.bikearlingtonforum.com/forums/topic/2026-photo-scavenger-hunt/
+    sponsor: Serdar,JAEP2R
 
   - tag: singlespeed
     name: Singlespeed
