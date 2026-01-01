@@ -43,6 +43,19 @@ tags:
       Find publicly accessible cool infrastructure that makes our cycling lives easier. Tag with <code>#BikeInfrastructure</code>.
     rank_by: rides
 
+  - tag: bikepacking
+    name: Bikepacking
+    description: |
+      <ul>
+      <li>Ride any bike that qualifies for Freezing Saddles</li>
+      <li>Carry your stuff on your bike or person (bags, baskets, backpacks, or get creative)</li>
+      <li>Sleep outdoors or in unheated rustic lodging</li>
+      <li>Use <code>#bikepacking</code> tag on Strava for the ride to your destination</li>
+      </ul>
+    url: https://www.bikearlingtonforum.com/forums/topic/2026-bikepacking-pointless-prize/
+    rank_by: days
+    sponsor: gspatter
+
   - tag: bikeshare
     alt: cabi
     name: Sharing is Caring
