@@ -233,6 +233,7 @@ tags:
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-publicartfinder/
     sponsor: karenbikes2
     rank_by: rides
+    default_view: photos
 
   - tag: scavhunt
     name: Photo Scavenger Hunt
@@ -312,13 +313,15 @@ tags:
     rank_by: rides
 
   - tag: UnderCon
+    alt: under-construction
     name: Under Construction
     description: |
       Post a picture taken while on a bike ride of new transportation infrastructure under construction.
-      Tag your ride with with <code>#UnderCon</code>.
+      Tag your ride with with <code>#UnderCon</code> or <code>#under-construction</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-under-construction-prize/
     rank_by: rides
     sponsor: lordofthemark
+    default_view: photos
 
   - tag: withkid
     name: Riding with Kids
