@@ -134,8 +134,14 @@
                 {% endfor %}
             </div>
             <nav class="d-flex flex-column-reverse flex-lg-row gap-3 justify-content-between align-items-center">
-                <div>
-                </div>
+                <button class="btn btn-secondary btn-sm"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseHow"
+                        aria-expanded="false"
+                        aria-controls="collapseExample">
+                    How does the photo board work?
+                </button>
                 {# djlint:off H023#}
                 <ul class="pagination mb-0">
                     <li class="page-item {% if page < 2 %}disabled{% endif %}">
@@ -155,6 +161,32 @@
                     <input id="date-picker" type="date"  value="{{ datestr or '' }}" />
                 </div>
             </nav>
+            <div id="collapseHow"
+                 class="collapse alert alert-light small mt-3 mt-lg-4">
+                <ul class="mb-0 ps-3">
+                    <li>
+                        If you post just one photo on your ride, tag your ride
+                        <code>{{ hashtag }}</code> and the photo will show up here.
+                    </li>
+                    <li>
+                        If you post multiple photos then tag <em>both</em> your ride <em>and</em> the
+                        photo(s) you want to show up, using the photo description field.
+                        <ul>
+                            <li>
+                                For example, you might tag your ride <code>{{ hashtag }} #zombie</code>
+                                and then tag one photo <code>{{ hashtag }}</code> and another
+                                <code>#zombie</code>.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        If you tag a photo and don't tag your ride, your photo will <em>not</em> show up.
+                    </li>
+                    <li>
+                        Sometimes it can take a few hours for photos to sync.
+                    </li>
+                </ul>
+            </div>
         {% else %}
             <div class="my-4 text-muted alert alert-info">
                 No photos found.
