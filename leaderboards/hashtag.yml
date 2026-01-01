@@ -142,6 +142,17 @@ tags:
       Find clever connections between places or tears in spacetime (tagged with <code>#FSWormhole</code>).
     rank_by: rides
 
+  - tag: gpsart
+    name: GPS Art
+    description: |
+      Record your bike GPS ART ride on STRAVA to make a winning picture. Tag your ride
+      <code>#gpsart</code>. Your ride needs to be public for anyone to see it. If you
+      want the art to show up here, post a screenshot of your map on your ride and tag the
+      photo <code>#gpsart</code> too.
+    url: https://www.bikearlingtonforum.com/forums/topic/gps-art-ride-pointless-prize-2026/
+    sponsor: Fast Friendly Guy
+    rank_by: rides
+
   - tag: goldenspike
     name: Golden Spike
     description: |
