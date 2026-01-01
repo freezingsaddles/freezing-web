@@ -180,7 +180,8 @@ tags:
     name: LOL Funny
     description: |
       Ride 1+ miles and post a photo of something you find that is laugh-out-loud funny to YOU.
-      Post the photo with the date of the post to the forum by midnight the same day along with what about it struck you as funny (unless it is obvious).
+      Tag your ride with hashtag <code>lolfunny</code> and add the photo to your ride in Strava.
+      If it's not obvious, add a description to the photo of what about it struck you as funny.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-lolfunny26-is-back/
     sponsor: bikingjenn
     rank_by: days
