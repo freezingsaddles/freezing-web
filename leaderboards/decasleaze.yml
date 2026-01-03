@@ -4,14 +4,12 @@ description: |
   A <strong>Decasleaze</strong> is a day consisting of one or more rides that are, collectively at least 10 miles,
   but less than 11 miles. These rides yield between 65-66 points, the optimal point on our scoring graph for maximizing
   your points without having to bike a huge amount.
-sponsor: obscurerichard
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-decasleaze/
 fields:
   - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: days
     label: Decasleaze Days
     rank_by: true
@@ -26,6 +24,5 @@ query: |
          sum(s.points) as points
   from lbd_athletes a
   join daily_scores s on s.athlete_id = a.id and s.distance >= 10 and s.distance < 11
-  where a.id != 2332659
   group by a.id, a.display_name
   order by days desc, points desc
