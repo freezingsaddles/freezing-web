@@ -89,13 +89,6 @@ table.dataTable.no-footer {
     justify-content: space-between;
     white-space: nowrap;
     gap: .5rem;
-
-    .caption {
-      min-width: 0;
-      flex-shrink: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
 }
 
 .ekko-lightbox-container .img-responsive {
@@ -330,6 +323,7 @@ a.dropdown-item[href^="http"]::after {
 
 ul.pointless-menu {
     overflow-x: hidden;
+
     li:has(.discord) {
         display: flex;
 
@@ -341,9 +335,11 @@ ul.pointless-menu {
             flex-shrink: 1;
             width: auto;
             padding: .25rem .5rem;
+
             &::after {
                 display: none;
             }
+
             svg {
                 height: 1rem;
                 width: 1.25rem;

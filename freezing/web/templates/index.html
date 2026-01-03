@@ -89,46 +89,6 @@
     <script src="/js/leaflet-gesture-handling.min.js"></script>
     <script src="/js/ride-map.js"></script>
 {% endblock %}
-{% block beforenav %}
-    {% for photo in photos %}
-        <div class="modal fade pop-up-{{ photo.id }}"
-             tabindex="-1"
-             role="dialog"
-             aria-labelledby="myLargeModalLabel-1"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title text-truncate" id="myLargeModalLabel-1">
-                            {{ photo.caption|default(photo.ride.name, true) }}
-                        </h4>
-                        <button type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body d-flex flex-column align-items-center ekko-lightbox-container">
-                        {# djlint:off H006 #}
-                        <img src="{{ photo.img_l }}"
-                             class="img-responsive"
-                             alt="{{ photo.caption }}">
-                        {# djlint:on #}
-                    </div>
-                    <div class="modal-footer">
-                        Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>
-                        {% if photo.ref %}
-                            <a href='{{ photo.ref }}'>View in Instagram</a>
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal mixer image -->
-    {% endfor %}
-{% endblock %}
 {% block content %}
     <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
         <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center ">
@@ -442,12 +402,16 @@
                             <br>
                         Photos</a>
                     {% else %}
-                        <a href="#"
-                           class="photo-thumbnail"
-                           data-bs-toggle="modal"
-                           data-bs-target=".pop-up-{{ photo.id }}"
-                           style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png')"></a>
-                        <!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
+                        <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+                            class="photo-thumbnail"
+                            data-title="{{ photo.ride.name }}"
+                            data-parent="#sect-photos"
+                            {# djlint:off #}
+                            data-info='{{ photo.caption or "" | safe }}'
+                            data-footer='Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>'
+                            style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
+                            {# djlint:on #}
+                        </a>
                     {% endif %}
                 {% endfor %}
             </div>
