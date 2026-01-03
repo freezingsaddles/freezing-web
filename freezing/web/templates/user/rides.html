@@ -576,6 +576,7 @@
       data: { id: rideId },
       success: function (data) {
         refreshTable();
+        alert("Please wait up to ten minutes for your photos to sync.");
       },
       error: function (xhr, status, errorThrown) {
         alert("There was an error updating ride. " + errorThrown);
@@ -659,6 +660,9 @@
         },
       ],
     });
+    // Remove the absolutely dreadful styling.
+    $(".bootstrap-table").removeClass("bootstrap-table");
+    $(".fixed-table-container").removeClass("fixed-table-container");
 
     $("#map-link").one("click", () => {
       create_ride_map("map", "/api/my/trackmap.json", "red", true);
