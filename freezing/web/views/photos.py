@@ -39,7 +39,10 @@ def index():
         meta.scoped_session()
         .query(RidePhoto)
         .join(Ride)
-        .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
+        .order_by(
+            func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc(),
+            RidePhoto.id.asc(),
+        )
     )
     num_photos = total_q.count()
 
