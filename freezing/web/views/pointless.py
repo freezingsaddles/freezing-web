@@ -157,8 +157,7 @@ def _get_phototag_tdata(request, hashtag):
                 tagged_rides R join
                 ride_photos P ON P.ride_id = R.ride_id
             where
-                P.primary and
-                (P.caption like :tag or coalesce(P.caption, '') not like '%#%')
+                P.primary
         ), tagged_photos as (
             select
                 P.id, P.caption, P.img_l, R.*
@@ -166,12 +165,14 @@ def _get_phototag_tdata(request, hashtag):
                 tagged_rides R join
                 ride_photos P ON P.ride_id = R.ride_id
             where
-                P.caption like :tag
+                P.caption like '%#%'
         ), union_photos as (
             select
                 P.*
             from
                 tagged_photos P
+            where
+                P.caption like :tag
             union all
             select
                 P.*
@@ -234,7 +235,7 @@ def _get_phototag_tdata(request, hashtag):
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
-    ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
+    ht = meta.tag if meta else hashtag
     rank_by = meta.rank_by if meta else "miles"
     default_view = meta.default_view if meta else None
     view = request.args.get("view", default_view or "leaderboard")
