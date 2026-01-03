@@ -172,7 +172,7 @@ def _get_phototag_tdata(request, hashtag):
             from
                 tagged_photos P
             where
-                P.caption like :tag
+                lower(P.caption) like :tag
             union all
             select
                 P.*
@@ -202,13 +202,14 @@ def _get_phototag_tdata(request, hashtag):
         from
             union_photos P
         order by
-            P.start_date desc
+            P.start_date desc,
+            P.id
         limit :limit
         offset :offset
         """
     ).bindparams(
         tz=config.TIMEZONE,
-        tag=f"%#{hashtag}%",
+        tag=f"%#{hashtag.lower()}%",
         date=date,
         offset=offset,
         limit=limit,
