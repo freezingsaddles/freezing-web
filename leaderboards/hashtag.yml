@@ -71,7 +71,7 @@ tags:
   - tag: bingo
     name: Bicycle Bingo
     description: |
-      Ride your bike and play Bingo!
+      Ride your bike and play Bingo! The hashtag to use is <code>#bingo</code>.
     rank_by: days
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2026-sign-up-now/
     sponsor: cvcalhoun
