@@ -43,7 +43,8 @@
           this.options.footer +
           "</div></div>"),
         (i =
-          '<div class="ekko-info-overlay alert fade"><h5>' +
+          '<div class="ekko-info-overlay alert fade">' +
+          (this.options.info ? "<h5>" : '<h5 class="mb-0">') +
           (this.options.title || "") +
           "</h5><div>" +
           (this.options.info || "") +
@@ -293,8 +294,9 @@
         var i = this.$element.data("info") || "";
         this.modal_content
           .find(".ekko-info-overlay")
-          .removeClass("show")
-          .html(i ? "<h5>" + d + "</h5><div>" + i + "</div>" : "");
+          .html(
+            (i ? "<h5>" : '<h5 class="mb-0">') + d + "</h5><div>" + i + "</div>"
+          );
         this.modal_content
           .find(".show-caption")
           .css("visibility", i ? "visible" : "hidden");
