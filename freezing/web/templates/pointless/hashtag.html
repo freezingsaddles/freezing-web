@@ -13,7 +13,8 @@
     <script src="/js/ride-map.js"></script>
 {% endblock %}
 {% block title %}
-    {{ meta.name if meta else hashtag + " Ride Miles" }}
+    {{ meta.name if meta else hashtag + " Ride
+    Miles" }}
 {% endblock %}
 {% block content %}
     <h2 class="mb-3">
@@ -126,7 +127,8 @@
                         data-title="{{ photo.name }}"
                         data-parent=".gallery-wrapper"
                         {# djlint:off #}
-                        data-footer='<p class="caption">{{ photo.caption or '' | safe }}</p><p>Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a></p>'
+                        data-info='{{ photo.caption or "" | safe }}'
+                        data-footer='Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a>'
                         style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');"
                         {# djlint:on #}
                         >
@@ -158,31 +160,48 @@
                 </ul>
                 {# djlint:on #}
                 <div class="photo-date-picker">
-                    <input id="date-picker" type="date"  value="{{ datestr or '' }}" />
+                    <input id="date-picker" type="date" value="{{ datestr or '' }}" />
                 </div>
             </nav>
             <div id="collapseHow" class="collapse alert alert-light mt-3 mt-lg-4">
                 <ul class="mb-0 ps-3">
                     <li>
-                        If you post just one photo on your ride, tag your ride
-                        <code>{{ hashtag }}</code> and the photo will show up here.
+                        If you post just one photo on your ride, tag your ride by putting
+                        <code>{{ hashtag }}</code> in the ride <em>title</em>, and the photo will
+                        show up here.
                     </li>
                     <li>
-                        If you post multiple photos then tag <em>both</em> your ride <em>and</em> the
-                        photo(s) you want to show up, using the photo description field.
+                        If you post multiple photos then tag <em>both</em> your ride
+                        <em>and</em> the photo(s) you want to show up, using the photo
+                        <em>description</em>
+                        field.
                         <ul>
                             <li>
-                                For example, you might tag your ride <code>{{ hashtag }} #zombie</code>
-                                and then tag one photo <code>{{ hashtag }}</code> and another
-                                <code>#zombie</code>.
+                                For example, you might tag your ride
+                                <code>{{ hashtag }} #zombie</code> and then tag one photo
+                                <code>{{ hashtag }}</code> and another <code>#zombie</code>.
+                            </li>
+                            <li>
+                                In Strava, after you have added the photo(s) and saved your ride,
+                                click on the photo.
+                            </li>
+                            <li>
+                                If you don't see three horizontal dots (<strong>⋯</strong>) at the
+                                top-right then click on the photo again.
+                            </li>
+                            <li>
+                                Click on the three horizontal dots, click
+                                <em>Add Description</em>
+                                and enter the hashtag there, along with any other description.
                             </li>
                         </ul>
                     </li>
                     <li>
-                        If you tag a photo and don't tag your ride, your photo will <em>not</em> show up.
+                        If you tag a photo and don't tag your ride, your photo will
+                        <em>not</em> show up.
                     </li>
                     <li>
-                        Sometimes it can take a few hours for photos to sync.
+                        Sometimes it can take a few hours for photo tags to sync.
                     </li>
                 </ul>
             </div>
@@ -210,10 +229,10 @@
         </script>
     {% elif view == 'photos' %}
         <script type="text/javascript">
-    $("#date-picker").on("change", (e) => {
-      const date = e.target.value;
-      document.location.search = date ? `?date=${date}` : "";
-    });
+  $("#date-picker").on("change", (e) => {
+    const date = e.target.value;
+    document.location.search = date ? `?date=${date}` : "";
+  });
         </script>
     {% endif %}
 {% endblock %}

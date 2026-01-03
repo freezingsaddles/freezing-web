@@ -11,7 +11,8 @@
                     data-title="{{ photo.ride.name }}"
                     data-parent=".gallery-wrapper"
                     {# djlint:off #}
-                    data-footer='<p class="caption">{{ photo.caption or '' | safe }}</p><p>Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a> {% if photo.ref %}<a href='{{photo.ref}}'>View in Instagram</a>{% endif %}</p>'
+                    data-info='{{ photo.caption or "" | safe }}'
+                    data-footer='Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>'
                     style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
                     {# djlint:on #}
                 </a>
