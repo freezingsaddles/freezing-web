@@ -126,15 +126,11 @@
                         class="photo-thumbnail"
                         data-title="{{ photo.name }}"
                         data-parent=".gallery-wrapper"
-                        {#
-    djlint:off
-    #}
-                            data-info='{{ photo.caption or "" | safe }}'
-                            data-footer='Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a>'
-                            style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');"
-                        {#
-djlint:on
-#}
+                        {# djlint:off #}
+                        data-info='{{ photo.caption or "" | safe }}'
+                        data-footer='Taken by <a href="/people/{{ photo.athlete_id }}" class="hover-underline">{{ photo.display_name }}</a>'
+                        style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');"
+                        {# djlint:on #}
                         >
                     </a>
                 {% endfor %}
