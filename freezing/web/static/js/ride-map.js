@@ -42,10 +42,11 @@ function create_ride_map(id, url, ride_color = null, recenter = false) {
     // the absence of teams is for legacy cached responses that will rapidly expire.
     const teams = {};
     data.teams?.forEach(({id, name}, index) => teams[id] = {name, index});
+    const colors = Object.keys(teams).length > 1 ? track_colors : ['#00a4e4'];
     data.tracks.forEach(({team, track}, index) => {
       const team_info = teams[team];
       const polyline = L.polyline([track], {
-        color: ride_color ?? track_colors[(team_info?.index ?? team) % track_colors.length],
+        color: ride_color ?? colors[(team_info?.index ?? team) % colors.length],
         opacity: .2 + .4 * (index + 1) / data.tracks.length,
         weight: 2
       });
