@@ -371,6 +371,33 @@ ul.pointless-menu {
     right: 1rem;
 }
 
+@media (max-width: 575px) {
+
+    #sect-main.live>.d-flex {
+        flex-direction: row !important;
+        padding: 1rem !important;
+
+        img {
+            width: 64px !important;
+            height: 64px !important;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        .text-muted {
+            display: none;
+        }
+    }
+
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;

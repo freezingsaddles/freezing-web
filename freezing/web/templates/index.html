@@ -90,7 +90,8 @@
     <script src="/js/ride-map.js"></script>
 {% endblock %}
 {% block content %}
-    <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
+    <div id="sect-main"
+         class="card mb-3 my-lg-4 bg-light {{ 'live' if bafs_is_live else '' }}">
         <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center ">
             <div class="d-flex flex-column align-items-center me-lg-5">
                 <img src="/img/logo-blue.png"
@@ -186,9 +187,11 @@
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
-                    <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
-                    </a>
+                    {% if team_count %}
+                        <a class="flex-grow-1 text-center tag-link"
+                           href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
+                        </a>
+                    {% endif %}
                     <a class="flex-grow-1 text-center tag-link"
                        href="/leaderboard/individual_text">{{ contestant_count }} contestant{{ contestant_count|ess }}</a>
                 </div>
@@ -310,7 +313,7 @@
                         <div class="d-grid grid-2 flex-grow-1">
                             <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2"
                                  style="border-right: 1px solid #8888">
-                                {% if yourself.rank %}
+                                {% if team_count and yourself.rank %}
                                     <div>
                                         <a class="tag-link"
                                            href="/leaderboard/individual_text"
