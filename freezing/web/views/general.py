@@ -230,29 +230,22 @@ def index():
     #              LAG(local_legend) OVER (PARTITION BY E.segment_id, R.athlete_id ORDER BY E.id) AS previous_legend
     #       FROM ride_efforts E join rides R on R.id = E.ride_id) AS subquery
     # WHERE local_legend = TRUE AND previous_legend = FALSE;
+    #
+    # But this doesn't work at all because when we refetch old rides, those
+    # old segments become reported as legendary based on your *current* status
+    # so we have no real view of when you became legend.
     q = text(
         """
-            with unlegends as (
+            with legends as (
                 select
-                    R.athlete_id, RE.segment_id, MIN(RE.id) as id
-                from rides R
-                join ride_efforts RE on RE.ride_id = R.id
-                where not RE.local_legend
-                group by R.athlete_id, RE.segment_id
-            ), legends as (
-                select
-                    R.athlete_id, RE.segment_id, MAX(RE.id) as id
+                    R.athlete_id, RE.segment_id
                 from rides R
                 join ride_efforts RE on RE.ride_id = R.id
                 where RE.local_legend
-                group by R.athlete_id, RE.segment_id
             )
             select
-                count(*) as legends
+                count(distinct L.athlete_id, L.segment_id) as legends
             from legends L
-            join unlegends U on U.athlete_id = L.athlete_id
-                            and U.segment_id = L.segment_id
-            where L.id > U.id
             ;
         """
     )
