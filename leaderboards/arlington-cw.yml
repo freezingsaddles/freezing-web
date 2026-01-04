@@ -3,17 +3,15 @@ title: Clockwise Loopy for Arlington
 description: |
   Number of clockwise rides of the Arlington loop (ArLoopCW1 through ArLoopCW8).
   Part of <a href="../arlington">Loopy for Arlington</a>.
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-loopy-for-arlington/
-sponsor: bentbike33
 fields:
   - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: segment_name
     label: Least-Ridden Segment
-    format: "<a href=\"https://www.strava.com/segments/{segment_id}\" class=\"hover-underline\">{segment_name}</a>"
+    format: '<a href="https://www.strava.com/segments/{segment_id}" class="hover-underline">{segment_name}</a>'
   - name: segment_rides
     label: Loop Rides
     rank_by: true

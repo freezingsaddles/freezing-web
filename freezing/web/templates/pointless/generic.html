@@ -27,9 +27,13 @@
             See: <a href="{{ url }}">{{ url }}</a>
         </p>
     {% endif %}
-    {% if sponsor %}
+    {% if sponsors %}
         <p>
-            Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+            Sponsored by
+            {% for sp in sponsors %}
+                {# djlint:off #}<em><a href="{{ sp.url }}">{{ sp.name }}</a></em
+                >{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
+            {% endfor %}
         </p>
     {% endif %}
     {% if show_rides %}

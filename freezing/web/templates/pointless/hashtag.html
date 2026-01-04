@@ -29,15 +29,11 @@
                 See: <a href="{{ meta.url }}">{{ meta.url }}</a>
             </p>
         {% endif %}
-        {% if meta.sponsor %}
-            {% set sponsors = meta.sponsor.split(',') %}
+        {% if sponsors %}
             <p>
                 Sponsored by
                 {% for sp in sponsors %}
-                    {# djlint:off #}<em
-    ><a href="https://www.bikearlingtonforum.com/forums/users/{{ sp }}/"
-      >{{ sp }}</a
-    ></em
+                    {# djlint:off #}<em><a href="{{ sp.url }}">{{ sp.name }}</a></em
                     >{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
                 {% endfor %}
             </p>
@@ -103,7 +99,11 @@
                             {{ f }}
                         </td>
                         <td>
-                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                            {% if a in banned %}
+                                <a href="/people/{{ a }}" class="hover-underline text-muted">{{ b }} <em>(ineligible)</em></a>
+                            {% else %}
+                                <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                            {% endif %}
                         </td>
                         <td class="number">
                             {{ e if meta and meta.rank_by == 'days' else c }}

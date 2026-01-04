@@ -29,7 +29,7 @@ tags:
       Tag your ride with with <code>#beerneuring</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-bringing-back-beerneuring/
     rank_by: rides
-    sponsor: jrenaut
+    sponsors: [1873089]
 
   - tag: biathlon
     name: Biathlon
@@ -54,7 +54,7 @@ tags:
       </ul>
     url: https://www.bikearlingtonforum.com/forums/topic/2026-bikepacking-pointless-prize/
     rank_by: days
-    sponsor: gspatter
+    sponsors: [33937007]
 
   - tag: bikeshare
     alt: cabi
@@ -66,7 +66,7 @@ tags:
       Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
     rank_by: miles
-    sponsor: Thomas Esch
+    sponsors: [30367988]
 
   - tag: bingo
     name: Bicycle Bingo
@@ -74,7 +74,7 @@ tags:
       Ride your bike and play Bingo! The hashtag to use is <code>#bingo</code>.
     rank_by: days
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2026-sign-up-now/
-    sponsor: cvcalhoun
+    sponsors: [3487165]
     default_view: photos
 
   - tag: bob
@@ -150,7 +150,7 @@ tags:
       want the art to show up here, post a screenshot of your map on your ride and tag the
       photo <code>#gpsart</code> too.
     url: https://www.bikearlingtonforum.com/forums/topic/gps-art-ride-pointless-prize-2026/
-    sponsor: Fast Friendly Guy
+    sponsors: [3415618]
     rank_by: rides
 
   - tag: goldenspike
@@ -194,7 +194,7 @@ tags:
       Tag your ride with hashtag <code>lolfunny</code> and add the photo to your ride in Strava.
       If it's not obvious, add a description to the photo of what about it struck you as funny.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-lolfunny26-is-back/
-    sponsor: bikingjenn
+    sponsors: [2831630]
     rank_by: days
     default_view: photos
 
@@ -231,7 +231,7 @@ tags:
       Rules in the forum post. Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
       Post to the forum on the linked thread.
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-publicartfinder/
-    sponsor: karenbikes2
+    sponsors: [38633292]
     rank_by: rides
     default_view: photos
 
@@ -244,13 +244,13 @@ tags:
     rank_by: days
     default_view: photos
     url: https://www.bikearlingtonforum.com/forums/topic/2026-photo-scavenger-hunt/
-    sponsor: Serdar,JAEP2R
+    sponsors: [11555517, 4704298]
 
   - tag: singlespeed
     name: Singlespeed
     description: |
       Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
-    sponsor: jlamb
+    sponsors: [516697]
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
     rank_by: miles
 
@@ -286,7 +286,7 @@ tags:
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
-    sponsor: shirag,greta
+    sponsors: [26341642, 17674988]
     rank_by: rides
 
   - tag: tandemVI
@@ -294,7 +294,7 @@ tags:
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
-    sponsor: shirag,greta
+    sponsors: [26341642, 17674988]
     rank_by: rides
 
   - tag: tandemKid
@@ -302,7 +302,7 @@ tags:
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
-    sponsor: shirag,greta
+    sponsors: [26341642, 17674988]
     rank_by: rides
 
   - tag: treats
@@ -320,7 +320,7 @@ tags:
       Tag your ride with with <code>#UnderCon</code> or <code>#under-construction</code>.
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-under-construction-prize/
     rank_by: rides
-    sponsor: lordofthemark
+    sponsors: [7188282]
     default_view: photos
 
   - tag: withkid
@@ -328,7 +328,7 @@ tags:
     description: |
       For the Saddlero who rides the most miles accompanying kids who are riding under their own power.
     url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
-    sponsor: chill-dad
+    sponsors: [1272438]
 
   - tag: Yum
     name: Yum
@@ -340,4 +340,4 @@ tags:
       <li>Include <code>#Yum</code> in your Strava ride title</li>
       </ol>
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-yum/
-    sponsor: bigredboiler
+    sponsors: [380419]

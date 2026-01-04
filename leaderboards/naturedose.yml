@@ -3,8 +3,8 @@ title: NatureDose
 description: |
   Number of minutes spent in nature, as measured by
   <a href="https://www.naturequant.com/naturedose/" target="_blank" rel="noreferrer">NatureDose®</a>.
-sponsor: jlamb
 url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-naturedose/
+sponsors: [516697]
 fields:
   - name: id
     visible: false

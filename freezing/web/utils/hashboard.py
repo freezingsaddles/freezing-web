@@ -14,7 +14,8 @@ class HashtagBoardTag(BaseMessage):
     alt = None
     name = None
     description = None
-    sponsor = None
+    sponsors: List[int] | None = None
+    banned: List[int] | None = None  # banned for prior win
     url = None
     rank_by = None
     default_view = None
@@ -27,7 +28,8 @@ class HashtagBoardTagSchema(BaseSchema):
     alt = fields.Str()
     name = fields.Str(required=True)
     description = fields.Str(required=True)
-    sponsor = fields.Str()
+    sponsors = fields.List(fields.Int())
+    banned = fields.List(fields.Int())
     url = fields.Str()
     rank_by = fields.Str()
     default_view = fields.Str()

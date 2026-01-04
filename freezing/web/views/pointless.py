@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, abort, redirect, render_template, request
 from freezing.model import meta
+from freezing.model.orm import Athlete
 from sqlalchemy import text
 
 from freezing.web.config import config
@@ -22,12 +23,17 @@ def generic(leaderboard):
     except ObjectNotFound:
         abort(404)
     else:
+        sponsors = (
+            [_load_sponsor(sponsor) for sponsor in board.sponsors]
+            if board.sponsors
+            else None
+        )
         return render_template(
             "pointless/generic.html",
             fields=board.fields,
             title=board.title,
             description=board.description,
-            sponsor=board.sponsor,
+            sponsors=sponsors,
             show_rides=[f for f in board.fields if f.name == "ride_ids"],
             url=board.url,
             data=data,
@@ -233,6 +239,15 @@ def _get_phototag_tdata(request, hashtag):
     }
 
 
+def _load_sponsor(sponsor: int):
+    person = meta.scoped_session().get(Athlete, sponsor)
+    return (
+        {"name": person.display_name, "url": f"/people/{sponsor}"}
+        if person
+        else {"name": "Unknown", "url": "#"}
+    )
+
+
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
@@ -240,6 +255,16 @@ def hashtag_leaderboard(hashtag):
     rank_by = meta.rank_by if meta else "miles"
     default_view = meta.default_view if meta else None
     view = request.args.get("view", default_view or "leaderboard")
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in meta.sponsors]
+        if meta and meta.sponsors
+        else None
+    )
+    banned = []
+    if meta and meta.sponsors:
+        banned.extend(meta.sponsors)
+    if meta and meta.banned:
+        banned.extend(meta.banned)
 
     args = {}
     if view == "leaderboard":
@@ -258,6 +283,8 @@ def hashtag_leaderboard(hashtag):
             "hashtag_notag": ht,
             "meta": meta,
             "view": view,
+            "sponsors": sponsors,
+            "banned": banned,
             **args,
         },
     )
@@ -309,6 +336,16 @@ def segment_leaderboard(segment):
     tdata = _get_segment_tdata(
         segment=segment,
     )
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in meta.sponsors]
+        if meta and meta.sponsors
+        else None
+    )
+    banned = []
+    if meta and meta.sponsors:
+        banned.extend(meta.sponsors)
+    if meta and meta.banned:
+        banned.extend(meta.banned)
     return render_template(
         "pointless/segment.html",
         data={
@@ -321,6 +358,8 @@ def segment_leaderboard(segment):
             ),
         },
         meta=meta,
+        sponsors=sponsors,
+        banned=banned,
     )
 
 
@@ -484,12 +523,17 @@ def arlington():
     ]
     data.sort(key=lambda d: (-d["segment_rides"], d["athlete_name"]))
     formatted = format_rows([FakeRow(d) for d in data], board)
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in board.sponsors]
+        if board.sponsors
+        else None
+    )
     return render_template(
         "pointless/generic.html",
         fields=board.fields,
         title=board.title,
         description=board.description,
-        sponsor=board.sponsor,
+        sponsors=sponsors,
         url=board.url,
         data=formatted,
     )
