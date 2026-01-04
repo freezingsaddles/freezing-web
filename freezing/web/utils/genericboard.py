@@ -74,7 +74,7 @@ class GenericBoard(BaseMessage):
     title = None
     description = None
     url = None
-    sponsor = None
+    sponsors: List[int] | None = None
     query = None
     fields: List[GenericBoardField] = None
 
@@ -85,7 +85,7 @@ class GenericBoardSchema(BaseSchema):
     title = fields.Str()
     description = fields.Str()
     url = fields.Str()
-    sponsor = fields.Str()
+    sponsors = fields.List(fields.Int())
     query = fields.Str(required=True, allow_none=False)
     fields = fields.Nested(GenericBoardFieldSchema, many=True, required=False)
 

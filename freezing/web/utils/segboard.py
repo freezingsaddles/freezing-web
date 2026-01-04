@@ -14,7 +14,8 @@ class SegmentBoardSegment(BaseMessage):
     segment_name = None
     name = None
     description = None
-    sponsor = None
+    sponsors: List[int] | None = None
+    banned: List[int] | None = None  # banned for prior win
     url = None
 
 
@@ -25,7 +26,8 @@ class SegmentBoardSegmentchema(BaseSchema):
     segment_name = fields.Str(required=True)
     name = fields.Str(required=True)
     description = fields.Str()
-    sponsor = fields.Str()
+    sponsors = fields.List(fields.Int())
+    banned = fields.List(fields.Int())
     url = fields.Str()
 
 

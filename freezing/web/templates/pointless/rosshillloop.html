@@ -15,7 +15,7 @@
     </p>
     {% if sponsor %}
         <p>
-            Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+            Sponsored by <em><a href="{{ sponsor.url }}">{{ sponsor.name }}</a></em>.
         </p>
     {% else %}
         <p class="text-muted">
