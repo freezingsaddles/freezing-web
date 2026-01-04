@@ -269,8 +269,8 @@
                     </div>
                 </div>
                 <div class="card bg-light d-flex flex-row achievements-row">
-                    <div class="achievements py-2 ps-3 pe-3 position-relative">
-                        strava<span class="d-none d-lg-inline"> achievements</span>
+                    <div class="achievements py-2 ps-3 pe-3 position-relative d-none d-lg-block">
+                        strava achievements
                     </div>
                     <div class="d-flex flex-grow-1 justify-content-evenly ps-3 py-2 gap-2">
                         <span>🥇 {{ pr_gold|groupnum }}</span>
@@ -313,14 +313,14 @@
                         <div class="d-grid grid-2 flex-grow-1">
                             <div class="d-flex flex-column justify-content-center flex-grow-1 text-nowrap text-center px-3 py-2"
                                  style="border-right: 1px solid #8888">
-                                {% if team_count and yourself.rank %}
+                                {% if yourself.rank %}
                                     <div>
                                         <a class="tag-link"
                                            href="/leaderboard/individual_text"
                                            title="Individual rank">
                                             👤 {{ yourself.rank }}<sup>{{ yourself.rank|ord }}</sup>
                                         </a>
-                                        {% if yourself.team_rank %}
+                                        {% if team_count and yourself.team_rank %}
                                             <span class="stat-divider vertical mb-2 mx-md-3"></span>
                                             <a class="tag-link" href="/leaderboard/team_text" title="Team rank">
                                                 👥 {{ yourself.team_rank }}<sup>{{ yourself.team_rank|ord }}</sup>
