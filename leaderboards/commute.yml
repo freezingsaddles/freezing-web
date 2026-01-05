@@ -1,0 +1,56 @@
+---
+title: Commute Champ
+description: |
+  <p><strong>BE A COMMUTE CHAMP!</strong> Bikes are transportation! Ride your bike to work, soak in the sunshine, arrive in a good mood (if a little sweaty). Do it again on the way home - decompress from your day and enjoy the sights. It’s good for you, good for the planet!</p>
+  <p>Use the Strava <em>Commute</em> built-in tag and/or add <code>#commute</code> to your ride title to count the ride. A maximum of 2 rides per day will be counted.</p>
+url: https://discord.com/channels/1443244420358213643/1457554898781470813
+sponsors: [21807336]
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
+  - name: rides
+    label: Commute Rides
+    format: "{0:.0f}"
+    type: number
+    rank_by: true
+  - name: distance
+    label: Distance
+    type: number
+    format: "{0:.1f} mi"
+  - name: ride_ids
+    visible: false
+query: |
+  with commutes as (
+    select
+      R.id,
+      R.athlete_id,
+      R.distance,
+      date(convert_tz(R.start_date, R.timezone, 'America/New_York')) as start_date
+    from
+      rides R
+    where
+      R.commute or R.name like '%#commute%'
+  ), daily_commutes as (
+    select
+      C.athlete_id,
+      sum(C.distance) as distance,
+      count(*) as rides,
+      group_concat(hex(C.id)) as ride_ids
+    from commutes C
+    group by C.athlete_id, C.start_date
+  )
+  select
+    R.athlete_id,
+    A.display_name as athlete_name,
+    sum(case when R.rides > 2 then 2 else R.rides end) as rides,
+    round(sum(R.distance), 1) as distance,
+    group_concat(R.ride_ids) as ride_ids
+  from
+    lbd_athletes A
+  join daily_commutes R
+    on R.athlete_id = A.id
+  group by R.athlete_id, A.display_name
+  order by rides desc, lower(athlete_name) asc;

@@ -421,15 +421,6 @@ def ross_hill_loop():
     )
 
 
-@blueprint.route("/coffeeride")
-def coffeeride():
-    year = datetime.now().year
-    tdata = _get_hashtag_tdata("coffeeride{}".format(year), "coffeeride", 2)
-    return render_template(
-        "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
-    )
-
-
 @blueprint.route("/kidsathlon")
 def kidsathlon():
     q = text(

@@ -39,7 +39,7 @@ class AccessDenied(RuntimeError):
 custom_tag_pages = {
     "civilwarmarker": "civilwarhistory",
     "civilwarstreet": "civilwarhistory",
-    "coffeeride": "coffeeride",
+    "commute": "generic/commute",
     "decasleaze": "generic/decasleaze",
     "foodrescue": "generic/foodrescue",
     "fsrealsuppleride": "generic/suppleride",

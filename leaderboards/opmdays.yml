@@ -1,14 +1,14 @@
 ---
 title: Michigander - You call THAT a snow day?! - Prize
 description: |
-  <p>Riders who have ridden on the most offcial OPM snow days, or if no snow days are declared, on Michigan Day (Monday, January 18th). Ties to be broken by total mileage.</p>
+  <p>Riders who have ridden on the most official OPM snow days, or if no snow days are declared, on Michigan Day (Monday, January 18th). Ties to be broken by total mileage.</p>
   <p>Current official snow days: None</p>
 fields:
   - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: days
     label: Days Ridden
     type: number
@@ -16,13 +16,20 @@ fields:
     label: Distance
     type: number
 query: |
+  with tzrides as (
+    select
+      R.athlete_id,
+      date(convert_tz(R.start_date, R.timezone, 'America/New_York')) as start_date,
+      R.distance
+    from rides R
+  )
   select
     A.id as athlete_id,
     A.display_name as athlete_name,
-    count(distinct(date(R.start_date))) as days,
+    count(distinct(start_date)) as days,
     sum(R.distance) as distance
   from lbd_athletes A
-    join rides R on R.athlete_id=A.id
-  where date(R.start_date) in (makedate(year(now()), 18))
+    join tzrides R on R.athlete_id=A.id
+  where R.start_date in (makedate(year(now()), 18))
   group by athlete_id, athlete_name
   order by days desc, distance desc;
