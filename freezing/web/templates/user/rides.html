@@ -4,7 +4,7 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.6.0/dist/bootstrap-table.min.css"
           integrity="sha256-SAChiSCzuX+r8fGO1EDy38z7Bcj1Qd2VUS+64BlFSIM="
-          crossorigin="anonymous">
+          crossorigin="anonymous" />
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
           integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -19,7 +19,7 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css"
           integrity="sha384-ztqQYuF0ztQOO26+6hbRTtSQ6HGLosUJRQI9kx0L9OpJiESTtsiriiQNqwBIBl9a"
-          crossorigin="anonymous">
+          crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.8.0/d3.min.js"
             integrity="sha384-Nth41CoN2s0hj2li43h7cs5a1J0zroMLa7ugSGFSdWJMF1OuKrJwZaritPHBnk3E"
             crossorigin="anonymous"></script>
@@ -27,90 +27,86 @@
             integrity="sha384-xOzJ6ocROuPNeY/PUgXyXgiPyvvePCiWVkKXro4Lb1gWoGJOtrJw+zrpf3NBx1B5"
             crossorigin="anonymous"></script>
     <script type="text/javascript">
-      function drawDailyPointsChart() {
-	      $.ajax({
-	          url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
-	          dataType: "json"
-          }).done(function(jsonData) {
-            c3.generate({
-              bindto: '#chart_user_daily_points',
-              bar: {
-              },
-              data: {
-                x: 'x',
-                columns:
-                  [
-                    ['x', ...jsonData.days.map(d => d.slice(0, 10))],
-                    ['points', ...jsonData.points],
-                  ],
-                type: 'bar',
-              },
-              axis: {
-                x: {
-                  type: 'timeseries',
-                  tick: {
-                    format: "%m/%d",
-                  }
-                },
-                y: {
-                  tick: {
-                    format: d => d.toLocaleString()
-                  }
-                }
-              },
-              tooltip: {
-                format: {
-                  value: (value) => Math.round(value).toLocaleString(),
-                }
-              },
-              legend: {
-                show: false
-              }
-            });
-          });
-	  }
+  function drawDailyPointsChart() {
+    $.ajax({
+      url: "/chartdata/user_daily_points/{{ session.get('athlete_id') }}",
+      dataType: "json",
+    }).done(function (jsonData) {
+      c3.generate({
+        bindto: "#chart_user_daily_points",
+        bar: {},
+        data: {
+          x: "x",
+          columns: [
+            ["x", ...jsonData.days.map((d) => d.slice(0, 10))],
+            ["points", ...jsonData.points],
+          ],
+          type: "bar",
+        },
+        axis: {
+          x: {
+            type: "timeseries",
+            tick: {
+              format: "%m/%d",
+            },
+          },
+          y: {
+            tick: {
+              format: (d) => d.toLocaleString(),
+            },
+          },
+        },
+        tooltip: {
+          format: {
+            value: (value) => Math.round(value).toLocaleString(),
+          },
+        },
+        legend: {
+          show: false,
+        },
+      });
+    });
+  }
 
-	  function drawWeeklyPointsChart() {
-	      $.ajax({
-	          url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
-	          dataType: "json"
-          }).done(function(jsonData) {
-            c3.generate({
-              bindto: '#chart_user_weekly_points',
-              bar: {
-              },
-              data: {
-                x: 'x',
-                columns:
-                  [
-                    ['x', ...jsonData.weeks],
-                    ['points', ...jsonData.points],
-                  ],
-                type: 'bar',
-              },
-              axis: {
-                x: {
-                  tick: {
-                    format: d => "Week " + d,
-                  }
-                },
-                y: {
-                  tick: {
-                    format: d => d.toLocaleString()
-                  }
-                }
-              },
-              tooltip: {
-                format: {
-                  value: (value) => Math.round(value).toLocaleString(),
-                }
-              },
-              legend: {
-                show: false
-              }
-            });
-          });
-	  }
+  function drawWeeklyPointsChart() {
+    $.ajax({
+      url: "/chartdata/user_weekly_points/{{ session.get('athlete_id') }}",
+      dataType: "json",
+    }).done(function (jsonData) {
+      c3.generate({
+        bindto: "#chart_user_weekly_points",
+        bar: {},
+        data: {
+          x: "x",
+          columns: [
+            ["x", ...jsonData.weeks],
+            ["points", ...jsonData.points],
+          ],
+          type: "bar",
+        },
+        axis: {
+          x: {
+            tick: {
+              format: (d) => "Week " + d,
+            },
+          },
+          y: {
+            tick: {
+              format: (d) => d.toLocaleString(),
+            },
+          },
+        },
+        tooltip: {
+          format: {
+            value: (value) => Math.round(value).toLocaleString(),
+          },
+        },
+        legend: {
+          show: false,
+        },
+      });
+    });
+  }
     </script>
 {% endblock %}
 {% block content %}
@@ -168,7 +164,171 @@
                          viewBox="0 0 24 24"
                          fill="currentColor"
                          xmlns="http://www.w3.org/2000/svg">
-                        <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+                        <style>
+            .spinner_zWVm {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_PnZo 1.2s linear infinite;
+            }
+            .spinner_gfyD {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_4j7o 1.2s linear infinite;
+              animation-delay: 0.1s;
+            }
+            .spinner_T5JJ {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_fLK4 1.2s linear infinite;
+              animation-delay: 0.1s;
+            }
+            .spinner_E3Wz {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_tDji 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_g2vs {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_CMiT 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_ctYB {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_cHKR 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_BDNj {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_Re6e 1.2s linear infinite;
+              animation-delay: 0.3s;
+            }
+            .spinner_rCw3 {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_EJmJ 1.2s linear infinite;
+              animation-delay: 0.3s;
+            }
+            .spinner_Rszm {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_YJOP 1.2s linear infinite;
+              animation-delay: 0.4s;
+            }
+            @keyframes spinner_5QiW {
+              0%,
+              50% {
+                width: 7.33px;
+                height: 7.33px;
+              }
+              25% {
+                width: 1.33px;
+                height: 1.33px;
+              }
+            }
+            @keyframes spinner_PnZo {
+              0%,
+              50% {
+                x: 1px;
+                y: 1px;
+              }
+              25% {
+                x: 4px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_4j7o {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 1px;
+              }
+              25% {
+                x: 11.33px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_fLK4 {
+              0%,
+              50% {
+                x: 1px;
+                y: 8.33px;
+              }
+              25% {
+                x: 4px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_tDji {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 1px;
+              }
+              25% {
+                x: 18.66px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_CMiT {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 8.33px;
+              }
+              25% {
+                x: 11.33px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_cHKR {
+              0%,
+              50% {
+                x: 1px;
+                y: 15.66px;
+              }
+              25% {
+                x: 4px;
+                y: 18.66px;
+              }
+            }
+            @keyframes spinner_Re6e {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 8.33px;
+              }
+              25% {
+                x: 18.66px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_EJmJ {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 15.66px;
+              }
+              25% {
+                x: 11.33px;
+                y: 18.66px;
+              }
+            }
+            @keyframes spinner_YJOP {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 15.66px;
+              }
+              25% {
+                x: 18.66px;
+                y: 18.66px;
+              }
+            }
+                        </style>
+                        <rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" />
+                        <rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" />
+                        <rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
                     </svg>
                     &nbsp;Loading daily points...
                 </div>
@@ -180,13 +340,177 @@
                          viewBox="0 0 24 24"
                          fill="currentColor"
                          xmlns="http://www.w3.org/2000/svg">
-                        <style>.spinner_zWVm{animation:spinner_5QiW 1.2s linear infinite,spinner_PnZo 1.2s linear infinite}.spinner_gfyD{animation:spinner_5QiW 1.2s linear infinite,spinner_4j7o 1.2s linear infinite;animation-delay:.1s}.spinner_T5JJ{animation:spinner_5QiW 1.2s linear infinite,spinner_fLK4 1.2s linear infinite;animation-delay:.1s}.spinner_E3Wz{animation:spinner_5QiW 1.2s linear infinite,spinner_tDji 1.2s linear infinite;animation-delay:.2s}.spinner_g2vs{animation:spinner_5QiW 1.2s linear infinite,spinner_CMiT 1.2s linear infinite;animation-delay:.2s}.spinner_ctYB{animation:spinner_5QiW 1.2s linear infinite,spinner_cHKR 1.2s linear infinite;animation-delay:.2s}.spinner_BDNj{animation:spinner_5QiW 1.2s linear infinite,spinner_Re6e 1.2s linear infinite;animation-delay:.3s}.spinner_rCw3{animation:spinner_5QiW 1.2s linear infinite,spinner_EJmJ 1.2s linear infinite;animation-delay:.3s}.spinner_Rszm{animation:spinner_5QiW 1.2s linear infinite,spinner_YJOP 1.2s linear infinite;animation-delay:.4s}@keyframes spinner_5QiW{0%,50%{width:7.33px;height:7.33px}25%{width:1.33px;height:1.33px}}@keyframes spinner_PnZo{0%,50%{x:1px;y:1px}25%{x:4px;y:4px}}@keyframes spinner_4j7o{0%,50%{x:8.33px;y:1px}25%{x:11.33px;y:4px}}@keyframes spinner_fLK4{0%,50%{x:1px;y:8.33px}25%{x:4px;y:11.33px}}@keyframes spinner_tDji{0%,50%{x:15.66px;y:1px}25%{x:18.66px;y:4px}}@keyframes spinner_CMiT{0%,50%{x:8.33px;y:8.33px}25%{x:11.33px;y:11.33px}}@keyframes spinner_cHKR{0%,50%{x:1px;y:15.66px}25%{x:4px;y:18.66px}}@keyframes spinner_Re6e{0%,50%{x:15.66px;y:8.33px}25%{x:18.66px;y:11.33px}}@keyframes spinner_EJmJ{0%,50%{x:8.33px;y:15.66px}25%{x:11.33px;y:18.66px}}@keyframes spinner_YJOP{0%,50%{x:15.66px;y:15.66px}25%{x:18.66px;y:18.66px}}</style><rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" /><rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" /><rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" /><rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" /><rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" /><rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" /><rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" /><rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" /><rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
+                        <style>
+            .spinner_zWVm {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_PnZo 1.2s linear infinite;
+            }
+            .spinner_gfyD {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_4j7o 1.2s linear infinite;
+              animation-delay: 0.1s;
+            }
+            .spinner_T5JJ {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_fLK4 1.2s linear infinite;
+              animation-delay: 0.1s;
+            }
+            .spinner_E3Wz {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_tDji 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_g2vs {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_CMiT 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_ctYB {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_cHKR 1.2s linear infinite;
+              animation-delay: 0.2s;
+            }
+            .spinner_BDNj {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_Re6e 1.2s linear infinite;
+              animation-delay: 0.3s;
+            }
+            .spinner_rCw3 {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_EJmJ 1.2s linear infinite;
+              animation-delay: 0.3s;
+            }
+            .spinner_Rszm {
+              animation: spinner_5QiW 1.2s linear infinite,
+                spinner_YJOP 1.2s linear infinite;
+              animation-delay: 0.4s;
+            }
+            @keyframes spinner_5QiW {
+              0%,
+              50% {
+                width: 7.33px;
+                height: 7.33px;
+              }
+              25% {
+                width: 1.33px;
+                height: 1.33px;
+              }
+            }
+            @keyframes spinner_PnZo {
+              0%,
+              50% {
+                x: 1px;
+                y: 1px;
+              }
+              25% {
+                x: 4px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_4j7o {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 1px;
+              }
+              25% {
+                x: 11.33px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_fLK4 {
+              0%,
+              50% {
+                x: 1px;
+                y: 8.33px;
+              }
+              25% {
+                x: 4px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_tDji {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 1px;
+              }
+              25% {
+                x: 18.66px;
+                y: 4px;
+              }
+            }
+            @keyframes spinner_CMiT {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 8.33px;
+              }
+              25% {
+                x: 11.33px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_cHKR {
+              0%,
+              50% {
+                x: 1px;
+                y: 15.66px;
+              }
+              25% {
+                x: 4px;
+                y: 18.66px;
+              }
+            }
+            @keyframes spinner_Re6e {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 8.33px;
+              }
+              25% {
+                x: 18.66px;
+                y: 11.33px;
+              }
+            }
+            @keyframes spinner_EJmJ {
+              0%,
+              50% {
+                x: 8.33px;
+                y: 15.66px;
+              }
+              25% {
+                x: 11.33px;
+                y: 18.66px;
+              }
+            }
+            @keyframes spinner_YJOP {
+              0%,
+              50% {
+                x: 15.66px;
+                y: 15.66px;
+              }
+              25% {
+                x: 18.66px;
+                y: 18.66px;
+              }
+            }
+                        </style>
+                        <rect class="spinner_zWVm" x="1" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_gfyD" x="8.33" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_T5JJ" x="1" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_E3Wz" x="15.66" y="1" width="7.33" height="7.33" />
+                        <rect class="spinner_g2vs" x="8.33" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_ctYB" x="1" y="15.66" width="7.33" height="7.33" />
+                        <rect class="spinner_BDNj" x="15.66" y="8.33" width="7.33" height="7.33" />
+                        <rect class="spinner_rCw3" x="8.33" y="15.66" width="7.33" height="7.33" />
+                        <rect class="spinner_Rszm" x="15.66" y="15.66" width="7.33" height="7.33" />
                     </svg>
                     &nbsp;Loading weekly points...
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="map">
-                <div id="track-map" class="wide-aspect">
+                <div id="track-map" class="c3-wide">
                 </div>
             </div>
         </div>
@@ -198,147 +522,157 @@
             integrity="sha256-I+994H7NziIk5lIzMW+m7F6Iga56kmy34rpHhd8wKww="
             crossorigin="anonymous"></script>
     <script type="text/javascript">
-	function stampFormatter(value, row) {
-        var options = {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric",
-        }
-        var date = new Date(row.start_date)
-        return Intl.DateTimeFormat("en", options).format(date);
-	}
+  function stampFormatter(value, row) {
+    var options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    };
+    var date = new Date(row.start_date);
+    return Intl.DateTimeFormat("en", options).format(date);
+  }
 
-	function movingTimeFormatter(value, row) {
-        // Thanks https://stackoverflow.com/a/58531661/424301
-        // invalid for activities longer than a day though
-        return new Date(row.moving_time*1000).toISOString().slice(11,19);
-	}
+  function movingTimeFormatter(value, row) {
+    // Thanks https://stackoverflow.com/a/58531661/424301
+    // invalid for activities longer than a day though
+    return new Date(row.moving_time * 1000).toISOString().slice(11, 19);
+  }
 
-	function rideFormatter(value, row) {
-        return `<a href="https://www.strava.com/activities/${row.id}" class="hover-underline">${value}</a>`;
-	}
+  function rideFormatter(value, row) {
+    return `<a href="https://www.strava.com/activities/${row.id}" class="hover-underline">${value}</a>`;
+  }
 
-	function photosFormatter(value, row) {
-		return { disabled: true, checked: row.photos_fetched }
-	}
+  function photosFormatter(value, row) {
+    return { disabled: true, checked: row.photos_fetched };
+  }
 
-	function temperatureFormatter(value, row) {
-        if (value != null && typeof value === "number") {
-            // Thanks https://stackoverflow.com/a/53378133/424301
-            return value.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 });
-        } else {
-            return "🌞🤷☃️"; // sun, shrug, snowman
-        }
-	}
+  function temperatureFormatter(value, row) {
+    if (value != null && typeof value === "number") {
+      // Thanks https://stackoverflow.com/a/53378133/424301
+      return value.toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 1,
+      });
+    } else {
+      return "🌞🤷☃️"; // sun, shrug, snowman
+    }
+  }
 
-	function distanceFormatter(value, row) {
-        return value.toLocaleString(undefined, { maximumFractionDigits: 1, minimumFractionDigits: 1 });
-	}
+  function distanceFormatter(value, row) {
+    return value.toLocaleString(undefined, {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+    });
+  }
 
-	function privateFormatter(value, row) {
-        return value ? "🕵&nbsp;Private&nbsp;🕵" : "Public";
-	}
+  function privateFormatter(value, row) {
+    return value ? "🕵&nbsp;Private&nbsp;🕵" : "Public";
+  }
 
-	function refetchPhotosForRide(rideId) {
-		$.ajax({
-			url: "/my/refetch_ride_photos",
-			type: "POST",
-			data: {id: rideId},
-			success: function (data) {
-				refreshTable();
-			},
-			error: function (xhr, status, errorThrown) {
-				alert("There was an error updating ride. " + errorThrown);
-			},
-			dataType: "json"
-		});
-	}
+  function refetchPhotosForRide(rideId) {
+    $.ajax({
+      url: "/my/refetch_ride_photos",
+      type: "POST",
+      data: { id: rideId },
+      success: function (data) {
+        refreshTable();
+        alert("Please wait up to ten minutes for your photos to sync.");
+      },
+      error: function (xhr, status, errorThrown) {
+        alert("There was an error updating ride. " + errorThrown);
+      },
+      dataType: "json",
+    });
+  }
 
-	function refetchFormatter(value, row) {
-		if (row.photos_fetched) {
-            return `<a href="#" onclick="refetchPhotosForRide(${value})">refetch</a>`;
-		}
-	}
+  function refetchFormatter(value, row) {
+    if (row.photos_fetched) {
+      return `<a href="#" onclick="refetchPhotosForRide(${value})">refetch</a>`;
+    }
+  }
 
-	function refreshTable() {
-		$table.bootstrapTable('refresh', { url: '/my/rides.json' });
-	}
+  function refreshTable() {
+    $table.bootstrapTable("refresh", { url: "/my/rides.json" });
+  }
 
-	$(function() {
-		$table = $('#table-rides').bootstrapTable({
-			method: "get",
-			url: "/my/rides.json",
-			striped: true,
-			checkboxHeader: false,
-			showColumns: false,
-			columns: [
-				{
-					field: "start_date",
-					title: "Date",
-					sortable: true,
-					align: "right",
-					formatter: stampFormatter
-				},
-				{
-					field: "name",
-					title: "Summary",
-					sortable: true,
-					formatter: rideFormatter
-				},
-				{
-					field: "distance",
-                    title: "Distance<br>(mi)",
-					sortable: true,
-					align: "right",
-					formatter: distanceFormatter
-				},
-				{
-					field: "moving_time",
-					title: "Duration",
-					sortable: true,
-					align: "right",
-					formatter: movingTimeFormatter
-				},
-				{
-					field: "avg_temp",
-                    title: "Avg Temp<br>(&#8457;)",
-					align: "right",
-					sortable: true,
-					formatter: temperatureFormatter
-				},
-				{
-					field: "private",
-					title: "Visibility",
-					sortable: true,
-					align: "center",
-					formatter: privateFormatter
-				},
-				{
-					field: "photos_fetched",
-                    title: "Photos<br>Fetched?",
-					align: "center",
-					checkbox: true,
-					formatter: photosFormatter,
-				},
-				{
-					field: "id",
-                    title: "Refetch<br>Photos?",
-					sortable: true,
-					align: "center",
-					formatter: refetchFormatter
-				}
-			]
-		});
+  $(function () {
+    $table = $("#table-rides").bootstrapTable({
+      method: "get",
+      url: "/my/rides.json",
+      striped: true,
+      checkboxHeader: false,
+      showColumns: false,
+      columns: [
+        {
+          field: "start_date",
+          title: "Date",
+          sortable: true,
+          align: "right",
+          formatter: stampFormatter,
+        },
+        {
+          field: "name",
+          title: "Summary",
+          sortable: true,
+          formatter: rideFormatter,
+        },
+        {
+          field: "distance",
+          title: "Distance<br>(mi)",
+          sortable: true,
+          align: "right",
+          formatter: distanceFormatter,
+        },
+        {
+          field: "moving_time",
+          title: "Duration",
+          sortable: true,
+          align: "right",
+          formatter: movingTimeFormatter,
+        },
+        {
+          field: "avg_temp",
+          title: "Avg Temp<br>(&#8457;)",
+          align: "right",
+          sortable: true,
+          formatter: temperatureFormatter,
+        },
+        {
+          field: "private",
+          title: "Visibility",
+          sortable: true,
+          align: "center",
+          formatter: privateFormatter,
+        },
+        {
+          field: "photos_fetched",
+          title: "Photos<br>Fetched?",
+          align: "center",
+          checkbox: true,
+          formatter: photosFormatter,
+        },
+        {
+          field: "id",
+          title: "Refetch<br>Photos?",
+          sortable: true,
+          align: "center",
+          formatter: refetchFormatter,
+        },
+      ],
+    });
+    // Remove the absolutely dreadful styling.
+    $(".bootstrap-table").removeClass("bootstrap-table");
+    $(".fixed-table-container").removeClass("fixed-table-container");
 
-		$('#map-link').one('click', () => {
-			create_ride_map('map', '/api/my/trackmap.json', 'red', true);
-		});
-        $('#daily-link').one('click', () => {
-            drawDailyPointsChart();
-        });
-        $('#weekly-link').one('click', () => {
-            drawWeeklyPointsChart();
-        });
-	});
+    $("#map-link").one("click", () => {
+      create_ride_map("map", "/api/my/trackmap.json", "#00a4e4", true);
+    });
+    $("#daily-link").one("click", () => {
+      drawDailyPointsChart();
+    });
+    $("#weekly-link").one("click", () => {
+      drawWeeklyPointsChart();
+    });
+  });
     </script>
 {% endblock %}

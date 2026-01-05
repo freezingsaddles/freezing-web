@@ -16,6 +16,12 @@
     aspect-ratio: .75;
   }
 
+  .alert .btn-close {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+  }
+
   .front-page-counts {
     font-size: 1.5rem;
   }
@@ -83,46 +89,6 @@
     <script src="/js/leaflet-gesture-handling.min.js"></script>
     <script src="/js/ride-map.js"></script>
 {% endblock %}
-{% block beforenav %}
-    {% for photo in photos %}
-        <div class="modal fade pop-up-{{ photo.id }}"
-             tabindex="-1"
-             role="dialog"
-             aria-labelledby="myLargeModalLabel-1"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title text-truncate" id="myLargeModalLabel-1">
-                            {{ photo.caption|default(photo.ride.name, true) }}
-                        </h4>
-                        <button type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body d-flex flex-column align-items-center ekko-lightbox-container">
-                        {# djlint:off H006 #}
-                        <img src="{{ photo.img_l }}"
-                             class="img-responsive"
-                             alt="{{ photo.caption }}">
-                        {# djlint:on #}
-                    </div>
-                    <div class="modal-footer">
-                        Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>
-                        {% if photo.ref %}
-                            <a href='{{ photo.ref }}'>View in Instagram</a>
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal mixer image -->
-    {% endfor %}
-{% endblock %}
 {% block content %}
     <div id="sect-main" class="card mb-3 my-lg-4 bg-light">
         <div class="p-4 px-lg-5 d-flex flex-column flex-lg-row align-items-center ">
@@ -146,8 +112,8 @@
             </div>
         </div>
     </div>
-    {% if winter_is_coming %}
-        <div class="{{ 'my-3 my-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
+    {% if winter_is_coming and not g.logged_in %}
+        <div class="{{ 'mb-3 mb-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
             Freezing Saddles is a game organized by friends in the
             <a class="text-info text-decoration-none"
                href="https://www.bikearlingtonforum.com/">Washington Area Bike Forum</a>.
@@ -160,43 +126,71 @@
             usually March 19<sup>th</sup>.
         </div>
     {% elif bafs_is_over %}
-        <div class="my-3 my-lg-4 py-2 alert alert-success text-center position-relative"
+        <div class="mb-3 mb-lg-4 py-2 alert alert-success text-center position-relative"
              style="z-index: 1001">
             Winter is over. The game is done. The reindeer have been put out to pasture. Time to clean your bike, wax your chain,
             and go for a ride.
             <span class="sprout">🌱</span>
         </div>
     {% endif %}
+    {% if g.logged_in and yourself.total_days < 15 and not request.cookies.get('discord-invite') %}
+        <div id="discord-invite"
+             class="mb-3 mb-lg-4 alert alert-success text-center">
+            <button class="btn btn-close" id="discord-invite-close" aria-label="Close">
+            </button>
+            <strong>We're on Discord!</strong>
+            <br />
+            Freezing Saddles is using Discord to organize some group rides and pointless prizes.
+            <a rel="noreferrer" target="_blank" href="{{ discord_invitation }}">Join our Discord Server</a> to stay in touch.
+        </div>
+    {% endif %}
     {% if not bafs_is_live %}
-        <div class="my-4 mb-lg-5 alert alert-info">
+        <div class="mb-4 mb-lg-5 alert alert-info">
             The shiny new Freezing Saddles competition for the upcoming winter hasn't
             started yet, although there are currently <strong>{{ contestant_count }}</strong>
             contestants registered. There are still bike rides going on, you should go for a ride.
         </div>
+    {% else %}
+        {% if yourself.no_team and not request.cookies.get('team-warning') %}
+            <div id="team-warning"
+                 class="mb-3 mb-lg-4 py-2 alert alert-warning text-center">
+                <button class="btn btn-close" id="team-warning-close" aria-label="Close">
+                </button>
+                <strong>Not on the leaderboard?</strong>
+                <br />
+                If you are an active participant you must now join your competition team on Strava to appear on the leaderboard.
+                Please check the forum or reach out to your team captain to find your team and join it.
+                If you are playing as a Friend of BAFS, you may ignore this message.
+            </div>
+        {% endif %}
+        {% if yourself.missed_today %}
+            {% if yourself.missed_yesterday %}
+                <div class="mb-3 mb-lg-4 py-2 alert alert-danger text-center">
+                    <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
+                    day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
+                </div>
+            {% elif yourself.hour >= 12 %}
+                <div class="mb-3 mb-lg-4 py-2 alert alert-info text-center">
+                    <strong>You haven't ridden yet today!</strong> It's a beautiful {{ "day" if 20 > yourself.hour else "night" }} to go for a ride.
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if not bafs_is_live %}
         <iframe id="cal"
                 class="bigly mb-lg-4"
                 src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York"
                 frameborder="0"
                 scrolling="no"></iframe>
     {% else %}
-        {% if yourself.missed_today %}
-            {% if yourself.missed_yesterday %}
-                <div class="my-3 my-lg-4 py-2 alert alert-danger text-center">
-                    <strong>You didn't ride yesterday!</strong> If you can, it's important to ride every
-                    day. Even just <a style="color: inherit" href="/leaderboard/indiv_sleaze">one mile</a> will help your team!
-                </div>
-            {% elif yourself.hour >= 12 %}
-                <div class="my-3 my-lg-4 py-2 alert alert-info text-center">
-                    <strong>You haven't ridden yet today!</strong> It's a beautiful {{ "day" if 20 > yourself.hour else "night" }} to go for a ride.
-                </div>
-            {% endif %}
-        {% endif %}
         <div id="sect-stats" class="d-grid grid-xl-2 grid-gap-3 grid-gap-lg-4">
             <div class="d-flex flex-column gap-3 gap-lg-4">
                 <div class="card bg-light d-flex flex-row front-page-counts important">
-                    <a class="flex-grow-1 text-center tag-link"
-                       href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
-                    </a>
+                    {% if team_count %}
+                        <a class="flex-grow-1 text-center tag-link"
+                           href="/leaderboard/team_text">{{ team_count }} team{{ team_count|ess }}
+                        </a>
+                    {% endif %}
                     <a class="flex-grow-1 text-center tag-link"
                        href="/leaderboard/individual_text">{{ contestant_count }} contestant{{ contestant_count|ess }}</a>
                 </div>
@@ -273,6 +267,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="card bg-light d-flex flex-row achievements-row">
+                    <div class="achievements py-2 ps-3 pe-3 position-relative d-none d-lg-block">
+                        strava achievements
+                    </div>
+                    <div class="d-flex flex-grow-1 justify-content-evenly ps-3 py-2 gap-2">
+                        <span>🥇 {{ pr_gold|groupnum }}</span>
+                        <span>🥈 {{ pr_silver|groupnum }}</span>
+                        <span>🥉 {{ pr_bronze|groupnum }}</span>
+                        <a href="/pointless/generic/legend" class="tag-link">🦸 {{ legend|groupnum }}</a>
+                    </div>
+                </div>
                 {% if winners|length > 1 %}
                     <div class="card bg-light">
                         <a class="horizontal-header text-center tag-link"
@@ -314,7 +319,7 @@
                                            title="Individual rank">
                                             👤 {{ yourself.rank }}<sup>{{ yourself.rank|ord }}</sup>
                                         </a>
-                                        {% if yourself.team_rank %}
+                                        {% if team_count and yourself.team_rank %}
                                             <span class="stat-divider vertical mb-2 mx-md-3"></span>
                                             <a class="tag-link" href="/leaderboard/team_text" title="Team rank">
                                                 👥 {{ yourself.team_rank }}<sup>{{ yourself.team_rank|ord }}</sup>
@@ -385,6 +390,9 @@
    style="font-size: {{ tag[1] }}em">{{ tag[0] }}</a>
                 {% endfor %}
             </div>
+        {% else %}
+            <div class="pt-3 pt-lg-4">
+            </div>
         {% endif %}
         {% if photos %}
             <div id="sect-photos" class="mb-3 mb-lg-4 photo-grid gap-lg-4">
@@ -396,21 +404,21 @@
                             <br>
                         Photos</a>
                     {% else %}
-                        <a href="#"
-                           class="photo-thumbnail"
-                           data-bs-toggle="modal"
-                           data-bs-target=".pop-up-{{ photo.id }}"
-                           style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png')"></a>
-                        <!-- p class="mt-1">Taken by <a href="/people/{{ photo.ride.athlete.id }}">{{ photo.ride.athlete.display_name }}</a></p -->
+                        <a href="{{ photo.img_l }}" data-toggle="lightbox" data-gallery="multiimages"
+                            class="photo-thumbnail"
+                            data-title="{{ photo.ride.name }}"
+                            data-parent="#sect-photos"
+                            {# djlint:off #}
+                            data-info='{{ photo.caption or "" | safe }}'
+                            data-footer='Taken by <a href="/people/{{ photo.ride.athlete.id }}" class="hover-underline">{{ photo.ride.athlete.display_name }}</a>'
+                            style="background-image: url('{{ photo.img_l }}'), url('/img/logo-blue.png');">
+                            {# djlint:on #}
+                        </a>
                     {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
         {# djlint:on #}
-        {% if not photos and not tags %}
-            <div class="mb-3 mb-lg-4">
-            </div>
-        {% endif %}
         <div id="sect-cal" class="mb-lg-4">
             <iframe id="cal"
                     src="https://calendar.google.com/calendar/embed?height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=vss0aloebi85u9dc9shihueg0o%40group.calendar.google.com&amp;color=%2342104A&amp;ctz=America%2FNew_York"
@@ -421,14 +429,26 @@
 {% endblock %}
 {% block foot %}
     <script>
+  function initAlert(id, days) {
+    $(`#${id}-close`).click(e => {
+      $(`#${id}`).remove();
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      document.cookie = `${id}=hide; expires=${date.toUTCString()}; path=/`;
+    });
+  }
   $(() => {
-    const map = create_ride_map('map', '/api/all/trackmap.json');
-    $('#expand-map').click(e => {
-      e.preventDefault();
-      $('body').toggleClass('map-expanded');
-      map.invalidateSize();
-      $('#map')[0].scrollIntoView({block: 'center'});
-    })
+    if ($('#map').length) {
+        const map = create_ride_map('map', '/api/all/trackmap.json');
+        $('#expand-map').click(e => {
+            e.preventDefault();
+            $('body').toggleClass('map-expanded');
+            map.invalidateSize();
+            $('#map')[0].scrollIntoView({block: 'center'});
+        });
+    }
+    initAlert('team-warning', 30);
+    initAlert('discord-invite', 60);
   });
     </script>
     {% if bafs_is_over and bafs_days_over < 14 %}

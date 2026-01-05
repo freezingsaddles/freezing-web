@@ -17,7 +17,7 @@ from flask import (
     url_for,
 )
 from freezing.model import meta
-from freezing.model.orm import Athlete, Ride, RidePhoto
+from freezing.model.orm import Athlete, Ride, RidePhoto, Team
 from sqlalchemy import func, text
 from stravalib import Client
 
@@ -39,14 +39,14 @@ class AccessDenied(RuntimeError):
 custom_tag_pages = {
     "civilwarmarker": "civilwarhistory",
     "civilwarstreet": "civilwarhistory",
-    "coffeeride": "coffeeride",
+    "commute": "generic/commute",
     "decasleaze": "generic/decasleaze",
     "foodrescue": "generic/foodrescue",
     "fsrealsuppleride": "generic/suppleride",
     "kidical": "generic/kidmiles",
     "rosshillloop": "rosshillloop",
     "withkid": "generic/pointlesskids",
-    "poggio": "generic/poggio-indiv",
+    "poggio": "segment/650024",
 }
 
 
@@ -95,66 +95,67 @@ def myself(number):
 def index():
     q = text("""select count(*) as num_contestants from lbd_athletes""")
 
-    indiv_count_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    indiv_count_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     contestant_count = indiv_count_res._mapping["num_contestants"]
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
-                  coalesce(sum(R.distance),0) as distance
-                from rides R
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
+                coalesce(sum(R.distance),0) as distance
+            from rides R
+            ;
+        """
     )
 
-    all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    all_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     total_miles = int(all_res._mapping["distance"])
     total_hours = int(all_res._mapping["moving_time"]) / 3600
     total_rides = all_res._mapping["num_rides"]
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_temp_avg < 32
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_temp_avg < 32
+            ;
+        """
     )
 
-    sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    sub32_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_rain = 1
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_rain = 1
+            ;
+        """
     )
 
-    rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    rain_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
     q = text(
         """
-                select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
-                from rides R
-                join ride_weather W on W.ride_id = R.id
-                where W.ride_snow = 1
-                ;
-            """
+            select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
+            from rides R
+            join ride_weather W on W.ride_id = R.id
+            where W.ride_snow = 1
+            ;
+        """
     )
 
-    snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    snow_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     snow_hours = int(snow_res._mapping["moving_time"]) / 3600
 
     # Grab some recent photos
     photos = (
         meta.scoped_session()
         .query(RidePhoto)
+        .filter_by(primary=True)
         .join(Ride)
         .order_by(func.convert_tz(Ride.start_date, Ride.timezone, "GMT").desc())
         .limit(12)
@@ -183,10 +184,73 @@ def index():
             config.TIMEZONE, today.date()
         )
     )
-    today_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
+    today_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     today_riders = int(today_res._mapping["riders"])
     today_hours = round(today_res._mapping["moving_time"]) / 3600
     today_miles = int(today_res._mapping["distance"])
+
+    q = text(
+        """
+            select
+                RE.personal_record as pr,
+                count(RE.personal_record) as count
+            from ride_efforts RE
+            where RE.personal_record is not null
+            group by personal_record
+            ;
+        """
+    )
+    pr_res = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
+    prs = {res._mapping["pr"]: res._mapping["count"] for res in pr_res}
+
+    # We will need to watch the performance of this query. You became a
+    # legend in this competition if we have an earlier ride of the segment
+    # where you were not the legend. We use the ride effort id for ordering
+    # rather than ride start date, because that lets you achieve legendary
+    # status on one ride repeating the same segment.
+    # consider a materialized view...
+    #
+    # CREATE EVENT refresh_legend_view
+    # ON SCHEDULE EVERY 4 HOURS STARTS '2026-01-01' ENDS '2026-03-21'
+    # DO
+    # BEGIN
+    #     TRUNCATE TABLE legend_view;
+    #     INSERT INTO legend_view (athlete_id, segment_id)
+    #     WITH unlegends as ..., legends as ...
+    #     SELECT L.athlete_id, L.segment_id
+    #     FROM legends L
+    #     JOIN unlegends U ON U.athlete_id = L.athlete_id
+    #                     AND U.segment_id = L.segment_id
+    #                     AND L.id > U.id;
+    # END;
+    #
+    # Using lag is much slower:
+    # SELECT segment_id, athlete_id
+    # FROM (SELECT E.segment_id, R.athlete_id, E.local_legend,
+    #              LAG(local_legend) OVER (PARTITION BY E.segment_id, R.athlete_id ORDER BY E.id) AS previous_legend
+    #       FROM ride_efforts E join rides R on R.id = E.ride_id) AS subquery
+    # WHERE local_legend = TRUE AND previous_legend = FALSE;
+    #
+    # But this doesn't work at all because when we refetch old rides, those
+    # old segments become reported as legendary based on your *current* status
+    # so we have no real view of when you became legend.
+    q = text(
+        """
+            with legends as (
+                select
+                    R.athlete_id, RE.segment_id
+                from rides R
+                join ride_efforts RE on RE.ride_id = R.id
+                where RE.local_legend
+            )
+            select
+                count(distinct L.athlete_id, L.segment_id) as legends
+            from legends L
+            ;
+        """
+    )
+    ll_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
+    legends = int(ll_res._mapping["legends"])
 
     # Get teams sorted by points
     q = team_leaderboard_query()
@@ -217,6 +281,10 @@ def index():
         bafs_is_live=after_competition_start,
         bafs_is_over=not before_competition_end,
         bafs_days_over=delta_after_end.days,
+        pr_gold=prs.get(1, 0),
+        pr_silver=prs.get(2, 0),
+        pr_bronze=prs.get(3, 0),
+        legend=legends,
         photos=[photo for photo in photos],
         tags=tags,
         winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too
@@ -316,7 +384,7 @@ def _rider_stats(athlete_id):
                 """
             ).bindparams(athlete_id=athlete_id)
         )
-        .fetchone()
+        .one()
     )
     ride_days = set(
         res[0]
@@ -325,12 +393,15 @@ def _rider_stats(athlete_id):
             .execute(
                 text(
                     """
-                select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
-                """
+                    select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
+                    """
                 ).bindparams(athlete_id=athlete_id)
             )
             .fetchall()
         )
+    )
+    team = (
+        meta.scoped_session().query(Team).join(Athlete).filter_by(id=athlete_id).one()
     )
     start = config.START_DATE.date()
     now_tz = datetime.now(config.TIMEZONE)
@@ -346,6 +417,8 @@ def _rider_stats(athlete_id):
         0,
     ) + (1 if today in ride_days else 0)
     game_on = datetime.now().date() <= today
+    # if within the first month you are not on a team then explain
+    no_team = total_days <= 31 and team.leaderboard_exclude and config.COMPETITION_TEAMS
 
     return {
         "rank": rank[0] if rank else None,
@@ -354,12 +427,20 @@ def _rider_stats(athlete_id):
         "hours": round(ride_stats[1] / 3600),
         "miles": int(ride_stats[2]),
         "days": len(ride_days),
+        "total_days": total_days,
         "missed_today": game_on and today not in ride_days,
         "missed_yesterday": yesterday >= start and yesterday not in ride_days,
         "hour": datetime.now(config.START_DATE.tzinfo).hour,
         "streak": streak,
         "every_day": total_days > 0 and streak == total_days,
+        "team_name": team.name if not team.leaderboard_exclude else None,
+        "no_team": no_team,
     }
+
+
+@blueprint.route("/discord")
+def discord():
+    return render_template("discord.html") if session.get("athlete_id") else join()
 
 
 @blueprint.route("/logout")
@@ -454,6 +535,9 @@ def authorization():
         message = "Local development enabled"
     else:
         code = request.args.get("code")
+        scope = request.args.get("scope")
+        state = request.args.get("state")
+        log.info("Auth code: {}, scope: {}, state: {}".format(code, scope, state))
         client = Client()
         token_dict = client.exchange_code_for_token(
             client_id=config.STRAVA_CLIENT_ID,
@@ -462,8 +546,18 @@ def authorization():
         )
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
+        log.info("Strava athlete: {}", str(strava_athlete))
         try:
             athlete = data.register_athlete(strava_athlete, token_dict)
+            log.info(
+                "Received athlete auth [id: {}, name: {}] [at: {}, rt: {}, exp: {}]".format(
+                    athlete.id,
+                    athlete.name,
+                    athlete.access_token,
+                    athlete.refresh_token,
+                    athlete.expires_at,
+                )
+            )
             team = data.register_athlete_team(
                 strava_athlete=strava_athlete,
                 athlete_model=athlete,
@@ -485,6 +579,8 @@ def authorization():
         auth.login_athlete(strava_athlete)
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
     after_competition_start = datetime.now(config.TIMEZONE) > config.START_DATE
+    if message:
+        log.info("Authorization message: {}".format(message))
     return render_template(
         "authorization_success.html",
         after_competition_start_start=after_competition_start,

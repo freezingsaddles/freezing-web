@@ -1,48 +1,92 @@
 {% extends "base.html" %}
+{% block title %}
+    {{ meta.name if meta else
+    data.segment_name + " Rides" }}
+{% endblock %}
 {% block content %}
     <h2 class="mb-3">
-        {{ data.segment_name }} Rides
+        {{ meta.name if meta else data.segment_name + " Rides" }}
     </h2>
     <p>
-        Leaderboard for all rides of the <a href="https://www.strava.com/segments/{{ data.segment_id }}">{{ data.segment_name }}</a> segment on Strava.
+        Leaderboard for all rides of the
+        <a href="https://www.strava.com/segments/{{ data.segment_id }}">{{ data.segment_name }}</a>
+        segment on Strava.
     </p>
-    <p>
-        To see another segment, simply edit the URL and replace <em>{{ data.segment_id }}</em> with the identifier of the segment you want. The identifier of the segment is the number in the URL when you view the segment on Strava. If no one has yet ridden the segment in this competition, the name will not show up here.
-    </p>
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Rank
-                    </th>
-                    <th>
-                        Rider
-                    </th>
-                    <th class="number">
-                        Rides
-                    </th>
-                    <th class="number">
-                        Average Time
-                    </th>
-                </tr>
-                {% for a, b, c, d, e in data.tdata %}
-                    <tr>
-                        <td class="number rank">
-                            {{ loop.index }}
-                        </td>
-                        <td>
-                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
-                        </td>
-                        <td class="number">
-                            {{ d }}
-                        </td>
-                        <td class="number">
-                            {{(e / d / 60) | int}}m {{((e / d) % 60) | int}}s
-                        </td>
-                    </tr>
+    {% if meta %}
+        {% if meta.description %}
+            <p>
+                {{ meta.description | safe }}
+            </p>
+        {% endif %}
+        {% if meta.url %}
+            <p>
+                See: <a href="{{ meta.url }}">{{ meta.url }}</a>
+            </p>
+        {% endif %}
+        {% if sponsors %}
+            <p>
+                Sponsored by
+                {% for sp in sponsors %}
+                    {# djlint:off #}
+                    <em><a href="{{sp.url}}">{{ sp.name }}</a></em>{% if loop.last %}.{% else %}, {% endif %}
+                    {# djlint:on #}
                 {% endfor %}
-            </table>
-        </div>
+            </p>
+        {% else %}
+            <p class="text-muted">
+                This ride has no sponsor and is completely pointless.
+            </p>
+        {% endif %}
+    {% else %}
+        <p>
+            To see another segment, simply edit the URL and replace
+            <em>{{ data.segment_id }}</em> with the identifier of the segment you want.
+            The identifier of the segment is the number in the URL when you view the
+            segment on Strava. If no one has yet ridden the segment in this competition,
+            the name will not show up here.
+        </p>
+    {% endif %}
+    <ul class="nav nav-tabs mt-lg-4">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="">Leaderboard</a>
+        </li>
+    </ul>
+    <div class="leaderboard-overflow mt-2">
+        <table class="table table-condensed">
+            <tr>
+                <th class="number rank">
+                    Rank
+                </th>
+                <th>
+                    Rider
+                </th>
+                <th class="number">
+                    Rides
+                </th>
+                <th class="number">
+                    Average Time
+                </th>
+            </tr>
+            {% for a, b, c, d, e in data.tdata %}
+                <tr>
+                    <td class="number rank">
+                        {{ loop.index }}
+                    </td>
+                    <td>
+                        {% if a in banned %}
+                            <a href="/people/{{ a }}" class="hover-underline text-muted">{{ b }} <em>(ineligible)</em></a>
+                        {% else %}
+                            <a href="/people/{{ a }}" class="hover-underline">{{ b }}</a>
+                        {% endif %}
+                    </td>
+                    <td class="number">
+                        {{ d }}
+                    </td>
+                    <td class="number">
+                        {{(e / d / 60) | int}}m {{((e / d) % 60) | int}}s
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 {% endblock %}

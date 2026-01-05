@@ -14,9 +14,11 @@ class HashtagBoardTag(BaseMessage):
     alt = None
     name = None
     description = None
-    sponsor = None
+    sponsors: List[int] | None = None
+    banned: List[int] | None = None  # banned for prior win
     url = None
-    rank_by_rides = False
+    rank_by = None
+    default_view = None
 
 
 class HashtagBoardTagSchema(BaseSchema):
@@ -26,13 +28,15 @@ class HashtagBoardTagSchema(BaseSchema):
     alt = fields.Str()
     name = fields.Str(required=True)
     description = fields.Str(required=True)
-    sponsor = fields.Str()
+    sponsors = fields.List(fields.Int())
+    banned = fields.List(fields.Int())
     url = fields.Str()
-    rank_by_rides = fields.Bool()
+    rank_by = fields.Str()
+    default_view = fields.Str()
 
 
 class HashtagBoard(BaseMessage):
-    tags: List[HashtagBoardTag] = None
+    tags: List[HashtagBoardTag] = []
 
 
 class HashtagBoardSchema(BaseSchema):
@@ -41,7 +45,7 @@ class HashtagBoardSchema(BaseSchema):
     tags = fields.Nested(HashtagBoardTagSchema, many=True, required=True)
 
 
-def load_hashtag(hashtag) -> HashtagBoardTag:
+def load_hashtag(hashtag) -> HashtagBoardTag | None:
     path = os.path.join(config.LEADERBOARDS_DIR, "hashtag.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
@@ -60,4 +64,4 @@ def load_hashtag(hashtag) -> HashtagBoardTag:
         and tag.alt.lower() == hashtag.lower()
     ]
 
-    return None if len(matches) == 0 else matches[0]
+    return matches[0] if matches else None

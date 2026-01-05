@@ -56,3 +56,4 @@ services:
       TEAMS: ${TEAMS:-1234,1235}
       TIMEZONE: ${TIMEZONE:-America/New_York}
       VIRTUAL_HOST: ${FREEZING_WEB_FQDN:-localhost.localdomain}
+      DISCORD_INVITATION: ${DISCORD_INVITATION:-https://example.org/}

@@ -13,7 +13,7 @@
     <script src="/js/ride-map.js"></script>
 {% endblock %}
 {% block title %}
-    FS: {{ title }}
+    {{ title }}
 {% endblock %}
 {% block content %}
     <h2 class="mb-3">
@@ -27,118 +27,114 @@
             See: <a href="{{ url }}">{{ url }}</a>
         </p>
     {% endif %}
-    {% if sponsor %}
+    {% if sponsors %}
         <p>
-            Sponsored by <em><a href="https://www.bikearlingtonforum.com/forums/users/{{ sponsor }}/">{{ sponsor }}</a></em>.
+            Sponsored by
+            {% for sp in sponsors %}
+                {# djlint:off #}<em><a href="{{ sp.url }}">{{ sp.name }}</a></em
+                >{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
+            {% endfor %}
         </p>
     {% endif %}
     {% if show_rides %}
-        <div class="accordion mt-lg-4 mb-lg-3" id="accordion-parent">
-            <div class="accordion-item">
-                <h3 class="accordion-header">
-                    <button id="map-button"
-                            class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#ride-map"
-                            aria-controls="ride-map">
-                        Ride Map
-                    </button>
-                </h3>
-                <div id="ride-map"
-                     class="accordion-collapse collapse"
-                     data-bs-parent="#accordion-parent">
-                    <div class="accordion-body wide-aspect" id="map">
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h3 class="accordion-header">
-                    <button class="accordion-button"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            aria-expanded="true"
-                            data-bs-target="#leader-board"
-                            aria-controls="leader-board">
-                        Leaderboard
-                    </button>
-                </h3>
-                <div id="leader-board"
-                     class="accordion-collapse collapse show"
-                     data-bs-parent="#accordion-parent">
-                    <div class="accordion-body py-2 leaderboard-overflow">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th class="number rank">
-                                        Rank
-                                    </th>
+        <div role="tabpanel"  class="mt-lg-4 mb-lg-3">
+            <ul class="nav nav-tabs mb-0" role="tablist">
+                <li role="presentation" class="nav-item">
+                    <a href="#leaderboard"
+                       class="nav-link active"
+                       aria-controls="leaderboard"
+                       role="tab"
+                       data-bs-toggle="tab">Leaderboard</a>
+                </li>
+                <li role="presentation" class="nav-item">
+                    <a href="#map"
+                       id="map-link"
+                       class="nav-link"
+                       aria-controls="map"
+                       role="tab"
+                       data-bs-toggle="tab">Ride Map</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel"
+                     class="tab-pane active py-2 leaderboard-overflow"
+                     id="leaderboard">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="number rank">
+                                    Rank
+                                </th>
+                                {% for field in fields %}
+                                    {% if field.visible %}
+                                        <th class="{{ field.type }}">
+                                            {{ field.label or field.name }}
+                                        </th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                                <tr class="{{ row.athlete_id | myself }}">
+                                    <td class="number rank">
+                                        {{ row.rank }}
+                                    </td>
                                     {% for field in fields %}
                                         {% if field.visible %}
-                                            <th class="{{ field.type }}">
-                                                {{ field.label or field.name }}
-                                            </th>
+                                            <td class="{{ field.type }}">
+                                                {{ row[field.name] | safe }}
+                                            </td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in data %}
-                                    <tr class="{{ row.athlete_id | myself }}">
-                                        <td class="number rank">
-                                            {{ row.rank }}
-                                        </td>
-                                        {% for field in fields %}
-                                            {% if field.visible %}
-                                                <td class="{{ field.type }}">
-                                                    {{ row[field.name] | safe }}
-                                                </td>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div role="tabpanel" class="tab-pane c3-wide my-3 my-lg-4" id="map">
                 </div>
             </div>
         </div>
     {% else %}
-        <div class="card">
-            <div class="card-body py-1">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="number rank">
-                                Rank
-                            </th>
+        <ul class="nav nav-tabs mt-lg-4">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="">Leaderboard</a>
+            </li>
+        </ul>
+        <div class="leaderboard-overflow mt-2">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th class="number rank">
+                            Rank
+                        </th>
+                        {% for field in fields %}
+                            {% if field.visible %}
+                                <th class="{{ field.type }}">
+                                    {{ field.label or field.name }}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr class="{{ row.athlete_id | myself }}">
+                            <td class="number rank">
+                                {{ row.rank }}
+                            </td>
                             {% for field in fields %}
                                 {% if field.visible %}
-                                    <th class="{{ field.type }}">
-                                        {{ field.label or field.name }}
-                                    </th>
+                                    <td class="{{ field.type }}">
+                                        {{ row[field.name] | safe }}
+                                    </td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in data %}
-                            <tr class="{{ row.athlete_id | myself }}">
-                                <td class="number rank">
-                                    {{ row.rank }}
-                                </td>
-                                {% for field in fields %}
-                                    {% if field.visible %}
-                                        <td class="{{ field.type }}">
-                                            {{ row[field.name] | safe }}
-                                        </td>
-                                    {% endif %}
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% endif %}
 {% endblock %}
@@ -146,7 +142,7 @@
     {% if show_rides %}
         <script type="text/javascript">
   $(function() {
-    $('#map-button').one('click', () => {
+    $('#map-link').one('click', () => {
       create_ride_map('map', '/api/all/trackmap.json?rides={{data | map(attribute="ride_ids") | join(",")}}', null, true);
     });
   });

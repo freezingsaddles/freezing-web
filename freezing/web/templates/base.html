@@ -57,8 +57,8 @@
               rel="stylesheet"
               integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
               crossorigin="anonymous">
-        <link href="/css/ekko-lightbox.min.css" rel="stylesheet">
-        <link href="/css/styles.css" rel="stylesheet">
+        <link href="/css/ekko-lightbox.min.css?1" rel="stylesheet">
+        <link href="/css/styles.css?1" rel="stylesheet">
         <!-- Google Font and Charts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,7 +67,7 @@
         {% block head %}
         {% endblock %}
     </head>
-    <body>
+    <body class="{{'logged-in' if g.logged_in else ''}}">
         {% block beforenav %}
             {# put modal windows before the navbar, see: #}
             {# https://stackoverflow.com/a/13368485/217080 #}
@@ -87,7 +87,7 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"></script>
-        <script src="/js/ekko-lightbox-min.js"></script>
+        <script src="/js/ekko-lightbox-min.js?2"></script>
         <script src="/js/base.js"></script>
         {% block foot %}
         {% endblock %}

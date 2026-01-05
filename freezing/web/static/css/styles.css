@@ -84,6 +84,13 @@ table.dataTable.no-footer {
     }
 }
 
+.ekko-lightbox .modal-footer {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    white-space: nowrap;
+    gap: .5rem;
+}
+
 .ekko-lightbox-container .img-responsive {
     border-radius: .25rem;
     max-width: 100%;
@@ -126,6 +133,15 @@ nav.bg-light {
         margin: 0 .5rem;
         width: 0;
         height: 1em;
+    }
+}
+
+.achievements-row {
+    font-size: 1.2rem;
+
+    .achievements {
+        border-right: 1px solid #8888;
+        font-weight: bold;
     }
 }
 
@@ -236,10 +252,6 @@ nav.bg-light {
     font-weight: bold;
 }
 
-.wide-aspect {
-    aspect-ratio: 1.333;
-}
-
 .leaderboard-overflow {
     min-width: 0;
     overflow-x: auto;
@@ -301,6 +313,68 @@ nav.bg-light {
     z-index: 1000;
 }
 
+a.dropdown-item[href^="http"]::after {
+    content: '⤴';
+    margin-left: .25rem;
+    color: #ffffff80;
+    font-size: .66rem;
+    vertical-align: .25rem;
+}
+
+ul.pointless-menu {
+    overflow-x: hidden;
+
+    li:has(.discord) {
+        display: flex;
+
+        a:first-child {
+            flex-grow: 1;
+        }
+
+        a:last-child {
+            flex-shrink: 1;
+            width: auto;
+            padding: .25rem .5rem;
+
+            &::after {
+                display: none;
+            }
+
+            svg {
+                height: 1rem;
+                width: 1.25rem;
+            }
+        }
+    }
+}
+
+.photo-date-picker {
+    align-self: center;
+    display: flex;
+    justify-content: end;
+}
+
+.glyphicon::after {
+    display: block;
+    transform: translateY(-1rem);
+    position: absolute;
+    text-decoration: none !important;
+}
+
+.glyphicon.glyphicon-chevron-left::after {
+    content: '◀';
+    left: 1rem;
+}
+
+.glyphicon.glyphicon-chevron-right::after {
+    content: '▶';
+    right: 1rem;
+}
+
+body.logged-in #sect-main {
+    display: none;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
@@ -341,6 +415,10 @@ nav.bg-light {
 }
 
 @media (min-width: 768px) {
+    body.logged-in #sect-main {
+        display: block;
+    }
+
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -359,6 +437,10 @@ nav.bg-light {
     .grid-gap-lg-4 {
         column-gap: 1.5rem;
         row-gap: 1.5rem;
+    }
+
+    .photo-date-picker {
+        width: 0;
     }
 
     .badge-group:not(.vertical) {

@@ -1,14 +1,17 @@
+import math
 import operator
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, redirect, render_template, request
 from freezing.model import meta
+from freezing.model.orm import Athlete
 from sqlalchemy import text
 
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data
 from freezing.web.utils.hashboard import load_hashtag
+from freezing.web.utils.segboard import load_segment
 
 blueprint = Blueprint("pointless", __name__)
 
@@ -20,12 +23,17 @@ def generic(leaderboard):
     except ObjectNotFound:
         abort(404)
     else:
+        sponsors = (
+            [_load_sponsor(sponsor) for sponsor in board.sponsors]
+            if board.sponsors
+            else None
+        )
         return render_template(
             "pointless/generic.html",
             fields=board.fields,
             title=board.title,
             description=board.description,
-            sponsor=board.sponsor,
+            sponsors=sponsors,
             show_rides=[f for f in board.fields if f.name == "ride_ids"],
             url=board.url,
             data=data,
@@ -69,59 +77,223 @@ def points_per_mile():
     )
 
 
-def _get_hashtag_tdata(hashtag, alttag, orderby=1):
+def _get_hashtag_tdata(hashtag, alttag, orderby):
     """
-    if orderby = 1 then order by mileage. Else by #rides
+    orderby 'miles', 'rides' or 'days'
     """
     sess = meta.scoped_session()
-    if orderby == 1:
-        sortkeyidx = (3, 2)
-    else:
-        sortkeyidx = (2, 3)
+    rank_by = "hashtag_miles"
+    if orderby == "days":
+        rank_by = "hashtag_days"
+    elif orderby == "rides":
+        rank_by = "hashtag_rides"
     q = text(
-        """
+        f"""
+        with htdata as (
+            select
+                A.id,
+                A.display_name as athlete_name,
+                count(R.id) as hashtag_rides,
+                sum(R.distance) as hashtag_miles,
+                count(distinct date(convert_tz(R.start_date, R.timezone, :tz))) as hashtag_days
+            from
+                athletes A join
+                rides R on R.athlete_id = A.id
+            where
+                R.name like concat('%', '#', :hashtag, '%') or
+                R.name like concat('%', '#', :alttag, '%')
+            group by
+                A.id, A.display_name
+        )
         select
-            A.id,
-            A.display_name as athlete_name,
-            count(R.id) as hashtag_rides,
-            sum(R.distance) as hashtag_miles
+            H.*,
+            rank() over (order by H.{rank_by} desc) as hashtag_rank
         from
-            athletes A join
-            rides R on R.athlete_id = A.id
-        where
-            R.name like concat('%', '#', :hashtag, '%') or
-            R.name like concat('%', '#', :alttag, '%')
-        group by
-            A.id, A.display_name;
+            htdata H
+        order by
+            H.{rank_by} desc, lower(H.athlete_name) asc
         """
     )
-    rs = sess.execute(q, params=dict(hashtag=hashtag, alttag=alttag or hashtag))
+    rs = sess.execute(
+        q, params=dict(hashtag=hashtag, alttag=alttag or hashtag, tz=config.TIMEZONE)
+    )
     retval = [
         (
             x._mapping["id"],
             x._mapping["athlete_name"],
             x._mapping["hashtag_rides"],
             x._mapping["hashtag_miles"],
+            x._mapping["hashtag_days"],
+            x._mapping["hashtag_rank"],
         )
         for x in rs.fetchall()
     ]
-    return sorted(retval, key=operator.itemgetter(*sortkeyidx), reverse=True)
+    return {"tdata": retval}
+
+
+def _get_phototag_tdata(request, hashtag):
+    page = int(request.args.get("page", 1))
+    if page < 1:
+        page = 1
+    date = request.args.get("date")
+
+    page_size = 24
+    offset = page_size * (page - 1)
+    limit = page_size
+
+    # clunky query so if a tagged ride has tagged photos then include
+    # those, else include its primary photo.
+    with_union_photos = """
+        with tagged_rides as (
+            select
+                R.id AS ride_id,
+                R.name,
+                R.athlete_id,
+                convert_tz(R.start_date, R.timezone, :tz) AS start_date,
+                A.display_name
+            from
+                rides R join athletes A on A.id = R.athlete_id
+            where
+                R.name like :tag and
+                (:date is null or date(R.start_date) = :date)
+        ), primary_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON P.ride_id = R.ride_id
+            where
+                P.primary
+        ), tagged_photos as (
+            select
+                P.id, P.caption, P.img_l, R.*
+            from
+                tagged_rides R join
+                ride_photos P ON P.ride_id = R.ride_id
+            where
+                P.caption like '%#%'
+        ), union_photos as (
+            select
+                P.*
+            from
+                tagged_photos P
+            where
+                lower(P.caption) like :tag
+            union all
+            select
+                P.*
+            from
+                primary_photos P
+            where
+                P.ride_id not in (select ride_id from tagged_photos)
+        )
+        """
+
+    total_q = text(
+        f"""
+        {with_union_photos}
+        select
+            count(P.id)
+        from
+            union_photos P
+        """
+    ).bindparams(tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date)
+    num_photos = meta.scoped_session().execute(total_q).scalar_one()
+
+    photo_q = text(
+        f"""
+        {with_union_photos}
+        select
+            P.*
+        from
+            union_photos P
+        order by
+            P.start_date desc,
+            P.id
+        limit :limit
+        offset :offset
+        """
+    ).bindparams(
+        tz=config.TIMEZONE,
+        tag=f"%#{hashtag.lower()}%",
+        date=date,
+        offset=offset,
+        limit=limit,
+    )
+    photos = meta.scoped_session().execute(photo_q)
+
+    if num_photos < offset:
+        page = 1
+
+    total_pages = int(math.ceil((1.0 * num_photos) / page_size))
+
+    if page > total_pages:
+        page = total_pages
+
+    return {
+        "photos": [photo for photo in photos],
+        "page": page,
+        "total_pages": total_pages,
+        "date": datetime.fromisoformat(date) if date else "",
+        "datestr": date,
+    }
+
+
+def _load_sponsor(sponsor: int):
+    person = meta.scoped_session().get(Athlete, sponsor)
+    return (
+        {"name": person.display_name, "url": f"/people/{sponsor}"}
+        if person
+        else {"name": "Unknown", "url": "#"}
+    )
 
 
 @blueprint.route("/hashtag/<string:hashtag>")
 def hashtag_leaderboard(hashtag):
     meta = load_hashtag(hashtag)
-    ht = meta.tag if meta else "".join(ch for ch in hashtag if ch.isalnum())
-    tdata = _get_hashtag_tdata(
-        hashtag=ht,
-        alttag=meta.alt if meta else None,
-        orderby=1 if meta is None or not meta.rank_by_rides else 2,
+    ht = meta.tag if meta else hashtag
+    rank_by = meta.rank_by if meta else "miles"
+    default_view = meta.default_view if meta else None
+    view = request.args.get("view", default_view or "leaderboard")
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in meta.sponsors]
+        if meta and meta.sponsors
+        else None
     )
+    banned = []
+    if meta and meta.sponsors:
+        banned.extend(meta.sponsors)
+    if meta and meta.banned:
+        banned.extend(meta.banned)
+
+    args = {}
+    if view == "leaderboard":
+        args = _get_hashtag_tdata(
+            hashtag=ht,
+            alttag=meta.alt if meta else None,
+            orderby=rank_by,
+        )
+    elif view == "photos":
+        args = _get_phototag_tdata(request=request, hashtag=ht)
+
     return render_template(
         "pointless/hashtag.html",
-        data={"tdata": tdata, "hashtag": "#" + ht, "hashtag_notag": ht},
-        meta=meta,
+        **{
+            "hashtag": f"#{ht}",
+            "hashtag_notag": ht,
+            "meta": meta,
+            "view": view,
+            "sponsors": sponsors,
+            "banned": banned,
+            **args,
+        },
     )
+
+
+# Junk but someone posted the wrong url everywhere
+@blueprint.route("/phototag/<string:hashtag>")
+def phototag_leaderboard(hashtag):
+    return redirect(f"/pointless/hashtag/{hashtag}?view=photos")
 
 
 def _get_segment_tdata(segment):
@@ -160,17 +332,34 @@ def _get_segment_tdata(segment):
 
 @blueprint.route("/segment/<int:segment>")
 def segment_leaderboard(segment):
+    meta = load_segment(segment)
     tdata = _get_segment_tdata(
         segment=segment,
     )
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in meta.sponsors]
+        if meta and meta.sponsors
+        else None
+    )
+    banned = []
+    if meta and meta.sponsors:
+        banned.extend(meta.sponsors)
+    if meta and meta.banned:
+        banned.extend(meta.banned)
     return render_template(
         "pointless/segment.html",
         data={
             "tdata": tdata,
             "segment_id": segment,
-            "segment_name": tdata[0][2] if tdata else "Unknown Segment",
+            "segment_name": (
+                meta.segment_name
+                if meta
+                else tdata[0][2] if tdata else "Unknown Segment"
+            ),
         },
         meta=meta,
+        sponsors=sponsors,
+        banned=banned,
     )
 
 
@@ -229,15 +418,6 @@ def ross_hill_loop():
         "pointless/rosshillloop.html",
         data={"tdata": tdata},
         meta=meta,
-    )
-
-
-@blueprint.route("/coffeeride")
-def coffeeride():
-    year = datetime.now().year
-    tdata = _get_hashtag_tdata("coffeeride{}".format(year), "coffeeride", 2)
-    return render_template(
-        "pointless/coffeeride.html", data={"tdata": tdata, "year": year}
     )
 
 
@@ -334,12 +514,17 @@ def arlington():
     ]
     data.sort(key=lambda d: (-d["segment_rides"], d["athlete_name"]))
     formatted = format_rows([FakeRow(d) for d in data], board)
+    sponsors = (
+        [_load_sponsor(sponsor) for sponsor in board.sponsors]
+        if board.sponsors
+        else None
+    )
     return render_template(
         "pointless/generic.html",
         fields=board.fields,
         title=board.title,
         description=board.description,
-        sponsor=board.sponsor,
+        sponsors=sponsors,
         url=board.url,
         data=formatted,
     )

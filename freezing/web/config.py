@@ -41,6 +41,10 @@ class Config:
         "FORUM_SITE",
         "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
     )
+    DISCORD_INVITATION: str = env(
+        "DISCORD_INVITATION",
+        "https://example.org/",
+    )
     INSTANCE_PATH: str = env(
         "INSTANCE_PATH", default=os.path.join(_basedir, "data/instance")
     )

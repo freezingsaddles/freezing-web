@@ -2,15 +2,22 @@
 {% block content %}
     <div class="jumbotron">
         <h1>
-            {% if after_competition_start %}
+            {% if request.path == '/discord' %}
+                Discord Invitation
+            {% elif after_competition_start %}
                 Login
             {% else %}
                 Join the Competition!
             {% endif %}
         </h1>
         <p class="lead">
-            In order to count your ride statistics, we need you to authorize the Freezing Saddles application
-            to access (read) your Strava data.
+            {% if request.path == '/discord' %}
+                Please log in by clicking "Connect with Strava" below, then you will see the Discord
+                invitation link in the instructions.
+            {% else %}
+                In order to count your ride statistics, we need you to authorize the Freezing Saddles application
+                to access (read) your Strava data.
+            {% endif %}
         </p>
         <p>
             Login via <em>Connect with Strava</em> and you can also view personalized competition information.

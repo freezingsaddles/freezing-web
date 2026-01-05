@@ -6,6 +6,7 @@ It also sets up a fault handler with a signal early to ensure stack traces happe
 """
 
 import freezing.web._faulthandler  # noqa isort: skip
+import freezing.web.utils.sqlog  # noqa isort: skip
 
 from socket import gethostbyname
 from time import sleep
@@ -42,9 +43,9 @@ def _get_app():
 def _register_blueprints(app):
     # This needs to be after the app is created, unfortunately.
     from freezing.web.views import (
-        alt_scoring,
         api,
         chartdata,
+        explore,
         general,
         leaderboard,
         people,
@@ -56,7 +57,7 @@ def _register_blueprints(app):
 
     app.register_blueprint(general.blueprint)
     app.register_blueprint(leaderboard.blueprint, url_prefix="/leaderboard")
-    app.register_blueprint(alt_scoring.blueprint, url_prefix="/alt_scoring")
+    app.register_blueprint(explore.blueprint, url_prefix="/explore")
     app.register_blueprint(chartdata.blueprint, url_prefix="/chartdata")
     app.register_blueprint(people.blueprint, url_prefix="/people")
     app.register_blueprint(pointless.blueprint, url_prefix="/pointless")
@@ -95,6 +96,7 @@ def inject_config():
         "competition_title": config.COMPETITION_TITLE,
         "environment": config.ENVIRONMENT,
         "registration_site": config.REGISTRATION_SITE,
+        "discord_invitation": config.DISCORD_INVITATION,
         "forum_site": config.FORUM_SITE,
         "version_string": config.VERSION_STRING,
         "end_date": config.END_DATE,
