@@ -2,7 +2,8 @@
 title: Commute Champ
 description: |
   <p><strong>BE A COMMUTE CHAMP!</strong> Bikes are transportation! Ride your bike to work, soak in the sunshine, arrive in a good mood (if a little sweaty). Do it again on the way home - decompress from your day and enjoy the sights. It’s good for you, good for the planet!</p>
-  <p>Use the Strava <em>Commute</em> built-in tag and/or add <code>#commute</code> to your ride title to count the ride. A maximum of 2 rides per day will be counted.</p>
+  <p>Use the Strava <em>Commute</em> built-in tag and/or add <code>#commute</code> to your ride title to count the ride. A maximum of 2 rides per day will be counted.
+  <strong>Important:</strong> You must post at least one ride with <code>#commute-champ</code> in the title to join this competition. After that, you can just use the Strava tag.</p>
 url: https://discord.com/channels/1443244420358213643/1457554898781470813
 sponsors: [21807336]
 fields:
@@ -23,7 +24,14 @@ fields:
   - name: ride_ids
     visible: false
 query: |
-  with commutes as (
+  with commuters as (
+    select
+      distinct athlete_id
+    from
+      rides R
+    where
+      R.name like '%#commute-champion%'
+  ), commutes as (
     select
       R.id,
       R.athlete_id,
@@ -31,6 +39,10 @@ query: |
       date(convert_tz(R.start_date, R.timezone, 'America/New_York')) as start_date
     from
       rides R
+    join
+      commuters C
+    on
+      R.athlete_id = C.athlete_id
     where
       R.commute or R.name like '%#commute%'
   ), daily_commutes as (
