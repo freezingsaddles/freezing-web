@@ -30,7 +30,7 @@ query: |
     from
       rides R
     where
-      R.name like '%#commute-champion%'
+      R.name like '%#commute-champ%'
   ), commutes as (
     select
       R.id,
