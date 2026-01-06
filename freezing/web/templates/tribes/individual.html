@@ -1,75 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-    {% if tribe %}
-        <h2 class="mb-3">
-            Leaderboard – {{ tribe }}
-        </h2>
-        <ol>
-            {% for indiv_row in indiv_rows %}
-                <li class="{{ 'large' if loop.index <= 10 else '' }} {{ indiv_row._mapping['athlete_id'] | myself }}">
-                    <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
-                       class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a> –
-                    <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong> points
-                    ({{ indiv_row._mapping['days_ridden'] }} day{{ indiv_row._mapping['days_ridden']|ess }},
-                    {{ indiv_row._mapping['total_distance']|round|int|groupnum }} miles) –
-                    {{ indiv_row._mapping['team_name'] }}
-                </li>
-            {% endfor %}
-        </ol>
-    {% else %}
-        <h2 class="mb-3">
-            Leaderboard by Bike Tribe
-        </h2>
-        <div class="d-flex gap-3 mb-3">
-            <select id="select-group" class="form-select">
-                <option>
-                </option>
-                {% for group in tribal_groups %}
-                    <option {% if group.id == tribal_group %}selected{% endif %}
-                            value="{{ group.id }}">
-                        {{ group.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <select {% if not tribal_group %}disabled{% endif %}
-                    id="select-tribe"
-                    class="form-select">
-                <option>
-                </option>
-                {% for group in tribal_groups %}
-                    {% if group.id == tribal_group %}
-                        {% for tribe in group.tribes %}
-                            <option {% if tribe == cur_tribe %}selected{% endif %}>
-                                {{ tribe }}
-                            </option>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </select>
-            <button id="btn-submit" disabled class="btn btn-primary text-nowrap">
-                Show Leaderboard
-            </button>
-        </div>
-    {% endif %}
-{% endblock %}
-{% block foot %}
-    <script type="text/javascript">
-  $(function () {
-  $("#select-group").on("change", (e) => {
-    const group = e.target.value;
-    document.location.search = `?group=${group}`;
-  });
-  $("#select-tribe").on("change", (e) => {
-    const tribe = e.target.value;
-    if (tribe) $('#btn-submit').removeAttr('disabled')
-    else $('#btn-submit').attr('disabled', 'disabled');
-  });
-  $('#btn-submit').on("click", (e) => {
-    e.preventDefault();
-    const group = $('#select-group').val();
-    const tribe = encodeURIComponent($('#select-tribe').val());
-    document.location.search = `?${group}=${tribe}`;
-  });
-});
-    </script>
+    <h2 class="mb-3">
+        Leaderboard – {{ tribe }}
+    </h2>
+    <ol>
+        {% for indiv_row in indiv_rows %}
+            <li class="{{ 'large' if loop.index <= 10 else '' }} {{ indiv_row._mapping['athlete_id'] | myself }}">
+                <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
+                   class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
+                –
+                <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong>
+                points ({{ indiv_row._mapping['days_ridden'] }} day{{
+                indiv_row._mapping['days_ridden']|ess }}, {{
+                indiv_row._mapping['total_distance']|round|int|groupnum }} miles) – {{
+                indiv_row._mapping['team_name'] }}
+            </li>
+        {% endfor %}
+    </ol>
 {% endblock %}

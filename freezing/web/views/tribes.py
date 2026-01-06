@@ -69,11 +69,8 @@ def leaderboard():
 @blueprint.route("/individual")
 def individual():
     tribal_groups = load_tribes()
-    tribal_group = request.args.get("group")
-    cur_group = next(
-        (group for group in tribal_groups if request.args.get(group.id)), None
-    )
-    cur_tribe = request.args.get(cur_group.id) if cur_group else None
+    cur_group = next((group for group in tribal_groups if request.args.get(group.id)))
+    cur_tribe = request.args.get(cur_group.id)
     athlete_id = session.get("athlete_id")
 
     q = text(
@@ -99,15 +96,12 @@ def individual():
              order by total_score desc
              ;
              """
-    ).bindparams(group=cur_group.name if cur_group else None, tribe=cur_tribe)
+    ).bindparams(group=cur_group.name, tribe=cur_tribe)
 
-    # @UndefinedVariable
-    indiv_rows = meta.scoped_session().execute(q).fetchall() if cur_tribe else None
+    indiv_rows = meta.scoped_session().execute(q).fetchall()
 
     return render_template(
         "tribes/individual.html",
-        tribal_groups=tribal_groups,
-        tribal_group=tribal_group,
         tribe=cur_tribe,
         indiv_rows=indiv_rows,
         myself=athlete_id,
