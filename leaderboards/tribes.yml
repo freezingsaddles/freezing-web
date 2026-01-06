@@ -1,14 +1,17 @@
 ---
 tribal_groups:
   - name: Which side of the river?
+    id: side
     tribes:
       - The right side
       - The wrong side
   - name: Your handlebars...
+    id: bars
     tribes:
       - Dropped
       - Flat
   - name: Foot down...
+    id: foot
     tribes:
       - Lefty
       - Righty

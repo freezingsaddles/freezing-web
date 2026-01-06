@@ -14,6 +14,7 @@ from freezing.web.exc import ObjectNotFound
 
 class TribalGroup(BaseMessage):
     name = None
+    id = None
     tribes: List[str] = None
 
 
@@ -21,6 +22,7 @@ class TribalGroupSchema(BaseSchema):
     _model_class = TribalGroup
 
     name = fields.Str(required=True)
+    id = fields.Str(required=True)
     tribes = fields.List(fields.Str())
 
 
