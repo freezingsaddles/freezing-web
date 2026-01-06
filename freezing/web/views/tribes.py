@@ -66,6 +66,48 @@ def leaderboard():
     )
 
 
+@blueprint.route("/individual")
+def individual():
+    tribal_groups = load_tribes()
+    cur_group = next((group for group in tribal_groups if request.args.get(group.id)))
+    cur_tribe = request.args.get(cur_group.id)
+    athlete_id = session.get("athlete_id")
+
+    q = text(
+        """
+             select
+               A.id as athlete_id,
+               A.team_id,
+               A.display_name as athlete_name,
+               T.name as team_name,
+               sum(DS.distance) as total_distance,
+               sum(DS.points) as total_score,
+               count(DS.points) as days_ridden
+             from
+               daily_scores DS
+                 join lbd_athletes A on A.id = DS.athlete_id
+                 join teams T on T.id = A.team_id
+                 join tribes G on
+                   G.athlete_id = A.id and
+                   G.tribal_group = :group and
+                   G.tribe_name = :tribe
+             where not T.leaderboard_exclude
+             group by A.id, A.display_name
+             order by total_score desc
+             ;
+             """
+    ).bindparams(group=cur_group.name, tribe=cur_tribe)
+
+    indiv_rows = meta.scoped_session().execute(q).fetchall()
+
+    return render_template(
+        "tribes/individual.html",
+        tribe=cur_tribe,
+        indiv_rows=indiv_rows,
+        myself=athlete_id,
+    )
+
+
 @blueprint.route("/my")
 @requires_auth
 def my():
@@ -87,10 +129,10 @@ def post_my():
         dict(
             athlete_id=athlete_id,
             tribal_group=tribal_group.name,
-            tribe_name=request.form.get(tribal_group.name),
+            tribe_name=request.form.get(tribal_group.id),
         )
         for tribal_group in tribal_groups
-        if request.form.get(tribal_group.name) in tribal_group.tribes
+        if request.form.get(tribal_group.id) in tribal_group.tribes
     ]
 
     meta.scoped_session().execute(

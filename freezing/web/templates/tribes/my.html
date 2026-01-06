@@ -13,7 +13,9 @@
                     <h4>
                         {{ group.name }}
                     </h4>
-                    <select name="{{ group.name }}" class="form-control big-bottom">
+                    <select name="{{ group.id }}" class="form-control big-bottom">
+                        <option>
+                        </option>
                         {% for tribe in group.tribes %}
                             {% if tribe == my_tribes[group.name] %}
                                 <option selected>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mb-3">
+        Leaderboard – {{ tribe }}
+    </h2>
+    <ol>
+        {% for indiv_row in indiv_rows %}
+            <li class="{{ 'large' if loop.index <= 10 else '' }} {{ indiv_row._mapping['athlete_id'] | myself }}">
+                <a href="/people/{{ indiv_row._mapping['athlete_id'] }}"
+                   class="hover-underline">{{ indiv_row._mapping['athlete_name'] }}</a>
+                –
+                <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong>
+                points ({{ indiv_row._mapping['days_ridden'] }} day{{
+                indiv_row._mapping['days_ridden']|ess }}, {{
+                indiv_row._mapping['total_distance']|round|int|groupnum }} miles) – {{
+                indiv_row._mapping['team_name'] }}
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}

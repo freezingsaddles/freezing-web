@@ -27,7 +27,8 @@
                                     &#128148;
                                 {% endif %}
                             {% endif %}
-                            {{ tribe }}
+                            <a href="/tribes/individual?{{ group.id }}={{ tribe | urlencode }}"
+                               class="hover-underline">{{ tribe }}</a>
                             <span style="font-weight: normal">
                                 ({{ stats[(group.name, tribe)]["points"] }} points,
                                 {{ stats[(group.name, tribe)]["distance"] }} miles,
