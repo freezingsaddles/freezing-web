@@ -282,7 +282,7 @@ tags:
     rank_by: rides
 
   - tag: tandem
-    name: Tandem
+    name: Tandem Rides
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
@@ -290,7 +290,7 @@ tags:
     rank_by: rides
 
   - tag: tandemVI
-    name: Tandem - Visually Impaired
+    name: Tandem Rides - Visually Impaired
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
     url: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
@@ -340,5 +340,5 @@ tags:
       <li>Include <code>#Yum</code> in your Strava ride title</li>
       </ol>
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-yum/
-    rank_by: rides
+    rank_by: days
     sponsors: [380419]
