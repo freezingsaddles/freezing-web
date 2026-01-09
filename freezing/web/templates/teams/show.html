@@ -116,7 +116,7 @@
 {% block foot %}
     <script type="text/javascript">
   $(function () {
-    create_ride_map("map", "/api/team/{{team.id}}/trackmap.json", null, true);
+    create_ride_map("map", "/api/teams/{{team.id}}/trackmap.json", null, true);
   });
     </script>
 {% endblock %}
