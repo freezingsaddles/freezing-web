@@ -32,7 +32,7 @@ def people_list_users():
         meta.scoped_session()
         .query(Athlete)
         .filter(Athlete.team.has(leaderboard_exclude=0))
-        .order_by(Athlete.name)
+        .order_by(Athlete.display_name)
     )  # @UndefinedVariable
     today = get_today()
     week_start = today.date() - timedelta(days=(today.weekday()) % 7)
@@ -74,7 +74,7 @@ def people_show_person(user_id):
     if not our_user:
         abort(404)
     if our_user.profile_photo and not str.startswith(our_user.profile_photo, "http"):
-        our_user.profile_photo = "https://www.strava.com/" + our_user.profile_photo
+        our_user.profile_photo = None
 
     our_team = meta.scoped_session().query(Team).filter_by(id=our_user.team_id).first()
     today = get_today()

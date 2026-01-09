@@ -97,17 +97,15 @@ fieldset[disabled] .btn-impersonate.active {
     <div class="card flex-row align-items-center">
         {# djlint:off H006 #}
         <img class="user-profile"
-             src="{{ '/img/logo-blue.png' if 'strava.com' in data.user.profile_photo else data.user.profile_photo }}"
+             src="{{ '/img/logo-blue.png' if not data.user.profile_photo else data.user.profile_photo }}"
              alt="photo of {{ data.user.display_name }}">
         {# djlint:on #}
         <div class="d-flex flex-column ms-3">
             <h5 class="card-title">
-                <a class="hover-underline"
-                   href="https://www.strava.com/athletes/{{ data.user.id }}">{{ data.user.display_name }}</a>
+                {{ data.user.display_name }}
             </h5>
             <h6 class="card-subtitle text-body-secondary mb-3">
-                <a class="hover-underline"
-                   href="https://www.strava.com/clubs/{{ data.team.id }}">{{ data.team.name }}</a>
+                <a class="hover-underline" href="/teams/{{ data.team.id }}">{{ data.team.name }}</a>
             </h6>
             <div class="d-flex">
                 <a class="btn btn-strava btn-sm"
