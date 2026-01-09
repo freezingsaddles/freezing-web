@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+          crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+            crossorigin=""></script>
+    <!-- https://github.com/elmarquis/Leaflet.GestureHandling -->
+    <link rel="stylesheet" href="/css/leaflet-gesture-handling.min.css" />
+    <script src="/js/leaflet-gesture-handling.min.js"></script>
+    <script src="/js/ride-map.js"></script>
+    <style>
+  .btn-strava {
+    color: #ffffff;
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+  }
+
+  .btn-strava:hover,
+  .btn-strava:focus,
+  .btn-strava:active,
+  .btn-strava.active,
+  .open .dropdown-toggle.btn-strava {
+    color: #ffffff;
+    background-color: #d62600;
+    border-color: #fc3c02;
+  }
+
+  .btn-strava:active,
+  .btn-strava.active,
+  .open .dropdown-toggle.btn-strava {
+    background-image: none;
+  }
+
+  .btn-strava.disabled,
+  .btn-strava[disabled],
+  fieldset[disabled] .btn-strava,
+  .btn-strava.disabled:hover,
+  .btn-strava[disabled]:hover,
+  fieldset[disabled] .btn-strava:hover,
+  .btn-strava.disabled:focus,
+  .btn-strava[disabled]:focus,
+  fieldset[disabled] .btn-strava:focus,
+  .btn-strava.disabled:active,
+  .btn-strava[disabled]:active,
+  fieldset[disabled] .btn-strava:active,
+  .btn-strava.disabled.active,
+  .btn-strava[disabled].active,
+  fieldset[disabled] .btn-strava.active {
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+  }
+
+  .btn-strava .badge {
+    color: #fc4c02;
+    background-color: #ffffff;
+  }
+  .btn-impersonate {
+    color: #ffffff;
+    background-color: #022ca2;
+    border-color: #3c3ca2;
+  }
+    </style>
+{% endblock %}
+{% block title %}
+    {{ team.name }}
+{% endblock %}
+{% block content
+    %}
+    <div class="card flex-row align-items-center">
+        {# djlint:off H006 #}
+        <img class="user-profile"
+             src="{{ '/img/logo-blue.png' if not team.profile_photo else team.profile_photo }}"
+             alt="{{ team.name }} logo" />
+        {# djlint:on #}
+        <div class="d-flex flex-column ms-3">
+            <h5 class="card-title">
+                {{ team.name }}
+            </h5>
+            <h6 class="card-subtitle text-body-secondary mb-3">
+                {{ members|count }} member{{ members|count|ess }}
+            </h6>
+            <div class="d-flex">
+                <a class="btn btn-strava btn-sm"
+                   href="https://www.strava.com/clubs/{{ team.id }}">View on Strava</a>
+            </div>
+        </div>
+    </div>
+    <div class="mt-3 mt-lg-4 d-grid grid-gap-3 grid-gap-lg-4 grid-lg-2">
+        <div>
+            <h5 class="ps-2">
+                Team Members
+            </h5>
+            <ul>
+                {% for member in members %}
+                    <li>
+                        <a href="/people/{{ member._mapping['athlete_id'] }}">{{ member._mapping['athlete_name'] }}</a>
+                        {{ member._mapping['total_score']|round|int|groupnum }} points
+                        ({{ member._mapping['days_ridden'] }} days,
+                        {{ member._mapping['total_distance']|round|int|groupnum }} miles)
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h5 class="ps-2">
+                Ride Map
+            </h5>
+            <div class="square-map my-3" id="map">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block foot %}
+    <script type="text/javascript">
+  $(function () {
+    create_ride_map("map", "/api/team/{{team.id}}/trackmap.json", null, true);
+  });
+    </script>
+{% endblock %}

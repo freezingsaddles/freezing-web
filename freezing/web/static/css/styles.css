@@ -282,6 +282,7 @@ nav.bg-light {
     color: var(--bs-body-color) !important;
 }
 
+.square-map,
 .c3-wide {
     width: 100%;
     aspect-ratio: 1;
