@@ -309,7 +309,7 @@ def _trending_tags():
     for res in meta.scoped_session().execute(q).fetchall():
         ride_tags = {}  # Prevent double-tagging
         for hash in findall(r"(?<=#)\w+", res._mapping["name"]):
-            desuffix = fullmatch(r"(?i)(withkid|foodrescue).*", hash)
+            desuffix = fullmatch(r"(?i)(withkid|foodrescue|fsrealsuppleride).*", hash)
             hash = desuffix[1] if desuffix else hash
             if not fullmatch(
                 r"(?i)(BAFS|FS|FreezingSaddles)?\d*", hash

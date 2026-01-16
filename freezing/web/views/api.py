@@ -373,26 +373,28 @@ def _track_map(
             for (lon, lat) in parse_linestring(gps_track)
         ]
 
-        # Trim points from the start and end that are within a short distance of the actual ride start
-        # and end locations, because Strava sometimes feeds us geometry within riders' privacy radii
-        # and they do not wish these data to be shown. This will not hide a mid-ride stop back home, but
-        # Strava does not hide this either.
-        while (
-            track_points
-            and _distance2(
-                track_points[0][0], track_points[0][1], start_geo[0], start_geo[1]
-            )
-            < _min_privacy2
-        ):
-            del track_points[0]
-        while (
-            track_points
-            and _distance2(
-                track_points[-1][0], track_points[-1][1], end_geo[0], end_geo[1]
-            )
-            < _min_privacy2
-        ):
-            del track_points[-1]
+        # Don't trim GPS art
+        if hash_tag != "gpsart":
+            # Trim points from the start and end that are within a short distance of the actual ride start
+            # and end locations, because Strava sometimes feeds us geometry within riders' privacy radii
+            # and they do not wish these data to be shown. This will not hide a mid-ride stop back home, but
+            # Strava does not hide this either.
+            while (
+                track_points
+                and _distance2(
+                    track_points[0][0], track_points[0][1], start_geo[0], start_geo[1]
+                )
+                < _min_privacy2
+            ):
+                del track_points[0]
+            while (
+                track_points
+                and _distance2(
+                    track_points[-1][0], track_points[-1][1], end_geo[0], end_geo[1]
+                )
+                < _min_privacy2
+            ):
+                del track_points[-1]
 
         track = None
         point = None
