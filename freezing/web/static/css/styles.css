@@ -512,6 +512,12 @@ body.logged-in #sect-main {
     }
 }
 
+@media (prefers-color-scheme: light) {
+    .modal .text-warning {
+        color: #a87e00 !important;
+    }
+}
+
 @media (prefers-color-scheme: dark) {
     .text-black {
         color: #ffffff !important;
