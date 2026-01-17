@@ -8,12 +8,14 @@ It also sets up a fault handler with a signal early to ensure stack traces happe
 import freezing.web._faulthandler  # noqa isort: skip
 import freezing.web.utils.sqlog  # noqa isort: skip
 
+from datetime import datetime
 from socket import gethostbyname
 from time import sleep
 from urllib.parse import urlparse
 
 from flask import Flask, g, session
 from freezing.model import init_model, meta
+from freezing.model.orm import Athlete, Team
 
 from freezing.web.autolog import log
 
@@ -80,6 +82,29 @@ def set_logged_in_global():
         g.logged_in = True
     else:
         g.logged_in = False
+
+
+@app.before_request
+def set_no_team_global():
+    start = config.START_DATE.date()
+    now_tz = datetime.now(config.TIMEZONE)
+    today = min(now_tz, config.END_DATE).date()
+    total_days = 1 + (today - start).days
+    athlete_id = session.get("athlete_id")
+
+    if athlete_id:
+        team = (
+            meta.scoped_session()
+            .query(Team)
+            .join(Athlete)
+            .filter_by(id=athlete_id)
+            .one()
+        )
+        g.no_team = (
+            total_days <= 31 and team.leaderboard_exclude and config.COMPETITION_TEAMS
+        )
+    else:
+        g.no_team = total_days <= 31 and config.COMPETITION_TEAMS
 
 
 @app.teardown_request
