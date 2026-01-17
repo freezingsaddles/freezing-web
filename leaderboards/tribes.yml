@@ -16,3 +16,8 @@ tribal_groups:
       - Lefty
       - Righty
       - Track stand
+  - name: Better frostbite than bar mitts...
+    id: mitts
+    tribes:
+      - Am I right?
+      - Fingers so toasty
