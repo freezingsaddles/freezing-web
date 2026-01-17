@@ -151,7 +151,7 @@
             contestants registered. There are still bike rides going on, you should go for a ride.
         </div>
     {% else %}
-        {% if yourself.no_team and not request.cookies.get('team-warning') %}
+        {% if (yourself.no_team or not g.logged_in) and not request.cookies.get('team-warning') %}
             <div id="team-warning"
                  class="mb-3 mb-lg-4 py-2 alert alert-warning text-center">
                 <button class="btn btn-close" id="team-warning-close" aria-label="Close">
