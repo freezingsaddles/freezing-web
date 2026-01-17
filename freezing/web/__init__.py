@@ -101,9 +101,7 @@ def set_no_team_global():
             .one()
         )
         g.no_team = (
-            total_days <= 31
-            and team.leaderboard_exclude
-            and config.COMPETITION_TEAMS
+            total_days <= 31 and team.leaderboard_exclude and config.COMPETITION_TEAMS
         )
     else:
         g.no_team = total_days <= 31 and config.COMPETITION_TEAMS
