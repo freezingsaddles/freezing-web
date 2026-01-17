@@ -257,11 +257,7 @@ def index():
     team_rows = meta.scoped_session().execute(q).fetchall()
 
     athlete_id = session.get("athlete_id")
-    yourself = (
-        _rider_stats(athlete_id)
-        if athlete_id
-        else {"not_logged_in": after_competition_start and before_competition_end}
-    )
+    yourself = _rider_stats(athlete_id) if athlete_id else _non_rider_stats()
 
     return render_template(
         "index.html",
@@ -330,6 +326,24 @@ def _trending_tags():
         )
     else:
         return []
+
+
+# Get non-rider stats
+def _non_rider_stats():
+    start = config.START_DATE.date()
+    now_tz = datetime.now(config.TIMEZONE)
+    today = min(now_tz, config.END_DATE).date()
+    total_days = 1 + (today - start).days
+    after_competition_start = now_tz >= config.START_DATE
+    before_competition_end = now_tz < config.END_DATE
+
+    # we could look to see if #competitors < #teams * max(#members)
+    no_team = total_days <= 31 and config.COMPETITION_TEAMS
+
+    return {
+        "no_team": no_team,
+        "not_logged_in": after_competition_start and before_competition_end,
+    }
 
 
 # Get rider stats
