@@ -31,7 +31,7 @@ query: |
           regexp_substr(R.description, '(?<=NatureDose. of )[0-9]+(?= minutes)')
           as unsigned
         ),
-        R.moving_time / 60
+        floor(R.moving_time / 60)
       ) as nature_minutes_tm
     from
       rides R
