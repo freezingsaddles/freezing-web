@@ -25,7 +25,14 @@ query: |
       R.id,
       R.athlete_id,
       R.elapsed_time,
-      cast(regexp_substr(R.description, '(?<=NatureDose. of )[0-9]+(?= minutes)') as unsigned) as nature_minutes_tm
+      R.moving_time,
+      min(
+        cast(
+          regexp_substr(R.description, '(?<=NatureDose. of )[0-9]+(?= minutes)')
+          as unsigned
+        ),
+        R.moving_time / 60
+      ) as nature_minutes_tm
     from
       rides R
     where
@@ -42,7 +49,7 @@ query: |
     lbd_athletes A join
     nature_rides R on R.athlete_id = A.id
   where
-    R.nature_minutes_tm < R.elapsed_time / 60
+    R.elapsed_time < R.moving_time * 1.25
   group by
     A.id
   having
