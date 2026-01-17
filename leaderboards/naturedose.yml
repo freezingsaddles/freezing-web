@@ -26,7 +26,7 @@ query: |
       R.athlete_id,
       R.elapsed_time,
       R.moving_time,
-      min(
+      least(
         cast(
           regexp_substr(R.description, '(?<=NatureDose. of )[0-9]+(?= minutes)')
           as unsigned
