@@ -12,6 +12,7 @@ import os
 from datetime import datetime
 from socket import gethostbyname
 from time import sleep
+from typing import List
 from urllib.parse import urlparse
 
 import yaml
