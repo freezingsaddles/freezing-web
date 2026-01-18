@@ -186,6 +186,17 @@ tags:
       to the public. Tag with <code>#LakeFinder</code>.
     rank_by: rides
 
+  - tag: library
+    name: Library
+    description: |
+      According to multiple pages on the internet, February is National Library Lover's Month.
+      Since I agree that libraries are awesome, to celebrate, I'm sponsoring a related prize.
+      Beginning <strong>February 1</strong> (and through the end of Freezing Saddles), once per day, visit an
+      active public library, take a picture of said library, use hashtag <code>#library</code>
+      on your ride and photo, and win.  Each unique library only counts once.
+    rank_by: days
+    sponsors: [12125159]
+
   - tag: lolfunny
     alt: lolfunny26
     name: LOL Funny
