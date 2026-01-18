@@ -8,14 +8,18 @@ It also sets up a fault handler with a signal early to ensure stack traces happe
 import freezing.web._faulthandler  # noqa isort: skip
 import freezing.web.utils.sqlog  # noqa isort: skip
 
+import os
 from datetime import datetime
 from socket import gethostbyname
 from time import sleep
 from urllib.parse import urlparse
 
+import yaml
 from flask import Flask, g, session
 from freezing.model import init_model, meta
+from freezing.model.msg import BaseMessage, BaseSchema
 from freezing.model.orm import Athlete, Team
+from marshmallow import fields
 
 from freezing.web.autolog import log
 
@@ -117,6 +121,46 @@ def teardown_request(exception):
     meta.scoped_session.remove()
 
 
+class PointlessPrize(BaseMessage):
+    url: str | None = None
+    name: str | None = None
+    discord: int | None = None
+    hidden: bool | None = None
+
+
+class PointlessPrizeSchema(BaseSchema):
+    _model_class = PointlessPrize
+
+    url = fields.Str(required=True)
+    name = fields.Str(required=True)
+    discord = fields.Int()
+    hidden = fields.Bool()
+
+
+class PointlessPrizes(BaseMessage):
+    active: List[PointlessPrize] = []
+    kids: List[PointlessPrize] = []
+    inactive: List[PointlessPrize] = []
+
+
+class PointlessPrizesSchema(BaseSchema):
+    _model_class = PointlessPrizes
+
+    active = fields.Nested(PointlessPrizeSchema, many=True, required=True)
+    kids = fields.Nested(PointlessPrizeSchema, many=True, required=True)
+    inactive = fields.Nested(PointlessPrizeSchema, many=True, required=True)
+
+
+def _load_pointless():
+    # doesn't belong in leaderboards but guess what? idk
+    path = os.path.join(config.LEADERBOARDS_DIR, "pointless.yml")
+    with open(path, "rt", encoding="utf-8") as fp:
+        doc = yaml.safe_load(fp)
+    schema = PointlessPrizesSchema()
+    prizes: PointlessPrizes = schema.load(doc)
+    return prizes
+
+
 @app.context_processor
 def inject_config():
     return {
@@ -127,6 +171,7 @@ def inject_config():
         "forum_site": config.FORUM_SITE,
         "version_string": config.VERSION_STRING,
         "end_date": config.END_DATE,
+        "pointless_prizes": _load_pointless(),
     }
 
 
