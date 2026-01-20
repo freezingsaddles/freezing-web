@@ -156,7 +156,7 @@ class PointlessPrizes(BaseMessage):
 
     def get(self, category: str) -> List[PointlessPrize]:
         prizes = [p for p in self.prizes if p.category == category]
-        prizes.sort(key=lambda p: p.name or "")
+        prizes.sort(key=lambda p: (p.name or "").lower())
         return prizes
 
 
