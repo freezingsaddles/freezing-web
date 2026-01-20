@@ -224,6 +224,10 @@ prizes:
   - name: Tortoise and Hare
     url: /pointless/generic/avgspeed
     category: unsponsored
+  - name: Under Construction
+    url: /pointless/hashtag/undercon
+    discord: 1448069690436878568
+    category: active
   - name: Vehicle ABCs
     url: /pointless/hashtag/abc
     category: hidden
