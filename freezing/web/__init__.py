@@ -122,11 +122,23 @@ def teardown_request(exception):
     meta.scoped_session.remove()
 
 
+class PointlessCategory(BaseMessage):
+    id: str | None = None
+    name: str | None = None
+
+
+class PointlessCategorySchema(BaseSchema):
+    _model_class = PointlessCategory
+
+    id = fields.Str(required=True)
+    name = fields.Str(required=True)
+
+
 class PointlessPrize(BaseMessage):
     url: str | None = None
     name: str | None = None
     discord: int | None = None
-    hidden: bool | None = None
+    category: str | None = None
 
 
 class PointlessPrizeSchema(BaseSchema):
@@ -135,21 +147,24 @@ class PointlessPrizeSchema(BaseSchema):
     url = fields.Str(required=True)
     name = fields.Str(required=True)
     discord = fields.Int()
-    hidden = fields.Bool()
+    category = fields.Str(required=True)
 
 
 class PointlessPrizes(BaseMessage):
-    active: List[PointlessPrize] = []
-    kids: List[PointlessPrize] = []
-    inactive: List[PointlessPrize] = []
+    categories: List[PointlessCategory] = []
+    prizes: List[PointlessPrize] = []
+
+    def get(self, category: str) -> List[PointlessPrize]:
+        prizes = [p for p in self.prizes if p.category == category]
+        prizes.sort(key=lambda p: p.name or "")
+        return prizes
 
 
 class PointlessPrizesSchema(BaseSchema):
     _model_class = PointlessPrizes
 
-    active = fields.Nested(PointlessPrizeSchema, many=True, required=True)
-    kids = fields.Nested(PointlessPrizeSchema, many=True, required=True)
-    inactive = fields.Nested(PointlessPrizeSchema, many=True, required=True)
+    categories = fields.Nested(PointlessCategorySchema, many=True, required=True)
+    prizes = fields.Nested(PointlessPrizeSchema, many=True, required=True)
 
 
 def _load_pointless():

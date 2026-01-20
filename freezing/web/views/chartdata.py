@@ -547,7 +547,7 @@ def indiv_before_sunrise():
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
         labels.append(res._mapping["athlete_name"])
-        values.append(res._mapping["dark"])
+        values.append(res._mapping["dark"] / 60)
         tooltips.append(str(timedelta(seconds=int(res._mapping["dark"]))))
 
     return jsonify(
@@ -587,7 +587,7 @@ def indiv_after_sunset():
     for i, res in enumerate(indiv_q):
         ranks.append(i + 1)
         labels.append(res._mapping["athlete_name"])
-        values.append(res._mapping["dark"])
+        values.append(res._mapping["dark"] / 60)
         tooltips.append(str(timedelta(seconds=int(res._mapping["dark"]))))
 
     return jsonify(
