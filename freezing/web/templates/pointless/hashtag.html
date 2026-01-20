@@ -69,6 +69,13 @@
                aria-current="{{'page' if view == 'map' else 'false'}}"
                href="{{ hashtag_notag }}?view=map">Ride Map</a>
         </li>
+        {% if meta.extra_tab %}
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if view == 'extra' }}"
+                   aria-current="{{'page' if view == 'extra' else 'false'}}"
+                   href="{{ hashtag_notag }}?view=extra">{{ meta.extra_tab }}</a>
+            </li>
+        {% endif %}
     </ul>
     {% if view == 'leaderboard' %}
         <div class="leaderboard-overflow mt-2">
@@ -224,6 +231,8 @@
     {% elif view == 'map' %}
         <div class="c3-wide my-3 my-lg-4" id="map">
         </div>
+    {% elif view == 'extra' %}
+        {{ meta.extra_body | safe }}
     {% endif %}
 {% endblock %}
 {% block foot %}

@@ -19,6 +19,8 @@ class HashtagBoardTag(BaseMessage):
     url = None
     rank_by = None
     default_view = None
+    extra_tab = None
+    extra_body = None
 
 
 class HashtagBoardTagSchema(BaseSchema):
@@ -33,6 +35,8 @@ class HashtagBoardTagSchema(BaseSchema):
     url = fields.Str()
     rank_by = fields.Str()
     default_view = fields.Str()
+    extra_tab = fields.Str()
+    extra_body = fields.Str()
 
 
 class HashtagBoard(BaseMessage):

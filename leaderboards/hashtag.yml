@@ -216,6 +216,21 @@ tags:
     url: https://www.bikearlingtonforum.com/forums/topic/ww-london-bridge-pointless-prize-log/
     rank_by: rides
 
+  - tag: moremtb
+    name: More Mountain Biking
+    description: |
+      Ride at least 2 miles on any of the trails that MORE helps with, listed here:
+      <a href="https://more-mtb.org/collections/trails" target="_blank" rel="noreferrer">https://more-mtb.org/collections/trails</a>.
+      Yes, it can be part of bigger (road/gravel) ride, but at least 2 miles have to be on those MORE singletrack/trails.
+      Tag your ride with hashtag <code>moremtb</code>.
+      If you ride a trail that isn't in the MORE inventory, those won't count so please don't tag them.
+    extra_tab: MORE Map
+    extra_body: |
+      <iframe class="c3-wide my-3 my-lg-4" src="https://www.arcgis.com/apps/Embed/index.html?webmap=28848aa8c63f4780843f5a3ea358debd&extent=-78.5714,38.1209,-75.0255,39.8226&zoom=true&scale=true&disable_scroll=false&theme=light">
+      </iframe>
+    rank_by: days
+    sponsors: [190447]
+
   - tag: oldGeorge
     name: Old Georgetown Bike Lane
     description: |
