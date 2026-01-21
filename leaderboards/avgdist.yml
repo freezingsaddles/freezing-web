@@ -6,7 +6,7 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: dist
     label: Average Distance
     rank_by: true
@@ -20,7 +20,7 @@ query: |
           a.display_name as athlete_name,
           avg(r.distance) as dist,
           count(distinct(date(r.start_date))) as num_ride_days
-  from lbd_athletes a
+  from athletes a
   join rides r ON r.athlete_id = a.id
   group by a.id, a.display_name
   having num_ride_days >= 10

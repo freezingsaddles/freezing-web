@@ -26,7 +26,7 @@ query: |
     select
       substr(J.token FROM 9) as pointless_kid,
       R.*
-    from lbd_athletes A
+    from athletes A
     join rides R on R.athlete_id = A.id
     join json_table(
       concat('["', regexp_replace(R.name, '[^#a-zA-Z0-9_]+', '","'), '"]'), '$[*]'

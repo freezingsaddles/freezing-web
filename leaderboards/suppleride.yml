@@ -2,7 +2,7 @@
 title: Supple Ride
 description: |
   Number of miles multiplied by tyre width (2" is <code>#FSrealsuppleride2</code>,
-  3" is <code>#FSrealsuppleride3</code>, 4" is <code>#FSrealsuppleride4</code>).
+  3.1" is <code>#FSrealsuppleride3.1</code>, etc).
   Capital Bikeshare rides tagged with <code>#CABI</code> automatically count as 2" tyre rides,
   see also <a href="/pointless/hashtag/cabi">CABI rides</a>
 fields:
@@ -10,7 +10,7 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: supple_score
     label: Supple Mile Score
     rank_by: true
@@ -26,16 +26,19 @@ query: |
       A.display_name as athlete_name,
       R.distance,
       case
-        when (R.name like '%#FSrealsuppleride2%' or R.name like '%#cabi%') collate utf8mb4_general_ci then 2
-        when R.name like '%#FSrealsuppleride3%' collate utf8mb4_general_ci then 3
-        when R.name like '%#FSrealsuppleride4%' collate utf8mb4_general_ci then 4
+        when R.name like '%#cabi%' collate utf8mb4_general_ci then 2
+        else 
+          cast(
+            regexp_substr(R.description, '(?<=#FSrealsuppleride)[0-9.]+')
+            as double precision
+          )
       end as tyre_width
     from
       rides R join
-      lbd_athletes A on A.id = R.athlete_id
+      athletes A on A.id = R.athlete_id
     ) as T
   where
-    T.tyre_width is not null
+    T.tyre_width >= 2
   group by
     T.id
   order by

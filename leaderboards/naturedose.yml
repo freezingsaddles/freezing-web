@@ -46,7 +46,7 @@ query: |
     floor(sum(R.nature_minutes_tm) / 60) as nature_m_tm,
     sum(R.nature_minutes_tm) % 60 as nature_s_tm
   from
-    lbd_athletes A join
+    athletes A join
     nature_rides R on R.athlete_id = A.id
   where
     R.elapsed_time < R.moving_time * 1.25

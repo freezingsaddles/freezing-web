@@ -6,7 +6,7 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{athlete_id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
   - name: weekend
     label: Weekend Points
   - name: weekday
@@ -32,5 +32,5 @@ query: |
     W.weekend_points as weekend,
     W.total_points - W.weekend_points as weekday
   from weekend_scores W
-    join lbd_athletes A on A.id = W.athlete_id
+    join athletes A on A.id = W.athlete_id
   order by weekend_percentage desc

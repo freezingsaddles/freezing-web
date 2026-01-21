@@ -45,7 +45,7 @@ query: |
           ) AS rescues,
           sum(R.distance) AS distance,
           group_concat(hex(R.id)) as ride_ids
-      from lbd_athletes A
+      from athletes A
       join rides R on R.athlete_id = A.id
       where R.name like '%#foodrescue%'
       group by A.id, A.display_name

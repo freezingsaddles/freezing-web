@@ -6,10 +6,10 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{id}" class="hover-underline">{athlete_name}</a>'
   - name: segment_name
     label: Least-Ridden Segment
-    format: "<a href=\"https://www.strava.com/segments/{segment_id}\">{segment_name}</a>"
+    format: '<a href="https://www.strava.com/segments/{segment_id}">{segment_name}</a>'
   - name: segment_rides
     label: Infrastructure Rides
     rank_by: true
@@ -22,7 +22,7 @@ query: |
     E.segment_name,
     count(E.id) as segment_rides
   from
-    lbd_athletes A join
+    athletes A join
     rides R on R.athlete_id = A.id join
     ride_efforts E on E.ride_id = R.id
   where
