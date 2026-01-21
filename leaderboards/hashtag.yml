@@ -30,6 +30,7 @@ tags:
     url: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-bringing-back-beerneuring/
     rank_by: rides
     sponsors: [1873089]
+    min_miles: 1
 
   - tag: biathlon
     name: Biathlon
@@ -109,6 +110,12 @@ tags:
     description: |
       Ride your bike and take photo of the fire stations.
     rank_by: rides
+
+  - tag: dirtybiker
+    name: Dirty Biker
+    description: |
+      Number of days with at least 1 off-road ride (<code>#dirtybiker</code>).
+    rank_by: days
 
   - tag: donut
     name: Doughnut Rides
@@ -260,6 +267,7 @@ tags:
     sponsors: [38633292]
     rank_by: rides
     default_view: photos
+    friendless: true
 
   - tag: scavhunt
     name: Photo Scavenger Hunt
@@ -271,6 +279,7 @@ tags:
     default_view: photos
     url: https://www.bikearlingtonforum.com/forums/topic/2026-photo-scavenger-hunt/
     sponsors: [11555517, 4704298]
+    friendless: true
 
   - tag: singlespeed
     name: Singlespeed

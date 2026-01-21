@@ -6,14 +6,14 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: "<a href=\"/people/{id}\" class=\"hover-underline\">{athlete_name}</a>"
+    format: '<a href="/people/{id}" class="hover-underline">{athlete_name}</a>'
   - name: lost_dog_rides
     label: Lost Dog Rides
     rank_by: true
     type: number
 query: |
   select A.id, A.display_name as athlete_name, count(R.id) as lost_dog_rides
-  from lbd_athletes A join rides R on R.athlete_id = A.id
+  from athletes A join rides R on R.athlete_id = A.id
   where R.name like '%#FS2019LostDog%' collate utf8mb4_general_ci or
         R.name like '%#LostDog%' collate utf8mb4_general_ci
   group by A.id, A.display_name

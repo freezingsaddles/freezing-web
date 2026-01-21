@@ -24,7 +24,7 @@ query: |
     E.segment_name,
     count(E.id) as segment_rides
   from
-    lbd_athletes A join
+    athletes A join
     rides R on R.athlete_id = A.id join
     ride_efforts E on E.ride_id = R.id
   where

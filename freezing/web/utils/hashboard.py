@@ -21,6 +21,8 @@ class HashtagBoardTag(BaseMessage):
     default_view = None
     extra_tab = None
     extra_body = None
+    friendless = None
+    min_miles = None
 
 
 class HashtagBoardTagSchema(BaseSchema):
@@ -37,6 +39,8 @@ class HashtagBoardTagSchema(BaseSchema):
     default_view = fields.Str()
     extra_tab = fields.Str()
     extra_body = fields.Str()
+    friendless = fields.Bool()
+    min_miles = fields.Int()
 
 
 class HashtagBoard(BaseMessage):

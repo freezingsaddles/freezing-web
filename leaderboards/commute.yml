@@ -62,7 +62,7 @@ query: |
     round(sum(R.distance), 1) as distance,
     group_concat(R.ride_ids) as ride_ids
   from
-    lbd_athletes A
+    athletes A
   join daily_commutes R
     on R.athlete_id = A.id
   group by R.athlete_id, A.display_name

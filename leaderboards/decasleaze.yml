@@ -22,7 +22,7 @@ query: |
          a.display_name as athlete_name,
          count(*) as days,
          sum(s.points) as points
-  from lbd_athletes a
+  from athletes a
   join daily_scores s on s.athlete_id = a.id and s.distance >= 10 and s.distance < 11
   group by a.id, a.display_name
   order by days desc, points desc

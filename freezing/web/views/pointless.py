@@ -57,7 +57,7 @@ def points_per_mile():
             sum(B.distance) as dist,
             sum(B.points) as pnts,
             count(B.athlete_id) as ridedays
-        from lbd_athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
+        from athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
     """
     )
     ppm = [
@@ -77,7 +77,7 @@ def points_per_mile():
     )
 
 
-def _get_hashtag_tdata(hashtag, alttag, orderby):
+def _get_hashtag_tdata(hashtag, alttag, orderby, friendless, min_miles):
     """
     orderby 'miles', 'rides' or 'days'
     """
@@ -89,19 +89,40 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
         rank_by = "hashtag_rides"
     q = text(
         f"""
-        with htdata as (
+        with hash_rides as (
+            select
+                R.id,
+                R.athlete_id,
+                R.distance,
+                date(convert_tz(R.start_date, R.timezone, :tz)) as start_date
+            from
+                rides R
+            where
+                R.distance >= :min_miles and
+                (
+                    R.name like concat('%', '#', :hashtag, '%') or
+                    R.name like concat('%', '#', :alttag, '%')
+                )
+        ), daily_rides as (
+            select
+                H.athlete_id,
+                sum(H.distance) as distance,
+                count(*) as rides
+            from hash_rides H
+            group by H.athlete_id, H.start_date
+        ), htdata as (
             select
                 A.id,
                 A.display_name as athlete_name,
-                count(R.id) as hashtag_rides,
+                sum(R.rides) as hashtag_rides,
                 sum(R.distance) as hashtag_miles,
-                count(distinct date(convert_tz(R.start_date, R.timezone, :tz))) as hashtag_days
+                count(*) as hashtag_days
             from
                 athletes A join
-                rides R on R.athlete_id = A.id
+                daily_rides R on R.athlete_id = A.id join
+                teams T on T.id = A.team_id
             where
-                R.name like concat('%', '#', :hashtag, '%') or
-                R.name like concat('%', '#', :alttag, '%')
+                not :friendless or not T.leaderboard_exclude
             group by
                 A.id, A.display_name
         )
@@ -113,9 +134,12 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
         order by
             H.{rank_by} desc, lower(H.athlete_name) asc
         """
-    )
-    rs = sess.execute(
-        q, params=dict(hashtag=hashtag, alttag=alttag or hashtag, tz=config.TIMEZONE)
+    ).bindparams(
+        tz=config.TIMEZONE,
+        hashtag=hashtag,
+        alttag=alttag or hashtag,
+        min_miles=min_miles or 0.0,
+        friendless=friendless or False,
     )
     retval = [
         (
@@ -126,7 +150,7 @@ def _get_hashtag_tdata(hashtag, alttag, orderby):
             x._mapping["hashtag_days"],
             x._mapping["hashtag_rank"],
         )
-        for x in rs.fetchall()
+        for x in sess.execute(q).fetchall()
     ]
     return {"tdata": retval}
 
@@ -272,6 +296,8 @@ def hashtag_leaderboard(hashtag):
             hashtag=ht,
             alttag=meta.alt if meta else None,
             orderby=rank_by,
+            friendless=meta.friendless if meta else None,
+            min_miles=meta.min_miles if meta else None,
         )
     elif view == "photos":
         args = _get_phototag_tdata(request=request, hashtag=ht)
