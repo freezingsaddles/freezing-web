@@ -29,7 +29,7 @@ query: |
         when R.name like '%#cabi%' collate utf8mb4_general_ci then 2
         else 
           cast(
-            regexp_substr(R.description, '(?<=#FSrealsuppleride)[0-9.]+')
+            regexp_substr(R.name, '(?<=#FSrealsuppleride)[0-9.]+')
             as double precision
           )
       end as tyre_width

@@ -89,6 +89,11 @@ table.dataTable.no-footer {
     justify-content: space-between;
     white-space: nowrap;
     gap: .5rem;
+
+    .footer-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .ekko-lightbox-container .img-responsive {
