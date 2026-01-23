@@ -6,7 +6,11 @@ segments:
     sponsors: [595758]
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-hains-point-salmon-award/
     description: |
-      The winner of this Pointless Prize shall be the BAFS rider who completes the most counter-flow laps of Hains Point.
+      <ul>
+      <li>The winner of this Pointless Prize shall be the BAFS rider who completes the most counter-flow laps of Hains Point.</li>
+      <li>A second award to the Hains Point salmon with the fastest average time for a minimum of 3 salmon laps.</li>
+      <li>See also the <a href="/pointless/generic/alaska">Juneau how far away Alaska is?</a> side quest.</li>
+      </ul>
 
   - segment: 650024
     segment_name: POGGIO
