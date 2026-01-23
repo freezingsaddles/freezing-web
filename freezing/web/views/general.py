@@ -37,6 +37,7 @@ class AccessDenied(RuntimeError):
 # When a hashtag has a "/pointless/*" route instead of "/pointless/hashtag/*".
 # Some of the generic leaderboards ought to be pure hashtag leaderboards.
 custom_tag_pages = {
+    "alaska": "generic/alaska",
     "civilwarmarker": "civilwarhistory",
     "civilwarstreet": "civilwarhistory",
     "commute": "generic/commute",
@@ -47,6 +48,7 @@ custom_tag_pages = {
     "rosshillloop": "rosshillloop",
     "withkid": "generic/pointlesskids",
     "poggio": "segment/650024",
+    "salmon": "segment/37893544",
 }
 
 

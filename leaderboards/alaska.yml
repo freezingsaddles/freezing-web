@@ -1,0 +1,47 @@
+---
+title: Juneau how far away Alaska is?
+description: |
+  The person who, in a single ride completed on the same day, combines the most
+  HP salmon laps (ie qualifying reverse segments) with riding the full length of
+  Alaska Avenue NW (<a href="/pointless/segment/23962584">Alaska to Georgia</a>
+  or <a href="/pointless/segment/40631604">Olive Alaska</a>).
+sponsors: [29577875]
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
+  - name: salmon_laps
+    label: Salmon Laps
+    rank_by: true
+    type: number
+  - name: ride_ids
+    visible: false
+query: |
+  with alaska_rides as (
+    select
+      distinct E.ride_id
+    from ride_efforts E
+      where E.segment_id = 40631604 or E.segment_id = 23962584
+  ), salmon_rides as (
+    select
+      E.ride_id,
+      count(*) as salmon_laps
+    from ride_efforts E
+    where E.segment_id = 37893544
+    group by E.ride_id
+  ) select
+    A.id as athlete_id,
+    A.display_name as athlete_name,
+    max(SR.salmon_laps) as salmon_laps,
+    group_concat(hex(R.id)) as ride_ids
+  from
+    athletes A join
+    rides R on R.athlete_id = A.id join
+    alaska_rides AR on AR.ride_id = R.id join
+    salmon_rides SR on SR.ride_id = R.id
+  group by  
+    A.id, A.display_name
+  order by
+    salmon_laps desc, athlete_name asc
