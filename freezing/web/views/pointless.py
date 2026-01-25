@@ -179,7 +179,7 @@ def _get_phototag_tdata(request, hashtag):
                 rides R join athletes A on A.id = R.athlete_id
             where
                 R.name like :tag and
-                (:date is null or date(R.start_date) = :date)
+                (:date is null or date(convert_tz(R.start_date, R.timezone, :tz)) = :date)
         ), primary_photos as (
             select
                 P.id, P.caption, P.img_l, R.*
