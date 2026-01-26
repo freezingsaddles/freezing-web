@@ -21,3 +21,9 @@ tribal_groups:
     tribes:
       - Am I right?
       - Fingers so toasty
+  - name: Gender
+    id: gender
+    tribes:
+      - Female
+      - Male
+      - Nonbinary
