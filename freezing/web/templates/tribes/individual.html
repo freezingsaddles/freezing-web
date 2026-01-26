@@ -1,7 +1,17 @@
 {% extends "base.html" %}
+{% block title %}
+    Individual Points ({{ tribe }})
+{% endblock %}
 {% block content %}
+    <span class="float-end mt-1">
+        {% if g.logged_in %}
+            <a href="/tribes/my">My Tribes</a>
+        {% else %}
+            Log in to join tribes
+        {% endif %}
+    </span>
     <h2 class="mb-3">
-        Leaderboard – {{ tribe }}
+        Individual Points ({{ tribe }})
     </h2>
     <ol>
         {% for indiv_row in indiv_rows %}
