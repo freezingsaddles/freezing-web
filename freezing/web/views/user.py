@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+import arrow
 
 from flask import Blueprint, current_app, jsonify, render_template, request, session
 from freezing.model import meta
@@ -78,7 +79,7 @@ def rides_data():
                 elapsed_time=r.elapsed_time,
                 id=r.id,
                 moving_time=r.moving_time,
-                name=r.name,
+                duration_human=arrow.utcnow().shift(seconds=-int(r.moving_time)).humanize(only_distance=True),                name=r.name,
                 photos_fetched=r.photos_fetched,
                 private=r.private,
                 start_date=r.start_date,
