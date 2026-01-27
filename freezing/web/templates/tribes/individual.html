@@ -22,8 +22,9 @@
                 <strong>{{ indiv_row._mapping['total_score']|round|int|groupnum }}</strong>
                 points ({{ indiv_row._mapping['days_ridden'] }} day{{
                 indiv_row._mapping['days_ridden']|ess }}, {{
-                indiv_row._mapping['total_distance']|round|int|groupnum }} miles) – {{
-                indiv_row._mapping['team_name'] }}
+                indiv_row._mapping['total_distance']|round|int|groupnum }} miles) –
+                <a href="/teams/{{ indiv_row._mapping['team_id'] }}"
+                   class="hover-underline">{{ indiv_row._mapping['team_name'] }}</a>
             </li>
         {% endfor %}
     </ol>
