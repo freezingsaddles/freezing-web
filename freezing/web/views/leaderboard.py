@@ -144,7 +144,7 @@ def indiv_leaderboard_various():
 def team_sleaze():
     q = team_sleaze_query()
     data = [
-        (x._mapping["team_name"], x._mapping["num_sleaze_days"])
+        (x._mapping["id"], x._mapping["team_name"], x._mapping["num_sleaze_days"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(

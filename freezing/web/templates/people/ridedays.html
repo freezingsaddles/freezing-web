@@ -9,17 +9,17 @@
         </p>
     {% endif %}
     <ul style="padding-left: 1em">
-        <li style="list-style: none">
+        <li>
             <strong>{{ every_day_riders }} rider{{ every_day_riders|ess }}:</strong>
             Your name is <span class="text-success">green</span>, you've ridden every day. <em>Congratulations!</em>&nbsp;🏆 for you!
         </li>
         {% if contenders %}
-            <li style="list-style: none">
+            <li>
                 <strong>{{ contenders }} rider{{ contenders|ess }}:</strong>
                 <span class="text-warning">Yellow</span> means you are one ride shy of every day and you have not yet ridden today.  ⚠️  <strong>Go ride today!</strong>
             </li>
         {% endif %}
-        <li style="list-style: none">
+        <li>
             <strong>{{ remainders }} rider{{ remainders|ess }}:</strong>
             <span class="text-danger">Red</span> means you have missed a day, alas. Maybe next year you will be in the elite group of every day riders.
         </li>
@@ -30,51 +30,47 @@
             <a href="https://www.velominati.com/the-rules/#5" rel="noreferrer">Rule 5</a>) or you need to upload your rides.
         </p>
     {% endif %}
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Days
-                    </th>
-                    <th>
-                        Rider
-                    </th>
-                    <th class="number">
-                        Miles
-                    </th>
-                    <th class="emoji">
-                        Every Day Rider?
-                    </th>
-                </tr>
-                {% for a, b, c, d, e in ride_days %}
+    <table class="table table-condensed">
+        <tr>
+            <th class="number rank">
+                Days
+            </th>
+            <th>
+                Rider
+            </th>
+            <th class="number">
+                Miles
+            </th>
+            <th class="emoji">
+                Every Day Rider?
+            </th>
+        </tr>
+        {% for a, b, c, d, e in ride_days %}
+            {% if c >= num_days %}
+                {% set class = "text-success" %}
+            {% elif e %}
+                {% set class = "text-warning" %}
+            {% else %}
+                {% set class = "text-danger" %}
+            {% endif %}
+            <tr class="{{ a | myself }}">
+                <td class="number rank">
+                    {{ c }}
+                </td>
+                <td>
+                    <a href="/people/{{ a }}" class="{{ class }} hover-underline">{{ b }}</a>
+                </td>
+                <td class="number">
+                    {{ d | round(1) }}
+                </td>
+                <td class="emoji">
                     {% if c >= num_days %}
-                        {% set class = "text-success" %}
+                        🏆
                     {% elif e %}
-                        {% set class = "text-warning" %}
-                    {% else %}
-                        {% set class = "text-danger" %}
+                        ⚠️
                     {% endif %}
-                    <tr class="{{ a | myself }}">
-                        <td class="number rank">
-                            {{ c }}
-                        </td>
-                        <td>
-                            <a href="/people/{{ a }}" class="{{ class }} hover-underline">{{ b }}</a>
-                        </td>
-                        <td class="number">
-                            {{ d | round(1) }}
-                        </td>
-                        <td class="emoji">
-                            {% if c >= num_days %}
-                                🏆
-                            {% elif e %}
-                                ⚠️
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

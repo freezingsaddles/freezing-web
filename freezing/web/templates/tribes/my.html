@@ -12,33 +12,29 @@
         <a href="/tribes/leaderboard">bike tribe leaderboards</a>. If you don't want
         to declare a tribe, just leave it blank.
     </p>
-    <div class="card">
-        <div class="card-body">
-            <form method="post">
-                {% for group in tribal_groups %}
-                    <h4>
-                        {{ group.name }}
-                    </h4>
-                    <select name="{{ group.id }}" class="form-control big-bottom">
-                        <option>
+    <form method="post">
+        {% for group in tribal_groups %}
+            <h4>
+                {{ group.name }}
+            </h4>
+            <select name="{{ group.id }}" class="form-control big-bottom">
+                <option>
+                </option>
+                {% for tribe in group.tribes %}
+                    {% if tribe == my_tribes[group.name] %}
+                        <option selected>
+                            {{ tribe }}
                         </option>
-                        {% for tribe in group.tribes %}
-                            {% if tribe == my_tribes[group.name] %}
-                                <option selected>
-                                    {{ tribe }}
-                                </option>
-                            {% else %}
-                                <option>
-                                    {{ tribe }}
-                                </option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+                    {% else %}
+                        <option>
+                            {{ tribe }}
+                        </option>
+                    {% endif %}
                 {% endfor %}
-                <button type="submit" class="btn btn-primary px-4">
-                    Submit
-                </button>
-            </form>
-        </div>
-    </div>
+            </select>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary px-4">
+            Submit
+        </button>
+    </form>
 {% endblock %}
