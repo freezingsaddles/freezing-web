@@ -66,14 +66,10 @@ def rides_data():
 
     for r in rides_q:
         w = r.weather
-        if w:
-            avg_temp = w.ride_temp_avg
-        else:
-            avg_temp = None
-
         results.append(
             dict(
-                avg_temp=avg_temp,
+                avg_temp=w.ride_temp_avg if w else None,
+                avg_windchill=w.ride_windchill_avg if w else None,
                 distance=r.distance,
                 elapsed_time=r.elapsed_time,
                 id=r.id,
