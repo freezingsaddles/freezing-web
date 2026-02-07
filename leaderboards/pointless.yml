@@ -30,8 +30,9 @@ prizes:
     url: /pointless/hashtag/biathlon
     category: hidden
   - name: Calvinball
-    url: https://www.bikearlingtonforum.com/forums/topic/return-of-calvinball/
-    category: hidden
+    url: /pointless/hashtag/calvinball
+    discord: 1469393581382041730
+    category: unsponsored
   - name: Capital Bikeshare
     url: /pointless/hashtag/cabi
     category: unsponsored
