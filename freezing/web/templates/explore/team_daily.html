@@ -4,36 +4,33 @@
         Team Wins by Day
     </h2>
     <p>
-        For each day, the team with the highest daily total gets {{ team_total|length }} points. Second gets {{ team_total|length - 1 }}, down to 1 for the last place team.
+        For each day, the team with the highest daily total gets {{ team_total|length }}
+        points. Second gets {{ team_total|length - 1 }}, down to 1 for the last place team.
     </p>
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Rank
-                    </th>
-                    <th>
-                        Team
-                    </th>
-                    <th class="number">
-                        Points
-                    </th>
-                </tr>
-                {% for a, b in team_total %}
-                    <tr>
-                        <td class="number rank">
-                            {{ loop.index }}
-                        </td>
-                        <td>
-                            {{ b }}
-                        </td>
-                        <td class="number">
-                            {{ a| round(1) }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+    <table class="table table-condensed">
+        <tr>
+            <th class="number rank">
+                Rank
+            </th>
+            <th>
+                Team
+            </th>
+            <th class="number">
+                Points
+            </th>
+        </tr>
+        {% for a, id, b in team_total %}
+            <tr>
+                <td class="number rank">
+                    {{ loop.index }}
+                </td>
+                <td>
+                    <a href="/teams/{{ id }}" class="hover-underline">{{ b }}</a>
+                </td>
+                <td class="number">
+                    {{ a| round(1) }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

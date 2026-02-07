@@ -57,12 +57,12 @@ def team_cumul_trend():
 def team_riders():
     q = text(
         """
-        select b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
-        on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by a.team_id order by ride_days desc;
+        select b.id, b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
+        on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by b.id order by ride_days desc;
         """
     )
     team_riders = [
-        (x._mapping["name"], x._mapping["ride_days"])
+        (x._mapping["id"], x._mapping["name"], x._mapping["ride_days"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     return render_template(
@@ -74,20 +74,23 @@ def team_riders():
 @blueprint.route("/team_daily")
 def team_daily():
     q = text(
-        """select a.ride_date, b.name as team_name, sum(a.points) as team_score from daily_scores a,
+        """select a.ride_date, b.id, b.name as team_name, sum(a.points) as team_score from daily_scores a,
         teams b where a.team_id=b.id and b.leaderboard_exclude=0
-        group by a.ride_date, b.name order by a.ride_date, team_score;"""
+        group by a.ride_date, b.id, b.name order by a.ride_date, team_score;"""
     )
     temp = [
-        (x._mapping["ride_date"], x._mapping["team_name"])
+        (x._mapping["ride_date"], x._mapping["id"], x._mapping["team_name"])
         for x in meta.scoped_session().execute(q).fetchall()
     ]
     temp = groupby(temp, lambda x: x[0])
     team_daily = defaultdict(list)
     team_total = defaultdict(int)
+    team_name = defaultdict(str)
     for date, team in temp:
-        score_list = enumerate([x[1] for x in team], 1)
-        for a, b in score_list:
+        score_list = enumerate([(x[1], x[2]) for x in team], 1)
+        for a, id_name in score_list:
+            b = id_name[0]
+            team_name[b] = id_name[1]
             if not team_daily.get(date):
                 team_daily[date] = {}
             team_daily[date].update({a: b})
@@ -98,7 +101,7 @@ def team_daily():
     team_daily = sorted(team_daily)
     # NOTE: team_daily calculated to show the scores for each day
     # chart is too big to display, but leaving the calculation here just in case
-    team_total = [(b, a) for a, b in team_total.items()]
+    team_total = [(b, a, team_name[a]) for a, b in team_total.items()]
     team_total = sorted(team_total, reverse=True)
     return render_template(
         "explore/team_daily.html",
