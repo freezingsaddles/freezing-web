@@ -22,9 +22,20 @@
     <p>
         {{ description | safe }}
     </p>
-    {% if url %}
+    {% if url or discord %}
         <p>
-            See: <a href="{{ url }}">{{ url }}</a>
+            See:
+            {% if url %}
+                <a href="{{ url }}" target="_blank" rel="noreferrer">Forum Post</a>
+            {% endif %}
+            {% if url and discord %}
+                and
+            {% endif %}
+            {% if discord %}
+                <a href="https://discord.com/channels/1443244420358213643/{{ discord }}"
+                   target="_blank"
+                   rel="noreferrer">Discord Channel</a>
+            {% endif %}
         </p>
     {% endif %}
     {% if sponsors %}

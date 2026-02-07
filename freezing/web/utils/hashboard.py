@@ -16,7 +16,8 @@ class HashtagBoardTag(BaseMessage):
     description = None
     sponsors: List[int] | None = None
     banned: List[int] | None = None  # banned for prior win
-    url = None
+    forum = None
+    discord: int | None = None
     rank_by = None
     default_view = None
     extra_tab = None
@@ -34,7 +35,8 @@ class HashtagBoardTagSchema(BaseSchema):
     description = fields.Str(required=True)
     sponsors = fields.List(fields.Int())
     banned = fields.List(fields.Int())
-    url = fields.Str()
+    forum = fields.Str()
+    discord = fields.Int()
     rank_by = fields.Str()
     default_view = fields.Str()
     extra_tab = fields.Str()
@@ -53,7 +55,7 @@ class HashtagBoardSchema(BaseSchema):
     tags = fields.Nested(HashtagBoardTagSchema, many=True, required=True)
 
 
-def load_hashtag(hashtag) -> HashtagBoardTag | None:
+def load_hashboard() -> HashtagBoard:
     path = os.path.join(config.LEADERBOARDS_DIR, "hashtag.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
@@ -62,7 +64,12 @@ def load_hashtag(hashtag) -> HashtagBoardTag | None:
         doc = yaml.safe_load(fp)
 
     schema = HashtagBoardSchema()
-    board: HashtagBoard = schema.load(doc)
+
+    return schema.load(doc)
+
+
+def load_hashtag(hashtag) -> HashtagBoardTag | None:
+    board = load_hashboard()
 
     matches = [
         tag

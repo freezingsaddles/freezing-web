@@ -23,6 +23,9 @@ from freezing.model.orm import Athlete, Team
 from marshmallow import fields
 
 from freezing.web.autolog import log
+from freezing.web.utils.genericboard import load_board
+from freezing.web.utils.hashboard import load_hashboard
+from freezing.web.utils.segboard import load_segments
 
 from .config import config, init_logging
 
@@ -145,9 +148,9 @@ class PointlessPrizeSchema(BaseSchema):
     _model_class = PointlessPrize
 
     url = fields.Str(required=True)
-    name = fields.Str(required=True)
-    discord = fields.Int()
     category = fields.Str(required=True)
+    name = fields.Str()
+    discord = fields.Int()
 
 
 class PointlessPrizes(BaseMessage):
@@ -174,6 +177,31 @@ def _load_pointless():
         doc = yaml.safe_load(fp)
     schema = PointlessPrizesSchema()
     prizes: PointlessPrizes = schema.load(doc)
+    # mix in hashtag/generic data for prizes that have it, so we can link to the discord channels and such
+    hashtags = {t.tag.lower(): t for t in load_hashboard().tags}
+    segments = {s.segment: s for s in load_segments().segments}
+    for prize in prizes.prizes:
+        if prize.url.startswith("/pointless/hashtag/"):
+            tag = hashtags.get(prize.url.removeprefix("/pointless/hashtag/").lower())
+            if tag:
+                prize.name = prize.name or tag.name
+                prize.discord = prize.discord or tag.discord
+        elif prize.url.startswith("/pointless/segment/"):
+            seg = segments.get(int(prize.url.removeprefix("/pointless/segment/")))
+            if seg:
+                prize.name = prize.name or seg.name
+                prize.discord = prize.discord or seg.discord
+        elif prize.url.startswith("/pointless/generic/"):
+            board_name = prize.url.removeprefix("/pointless/generic/")
+            try:
+                board = load_board(board_name)
+                if board:
+                    prize.name = prize.name or board.name or board.title
+                    prize.discord = prize.discord or board.discord
+            except Exception as ex:
+                log.warning(
+                    f"Could not load generic board {board_name} for pointless prize: {str(prize)}"
+                )
     return prizes
 
 

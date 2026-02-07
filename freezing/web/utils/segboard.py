@@ -10,13 +10,14 @@ from freezing.web.exc import ObjectNotFound
 
 
 class SegmentBoardSegment(BaseMessage):
-    segment = None
+    segment: int | None = None
     segment_name = None
     name = None
     description = None
     sponsors: List[int] | None = None
     banned: List[int] | None = None  # banned for prior win
     url = None
+    discord: int | None = None
 
 
 class SegmentBoardSegmentchema(BaseSchema):
@@ -29,6 +30,7 @@ class SegmentBoardSegmentchema(BaseSchema):
     sponsors = fields.List(fields.Int())
     banned = fields.List(fields.Int())
     url = fields.Str()
+    discord = fields.Int()
 
 
 class SegmentBoard(BaseMessage):
@@ -41,7 +43,7 @@ class SegmentBoardSchema(BaseSchema):
     segments = fields.Nested(SegmentBoardSegmentchema, many=True, required=True)
 
 
-def load_segment(id) -> SegmentBoardSegment | None:
+def load_segments() -> SegmentBoard:
     path = os.path.join(config.LEADERBOARDS_DIR, "segment.yml")
     if not os.path.exists(path):
         raise ObjectNotFound("Could not find yaml board definition {}".format(path))
@@ -50,7 +52,11 @@ def load_segment(id) -> SegmentBoardSegment | None:
         doc = yaml.safe_load(fp)
 
     schema = SegmentBoardSchema()
-    board: SegmentBoard = schema.load(doc)
+    return schema.load(doc)
+
+
+def load_segment(id) -> SegmentBoardSegment | None:
+    board = load_segments()
 
     matches = [segment for segment in board.segments if segment.segment == id]
 

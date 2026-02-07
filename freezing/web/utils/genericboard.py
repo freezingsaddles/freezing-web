@@ -72,8 +72,10 @@ class GenericBoardFieldSchema(BaseSchema):
 
 class GenericBoard(BaseMessage):
     title = None
+    name = None  # used in the menu
     description = None
     url = None
+    discord: int | None = None
     sponsors: List[int] | None = None
     query = None
     fields: List[GenericBoardField] = None
@@ -83,8 +85,10 @@ class GenericBoardSchema(BaseSchema):
     _model_class = GenericBoard
 
     title = fields.Str()
+    name = fields.Str()
     description = fields.Str()
     url = fields.Str()
+    discord = fields.Int()
     sponsors = fields.List(fields.Int())
     query = fields.Str(required=True, allow_none=False)
     fields = fields.Nested(GenericBoardFieldSchema, many=True, required=False)

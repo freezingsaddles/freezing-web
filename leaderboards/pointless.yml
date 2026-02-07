@@ -11,119 +11,79 @@ categories:
       unsponsored but fun!
 
 prizes:
-  - name: Baby on Board
-    url: /pointless/hashtag/bob
+  - url: /pointless/hashtag/bob
     category: hidden
-  - name: Beerneuring
-    url: /pointless/hashtag/beerneuring
-    discord: 1447781269156135064
+  - url: /pointless/hashtag/beerneuring
     category: active
-  - name: Bicycle Bingo
-    url: /pointless/hashtag/bingo
-    discord: 1443983774185422849
+  - url: /pointless/hashtag/bingo
     category: active
-  - name: Bikepacking
-    url: /pointless/hashtag/bikepacking
-    discord: 1456035311028277399
+  - url: /pointless/hashtag/bikepacking
     category: active
-  - name: Biathlon
-    url: /pointless/hashtag/biathlon
+  - url: /pointless/hashtag/biathlon
     category: hidden
-  - name: Calvinball
-    url: /pointless/hashtag/calvinball
-    discord: 1469393581382041730
+  - url: /pointless/hashtag/calvinball
     category: unsponsored
-  - name: Capital Bikeshare
-    url: /pointless/hashtag/cabi
-    category: unsponsored
-  - name: Civil War Forts
-    url: /pointless/hashtag/civilwarforts
+  - url: /pointless/hashtag/cabi
     category: hidden
-  - name: Climbing per Mile (Individual)
-    url: /pointless/generic/billygoat-indiv
+  - url: /pointless/hashtag/civilwarforts
+    category: hidden
+  - url: /pointless/generic/billygoat-indiv
     category: unsponsored
-  - name: Climbing per Mile (Team)
-    url: /pointless/generic/billygoat-team
+  - url: /pointless/generic/billygoat-team
     category: unsponsored
-  - name: Commute Champ
-    url: /pointless/generic/commute
-    discord: 1457554898781470813
+  - url: /pointless/generic/commute
     category: active
-  - name: Decasleaze
-    url: /pointless/generic/decasleaze
+  - url: /pointless/generic/decasleaze
     category: unsponsored
-  - name: Deflated Rides
-    url: /pointless/hashtag/Deflated
+  - url: /pointless/hashtag/deflated
     category: unsponsored
-  - name: Doughnut Rides
-    url: /pointless/hashtag/donut
+  - url: /pointless/hashtag/donut
     category: unsponsored
-  - name: Errandeering
-    url: /pointless/hashtag/adulting
+  - url: /pointless/hashtag/adulting
     category: unsponsored
   - name: Extra Mile
     url: https://www.bikearlingtonforum.com/forums/topic/extra-mile-pointless-prize-3/
     discord: 1449623779167698954
     category: active
-  - name: Expand Your Horizons
-    url: /pointless/hashtag/420
+  - url: /pointless/hashtag/420
     category: hidden
-  - name: Fire
-    url: /pointless/hashtag/fire
+  - url: /pointless/hashtag/fire
     category: hidden
-  - name: First Time Riders
-    url: /pointless/hashtag/FirstTimeFS
+  - url: /pointless/hashtag/FirstTimeFS
     category: hidden
-  - name: Flag
-    url: /pointless/hashtag/flag
+  - url: /pointless/hashtag/flag
     category: hidden
-  - name: Food Rescue
-    url: /pointless/generic/foodrescue
+  - url: /pointless/generic/foodrescue
     category: hidden
-  - name: GPS Art
-    url: /pointless/hashtag/gpsart
+  - url: /pointless/hashtag/gpsart
     category: active
-  - name: Golden Spike
-    url: /pointless/hashtag/goldenspike
+  - url: /pointless/hashtag/goldenspike
     category: hidden
-  - name: Group Ride Groupie
-    url: /pointless/hashtag/groupridegroupie
+  - url: /pointless/hashtag/groupridegroupie
     category: hidden
-  - name: Group Ride Guru
-    url: /pointless/hashtag/grouprideguru
+  - url: /pointless/hashtag/grouprideguru
     category: hidden
-  - name: Hains Point Salmon Award
-    url: /pointless/segment/37893544
-    discord: 1443609035344449566
+  - url: /pointless/segment/37893544
     category: active
   - name: Kidathon
     url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
     category: kids
-  - name: Kidical
-    url: /pointless/generic/kidmiles
+  - url: /pointless/generic/kidmiles
     category: kids
-  - name: Lake Finder
-    url: /pointless/hashtag/lakefinder
+  - url: /pointless/hashtag/lakefinder
     category: hidden
   - name: Least Daily Variance
     url: /pointless/daily_variance
     category: unsponsored
-  - name: Library
-    url: /pointless/hashtag/library
-    discord: 1462202150632554730
+  - url: /pointless/hashtag/library
     category: active
-  - name: Little Free Library
-    url: /pointless/hashtag/fsbooks
+  - url: /pointless/hashtag/fsbooks
     category: hidden
-  - name: Locally Legendary
-    url: /pointless/generic/legend
+  - url: /pointless/generic/legend
     category: unsponsored
-  - name: LOL Funny
-    url: /pointless/hashtag/lolfunny
-    discord: 1457486832831959151
+  - url: /pointless/hashtag/lolfunny
     category: active
-  - name: London Bridge Rides
-    url: /pointless/hashtag/londonbridge
+  - url: /pointless/hashtag/londonbridge
     category: unsponsored
   - name: Loopy for Arlington
     url: /pointless/arlington
@@ -131,117 +91,76 @@ prizes:
   - name: Meh-diocrity
     url: https://www.bikearlingtonforum.com/forums/topic/meh-diocrity-pointless-prize-2/
     category: hidden
-  - name: Michigander Snow Day Rides
-    url: /pointless/generic/opmdays
+  - url: /pointless/generic/opmdays
     category: unsponsored
-  - name: Monuments and Memorials
-    url: /pointless/hashtag/monuments
+  - url: /pointless/hashtag/monuments
     category: hidden
-  - name: More Mountain Biking
-    url: /pointless/hashtag/moremtb
-    discord: 1462977433585062023
+  - url: /pointless/hashtag/moremtb
     category: active
-  - name: NatureDose
-    url: /pointless/generic/naturedose
-    discord: 1449054511459991653
+  - url: /pointless/generic/naturedose
     category: active
-  - name: Old Georgetown Bike Lane
-    url: /pointless/hashtag/oldGeorge
+  - url: /pointless/hashtag/oldGeorge
     category: hidden
-  - name: Park Finder
-    url: /pointless/hashtag/parks
+  - url: /pointless/hashtag/parks
     category: unsponsored
-  - name: Photo Scavenger Hunt
-    url: /pointless/hashtag/scavhunt
-    discord: 1455974154137239787
+  - url: /pointless/hashtag/scavhunt
     category: active
-  - name: Phone Ride
-    url: /pointless/hashtag/phoneride
+  - url: /pointless/hashtag/phoneride
     category: hidden
-  - name: Pizzaneuring
-    url: /pointless/hashtag/pizza
+  - url: /pointless/hashtag/pizza
     category: hidden
-  - name: POGGIO (Individual)
-    url: /pointless/segment/650024
+  - url: /pointless/segment/650024
     category: unsponsored
-  - name: POGGIO (Team)
-    url: /pointless/generic/poggio-team
+  - url: /pointless/generic/poggio-team
     category: unsponsored
   - name: Points per Mile
     url: /pointless/points_per_mile
     category: unsponsored
-  - name: Pointless Kids
-    url: /pointless/generic/pointlesskids
+  - url: /pointless/generic/pointlesskids
     category: kids
-  - name: Post Office
-    url: /pointless/hashtag/po
+  - url: /pointless/hashtag/po
     category: hidden
-  - name: Public Art Finder
-    url: /pointless/hashtag/publicartfinder
-    discord: 1446691565555814572
+  - url: /pointless/hashtag/publicartfinder
     category: active
-  - name: Riding with Kids
-    url: /pointless/hashtag/withkid
+  - url: /pointless/hashtag/withkid
     category: kids
   - name: Ross Hill Loop
     url: /pointless/rosshillloop
     category: unsponsored
-  - name: Sharing is Caring
-    url: /pointless/hashtag/bikeshare
-    discord: 1449177006204915906
+  - url: /pointless/hashtag/bikeshare
     category: active
-  - name: Shortest Rides
-    url: /pointless/generic/avgdist
+  - url: /pointless/generic/avgdist
     category: unsponsored
-  - name: Singlespeed
-    url: /pointless/hashtag/singlespeed
-    discord: 1447780972480303255
+  - url: /pointless/hashtag/singlespeed
     category: active
-  - name: Socks
-    url: /pointless/hashtag/socks
+  - url: /pointless/hashtag/socks
     category: hidden
-  - name: STEM
-    url: /pointless/hashtag/stem
+  - url: /pointless/hashtag/stem
     category: hidden
-  - name: Street Treats
-    url: /pointless/hashtag/treats
+  - url: /pointless/hashtag/treats
     category: hidden
-  - name: Supple Ride
-    url: /pointless/generic/suppleride
+  - url: /pointless/generic/suppleride
     category: unsponsored
-  - name: Tandem Rides
-    url: /pointless/hashtag/tandem
-    discord: 1446630946911686848
+  - url: /pointless/hashtag/tandem
     category: active
-  - name: Tandem Rides - Visually Impaired
-    url: /pointless/hashtag/tandemVI
+  - url: /pointless/hashtag/tandemVI
     category: active
-  - name: Tandem Rides - With a Kid
-    url: /pointless/hashtag/tandemKid
+  - url: /pointless/hashtag/tandemKid
     category: kids
-  - name: The Taco Ride
-    url: /pointless/hashtag/thetacoride
+  - url: /pointless/hashtag/thetacoride
     category: hidden
-  - name: Tortoise and Hare
-    url: /pointless/generic/avgspeed
+  - url: /pointless/generic/avgspeed
     category: unsponsored
-  - name: Under Construction
-    url: /pointless/hashtag/undercon
-    discord: 1448069690436878568
+  - url: /pointless/hashtag/undercon
     category: active
-  - name: Vehicle ABCs
-    url: /pointless/hashtag/abc
+  - url: /pointless/hashtag/abc
     category: hidden
   - name: Wandrer' About
     url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/
     category: hidden
-  - name: Weekend Warrior
-    url: /pointless/generic/weekend
+  - url: /pointless/generic/weekend
     category: unsponsored
-  - name: Wormholes
-    url: /pointless/hashtag/fswormhole
+  - url: /pointless/hashtag/fswormhole
     category: unsponsored
-  - name: Yum
-    url: /pointless/hashtag/Yum
-    discord: 1456702503981814042
+  - url: /pointless/hashtag/Yum
     category: active

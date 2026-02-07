@@ -4,6 +4,7 @@ description: |
   Number of minutes spent in nature, as measured by
   <a href="https://www.naturequant.com/naturedose/" target="_blank" rel="noreferrer">NatureDose®</a>.
 url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-naturedose/
+discord: 1449054511459991653
 sponsors: [516697]
 fields:
   - name: id

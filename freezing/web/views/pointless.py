@@ -36,6 +36,7 @@ def generic(leaderboard):
             sponsors=sponsors,
             show_rides=[f for f in board.fields if f.name == "ride_ids"],
             url=board.url,
+            discord=board.discord,
             data=data,
         )
 
@@ -505,6 +506,7 @@ def multisegment(leaderboard):
         title=board.title,
         description=board.description,
         url=board.url,
+        discord=board.discord,
         data=formatted,
     )
 
@@ -552,6 +554,7 @@ def arlington():
         description=board.description,
         sponsors=sponsors,
         url=board.url,
+        discord=board.discord,
         data=formatted,
     )
 

@@ -1,5 +1,5 @@
 ---
-title: Average Distance (Shortest Rides)
+title: Shortest Rides
 description: Rider average distance per ride, minimum ten days with a ride.
 fields:
   - name: athlete_id
