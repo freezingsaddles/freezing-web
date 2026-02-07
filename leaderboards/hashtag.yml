@@ -90,6 +90,17 @@ tags:
       Tag your rides on Capital Bikeshare (CaBi) with <code>#cabi</code> (eBike or red bike!) and whoever does the most miles will get a prize. The prize is likely to either be a CaBi embroidery or whatever I have in my bag at the final happy hour (up to and including trivial cash amounts or random stickers). Get riding!
     rank_by: miles
 
+  - tag: calvinball
+    name: Calvinball
+    description: |
+      <p>There will be multiple Calvinballs thrown out into the wild for folks to find and hide. Please remember this is a “hot potato” game, not a “make this really hard to find” game.</p>
+      <p>The ball (shape may be a water bottle or similar–I will post pic of each Calvinball that's deployed so you know what you're looking for) needs to be placed in “public” areas. 
+      Do not put the ball on or adjacent to military or government installations (i.e., on the grounds at the Pentagon or outside the gate at Ft Myer is a no-no). Take a picture that
+      clearly shows where the ball is “hiding” so that seekers will have a good chance of finding it. Please place the ball during daylight hours to make the location clearer and don't
+      hold onto the ball for more than a few hours before redeploying it.</p>
+    url: https://discord.com/channels/1443244420358213643/1469393581382041730
+    rank_by: rides
+
   - tag: civilwarforts
     name: Civil War Forts
     description: |
