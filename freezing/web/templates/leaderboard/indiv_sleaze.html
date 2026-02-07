@@ -6,34 +6,30 @@
     <p>
         If we really want to be pedantic, and <strong>of course</strong> we want to be pedantic, it's actually Sleaze <strong>Days</strong>. Two one mile rides in a day gets you no sleaze ride credit. Since no one <strong>wants</strong> sleaze ride credit, this is a good thing.
     </p>
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Rank
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th class="number">
-                        Sleaze Rides
-                    </th>
-                </tr>
-                {% for id, a, b in indiv_sleaze %}
-                    <tr class="{{ id | myself }}">
-                        <td class="number rank">
-                            {{ loop.index }}
-                        </td>
-                        <td>
-                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
-                        </td>
-                        <td class="number">
-                            {{ b }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+    <table class="table table-condensed">
+        <tr>
+            <th class="number rank">
+                Rank
+            </th>
+            <th>
+                Name
+            </th>
+            <th class="number">
+                Sleaze Rides
+            </th>
+        </tr>
+        {% for id, a, b in indiv_sleaze %}
+            <tr class="{{ id | myself }}">
+                <td class="number rank">
+                    {{ loop.index }}
+                </td>
+                <td>
+                    <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
+                </td>
+                <td class="number">
+                    {{ b }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

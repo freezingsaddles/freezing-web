@@ -9,34 +9,30 @@
     <p>
         See also <a href="/leaderboard/indiv_freeze{{'' if friends else '?friends=true'}}">Freeze Points {{'without' if friends else 'with'}} Friends</a>.
     </p>
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Rank
-                    </th>
-                    <th>
-                        Rider
-                    </th>
-                    <th class="number">
-                        Points
-                    </th>
-                </tr>
-                {% for id, a, b in indiv_freeze %}
-                    <tr class="{{ id | myself }}">
-                        <td class="number rank">
-                            {{ loop.index }}
-                        </td>
-                        <td>
-                            <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
-                        </td>
-                        <td class="number">
-                            {{ '%0.1f' % b }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+    <table class="table table-condensed">
+        <tr>
+            <th class="number rank">
+                Rank
+            </th>
+            <th>
+                Rider
+            </th>
+            <th class="number">
+                Points
+            </th>
+        </tr>
+        {% for id, a, b in indiv_freeze %}
+            <tr class="{{ id | myself }}">
+                <td class="number rank">
+                    {{ loop.index }}
+                </td>
+                <td>
+                    <a href="/people/{{ id }}" class="hover-underline">{{ a }}</a>
+                </td>
+                <td class="number">
+                    {{ '%0.1f' % b }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

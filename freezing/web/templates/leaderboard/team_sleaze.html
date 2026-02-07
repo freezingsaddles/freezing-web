@@ -9,34 +9,30 @@
     <p>
         Look, we want you to ride your bike, okay? Now if you feel that the bare minimum is enough, then okay. But some people choose to ride more and we encourage that, okay? You do want to ride your bike, don't you?
     </p>
-    <div class="card">
-        <div class="card-body py-1">
-            <table class="table table-condensed">
-                <tr>
-                    <th class="number rank">
-                        Rank
-                    </th>
-                    <th>
-                        Team
-                    </th>
-                    <th class="number">
-                        Sleaze Rides
-                    </th>
-                </tr>
-                {% for a, b in team_sleaze %}
-                    <tr>
-                        <td class="number rank">
-                            {{ loop.index }}
-                        </td>
-                        <td>
-                            {{ a }}
-                        </td>
-                        <td class="number">
-                            {{ b }}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </div>
+    <table class="table table-condensed">
+        <tr>
+            <th class="number rank">
+                Rank
+            </th>
+            <th>
+                Team
+            </th>
+            <th class="number">
+                Sleaze Rides
+            </th>
+        </tr>
+        {% for id, a, b in team_sleaze %}
+            <tr>
+                <td class="number rank">
+                    {{ loop.index }}
+                </td>
+                <td>
+                    <a href="/teams/{{ id }}" class="hover-underline">{{ a }}</a>
+                </td>
+                <td class="number">
+                    {{ b }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
