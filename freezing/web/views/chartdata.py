@@ -902,6 +902,8 @@ def riders_by_lowtemp():
             avg(W.ride_windchill_avg) as wind_chill,
             cast(sum(W.ride_rain) * 3600 / sum(R.moving_time) as float) as raininess,
             cast(sum(W.ride_snow) * 3600 / sum(R.moving_time) as float) as snowiness,
+            avg(W.wind_speed) as wind_speed,
+            max(W.wind_gust) as wind_gust,
             count(distinct R.athlete_id) as riders
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
@@ -923,6 +925,8 @@ def riders_by_lowtemp():
                 "riders": res._mapping["riders"],
                 "low_temp": res._mapping["low_temp"],
                 "wind_chill": res._mapping["wind_chill"],
+                "wind_speed": res._mapping["wind_speed"],
+                "wind_gust": res._mapping["wind_gust"],
                 "raininess": res._mapping["raininess"],
                 "snowiness": res._mapping["snowiness"],
             }
