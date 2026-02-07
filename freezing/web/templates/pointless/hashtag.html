@@ -24,9 +24,20 @@
         <p>
             {{ meta.description | safe }}
         </p>
-        {% if meta.url %}
+        {% if meta.forum or meta.discord %}
             <p>
-                See: <a href="{{ meta.url }}">{{ meta.url }}</a>
+                See:
+                {% if meta.forum %}
+                    <a href="{{ meta.forum }}" target="_blank" rel="noreferrer">Forum Post</a>
+                {% endif %}
+                {% if meta.forum and meta.discord %}
+                    and
+                {% endif %}
+                {% if meta.discord %}
+                    <a href="https://discord.com/channels/1443244420358213643/{{ meta.discord }}"
+                       target="_blank"
+                       rel="noreferrer">Discord Channel</a>
+                {% endif %}
             </p>
         {% endif %}
         {% if sponsors %}

@@ -7,6 +7,7 @@ description: |
   <p>
   For the purpose of this contest, a kid is defined as a human being younger than 14 years old. Older than that and they can have their own Strava account.
 url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
+discord: 1450126363901038647
 sponsors: [1272438]
 fields:
   - name: pointless_kid
