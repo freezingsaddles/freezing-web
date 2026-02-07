@@ -198,7 +198,7 @@ def _load_pointless():
                 if board:
                     prize.name = prize.name or board.name or board.title
                     prize.discord = prize.discord or board.discord
-            except Exception as ex:
+            except Exception:
                 log.warning(
                     f"Could not load generic board {board_name} for pointless prize: {str(prize)}"
                 )
