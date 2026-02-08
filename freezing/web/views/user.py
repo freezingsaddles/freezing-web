@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from math import atan, pi
 
 from flask import Blueprint, current_app, jsonify, render_template, request, session
 from freezing.model import meta
@@ -78,6 +79,12 @@ def rides_data():
                 photos_fetched=r.photos_fetched,
                 private=r.private,
                 start_date=r.start_date,
+                freeze_points=(
+                    (11 * (atan((r.distance + 4) - 2 * pi) + 1.4) - 2.66)
+                    * (1.2 + atan((32 - w.ride_temp_start) / 5))
+                    if w
+                    else None
+                ),
             )
         )
     return bt_jsonify(results)

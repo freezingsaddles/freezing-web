@@ -565,6 +565,15 @@
     });
   }
 
+  function freezeFormatter(value, row) {
+    return (
+      value?.toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 1,
+      }) ?? ""
+    );
+  }
+
   function privateFormatter(value, row) {
     return value ? "🕵&nbsp;Private&nbsp;🕵" : "Public";
   }
@@ -643,6 +652,13 @@
           align: "right",
           sortable: true,
           formatter: temperatureFormatter,
+        },
+        {
+          field: "freeze_points",
+          title: "Freeze<br>Pts",
+          align: "right",
+          sortable: true,
+          formatter: freezeFormatter,
         },
         {
           field: "private",
