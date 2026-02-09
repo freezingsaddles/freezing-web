@@ -67,7 +67,7 @@ dev = [
     "pymarkdownlnt",
 ]
 runtime = [
-    "gunicorn==23.0.0",
+    "gunicorn==25.0.3",
 ]
 
 [tool.isort]
