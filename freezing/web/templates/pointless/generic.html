@@ -46,6 +46,10 @@
                 >{% if loop.last %}.{% else %}, {% endif %}{# djlint:on #}
             {% endfor %}
         </p>
+    {% else %}
+        <p class="text-muted">
+            This ride has no sponsor and is completely pointless.
+        </p>
     {% endif %}
     {% if show_rides %}
         <div role="tabpanel"  class="mt-lg-4 mb-lg-3">

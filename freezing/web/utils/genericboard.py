@@ -77,6 +77,7 @@ class GenericBoard(BaseMessage):
     url = None
     discord: int | None = None
     sponsors: List[int] | None = None
+    banned: List[int] | None = None  # banned for prior win
     query = None
     fields: List[GenericBoardField] = None
 
@@ -90,6 +91,7 @@ class GenericBoardSchema(BaseSchema):
     url = fields.Str()
     discord = fields.Int()
     sponsors = fields.List(fields.Int())
+    banned = fields.List(fields.Int())
     query = fields.Str(required=True, allow_none=False)
     fields = fields.Nested(GenericBoardFieldSchema, many=True, required=False)
 
@@ -125,10 +127,36 @@ def load_board(leaderboard) -> GenericBoard:
 
 
 def format_rows(rows, board) -> List[Dict[str, Any]]:
+    banned = []
+    if board.sponsors:
+        banned.extend(board.sponsors)
+    if board.banned:
+        banned.extend(board.banned)
+
+    def format_athlete(row):
+        id = row._mapping["athlete_id"]
+        format = (
+            '<a href="/people/{id}" class="hover-underline text-muted">{name} <em>(ineligible)</em></a>'
+            if id in banned
+            else '<a href="/people/{id}" class="hover-underline">{name}</a>'
+        )
+        return format.format(id=id, name=row._mapping["athlete_name"])
+
+    def format_team(row):
+        format = '<a href="/teams/{id}" class="hover-underline">{name}</a>'
+        return format.format(id=row._mapping["team_id"], name=row._mapping["team_name"])
+
+    def format_field(f: GenericBoardField, row) -> str:
+        if f.type == "athlete":
+            return format_athlete(row)
+        elif f.type == "team":
+            return format_team(row)
+        else:
+            return f.format_value(row._mapping[f.name], row)
+
     try:
         formatted = [
-            {f.name: f.format_value(row._mapping[f.name], row) for f in board.fields}
-            for row in rows
+            {f.name: format_field(f, row) for f in board.fields} for row in rows
         ]
         rank_by = next(iter([f.name for f in board.fields if f.rank_by]), None)
         return formatted if rank_by is None else rank_rows(formatted, rank_by)

@@ -5,6 +5,7 @@ description: Elevation gain per mile by team
 fields:
   - name: team_name
     label: Team
+    type: team
   - name: elev
     label: Elevation (ft)
     type: number
@@ -20,9 +21,10 @@ query: |
     sum(R.elevation_gain) as elev,
     sum(R.distance) as dist,
     (sum(R.elevation_gain) / sum(R.distance)) as gainpermile,
+    T.id as team_id,
     T.name as team_name
   from rides R
   join  lbd_athletes A on A.id = R.athlete_id
   join teams T on T.id = A.team_id
-  group by team_name
+  group by team_id, team_name
   order by gainpermile desc

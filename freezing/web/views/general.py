@@ -45,7 +45,7 @@ custom_tag_pages = {
     "foodrescue": "generic/foodrescue",
     "fsrealsuppleride": "generic/suppleride",
     "kidical": "generic/kidmiles",
-    "rosshillloop": "rosshillloop",
+    "rosshillloop": "generic/rosshillloop",
     "withkid": "generic/pointlesskids",
     "poggio": "segment/650024",
     "salmon": "segment/37893544",

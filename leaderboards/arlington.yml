@@ -9,7 +9,7 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
+    type: athlete
   - name: segment_name
     label: Least-Ridden Segment
     format: '<a href="https://www.strava.com/segments/{segment_id}" class="hover-underline">{segment_name}</a>'

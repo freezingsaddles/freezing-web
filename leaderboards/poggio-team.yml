@@ -6,17 +6,18 @@ description: |
   segment.
 url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/ # yamllint disable-line
 fields:
-  - name: id
+  - name: team_id
     visible: false
   - name: team_name
     label: Team
+    type: team
   - name: total_rides
     label: Total Rides
     rank_by: true
     type: number
 query: |
   select
-    T.id,
+    T.id as team_id,
     T.name as team_name,
     count(E.id) as total_rides
   from
@@ -26,7 +27,7 @@ query: |
     ride_efforts E on E.ride_id = R.id
   where
     E.segment_id = 650024
-  group by T.id
+  group by team_id, team_name
   order by
     total_rides desc,
     team_name asc

@@ -6,7 +6,7 @@ fields:
     visible: false
   - name: athlete_name
     label: Rider
-    format: '<a href="/people/{athlete_id}" class="hover-underline">{athlete_name}</a>'
+    type: athlete
   - name: dist
     label: Average Distance
     rank_by: true
