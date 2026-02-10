@@ -1,0 +1,66 @@
+---
+title: Ross Hill Loop
+description: |
+  <p>
+    Number of <a href="https://www.strava.com/segments/1072528">Ross Hill Loop</a> or
+    <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
+    double dips.
+  </p>
+url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    type: athlete
+  - name: segment_rides
+    label: Loops
+    format: "{0:.0f}"
+    type: number
+    rank_by: true
+  - name: minutes
+    label: Average Time
+    type: number
+    formatx: "{minutes:0}m {seconds:0}s"
+banned: [48773683, 120519]
+# counts whichever loop you have done more efforts on for a given ride, because the loops
+# overlap so two loops on 1072528 means one on 4934241 and vice versa.
+query: |
+  with loops as (
+    select
+      Q.id as athlete_id,
+      Q.display_name as athlete_name,
+      sum(greatest(righteous, wrongeous)) as segment_rides,
+      sum(case when righteous > wrongeous THEN righttime ELSE wrongtime end) AS total_time
+    from (
+      select
+        A.id,
+        A.display_name,
+        R.id as ride_id,
+        sum(case when E.segment_id = 1072528 then 1 else 0 end) as righteous,
+        sum(case when E.segment_id = 1072528 then E.elapsed_time else 0 end) as righttime,
+        sum(case when E.segment_id = 4934241 then 1 else 0 end) as wrongeous,
+        sum(case when E.segment_id = 4934241 then E.elapsed_time else 0 end) as wrongtime
+      from
+        athletes A
+      inner join
+        rides R on R.athlete_id = A.id
+      inner join
+        ride_efforts E on E.ride_id = R.id
+      group by
+        A.id, A.display_name, R.id
+    ) as Q
+    group by
+      Q.id, Q.display_name
+    having
+      segment_rides > 0
+  )
+  select
+    athlete_id,
+    athlete_name,
+    segment_rides,
+    floor(total_time / segment_rides / 60) as minutes,
+    floor(total_time / segment_rides) % 60 as seconds
+  from loops
+  order by
+    segment_rides desc, lower(athlete_name) asc;
