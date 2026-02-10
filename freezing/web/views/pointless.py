@@ -390,64 +390,6 @@ def segment_leaderboard(segment):
     )
 
 
-def _get_ross_hill_loop_tdata():
-    sess = meta.scoped_session()
-    # counts whichever loop you have done more efforts on for a given ride, because the loops
-    # overlap so two loops on 1072528 means one on 4934241 and vice versa.
-    q = text(
-        """
-         select
-            Q.id,
-            Q.display_name as athlete_name,
-            sum(greatest(righteous, wrongeous)) as segment_rides,
-            sum(case when righteous > wrongeous THEN righttime ELSE wrongtime end) AS total_time
-         from (
-            select
-              A.id,
-              A.display_name,
-              R.id as ride_id,
-              sum(case when E.segment_id = 1072528 then 1 else 0 end) as righteous,
-              sum(case when E.segment_id = 1072528 then E.elapsed_time else 0 end) as righttime,
-              sum(case when E.segment_id = 4934241 then 1 else 0 end) as wrongeous,
-              sum(case when E.segment_id = 4934241 then E.elapsed_time else 0 end) as wrongtime
-            from
-              athletes A
-            inner join
-              rides R on R.athlete_id = A.id
-            inner join
-              ride_efforts E on E.ride_id = R.id
-            group by
-              A.id, A.display_name, R.id
-         ) as Q
-         group by
-            Q.id, Q.display_name
-         having
-            segment_rides > 0
-        """
-    )
-    rs = sess.execute(q)
-    retval = [
-        (
-            x._mapping["id"],
-            x._mapping["athlete_name"],
-            x._mapping["segment_rides"],
-            x._mapping["total_time"],
-        )
-        for x in rs.fetchall()
-    ]
-    return sorted(retval, key=operator.itemgetter(2), reverse=True)
-
-
-@blueprint.route("/rosshillloop")
-def ross_hill_loop():
-    tdata = _get_ross_hill_loop_tdata()
-    return render_template(
-        "pointless/rosshillloop.html",
-        data={"tdata": tdata},
-        meta=meta,
-    )
-
-
 @blueprint.route("/kidsathlon")
 def kidsathlon():
     q = text(

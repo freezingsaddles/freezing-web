@@ -7,11 +7,11 @@ url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-naturedose/
 discord: 1449054511459991653
 sponsors: [516697]
 fields:
-  - name: id
+  - name: athlete_id
     visible: false
   - name: athlete_name
     label: Rider
-    format: '<a href="/people/{id}" class="hover-underline">{athlete_name}</a>'
+    type: athlete
   - name: nature_rides
     label: Nature Rides
     type: number
@@ -40,7 +40,7 @@ query: |
       R.description like '%NatureDose%'
   )
   select
-    A.id,
+    A.id as athlete_id,
     A.display_name as athlete_name,
     count(R.id) as nature_rides,
     sum(R.nature_minutes_tm) as nature_minutes_tm,

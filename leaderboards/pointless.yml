@@ -124,8 +124,7 @@ prizes:
     category: active
   - url: /pointless/hashtag/withkid
     category: kids
-  - name: Ross Hill Loop
-    url: /pointless/rosshillloop
+  - url: /pointless/generic/rosshillloop
     category: unsponsored
   - url: /pointless/hashtag/bikeshare
     category: active
