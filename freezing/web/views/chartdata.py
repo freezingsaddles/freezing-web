@@ -735,7 +735,9 @@ def team_weekly_points():
 @blueprint.route("/team_cumul_points")
 def team_cumul_points():
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
+    teams = (
+        meta.scoped_session().query(Team).filter_by(leaderboard_exclude=False).all()
+    )  # @UndefinedVariable
 
     q = text(
         """
@@ -792,7 +794,9 @@ def team_cumul_points():
 @blueprint.route("/team_cumul_mileage")
 def team_cumul_mileage():
     """ """
-    teams = meta.scoped_session().query(Team).all()  # @UndefinedVariable
+    teams = (
+        meta.scoped_session().query(Team).filter_by(leaderboard_exclude=False).all()
+    )  # @UndefinedVariable
 
     q = text(
         """
@@ -889,8 +893,8 @@ def indiv_elev_dist():
     )
 
 
-@blueprint.route("/riders_by_lowtemp")
-def riders_by_lowtemp():
+@blueprint.route("/riders_vs_weather")
+def riders_vs_weather():
     """
     Snowiness and raininess are in the average inches per hour of snowfall during rides.
     A better metric would probably be total rain/snow at DCA on the day, but this is the measure we have.

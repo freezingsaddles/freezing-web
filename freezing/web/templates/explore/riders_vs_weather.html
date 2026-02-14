@@ -13,7 +13,7 @@
     <script type="text/javascript">
   $(() => {
     $.ajax({
-      url: '/chartdata/riders_by_lowtemp',
+      url: '/chartdata/riders_vs_weather',
       success: function(data) {
         var maxRiders = 0, maxRaininess = 0, maxSnowiness = 0;
         for (const {riders, raininess, snowiness} of data.data) {

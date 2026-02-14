@@ -190,7 +190,7 @@ def friends():
              join teams T on T.id = A.team_id
              where T.leaderboard_exclude
              group by A.id, A.display_name
-             order by total_score desc
+             order by lower(A.display_name) asc
              ;
              """
     )
