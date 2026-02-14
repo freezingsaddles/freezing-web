@@ -354,10 +354,20 @@ ul.pointless-menu {
     }
 }
 
+.photo-how-button {
+    align-self: center;
+    display: flex;
+    justify-content: start;
+    white-space: nowrap;
+}
+
 .photo-date-picker {
     align-self: center;
     display: flex;
     justify-content: end;
+    white-space: nowrap;
+    align-items: center;
+    gap: .75rem;
 }
 
 .glyphicon::after {
@@ -445,7 +455,8 @@ body.logged-in #sect-main {
         row-gap: 1.5rem;
     }
 
-    .photo-date-picker {
+    .photo-date-picker,
+    .photo-how-button {
         width: 0;
     }
 

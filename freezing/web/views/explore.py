@@ -39,10 +39,10 @@ def distance_by_lowtemp():
     )
 
 
-@blueprint.route("/riders_by_lowtemp")
-def riders_by_lowtemp():
+@blueprint.route("/riders_vs_weather")
+def riders_vs_weather():
     return render_template(
-        "explore/riders_by_lowtemp.html",
+        "explore/riders_vs_weather.html",
     )
 
 

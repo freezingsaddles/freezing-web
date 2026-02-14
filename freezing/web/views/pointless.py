@@ -2,7 +2,7 @@ import math
 import operator
 from datetime import datetime, timezone
 
-from flask import Blueprint, abort, redirect, render_template, request
+from flask import Blueprint, abort, redirect, render_template, request, session
 from freezing.model import meta
 from freezing.model.orm import Athlete
 from sqlalchemy import text
@@ -161,6 +161,8 @@ def _get_phototag_tdata(request, hashtag):
     if page < 1:
         page = 1
     date = request.args.get("date")
+    mine = request.args.get("mine") == "true"
+    myself = session.get("athlete_id") if mine else None
 
     page_size = 24
     offset = page_size * (page - 1)
@@ -180,6 +182,7 @@ def _get_phototag_tdata(request, hashtag):
                 rides R join athletes A on A.id = R.athlete_id
             where
                 R.name like :tag and
+                (:myself is null or A.id = :myself) and
                 (:date is null or date(convert_tz(R.start_date, R.timezone, :tz)) = :date)
         ), primary_photos as (
             select
@@ -222,7 +225,7 @@ def _get_phototag_tdata(request, hashtag):
         from
             union_photos P
         """
-    ).bindparams(tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date)
+    ).bindparams(tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date, myself=myself)
     num_photos = meta.scoped_session().execute(total_q).scalar_one()
 
     photo_q = text(
@@ -242,6 +245,7 @@ def _get_phototag_tdata(request, hashtag):
         tz=config.TIMEZONE,
         tag=f"%#{hashtag.lower()}%",
         date=date,
+        myself=myself,
         offset=offset,
         limit=limit,
     )
@@ -261,6 +265,7 @@ def _get_phototag_tdata(request, hashtag):
         "total_pages": total_pages,
         "date": datetime.fromisoformat(date) if date else "",
         "datestr": date,
+        "mine": mine,
     }
 
 
