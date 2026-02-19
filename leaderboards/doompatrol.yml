@@ -1,0 +1,48 @@
+---
+title: Doom Patrol
+description: |
+  Your task is to ride <a href="https://www.strava.com/segments/8098826" target="_blank" rel="nofollow">up and down 15th
+  Street between the Jefferson Memorial &amp; Constitution Ave</a>.
+  If you see trucks or construction equipment, pull up and call Elizabeth (see the sign-up form) so WABA can
+  start their legal response.
+  <p>
+  Hopefully it's just a quiet, pleasant bike ride. Ride safe, follow traffic laws,
+  and don't do anything you're not comfortable with.
+  <p>
+  Patrol runs from 2/19 through either the end of BAFS or the start of lane removal work, whichever comes first.
+fields:
+  - name: athlete_id
+    visible: false
+  - name: athlete_name
+    label: Rider
+    type: athlete
+  - name: segment_rides
+    label: Rides
+    rank_by: true
+    type: number
+    format: "{0:.0f}"
+  - name: total_time
+    label: Time Spent
+    type: number
+    formatx: "{hours:0}h {minutes:0}m"
+  - name: ride_ids
+    visible: false
+query: |
+  select
+      A.id                    as athlete_id,
+      A.display_name          as athlete_name,
+      count(E.id)             as segment_rides,
+      sum(R.elapsed_time)     as total_time,
+      floor(sum(R.moving_time / 60) / 60) as hours,
+      floor(sum(R.moving_time / 60)) % 60 as minutes,
+      group_concat(hex(R.id)) as ride_ids
+  from
+      athletes A join
+      rides R on R.athlete_id = A.id join
+      ride_efforts E on E.ride_id = R.id
+  where
+      E.segment_id = 8098826
+      and date(convert_tz(R.start_date, R.timezone, 'America/New_York')) >= '2026-02-19'
+  group by
+      A.id, A.display_name
+  order by segment_rides desc, athlete_name asc

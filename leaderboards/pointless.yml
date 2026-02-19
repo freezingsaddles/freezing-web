@@ -65,6 +65,8 @@ prizes:
     category: hidden
   - url: /pointless/segment/37893544
     category: active
+  - url: /pointless/generic/doompatrol
+    category: unsponsored
   - name: Kidathon
     url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
     category: kids
