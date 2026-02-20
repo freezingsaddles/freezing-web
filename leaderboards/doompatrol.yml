@@ -1,8 +1,9 @@
 ---
 title: Doom Patrol
 description: |
-  Your task is to ride <a href="https://www.strava.com/segments/8098826" target="_blank" rel="nofollow">up and down 15th
-  Street between the Jefferson Memorial &amp; Constitution Ave</a>.
+  Your task is to ride <a href="https://www.strava.com/segments/40946952" target="_blank" rel="nofollow">up</a> and
+   <a href="https://www.strava.com/segments/40946977" target="_blank" rel="nofollow">down</a> 15th
+  Street between the Jefferson Memorial &amp; Constitution Ave.
   If you see trucks or construction equipment, pull up and call Elizabeth (see the sign-up form) so WABA can
   start their legal response.
   <p>
@@ -16,7 +17,7 @@ fields:
   - name: athlete_name
     label: Rider
     type: athlete
-  - name: segment_rides
+  - name: total_rides
     label: Rides
     rank_by: true
     type: number
@@ -28,21 +29,47 @@ fields:
   - name: ride_ids
     visible: false
 query: |
-  select
-      A.id                    as athlete_id,
-      A.display_name          as athlete_name,
-      count(E.id)             as segment_rides,
-      sum(R.elapsed_time)     as total_time,
-      floor(sum(R.moving_time / 60) / 60) as hours,
-      floor(sum(R.moving_time / 60)) % 60 as minutes,
-      group_concat(hex(R.id)) as ride_ids
-  from
-      athletes A join
-      rides R on R.athlete_id = A.id join
+  with segment_rides as (
+    select
+      A.id as athlete_id,
+      A.display_name as athlete_name,
+      R.id as ride_id,
+      R.moving_time,
+      count(case when E.segment_id = 40946952 then 1 end) as ups,
+      count(case when E.segment_id = 40946977 then 1 end) as downs
+    from
+      athletes A
+    inner join
+      rides R on R.athlete_id = A.id
+    inner join
       ride_efforts E on E.ride_id = R.id
-  where
-      E.segment_id = 8098826
-      and date(convert_tz(R.start_date, R.timezone, 'America/New_York')) >= '2026-02-19'
-  group by
-      A.id, A.display_name
-  order by segment_rides desc, athlete_name asc
+    where
+      (E.segment_id = 40946952 or E.segment_id = 40946977)
+      and date(convert_tz(R.start_date, R.timezone, 'America/New_York')) >= '2024-02-19'
+   group by
+      athlete_id, athlete_name, ride_id
+  ),
+  patrol_rides as (
+    select
+      athlete_id,
+      athlete_name,
+      group_concat(hex(ride_id)) as ride_ids,
+      sum(least(ups, downs)) as total_rides,
+      sum(moving_time) as total_time
+    from
+      segment_rides
+    group by
+      athlete_id, athlete_name
+    having
+      total_rides > 0
+  )
+  select
+    athlete_id,
+    athlete_name, ride_ids,
+    total_rides,
+    total_time,
+    floor(total_time / 3600) as hours,
+    floor(total_time / 60) % 60 as minutes
+  from patrol_rides
+  order by
+    total_rides desc, athlete_name asc
