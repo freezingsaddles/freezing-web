@@ -98,7 +98,7 @@ fieldset[disabled] .btn-impersonate.active {
         {# djlint:off H006 #}
         <img class="user-profile"
              src="{{ '/img/logo-blue.png' if not data.user.profile_photo else data.user.profile_photo }}"
-             alt="photo of {{ data.user.display_name }}">
+             alt="photo of {{ data.user.display_name }}" />
         {# djlint:on #}
         <div class="d-flex flex-column ms-3">
             <h5 class="card-title">
@@ -127,61 +127,87 @@ fieldset[disabled] .btn-impersonate.active {
                     Total Rides: <span class="float-end">{{ data.totalrides }}</span>
                 </li>
                 <li class="list-group-item">
-                    Total Mileage: <span class="float-end">{{ data.totaldist | round(2) }}</span>
+                    Total Mileage:
+                    <span class="float-end">{{ data.totaldist | round(2) }}</span>
                 </li>
                 <li class="list-group-item">
-                    Average Ride: <span class="float-end">
-                    {% if data.totalrides > 0 %}
-                        {{ (data.totaldist / data.totalrides) | round(2) }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </span>
-            </li>
-            <li class="list-group-item">
-                Rides This Week: <span class="float-end">{{ data.weekrides }}</span>
-            </li>
-            <li class="list-group-item">
-                Mileage This Week: <span class="float-end">{{ data.weektotal | round(2) }}</span>
-            </li>
-            <li class="list-group-item">
-                Average Ride This Week: <span class="float-end">
-                {% if data.weekrides > 0 %}
-                    {{ (data.weektotal / data.weekrides) | round(2) }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </span>
-        </li>
-        <li class="list-group-item">
-            Rides Today: <span class="float-end">{{ data.todayrides }}</span>
-        </li>
-        <li class="list-group-item">
-            Mileage Today: <span class="float-end">{{ data.todaydist | round(2) }}</span>
-        </li>
-        <li class="list-group-item">
-            Average Ride Today: <span class="float-end">
-            {% if data.todayrides > 0 %}
-                {{ (data.todaydist / data.todayrides) | round(2) }}
-            {% else %}
-                N/A
-            {% endif %}
-        </span>
-    </li>
-</ul>
-</div>
-<div>
-    <h5 class="ps-2">
-        Bike Tribes
+                    Average Ride:
+                    <span class="float-end">
+                        {% if data.totalrides > 0 %}
+                            {{ (data.totaldist / data.totalrides) |
+                            round(2) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    Rides This Week: <span class="float-end">{{ data.weekrides }}</span>
+                </li>
+                <li class="list-group-item">
+                    Mileage This Week:
+                    <span class="float-end">{{ data.weektotal | round(2) }}</span>
+                </li>
+                <li class="list-group-item">
+                    Average Ride This Week:
+                    <span class="float-end">
+                        {% if data.weekrides > 0 %}
+                            {{ (data.weektotal / data.weekrides) |
+                            round(2) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </li>
+                <li class="list-group-item">
+                    Rides Today: <span class="float-end">{{ data.todayrides }}</span>
+                </li>
+                <li class="list-group-item">
+                    Mileage Today:
+                    <span class="float-end">{{ data.todaydist | round(2) }}</span>
+                </li>
+                <li class="list-group-item">
+                    Average Ride Today:
+                    <span class="float-end">
+                        {% if data.todayrides > 0 %}
+                            {{ (data.todaydist / data.todayrides) |
+                            round(2) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h5 class="ps-2">
+                Bike Tribes
+            </h5>
+            <ul class="list-group">
+                {% for group in data.tribal_groups %}
+                    <li class="list-group-item">
+                        {{ group.name }}
+                        <span class="float-end">{{ data.my_tribes[group.name] | default('–', true) }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <h5 class="ps-2 mt-3 mt-lg-4">
+        Ride Mosaic
     </h5>
-    <ul class="list-group">
-        {% for group in data.tribal_groups %}
-            <li class="list-group-item">
-                {{ group.name }}
-                <span class="float-end">{{ data.my_tribes[group.name] | default('–', true) }}</span>
-            </li>
-        {% endfor %}
-    </ul>
-</div>
-</div>
+    <div>
+        <table class="table border w-100">
+            {% for day in range(0,7) %}
+                <tr>
+                    {% for week in range(0,data.weeks) %}
+                        {% set date = week * 7 + day %}
+                        <td style="background-color: {{ data.mosaic[date] or 'transparent' }};">
+                            &nbsp;
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 {% endblock %}

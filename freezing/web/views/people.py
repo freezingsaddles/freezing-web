@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from math import ceil
 
 from flask import Blueprint, abort, render_template
 from freezing.model import meta
@@ -97,6 +98,40 @@ def people_show_person(user_id):
             today_dist += r.distance
             today_rides += 1
 
+    q = text(
+        """
+           with daily_rides as (
+            select date(CONVERT_TZ(R.start_date, R.timezone, :timezone)) as ride_date,
+            R.distance as distance,
+            W.ride_temp_avg as ride_temp
+            from rides R left outer join ride_weather W on W.ride_id = R.id
+            where R.athlete_id = :athlete_id
+          )
+          select ride_date, sum(distance) as distance, avg(ride_temp) as ride_temp
+            from daily_rides
+            group by ride_date
+            order by ride_date;
+            """
+    ).bindparams(athlete_id=user_id, timezone=config.TIMEZONE)
+
+    indiv_q = meta.scoped_session().execute(q).fetchall()
+    start = config.START_DATE - timedelta(days=(config.START_DATE.weekday() + 1) % 7)
+    weeks = ceil((config.END_DATE - start).days / 7)
+
+    def color(res) -> str:
+        distance = res._mapping["distance"]
+        temp = res._mapping["ride_temp"]
+        print(temp)
+        hue = int(min(360, max(240, 300 + (temp - 44) * 6))) if temp else 300
+        sat = 100  # max(1, min(100, int(distance * 10)))
+        lig = int(50 + min(25, max(0, (distance - 10))))
+        alp = int(min(100, max(0, distance * 5)))
+        return f"hsla({hue}, {sat}%, {lig}%, {alp}%)"
+
+    mosaic = {
+        (res._mapping["ride_date"] - start.date()).days: color(res) for res in indiv_q
+    }
+
     tribal_groups = load_tribes()
     my_tribes = query_tribes(user_id)
 
@@ -114,6 +149,8 @@ def people_show_person(user_id):
             "user": our_user,
             "weekrides": weekly_rides,
             "weektotal": weekly_dist,
+            "mosaic": mosaic,
+            "weeks": weeks,
         },
     )
 
