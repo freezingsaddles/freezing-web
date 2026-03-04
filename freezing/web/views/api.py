@@ -1,3 +1,4 @@
+import base64
 import datetime
 import gzip
 import hashlib
@@ -459,8 +460,14 @@ def _make_gzip_json_response(content, private=False):
 @blueprint.route("/all/trackmap.json")
 def track_map_all():
     hash_tag = request.args.get("hashtag")
-    ride_ids = request.args.get("rides")
+    rides = request.args.get("rides")
     limit = get_limit(request)
+
+    ride_ids = (
+        gzip.decompress(base64.b64decode(rides, b"-_")).decode("utf-8")
+        if rides
+        else None
+    )
 
     key_str = hash_tag or ride_ids
     # bandit in github curses this as insecure, but not locally, so just go wild to suppress
