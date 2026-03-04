@@ -121,7 +121,6 @@ def people_show_person(user_id):
     def color(res) -> str:
         distance = res._mapping["distance"]
         temp = res._mapping["ride_temp"]
-        print(temp)
         hue = int(min(360, max(240, 300 + (temp - 44) * 6))) if temp else 300
         sat = 100  # max(1, min(100, int(distance * 10)))
         lig = int(50 + min(25, max(0, (distance - 10))))
