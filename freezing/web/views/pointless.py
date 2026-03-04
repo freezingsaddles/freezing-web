@@ -1,3 +1,5 @@
+import base64
+import gzip
 import math
 import operator
 from datetime import datetime, timezone
@@ -7,6 +9,7 @@ from freezing.model import meta
 from freezing.model.orm import Athlete
 from sqlalchemy import text
 
+from freezing.web.autolog import log
 from freezing.web.config import config
 from freezing.web.exc import ObjectNotFound
 from freezing.web.utils.genericboard import format_rows, load_board, load_board_and_data
@@ -28,6 +31,24 @@ def generic(leaderboard):
             if board.sponsors
             else None
         )
+        rides = None
+        if any(f.name == "ride_ids" for f in board.fields):
+            length = len(data)
+            while not rides:
+                # hex|join|utf-8|gzip|base64|utf-8 :strong:
+                ride_ids = ",".join([d["ride_ids"] for d in data[:length]])
+                rides = base64.b64encode(
+                    gzip.compress(ride_ids.encode("utf-8")), b"-_"
+                ).decode("utf-8")
+                log.info(
+                    f"Compressed {ride_ids.count(',')} rides from {len(ride_ids)} to {len(rides)} chars"
+                )
+                # some piece of infrastructure craps out at 40xx chars
+                if len(rides) > 4000:
+                    log.info(f"Ride IDs too long ({len(rides)} chars), shrinking")
+                    rides = None
+                    length = length // 2
+
         return render_template(
             "pointless/generic.html",
             fields=board.fields,
@@ -38,6 +59,7 @@ def generic(leaderboard):
             url=board.url,
             discord=board.discord,
             data=data,
+            rides=rides,
         )
 
 
