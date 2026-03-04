@@ -204,55 +204,10 @@ def index():
     )
     pr_res = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
     prs = {res._mapping["pr"]: res._mapping["count"] for res in pr_res}
-
-    # We will need to watch the performance of this query. You became a
-    # legend in this competition if we have an earlier ride of the segment
-    # where you were not the legend. We use the ride effort id for ordering
-    # rather than ride start date, because that lets you achieve legendary
-    # status on one ride repeating the same segment.
-    # consider a materialized view...
-    #
-    # CREATE EVENT refresh_legend_view
-    # ON SCHEDULE EVERY 4 HOURS STARTS '2026-01-01' ENDS '2026-03-21'
-    # DO
-    # BEGIN
-    #     TRUNCATE TABLE legend_view;
-    #     INSERT INTO legend_view (athlete_id, segment_id)
-    #     WITH unlegends as ..., legends as ...
-    #     SELECT L.athlete_id, L.segment_id
-    #     FROM legends L
-    #     JOIN unlegends U ON U.athlete_id = L.athlete_id
-    #                     AND U.segment_id = L.segment_id
-    #                     AND L.id > U.id;
-    # END;
-    #
-    # Using lag is much slower:
-    # SELECT segment_id, athlete_id
-    # FROM (SELECT E.segment_id, R.athlete_id, E.local_legend,
-    #              LAG(local_legend) OVER (PARTITION BY E.segment_id, R.athlete_id ORDER BY E.id) AS previous_legend
-    #       FROM ride_efforts E join rides R on R.id = E.ride_id) AS subquery
-    # WHERE local_legend = TRUE AND previous_legend = FALSE;
-    #
-    # But this doesn't work at all because when we refetch old rides, those
-    # old segments become reported as legendary based on your *current* status
-    # so we have no real view of when you became legend.
-    q = text(
-        """
-            with legends as (
-                select
-                    R.athlete_id, RE.segment_id
-                from rides R
-                join ride_efforts RE on RE.ride_id = R.id
-                where RE.local_legend
-            )
-            select
-                count(distinct L.athlete_id, L.segment_id) as legends
-            from legends L
-            ;
-        """
-    )
-    ll_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
-    legends = int(ll_res._mapping["legends"])
+    # Don't try to do local legends. the strava api basically just tells us
+    # which segments are are the legend for, at the time we call the api. so
+    # we don't know when you became legend, and when we re-sync old rides
+    # we will change the legendary status to what it is now rather than then.
 
     # Get teams sorted by points
     q = team_leaderboard_query()
@@ -282,7 +237,6 @@ def index():
         pr_gold=prs.get(1, 0),
         pr_silver=prs.get(2, 0),
         pr_bronze=prs.get(3, 0),
-        legend=legends,
         photos=[photo for photo in photos],
         tags=tags,
         winners=team_rows[:3],  # + team_rows[4:][-1:]  # for last place too

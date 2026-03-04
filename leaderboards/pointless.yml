@@ -81,8 +81,6 @@ prizes:
     category: active
   - url: /pointless/hashtag/fsbooks
     category: hidden
-  - url: /pointless/generic/legend
-    category: unsponsored
   - url: /pointless/hashtag/lolfunny
     category: active
   - url: /pointless/hashtag/londonbridge
