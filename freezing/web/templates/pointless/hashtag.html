@@ -173,14 +173,14 @@
             <ul class="pagination mb-0">
                 <li class="page-item {% if page < 2 %}disabled{% endif %}">
                     <a class="page-link"
-                       href="{{ hashtag_notag }}?view=photos&page={{ page-1 }}{% if datestr %}&date={{ datestr }}{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
+                       href="{{ hashtag_notag }}?view=photos&page={{ page-1 }}{% if datestr %}&date={{ datestr }}{% endif %}{% if mine %}&mine=true{% endif %}"><span aria-hidden="true">&larr;</span> Newer</a>
                 </li>
                 <li class="page-item disabled">
                     <a class="page-link">Page {{ page }} of {{ total_pages }}</a>
                 </li>
                 <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
                     <a class="page-link"
-                       href="{{ hashtag_notag }}?view=photos&page={{ page+1 }}{% if datestr %}&date={{ datestr }}{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
+                       href="{{ hashtag_notag }}?view=photos&page={{ page+1 }}{% if datestr %}&date={{ datestr }}{% endif %}{% if mine %}&mine=true{% endif %}">Older <span aria-hidden="true">&rarr;</span></a>
                 </li>
             </ul>
             {# djlint:on #}
