@@ -1,96 +1,106 @@
 {% extends "base.html" %}
 {% block head %}
     <style>
-	.btn-strava {
-  color: #ffffff;
-  background-color: #FC4C02;
-  border-color: #FC3C02;
-}
+  .btn-strava {
+    color: #ffffff;
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+  }
 
-.btn-strava:hover,
-.btn-strava:focus,
-.btn-strava:active,
-.btn-strava.active,
-.open .dropdown-toggle.btn-strava {
-  color: #ffffff;
-  background-color: #D62600;
-  border-color: #FC3C02;
-}
+  .btn-strava:hover,
+  .btn-strava:focus,
+  .btn-strava:active,
+  .btn-strava.active,
+  .open .dropdown-toggle.btn-strava {
+    color: #ffffff;
+    background-color: #d62600;
+    border-color: #fc3c02;
+  }
 
-.btn-strava:active,
-.btn-strava.active,
-.open .dropdown-toggle.btn-strava {
-  background-image: none;
-}
+  .btn-strava:active,
+  .btn-strava.active,
+  .open .dropdown-toggle.btn-strava {
+    background-image: none;
+  }
 
-.btn-strava.disabled,
-.btn-strava[disabled],
-fieldset[disabled] .btn-strava,
-.btn-strava.disabled:hover,
-.btn-strava[disabled]:hover,
-fieldset[disabled] .btn-strava:hover,
-.btn-strava.disabled:focus,
-.btn-strava[disabled]:focus,
-fieldset[disabled] .btn-strava:focus,
-.btn-strava.disabled:active,
-.btn-strava[disabled]:active,
-fieldset[disabled] .btn-strava:active,
-.btn-strava.disabled.active,
-.btn-strava[disabled].active,
-fieldset[disabled] .btn-strava.active {
-  background-color: #FC4C02;
-  border-color: #FC3C02;
-}
+  .btn-strava.disabled,
+  .btn-strava[disabled],
+  fieldset[disabled] .btn-strava,
+  .btn-strava.disabled:hover,
+  .btn-strava[disabled]:hover,
+  fieldset[disabled] .btn-strava:hover,
+  .btn-strava.disabled:focus,
+  .btn-strava[disabled]:focus,
+  fieldset[disabled] .btn-strava:focus,
+  .btn-strava.disabled:active,
+  .btn-strava[disabled]:active,
+  fieldset[disabled] .btn-strava:active,
+  .btn-strava.disabled.active,
+  .btn-strava[disabled].active,
+  fieldset[disabled] .btn-strava.active {
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+  }
 
-.btn-strava .badge {
-  color: #FC4C02;
-  background-color: #ffffff;
-}
-.btn-impersonate {
-  color: #ffffff;
-  background-color: #022CA2;
-  border-color: #3C3CA2;
-}
+  .btn-strava .badge {
+    color: #fc4c02;
+    background-color: #ffffff;
+  }
+  .btn-impersonate {
+    color: #ffffff;
+    background-color: #022ca2;
+    border-color: #3c3ca2;
+  }
 
-.btn-impersonate:hover,
-.btn-impersonate:focus,
-.btn-impersonate:active,
-.btn-impersonate.active,
-.open .dropdown-toggle.btn-impersonate {
-  color: #ffffff;
-  background-color: #100640;
-  border-color: #3C3CA2;
-}
+  .btn-impersonate:hover,
+  .btn-impersonate:focus,
+  .btn-impersonate:active,
+  .btn-impersonate.active,
+  .open .dropdown-toggle.btn-impersonate {
+    color: #ffffff;
+    background-color: #100640;
+    border-color: #3c3ca2;
+  }
 
-.btn-impersonate:active,
-.btn-impersonate.active,
-.open .dropdown-toggle.btn-impersonate {
-  background-image: none;
-}
+  .btn-impersonate:active,
+  .btn-impersonate.active,
+  .open .dropdown-toggle.btn-impersonate {
+    background-image: none;
+  }
 
-.btn-impersonate.disabled,
-.btn-impersonate[disabled],
-fieldset[disabled] .btn-impersonate,
-.btn-impersonate.disabled:hover,
-.btn-impersonate[disabled]:hover,
-fieldset[disabled] .btn-impersonate:hover,
-.btn-impersonate.disabled:focus,
-.btn-impersonate[disabled]:focus,
-fieldset[disabled] .btn-impersonate:focus,
-.btn-impersonate.disabled:active,
-.btn-impersonate[disabled]:active,
-fieldset[disabled] .btn-impersonate:active,
-.btn-impersonate.disabled.active,
-.btn-impersonate[disabled].active,
-fieldset[disabled] .btn-impersonate.active {
-  background-color: #022CA2;
-  border-color: #FC3CA2;
-}
+  .btn-impersonate.disabled,
+  .btn-impersonate[disabled],
+  fieldset[disabled] .btn-impersonate,
+  .btn-impersonate.disabled:hover,
+  .btn-impersonate[disabled]:hover,
+  fieldset[disabled] .btn-impersonate:hover,
+  .btn-impersonate.disabled:focus,
+  .btn-impersonate[disabled]:focus,
+  fieldset[disabled] .btn-impersonate:focus,
+  .btn-impersonate.disabled:active,
+  .btn-impersonate[disabled]:active,
+  fieldset[disabled] .btn-impersonate:active,
+  .btn-impersonate.disabled.active,
+  .btn-impersonate[disabled].active,
+  fieldset[disabled] .btn-impersonate.active {
+    background-color: #022ca2;
+    border-color: #fc3ca2;
+  }
 
-.btn-impersonate .badge {
-  color: #022CA2;
-  background-color: #ffffff;
-}
+  .btn-impersonate .badge {
+    color: #022ca2;
+    background-color: #ffffff;
+  }
+
+  .border-collapse {
+    border-collapse: collapse;
+    td {
+      border: 1px solid var(--bs-border-color);
+      &.border-none {
+        border: none;
+      }
+    }
+  }
     </style>
 {% endblock %}
 {% block content %}
@@ -109,6 +119,8 @@ fieldset[disabled] .btn-impersonate.active {
             </h6>
             <div class="d-flex">
                 <a class="btn btn-strava btn-sm"
+                   rel="noreferrer"
+                   target="_blank"
                    href="https://www.strava.com/athletes/{{ data.user.id }}">View on Strava</a>
                 {% if data.environment == 'localdev' %}
                     <a class="btn btn-impersonate btn-sm ms-3"
@@ -137,7 +149,7 @@ fieldset[disabled] .btn-impersonate.active {
                             {{ (data.totaldist / data.totalrides) |
                             round(2) }}
                         {% else %}
-                            N/A
+                            –
                         {% endif %}
                     </span>
                 </li>
@@ -155,7 +167,7 @@ fieldset[disabled] .btn-impersonate.active {
                             {{ (data.weektotal / data.weekrides) |
                             round(2) }}
                         {% else %}
-                            N/A
+                            –
                         {% endif %}
                     </span>
                 </li>
@@ -173,13 +185,16 @@ fieldset[disabled] .btn-impersonate.active {
                             {{ (data.todaydist / data.todayrides) |
                             round(2) }}
                         {% else %}
-                            N/A
+                            –
                         {% endif %}
                     </span>
                 </li>
             </ul>
         </div>
         <div>
+            {% if session.athlete_id == data.user.id %}
+                <a class="float-end hover-underline" href="/tribes/my">Edit</a>
+            {% endif %}
             <h5 class="ps-2">
                 Bike Tribes
             </h5>
@@ -187,7 +202,12 @@ fieldset[disabled] .btn-impersonate.active {
                 {% for group in data.tribal_groups %}
                     <li class="list-group-item">
                         {{ group.name }}
-                        <span class="float-end">{{ data.my_tribes[group.name] | default('–', true) }}</span>
+                        {% if group.name in data.my_tribes %}
+                            <a href="/tribes/individual?{{ group.id }}={{ data.my_tribes[group.name] | urlencode }}"
+                               class="float-end hover-underline">{{ data.my_tribes[group.name] }}</a>
+                        {% else %}
+                            <span class="float-end">–</span>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -197,12 +217,13 @@ fieldset[disabled] .btn-impersonate.active {
         Ride Mosaic
     </h5>
     <div>
-        <table class="table border w-100">
+        <table class="table w-100 border-collapse">
             {% for day in range(0,7) %}
                 <tr>
                     {% for week in range(0,data.weeks) %}
                         {% set date = week * 7 + day %}
-                        <td style="background-color: {{ data.mosaic[date] or 'transparent' }};">
+                        <td style="background-color: {{ data.mosaic[date] or 'transparent' }}"
+                            {% if date < data.first_day or date > data.last_day %} class="border-none" {% endif %}>
                             &nbsp;
                         </td>
                     {% endfor %}
