@@ -91,6 +91,16 @@
     color: #022ca2;
     background-color: #ffffff;
   }
+
+  .border-collapse {
+    border-collapse: collapse;
+    td {
+      border: 1px solid var(--bs-border-color);
+      &.border-none {
+        border: none;
+      }
+    }
+  }
     </style>
 {% endblock %}
 {% block content %}
@@ -207,12 +217,13 @@
         Ride Mosaic
     </h5>
     <div>
-        <table class="table border w-100">
+        <table class="table w-100 border-collapse">
             {% for day in range(0,7) %}
                 <tr>
                     {% for week in range(0,data.weeks) %}
                         {% set date = week * 7 + day %}
-                        <td style="background-color: {{ data.mosaic[date] or 'transparent' }};">
+                        <td style="background-color: {{ data.mosaic[date] or 'transparent' }}"
+                            {% if date < data.first_day or date > data.last_day %} class="border-none" {% endif %}>
                             &nbsp;
                         </td>
                     {% endfor %}

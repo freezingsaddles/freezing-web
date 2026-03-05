@@ -150,6 +150,8 @@ def people_show_person(user_id):
             "weektotal": weekly_dist,
             "mosaic": mosaic,
             "weeks": weeks,
+            "first_day": (config.START_DATE - start).days,
+            "last_day": (config.END_DATE - start).days,
         },
     )
 
