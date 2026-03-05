@@ -244,7 +244,7 @@ def index():
     )
 
 
-# Find the top 16 trending tags from the most recent 250 tagged rides
+# Find the top 16 trending tags from the most recent 500 tagged rides
 def _trending_tags():
     q = text(
         """
@@ -252,7 +252,7 @@ def _trending_tags():
                 from rides R
                 where name like '%#%'
                 order by start_date desc
-                limit 250
+                limit 500
                 ;
             """
     )
