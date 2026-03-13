@@ -110,6 +110,7 @@ def people_show_person(user_id):
           select ride_date, sum(distance) as distance, avg(ride_temp) as ride_temp
             from daily_rides
             group by ride_date
+            having distance >= 1
             order by ride_date;
             """
     ).bindparams(athlete_id=user_id, timezone=config.TIMEZONE)
@@ -124,7 +125,7 @@ def people_show_person(user_id):
         hue = int(min(360, max(240, 300 + (temp - 44) * 6))) if temp else 300
         sat = 100  # max(1, min(100, int(distance * 10)))
         lig = int(50 + min(25, max(0, (distance - 10))))
-        alp = int(min(100, max(0, distance * 5)))
+        alp = int(min(100, max(0, (distance * 500) ** 0.5)))
         return f"hsla({hue}, {sat}%, {lig}%, {alp}%)"
 
     mosaic = {

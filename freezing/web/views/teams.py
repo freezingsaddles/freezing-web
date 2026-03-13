@@ -44,12 +44,15 @@ def teams_show_team(team_id):
         """
            with daily_rides as (
             select date(CONVERT_TZ(R.start_date, R.timezone, :timezone)) as ride_date,
-            A.id as athlete_id
+            A.id as athlete_id,
+            sum(R.distance) as distance
             from rides R inner join athletes A on A.id = R.athlete_id
             where A.team_id = :team_id
+            group by ride_date, athlete_id
           )
-          select ride_date, count(distinct athlete_id) as athletes
+          select ride_date, count(athlete_id) as athletes
             from daily_rides
+            where distance >= 1
             group by ride_date
             order by ride_date;
             """
