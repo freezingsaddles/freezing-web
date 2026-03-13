@@ -125,7 +125,7 @@ def people_show_person(user_id):
         hue = int(min(360, max(240, 300 + (temp - 44) * 6))) if temp else 300
         sat = 100  # max(1, min(100, int(distance * 10)))
         lig = int(50 + min(25, max(0, (distance - 10))))
-        alp = int(min(100, max(0, (distance * 500) ** .5)))
+        alp = int(min(100, max(0, (distance * 500) ** 0.5)))
         return f"hsla({hue}, {sat}%, {lig}%, {alp}%)"
 
     mosaic = {
