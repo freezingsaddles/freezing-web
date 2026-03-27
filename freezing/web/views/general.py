@@ -444,6 +444,56 @@ def join():
     )
 
 
+@blueprint.route("/register")
+def register():
+    step = request.args.get("step", "intro")
+    c = Client()
+    public_url = c.authorization_url(
+        client_id=config.STRAVA_CLIENT_ID,
+        redirect_uri=url_for(".authorization", _external=True),
+        approval_prompt="auto",
+        scope=["read", "activity:read", "profile:read_all"],
+        state="register",
+    )
+    private_url = c.authorization_url(
+        client_id=config.STRAVA_CLIENT_ID,
+        redirect_uri=url_for(".authorization", _external=True),
+        approval_prompt="auto",
+        scope=["read_all", "activity:read_all", "profile:read_all"],
+        state="register",
+    )
+    if config.ENVIRONMENT == "localdev":
+        private_url = public_url = url_for(".authorization", state="register")
+
+    athlete_id = session.get("athlete_id")
+    athlete = (
+        meta.scoped_session().query(Athlete).filter_by(id=athlete_id).first()
+        if athlete_id
+        else None
+    )
+    team = (
+        meta.scoped_session()
+        .query(Team)
+        .join(Athlete)
+        .filter(Athlete.id == athlete_id)
+        .first()
+        if athlete_id
+        else None
+    )
+
+    now_tz = datetime.now(config.START_DATE.tzinfo)
+    return render_template(
+        "register.html",
+        step=step,
+        athlete=athlete,
+        team=team,
+        mean_team=config.MAIN_TEAM,
+        public_authorize_url=public_url,
+        private_authorize_url=private_url,
+        after_competition_start=now_tz >= config.START_DATE,
+    )
+
+
 @blueprint.route("/authorization")
 def authorization():
     """
@@ -468,6 +518,7 @@ def authorization():
     no_teams = False
     team = None
     message = None
+    state = None
     log.info(f"Authorization request host: {request.host}")
     if config.ENVIRONMENT == "localdev" and request.host.split(":")[0] in [
         "localhost",
@@ -475,7 +526,9 @@ def authorization():
     ]:
         # if config.ENVIRONMENT == "localdev":
         # Cheat and pretend we're authorized
-        athlete_id = int(request.args.get("athlete_id", 2332659))
+        athlete_id = int(
+            request.args.get("athlete_id", session.get("athlete_id", 2332659))
+        )
         log.warning(
             f"Local development login bypass exercised for athlete {athlete_id}"
         )
@@ -503,6 +556,7 @@ def authorization():
             athlete.display_name.split(" ")[:0],
         )
         message = "Local development enabled"
+        state = request.args.get("state")
     else:
         code = request.args.get("code")
         scope = request.args.get("scope")
@@ -517,40 +571,41 @@ def authorization():
         # Use the now-authenticated client to get the current athlete
         strava_athlete = client.get_athlete()
         log.info("Strava athlete: {}", str(strava_athlete))
-        try:
-            athlete = data.register_athlete(strava_athlete, token_dict)
-            log.info(
-                "Received athlete auth [id: {}, name: {}] [at: {}, rt: {}, exp: {}]".format(
-                    athlete.id,
-                    athlete.name,
-                    athlete.access_token,
-                    athlete.refresh_token,
-                    athlete.expires_at,
-                )
+        athlete = data.register_athlete(strava_athlete, token_dict)
+        log.info(
+            "Received athlete auth [id: {}, name: {}] [at: {}, rt: {}, exp: {}]".format(
+                athlete.id,
+                athlete.name,
+                athlete.access_token,
+                athlete.refresh_token,
+                athlete.expires_at,
             )
+        )
+        try:
             team = data.register_athlete_team(
                 strava_athlete=strava_athlete,
                 athlete_model=athlete,
             )
-            # We autocommit at teardown_request, but we really want to commit
-            # before rendering success in case transaction commit fails.
-            meta.scoped_session().commit()
         except MultipleTeamsError as multx:
-            meta.scoped_session().rollback()
             multiple_teams = multx.teams
             message = multx
         except NoTeamsError as noteamx:
-            meta.scoped_session().rollback()
             no_teams = True
             message = noteamx
-        # All other exceptions will go to the default error handler and
-        # teardown_request will roll the transaction back.
-    if not no_teams:
-        auth.login_athlete(strava_athlete)
+
+    # We autocommit at teardown_request, but we really want to commit
+    # before rendering success in case transaction commit fails.
+    meta.scoped_session().commit()
+    auth.login_athlete(strava_athlete)
+
     # Thanks https://stackoverflow.com/a/32926295/424301 for the hint on tzinfo aware compares
     after_competition_start = datetime.now(config.TIMEZONE) > config.START_DATE
     if message:
         log.info("Authorization message: {}".format(message))
+
+    if state == "register":
+        return redirect(url_for(".register", step="club"))
+
     return render_template(
         "authorization_success.html",
         after_competition_start_start=after_competition_start,

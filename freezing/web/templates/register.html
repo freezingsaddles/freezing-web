@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}
+    {{ "Register for " + competition_title }}
+{% endblock %}
+{% block content %}
+    {% if after_competition_start %}
+        <div class="alert alert-warning bg-warning text-dark">
+            The {{ end_date.year }} competition has already started. You can still
+            register, but you will be placed on the waiting list and only assigned
+            to a team if a space opens up.
+        </div>
+    {% endif %}
+    {% if step == "intro" %}
+        <div class="card mb-3 my-lg-4 p-4 px-lg-5">
+            <h3 class="mb-3">
+                Register for Freezing Saddles {{ end_date.year }}
+            </h3>
+            <p>
+                Freezing Saddles is a winter riding competition for cyclists in the
+                general DC area.
+            </p>
+            <p>
+                The competition is for contestants to ride their bikes outside all
+                winter, <em>in the cold</em>, <em>in the dark</em> and
+                <em>in the snow</em>. The <em>farther you ride</em>, the
+                <em>more points</em> you earn. The
+                colder it is, the colder you'll be. Not everyone can ride every day,
+                but <em>many do</em>, and everyone is encouraged
+                to ride more than they would otherwise.
+            </p>
+            <p>
+                Freezing Saddles runs from January 1 through the last
+                <em>full</em> day of Winter ({{ end_date.strftime("%B %d") }} in {{
+                end_date.year }}). We divide contestants into teams of 10 or so
+                people, striving for competitive parity. Each team is a mix of riders
+                who typically ride enough to qualify as insane, people who ride
+                regularly but like sane people, people who ride occasionally, and
+                people who have never ridden through a winter before. Points are
+                awarded for miles ridden outdoors. The more miles, the more points.
+            </p>
+            <p>
+                In addition to the points competition, teams and individuals compete
+                and play for Pointless Prizes, of which there are many, both serious
+                and silly. For many, these <em>reindeer games</em> are the primary
+                reason they join and play Freezing Saddles.
+                We have in-person happy hours near the
+                start of the game to formally announce teams and after the end of the
+                game to hand out prizes.
+            </p>
+            <p>
+                We use Strava for data collection and team organization, which means that
+                to play you will need a Strava account and some sort of GPS device or
+                smartphone to track your rides.
+            </p>
+            <p>
+                <strong>
+                    Remember, the competition is to ride your bike <em>outside</em>, in the bleak
+                    mid-Atlantic winter, when it's <em>cold</em> and <em>wet</em> and <em>dark</em>.
+                    If that sounds like fun to you, then welcome!
+                </strong>
+            </p>
+            <a class="btn btn-primary mb-1" href="/register?step=login">Start Registration</a>
+        </div>
+    {% elif step == "login" %}
+        <div class="card mb-3 my-lg-4 p-4 px-lg-5">
+            <h3 class="mb-3">
+                <strong>Step 1.</strong> <span>Connect Strava and Login</span>
+            </h3>
+            {% if not athlete %}
+                <div>
+                    The first thing you need to do is authorize Freezing Saddles to
+                    read your Strava rides by clicking <em>Connect with Strava</em> below. This
+                    will also log you into the Freezing Saddles site.
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="radio" name="scope" id="public-scope" />
+                    <label for="public-scope" class="form-check-label">
+                        Only allow Freezing Saddles to read my public activities.
+                    </label>
+                </div>
+                <div class="form-check mt-1">
+                    <input class="form-check-input"
+                           type="radio"
+                           name="scope"
+                           id="private-scope"
+                           checked="checked" />
+                    <label for="private-scope" class="form-check-label">
+                        Allow Freezing Saddles to also read (and count points for) activities
+                        marked "private".
+                        <div class="small text-muted">
+                            We don't share details of these activities with anyone, we just use them
+                            for leaderboard statistics.
+                        </div>
+                    </label>
+                </div>
+                <div class="mt-3">
+                    {# djlint:off H006,H021 #}
+                    <a class="btn p-0"
+                       href="{{ private_authorize_url }}"
+                       role="button"
+                       id="connect-strava"
+                       style="margin-left: -0.35rem;
+                              margin-top: -0.25rem">
+                        <img src="/img/btn_strava_connectwith_orange.svg"
+                             style="height: 4rem"
+                             alt="Connect with Strava" />
+                    </a>
+                    {# djlint:on #}
+                </div>
+            {% else %}
+                <ul>
+                    <li>
+                        Congratulations! You have successfully connected your Strava account <strong>{{ athlete.name }}</strong>.
+                        <ul>
+                            <li>
+                                If you need to use a different account, select Logout from the top-right menu.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        You can now continue to the next step.
+                    </li>
+                </ul>
+                <a class="btn btn-primary mb-1" href="/register?step=club">Next</a>
+            {% endif %}
+        </div>
+    {% elif not athlete %}
+        <div class="alert alert-danger bg-danger text-dark mt-3">
+            <strong>Uh-oh, something went wrong!</strong>
+            <br />
+            You should be logged in at this point. Please check
+            your browser privacy settings and <a class="text-dark" href="/register">try registering again</a>,
+            or
+            <a rel="noreferrer"
+               target="_blank"
+               class="text-dark"
+               href="{{ registration_site }}contact-form/">contact us</a>.
+        </div>
+    {% elif step == "club" %}
+        <div class="card mb-3 my-lg-4 p-4 px-lg-5">
+            <h3 class="mb-3">
+                <strong>Step 2.</strong>
+                <span>Join the Freezing Saddles {{ end_date.year }} Strava Club</span>
+            </h3>
+            {% if team %}
+                <ul>
+                    <li>
+                        Congratulations! You have
+                        {{ "successfully" if "refresh" in request.args else "already" }}
+                        joined the <strong>{{ team.name }}</strong> Strava club.
+                    </li>
+                    <li>
+                        You can now continue to
+                        the next step.
+                    </li>
+                </ul>
+                <a class="btn btn-primary mb-1" href="/register?step=form">Next</a>
+            {% else %}
+                <ul>
+                    <li>
+                        The next step is to join the Freezing Saddles {{ end_date.year }} Strava club.
+                    </li>
+                    <li>
+                        Please click on the <em>Freezing Saddles {{ end_date.year }}</em> button below.
+                        <br />
+                        <a class="btn btn-strava my-2 ms-3"
+                           href="https://www.strava.com/clubs/{{ main_team }}"
+                           rel="noreferrer"
+                           target="_blank">
+                        Freezing Saddles {{ end_date.year }}</a>
+                    </li>
+                    <li>
+                        Strava will open in a new window and you should choose <strong>Join Club</strong>.
+                    </li>
+                    <li>
+                        Then come back to this window and click the <em>Refresh</em>
+                        button below to refresh this page.
+                    </li>
+                    <ul>
+                        <li>
+                            It can sometimes take a few minutes for the club membership to propagate.
+                        </li>
+                        <li>
+                            If things aren't working, use the top-right menu to log out and <a href="/register">try registering again</a>,
+                            or
+                            <a rel="noreferrer"
+                               target="_blank"
+                               href="{{ registration_site }}contact-form/">contact us</a>.
+                        </li>
+                    </ul>
+                </ul>
+                <a class="btn btn-primary mb-1" href="/register?step=club&refresh=true">Refresh</a>
+            {% endif %}
+        </div>
+    {% elif step == "form" %}
+        <div class="card mb-3 my-lg-4 p-4 px-lg-5">
+            <h3 class="mb-3">
+                <strong>Step 3.</strong> <span>Fill Out the Registration Form</span>
+            </h3>
+            <ul>
+                <li>
+                    Now that you've connected your Strava account you can proceed to fill out
+                    the registration form.
+                </li>
+                <li>
+                    The form will ask for your name, email address and
+                    various competition-related details.
+                </li>
+                <li>
+                    This information will be used when we
+                    organize teams or need to contact you.
+                    <ul>
+                        <li>
+                            If you are just playing as a <em>Friend of BAFS</em>, and not participating in the main competition,
+                            then you're already done. You don't need to fill
+                            out the registration form and may <a href="/">return to the home page</a>.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <a class="btn btn-primary mb-1"
+               href="{{ registration_site }}freezing-saddles-2027-registration/?stravanumber={{ athlete.id }}">Registration Form</a>
+        </div>
+    {% elif step == "complete" %}
+        <div class="card mb-3 my-lg-4 p-4 px-lg-5">
+            <h3 class="mb-3">
+                Registration Complete
+            </h3>
+            <ul>
+                <li>
+                    Congratulations! Your registration is complete.
+                </li>
+                <li>
+                    You may now return to the home page and await the start of the competition.
+                </li>
+                <li>
+                    If you need to change your registration, or have any questions, please
+                    <a rel="noreferrer"
+                       target="_blank"
+                       href="{{ registration_site }}contact-form/">contact us</a>.
+                </li>
+                <li>
+                    <strong>Remember that miles count starting from January 1<sup>st</sup>.</strong>
+                    <ul>
+                        <li>
+                            You should be riding from the start of the new year, even before you are assigned to a team.
+                        </li>
+                        <li>
+                            If don't ride at the start of the year, you won't be put on a team unless you
+                            <a rel="noreferrer"
+                               target="_blank"
+                               href="{{ registration_site }}contact-form/">contact us</a> in advance.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <a class="btn btn-primary mb-1" href="/">Done</a>
+        </div>
+    {% endif %}
+{% endblock %}
