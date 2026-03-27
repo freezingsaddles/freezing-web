@@ -391,6 +391,10 @@ body.logged-in #sect-main {
     display: none;
 }
 
+.text-small {
+    font-size: 0.85em;
+}
+
 @media (min-width: 576px) {
     .stats-card {
         flex-direction: row;
@@ -427,6 +431,12 @@ body.logged-in #sect-main {
     .photo-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    body:has(nav .nav-item .dropdown-menu.show) .content-block {
+        display: none;
     }
 }
 
@@ -528,9 +538,25 @@ body.logged-in #sect-main {
     }
 }
 
+
+a {
+    color: #00A4E4;
+    &:hover {
+        color: #0092CC;
+    }
+}
+
+
 @media (prefers-color-scheme: light) {
     .modal .text-warning {
         color: #a87e00 !important;
+    }
+
+    a {
+        color: #0092CC;
+        &:hover {
+            color: #00A4E4;
+        }
     }
 }
 
@@ -725,4 +751,96 @@ body.logged-in #sect-main {
 .snowflake:nth-of-type(11) {
     left: 65%;
     animation-delay: 2.5s
+}
+
+.btn-strava {
+    color: #ffffff;
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+}
+
+.btn-strava:hover,
+.btn-strava:focus,
+.btn-strava:active,
+.btn-strava.active,
+.open .dropdown-toggle.btn-strava {
+    color: #ffffff;
+    background-color: #d62600;
+    border-color: #fc3c02;
+}
+
+.btn-strava:active,
+.btn-strava.active,
+.open .dropdown-toggle.btn-strava {
+    background-image: none;
+}
+
+.btn-strava.disabled,
+.btn-strava[disabled],
+fieldset[disabled] .btn-strava,
+.btn-strava.disabled:hover,
+.btn-strava[disabled]:hover,
+fieldset[disabled] .btn-strava:hover,
+.btn-strava.disabled:focus,
+.btn-strava[disabled]:focus,
+fieldset[disabled] .btn-strava:focus,
+.btn-strava.disabled:active,
+.btn-strava[disabled]:active,
+fieldset[disabled] .btn-strava:active,
+.btn-strava.disabled.active,
+.btn-strava[disabled].active,
+fieldset[disabled] .btn-strava.active {
+    background-color: #fc4c02;
+    border-color: #fc3c02;
+}
+
+.btn-strava .badge {
+    color: #fc4c02;
+    background-color: #ffffff;
+}
+
+.btn-primary {
+  color: #ffffff;
+  background-color: #007cad;
+  border-color: #006e99;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  color: #ffffff;
+  background-color: #0084b8 !important;
+  border-color: #007cad !important;
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  background-image: none;
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+  background-color: #00A4E4;
+  border-color: #0092CC;
+}
+
+.btn-primary .badge {
+  color: #00A4E4;
+  background-color: #ffffff;
 }

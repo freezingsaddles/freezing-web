@@ -76,7 +76,24 @@
     max-height: 12rem;
     margin-bottom: .5rem;
   }
+
+  .register-btn {
+    font-size: 3rem;
+    font-weight: 400;
+    font-family: "Rubik Wet Paint", system-ui;
+    padding: 0;
+    div {
+        padding: 1.5rem 3rem;
+        /* background-image: url("https://texteffects.dev/demos/freezetext/images/ice.jpg");
+        https://www.istockphoto.com/photo/abstract-ice-blue-background-fragmented-ice-crystals-gm1463701601-496635725 ?
+        background-size: contain;
+        background-clip: text;
+        -webkit-text-fill-color: transparent; */
+    }
+  }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap"
+          rel="stylesheet" />
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
           integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -112,6 +129,23 @@
             </div>
         </div>
     </div>
+    {% if "register" in request.args %}
+        <div id="sect-reg"
+             class="card mb-3 my-lg-4 bg-light p-3 px-lg-4 text-center">
+            <h4>
+                {{ end_date.year }} Registration is Now Open!
+            </h4>
+            <a class="btn btn-primary register-btn mx-auto mt-3 mb-3"
+               href="/register">
+                <div>
+                    Register Now
+                </div>
+            </a>
+            <div class="text-muted mt-2">
+                You have until December 24<sup>th</sup> to register for this year's competition!
+            </div>
+        </div>
+    {% endif %}
     {% if winter_is_coming and not g.logged_in %}
         <div class="{{ 'mb-3 mb-lg-4' if bafs_is_over else 'mt-4 mt-lg-5' }} alert alert-info">
             Freezing Saddles is a game organized by friends in the

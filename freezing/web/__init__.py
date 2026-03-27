@@ -99,6 +99,7 @@ def set_no_team_global():
     today = min(now_tz, config.END_DATE).date()
     total_days = 1 + (today - start).days
     athlete_id = session.get("athlete_id")
+    g.finished = now_tz >= config.END_DATE
 
     if athlete_id:
         team = (
