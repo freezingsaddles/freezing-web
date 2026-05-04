@@ -38,10 +38,15 @@ def get_limit(request):
     limit = request.args.get("limit")
     if limit is None:
         return config.TRACK_LIMIT_DEFAULT
-    limit = int(limit)
+    try:
+        limit = int(limit)
+    except ValueError:
+        abort(400, "limit must be an integer")
+    if limit < 1:
+        abort(400, "limit must be positive")
     if limit > config.TRACK_LIMIT_MAX:
         abort(400, f"limit {limit} exceeds {config.TRACK_LIMIT_MAX}")
-    return min(config.TRACK_LIMIT_MAX, int(limit))
+    return limit
 
 
 @blueprint.route("/stats/general")
