@@ -58,7 +58,7 @@ dev = [
     "autoflake",
     "bandit",
     "black",
-    "djlint",
+    "djlint==1.36.4",
     "fawltydeps",
     "flake8",
     "flake8-pyproject",
