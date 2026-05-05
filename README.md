@@ -101,6 +101,7 @@ There is a sample file (`example.cfg`) that you can reference.  You need to set 
 Edit the file to change the value of `SECRET_KEY`, and set competition dates. Good date ranges are either the range for a prior year's competition, for testing with an archived database dump, or a 3 month range that includes the current date, for testing in conjunction with fresh data downloaded with [freezing-sync])https://github.com/freezingsaddles/freezing-sync)
 
 This component is designed to run as a container and should be configured with environment variables for:
+
 * `DEBUG`: Whether to display exception stack traces, etc.
 * `SECRET_KEY`: Used to cryptographically sign the Flask session cookies.
 * `SQLALCHEMY_URL`: The URL to the database.
@@ -112,6 +113,7 @@ This component is designed to run as a container and should be configured with e
 * `END_DATE`: The end of the competition.
 
 Changing _all_ these values is not necessary for a basic development setup. However, you should ensure these items are set appropriately:
+
 * The team IDs for the competition, `MAIN_TEAM`, `TEAMS` and any `OBSERVER_TEAMS`, if you are loading an archived database.
 * `SQLALCHEMY_URL` database credentials, if you are are using something other than the default Docker Compose setup.
 * Strava client API credentials, if you want to test athlete registration and authorization. (You don't have to do this to test user pages, see the [impersonation feature](https://github.com/freezingsaddles/freezing-web/pull/332))
