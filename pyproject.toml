@@ -110,5 +110,5 @@ ignore_unused = [
     "gunicorn",
     "isort",
     "pre-commit",
-    "pymarkdownlnt==0.9.37",
+    "pymarkdownlnt",
 ]
