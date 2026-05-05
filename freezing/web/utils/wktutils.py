@@ -12,7 +12,7 @@ def point_wkt(lon, lat):
 
 
 def parse_point_wkt(wkt):
-    (lon, lat) = _point_rx.match(wkt).group(1).split(" ")
+    lon, lat = _point_rx.match(wkt).group(1).split(" ")
     return LonLat(lon=lon, lat=lat)
 
 

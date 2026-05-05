@@ -20,8 +20,7 @@ def teams_show_team(team_id):
     if our_team.profile_photo and not str.startswith(our_team.profile_photo, "http"):
         our_team.profile_photo = None
 
-    q = text(
-        """
+    q = text("""
              select
                A.id as athlete_id,
                A.display_name as athlete_name,
@@ -35,13 +34,11 @@ def teams_show_team(team_id):
              group by A.id, A.display_name
              order by display_name asc
              ;
-             """
-    ).params(team=team_id)
+             """).params(team=team_id)
 
     members = meta.scoped_session().execute(q).fetchall()
 
-    q = text(
-        """
+    q = text("""
            with daily_rides as (
             select date(CONVERT_TZ(R.start_date, R.timezone, :timezone)) as ride_date,
             A.id as athlete_id,
@@ -55,8 +52,7 @@ def teams_show_team(team_id):
             where distance >= 1
             group by ride_date
             order by ride_date;
-            """
-    ).bindparams(team_id=team_id, timezone=config.TIMEZONE)
+            """).bindparams(team_id=team_id, timezone=config.TIMEZONE)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()
     start = config.START_DATE - timedelta(days=(config.START_DATE.weekday() + 1) % 7)

@@ -37,8 +37,7 @@ def team_leaderboard_classic():
     # @UndefinedVariable
     team_rows = meta.scoped_session().execute(q).fetchall()
 
-    q = text(
-        """
+    q = text("""
              select
                A.id as athlete_id,
                A.team_id,
@@ -51,8 +50,7 @@ def team_leaderboard_classic():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """
-    )
+             """)
 
     team_members = {}
     # @UndefinedVariable
@@ -102,8 +100,7 @@ def indiv_leaderboard():
 def individual_leaderboard_text():
     athlete_id = session.get("athlete_id")
 
-    q = text(
-        """
+    q = text("""
              select
                A.id as athlete_id,
                A.team_id,
@@ -120,8 +117,7 @@ def individual_leaderboard_text():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """
-    )
+             """)
 
     # @UndefinedVariable
     indiv_rows = meta.scoped_session().execute(q).fetchall()
