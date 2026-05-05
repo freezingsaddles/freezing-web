@@ -55,10 +55,12 @@ def team_cumul_trend():
 
 @blueprint.route("/team_riders")
 def team_riders():
-    q = text("""
+    q = text(
+        """
         select b.id, b.name, count(a.athlete_id) as ride_days from daily_scores a join teams b
         on a.team_id = b.id where a.distance > 1 and b.leaderboard_exclude=0 group by b.id order by ride_days desc;
-        """)
+        """
+    )
     team_riders = [
         (x._mapping["id"], x._mapping["name"], x._mapping["ride_days"])
         for x in meta.scoped_session().execute(q).fetchall()
@@ -109,14 +111,17 @@ def team_daily():
 
 @blueprint.route("/indiv_worst_day_points")
 def indiv_worst_day_points():
-    ridersq = text("""
+    ridersq = text(
+        """
     select count(distinct(athlete_id)) as riders from rides group by date(start_date)
-    """)
+    """
+    )
     riders = [
         x._mapping["riders"] for x in meta.scoped_session().execute(ridersq).fetchall()
     ]
     median_riders = 0 if len(riders) == 0 else median(riders)
-    q = text(f"""
+    q = text(
+        f"""
     select A.id as athlete_id, A.team_id, A.display_name as athlete_name, T.name as team_name,
     sum(s.distance) as total_distance, sum(s.points) as total_score, sum(s.adj_points) as total_adjusted,
     count(s.points) as days_ridden from
@@ -126,7 +131,8 @@ def indiv_worst_day_points():
     join teams T on T.id = A.team_id
     group by A.id, A.display_name
     order by total_adjusted desc;
-    """)  # nosec B608
+    """
+    )  # nosec B608
     data = [
         (
             x._mapping["athlete_id"],

@@ -26,7 +26,8 @@ def leaderboard():
 
     tribe_stats = defaultdict(lambda: dict(distance=0, points=0, ride_days=0, riders=0))
 
-    stats_query = text("""
+    stats_query = text(
+        """
         SELECT
             T.tribal_group,
             T.tribe_name,
@@ -35,7 +36,8 @@ def leaderboard():
             COUNT(B.athlete_id) AS ride_days,
             COUNT(DISTINCT T.athlete_id) AS riders
         FROM tribes T LEFT OUTER JOIN daily_scores B ON T.athlete_id = B.athlete_id GROUP BY tribal_group, tribe_name;
-        """)
+        """
+    )
     for t in meta.scoped_session().execute(stats_query).fetchall():
         tribe_stats[(t.tribal_group, t.tribe_name)].update(
             distance=round(t.distance),
@@ -71,7 +73,8 @@ def individual():
     cur_tribe = request.args.get(cur_group.id)
     athlete_id = session.get("athlete_id")
 
-    q = text("""
+    q = text(
+        """
              select
                A.id as athlete_id,
                A.team_id,
@@ -92,7 +95,8 @@ def individual():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """).bindparams(group=cur_group.name, tribe=cur_tribe)
+             """
+    ).bindparams(group=cur_group.name, tribe=cur_tribe)
 
     indiv_rows = meta.scoped_session().execute(q).fetchall()
 

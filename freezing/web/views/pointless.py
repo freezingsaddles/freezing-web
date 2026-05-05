@@ -72,7 +72,8 @@ def points_per_mile():
     (@hozn noted: I didn't pay enough attention to determine if this is something we can calculate.)
     """
     num_days = 40
-    query = text("""
+    query = text(
+        """
         select
             A.id as athlete_id,
             A.display_name as athlete_name,
@@ -80,7 +81,8 @@ def points_per_mile():
             sum(B.points) as pnts,
             count(B.athlete_id) as ridedays
         from athletes A join daily_scores B on A.id = B.athlete_id group by athlete_id;
-    """)
+    """
+    )
     ppm = [
         (
             x._mapping["athlete_id"],
@@ -108,7 +110,8 @@ def _get_hashtag_tdata(hashtag, alttag, orderby, friendless, min_miles):
         rank_by = "hashtag_days"
     elif orderby == "rides":
         rank_by = "hashtag_rides"
-    q = text(f"""
+    q = text(
+        f"""
         with hash_rides as (
             select
                 R.id,
@@ -153,7 +156,8 @@ def _get_hashtag_tdata(hashtag, alttag, orderby, friendless, min_miles):
             htdata H
         order by
             H.{rank_by} desc, lower(H.athlete_name) asc
-        """).bindparams(
+        """
+    ).bindparams(
         tz=config.TIMEZONE,
         hashtag=hashtag,
         alttag=alttag or hashtag,
@@ -235,18 +239,19 @@ def _get_phototag_tdata(request, hashtag):
         )
         """
 
-    total_q = text(f"""
+    total_q = text(
+        f"""
         {with_union_photos}
         select
             count(P.id)
         from
             union_photos P
-        """).bindparams(
-        tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date, myself=myself
-    )
+        """
+    ).bindparams(tz=config.TIMEZONE, tag=f"%#{hashtag}%", date=date, myself=myself)
     num_photos = meta.scoped_session().execute(total_q).scalar_one()
 
-    photo_q = text(f"""
+    photo_q = text(
+        f"""
         {with_union_photos}
         select
             P.*
@@ -257,7 +262,8 @@ def _get_phototag_tdata(request, hashtag):
             P.id
         limit :limit
         offset :offset
-        """).bindparams(
+        """
+    ).bindparams(
         tz=config.TIMEZONE,
         tag=f"%#{hashtag.lower()}%",
         date=date,
@@ -346,7 +352,8 @@ def phototag_leaderboard(hashtag):
 
 def _get_segment_tdata(segment):
     sess = meta.scoped_session()
-    q = text("""
+    q = text(
+        """
         select
             A.id,
             A.display_name      as athlete_name,
@@ -361,7 +368,8 @@ def _get_segment_tdata(segment):
             E.segment_id = :segment
         group by
             A.id, A.display_name, E.segment_name;
-        """)
+        """
+    )
     rs = sess.execute(q, params=dict(segment=segment))
     retval = [
         (
@@ -411,7 +419,8 @@ def segment_leaderboard(segment):
 
 @blueprint.route("/kidsathlon")
 def kidsathlon():
-    q = text("""
+    q = text(
+        """
         select
         A.id as athlete_id,
         A.display_name as athlete_name,
@@ -422,7 +431,8 @@ def kidsathlon():
         join rides R on R.athlete_id = A.id
         where (upper(R.name) like '%#KIDICAL%' or upper(R.name) like '%#WITHKID%')
         group by A.id, A.display_name
-    """)
+    """
+    )
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
         miles_both = float(x._mapping["miles_both"])
@@ -556,9 +566,11 @@ def load_multisegment_board_data(board):
 
 @blueprint.route("/daily_variance")
 def daily_variance():
-    q = text("""
+    q = text(
+        """
         select a.display_name as name, vbd.* from variance_by_day vbd, lbd_athletes a where vbd.athlete_id=a.id
-    """)
+    """
+    )
     days_left = (
         config.END_DATE - datetime.now(timezone.utc)
     ).days  # how many days left in the competition
@@ -606,7 +618,8 @@ def daily_variance():
 
 @blueprint.route("/civilwarhistory")
 def civilwarhistory():
-    q = text("""
+    q = text(
+        """
         select
         A.id as athlete_id,
         A.display_name as athlete_name,
@@ -616,7 +629,8 @@ def civilwarhistory():
         join rides R on R.athlete_id = A.id
         where (upper(R.name) like '%#CIVILWARMARKER%' or upper(R.name) like '%#CIVILWARSTREET%')
         group by A.id, A.display_name
-    """)
+    """
+    )
 
     data = []
     for x in meta.scoped_session().execute(q).fetchall():
