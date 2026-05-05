@@ -64,7 +64,7 @@ dev = [
     "flake8-pyproject",
     "isort",
     "pre-commit",
-    "pymarkdownlnt",
+    "pymarkdownlnt==0.9.37",
 ]
 runtime = [
     "gunicorn==23.0.0",
@@ -110,5 +110,5 @@ ignore_unused = [
     "gunicorn",
     "isort",
     "pre-commit",
-    "pymarkdownlnt",
+    "pymarkdownlnt==0.9.37",
 ]
