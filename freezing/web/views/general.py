@@ -100,55 +100,47 @@ def index():
     indiv_count_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     contestant_count = indiv_count_res._mapping["num_contestants"]
 
-    q = text(
-        """
+    q = text("""
             select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
                 coalesce(sum(R.distance),0) as distance
             from rides R
             ;
-        """
-    )
+        """)
 
     all_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     total_miles = int(all_res._mapping["distance"])
     total_hours = int(all_res._mapping["moving_time"]) / 3600
     total_rides = all_res._mapping["num_rides"]
 
-    q = text(
-        """
+    q = text("""
             select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
             from rides R
             join ride_weather W on W.ride_id = R.id
             where W.ride_temp_avg < 32
             ;
-        """
-    )
+        """)
 
     sub32_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
-    q = text(
-        """
+    q = text("""
             select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
             from rides R
             join ride_weather W on W.ride_id = R.id
             where W.ride_rain = 1
             ;
-        """
-    )
+        """)
 
     rain_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
-    q = text(
-        """
+    q = text("""
             select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
             from rides R
             join ride_weather W on W.ride_id = R.id
             where W.ride_snow = 1
             ;
-        """
-    )
+        """)
 
     snow_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     snow_hours = int(snow_res._mapping["moving_time"]) / 3600
@@ -173,8 +165,7 @@ def index():
     tags = _trending_tags()
 
     today = min(now_tz, config.END_DATE)
-    q = text(
-        """
+    q = text("""
             select
                 count(distinct athlete_id) as riders,
                 coalesce(sum(R.moving_time),0) as moving_time,
@@ -182,17 +173,13 @@ def index():
             from rides R
             where date(CONVERT_TZ(R.start_date, R.timezone,'{0}')) >= '{1}'
             ;
-        """.format(
-            config.TIMEZONE, today.date()
-        )
-    )
+        """.format(config.TIMEZONE, today.date()))
     today_res = meta.scoped_session().execute(q).one()  # @UndefinedVariable
     today_riders = int(today_res._mapping["riders"])
     today_hours = round(today_res._mapping["moving_time"]) / 3600
     today_miles = int(today_res._mapping["distance"])
 
-    q = text(
-        """
+    q = text("""
             select
                 RE.personal_record as pr,
                 count(RE.personal_record) as count
@@ -200,8 +187,7 @@ def index():
             where RE.personal_record is not null
             group by personal_record
             ;
-        """
-    )
+        """)
     pr_res = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
     prs = {res._mapping["pr"]: res._mapping["count"] for res in pr_res}
     # Don't try to do local legends. the strava api basically just tells us
@@ -246,16 +232,14 @@ def index():
 
 # Find the top 16 trending tags from the most recent 500 tagged rides
 def _trending_tags():
-    q = text(
-        """
+    q = text("""
                 select name
                 from rides R
                 where name like '%#%'
                 order by start_date desc
                 limit 500
                 ;
-            """
-    )
+            """)
     tag_count = {}
     original_tag = {}
     for res in meta.scoped_session().execute(q).fetchall():
@@ -304,11 +288,7 @@ def _non_rider_stats():
 
 # Get rider stats
 def _rider_stats(athlete_id):
-    rank = (
-        meta.scoped_session()
-        .execute(
-            text(
-                """
+    rank = meta.scoped_session().execute(text("""
                 with scores as (
                   select A.id, sum(DS.points) as score
                   from daily_scores DS join lbd_athletes A on A.id = DS.athlete_id
@@ -317,16 +297,8 @@ def _rider_stats(athlete_id):
                   select id, rank() over (order by score desc) as place from scores
                 )
                 select place from ranked_scores where id = :athlete_id
-                """
-            ).bindparams(athlete_id=athlete_id)
-        )
-        .fetchone()
-    )
-    team_rank = (
-        meta.scoped_session()
-        .execute(
-            text(
-                """
+                """).bindparams(athlete_id=athlete_id)).fetchone()
+    team_rank = meta.scoped_session().execute(text("""
                 with scores as (
                   select T.id, sum(DS.points) as score
                   from daily_scores DS join teams T on T.id = DS.team_id where not T.leaderboard_exclude
@@ -335,41 +307,18 @@ def _rider_stats(athlete_id):
                   select id, rank() over (order by score desc) as place from scores
                 )
                 select RS.place from ranked_scores RS join lbd_athletes A on RS.id = A.team_id where A.id = :athlete_id
-                """
-            ).bindparams(athlete_id=athlete_id)
-        )
-        .fetchone()
-    )
-    ride_stats = (
-        meta.scoped_session()
-        .execute(
-            text(
-                """
+                """).bindparams(athlete_id=athlete_id)).fetchone()
+    ride_stats = meta.scoped_session().execute(text("""
                 select
                   count(id) as rides,
                   coalesce(sum(moving_time), 0) as time,
                   coalesce(sum(distance), 0) as distance
                 from rides R
                 where R.athlete_id = :athlete_id
-                """
-            ).bindparams(athlete_id=athlete_id)
-        )
-        .one()
-    )
-    ride_days = set(
-        res[0]
-        for res in (
-            meta.scoped_session()
-            .execute(
-                text(
-                    """
+                """).bindparams(athlete_id=athlete_id)).one()
+    ride_days = set(res[0] for res in (meta.scoped_session().execute(text("""
                     select ride_date from daily_scores DS where DS.athlete_id = :athlete_id
-                    """
-                ).bindparams(athlete_id=athlete_id)
-            )
-            .fetchall()
-        )
-    )
+                    """).bindparams(athlete_id=athlete_id)).fetchall()))
     team = (
         meta.scoped_session().query(Team).join(Athlete).filter_by(id=athlete_id).one()
     )
@@ -551,7 +500,9 @@ def authorization():
                 self.firstname = firstname
                 self.lastname = lastname
 
-        parts = athlete.display_name.split(" ") if athlete and athlete.display_name else []
+        parts = (
+            athlete.display_name.split(" ") if athlete and athlete.display_name else []
+        )
         strava_athlete = MockAthlete(
             athlete_id,
             parts[0] if parts else "Dev",
