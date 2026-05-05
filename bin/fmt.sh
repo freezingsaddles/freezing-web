@@ -6,3 +6,5 @@ echo "*** isort ***"
 isort freezing
 echo "*** djlint ***"
 djlint --reformat .
+echo "*** pymarkdown ***"
+pymarkdown fix .
