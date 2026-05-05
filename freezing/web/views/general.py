@@ -554,8 +554,8 @@ def authorization():
         parts = athlete.display_name.split(" ") if athlete and athlete.display_name else []
         strava_athlete = MockAthlete(
             athlete_id,
-            parts[0] if parts else "Frank",
-            parts[-1] if len(parts) > 1 else "Velez",
+            parts[0] if parts else "Dev",
+            parts[-1] if len(parts) > 1 else "User",
         )
         message = "Local development enabled"
         state = request.args.get("state")
