@@ -131,8 +131,8 @@ def indiv_worst_day_points():
     join teams T on T.id = A.team_id
     group by A.id, A.display_name
     order by total_adjusted desc;
-    """  # nosec B608
-    )
+    """
+    )  # nosec B608
     data = [
         (
             x._mapping["athlete_id"],
