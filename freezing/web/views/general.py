@@ -526,9 +526,16 @@ def authorization():
     ]:
         # if config.ENVIRONMENT == "localdev":
         # Cheat and pretend we're authorized
-        athlete_id = int(
-            request.args.get("athlete_id", session.get("athlete_id", 2332659))
+        athlete_id = request.args.get("athlete_id", session.get("athlete_id"))
+        athlete = (
+            meta.scoped_session()
+            .query(Athlete)
+            .filter(Athlete.id == int(athlete_id))
+            .first()
+            if athlete_id is not None
+            else meta.scoped_session().query(Athlete).first()
         )
+        athlete_id = athlete.id if athlete else 0
         log.warning(
             f"Local development login bypass exercised for athlete {athlete_id}"
         )
@@ -544,16 +551,13 @@ def authorization():
                 self.firstname = firstname
                 self.lastname = lastname
 
-        athlete = (
-            meta.scoped_session()
-            .query(Athlete)
-            .filter(Athlete.id == athlete_id)
-            .first()
+        parts = (
+            athlete.display_name.split(" ") if athlete and athlete.display_name else []
         )
         strava_athlete = MockAthlete(
             athlete_id,
-            athlete.display_name.split(" ")[0],
-            athlete.display_name.split(" ")[:0],
+            parts[0] if parts else "Dev",
+            parts[-1] if len(parts) > 1 else "User",
         )
         message = "Local development enabled"
         state = request.args.get("state")
