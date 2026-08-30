@@ -16,3 +16,4 @@
 /resources/docker/settings.cfg
 /src
 tmp.*
+__pycache__/
