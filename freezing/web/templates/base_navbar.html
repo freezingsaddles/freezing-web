@@ -116,9 +116,13 @@
                             </li>
                             {% for prize in pointless_prizes.get(category.id) %}
                                 <li>
-                                    <a class="dropdown-item"
-                                       href="{{ prize.url }}"
-                                       {% if prize.url.startswith("http") %} target="_blank" rel="noreferrer"{% endif %}>{{ prize.name }}</a>
+                                    {% if prize.url %}
+                                        <a class="dropdown-item"
+                                           href="{{ prize.url }}"
+                                           {% if prize.url.startswith("http") %} target="_blank" rel="noreferrer"{% endif %}>{{ prize.name }}</a>
+                                    {% else %}
+                                        <span class="dropdown-item">{{ prize.name }}</span>
+                                    {% endif %}
                                     {% if g.logged_in and prize.discord %}
                                         <a class="dropdown-item"
                                            href="https://discord.com/channels/1443244420358213643/{{ prize.discord }}"
