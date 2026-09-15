@@ -4,7 +4,6 @@ description: |
   Number of team rides of the
   <a href="https://www.strava.com/segments/650024">POGGIO</a>
   segment.
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2025-poggio/ # yamllint disable-line
 fields:
   - name: team_id
     visible: false

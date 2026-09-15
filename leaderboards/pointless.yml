@@ -42,7 +42,6 @@ prizes:
   - url: /pointless/hashtag/adulting
     category: unsponsored
   - name: Extra Mile
-    url: https://www.bikearlingtonforum.com/forums/topic/extra-mile-pointless-prize-3/
     discord: 1449623779167698954
     category: active
   - url: /pointless/hashtag/420
@@ -68,7 +67,6 @@ prizes:
   - url: /pointless/generic/doompatrol
     category: unsponsored
   - name: Kidathon
-    url: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
     category: kids
   - url: /pointless/generic/kidmiles
     category: kids
@@ -89,7 +87,6 @@ prizes:
     url: /pointless/arlington
     category: unsponsored
   - name: Meh-diocrity
-    url: https://www.bikearlingtonforum.com/forums/topic/meh-diocrity-pointless-prize-2/
     category: hidden
   - url: /pointless/generic/opmdays
     category: unsponsored
@@ -155,7 +152,6 @@ prizes:
   - url: /pointless/hashtag/abc
     category: hidden
   - name: Wandrer' About
-    url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-wandrer-about/
     category: hidden
   - url: /pointless/generic/weekend
     category: unsponsored

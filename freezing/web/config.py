@@ -37,10 +37,6 @@ class Config:
     )
     # Environment (localdev, production, etc.)
     ENVIRONMENT: str = env("ENVIRONMENT", default="localdev")
-    FORUM_SITE: str = env(
-        "FORUM_SITE",
-        "https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/",
-    )
     DISCORD_INVITATION: str = env(
         "DISCORD_INVITATION",
         "https://example.org/",

@@ -6,7 +6,6 @@ description: |
     <a href="https://www.strava.com/segments/4934241">RCP Loop</a> rides, ignoring
     double dips.
   </p>
-url: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-ross-hill-loop-2024
 fields:
   - name: athlete_id
     visible: false
