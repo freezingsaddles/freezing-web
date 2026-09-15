@@ -139,7 +139,6 @@ class PointlessCategorySchema(BaseSchema):
 
 
 class PointlessPrize(BaseMessage):
-    url: str | None = None
     name: str | None = None
     discord: int | None = None
     category: str | None = None
@@ -148,7 +147,6 @@ class PointlessPrize(BaseMessage):
 class PointlessPrizeSchema(BaseSchema):
     _model_class = PointlessPrize
 
-    url = fields.Str(required=True)
     category = fields.Str(required=True)
     name = fields.Str()
     discord = fields.Int()
