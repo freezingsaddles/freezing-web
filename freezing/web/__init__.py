@@ -182,17 +182,17 @@ def _load_pointless():
     hashtags = {t.tag.lower(): t for t in load_hashboard().tags}
     segments = {s.segment: s for s in load_segments().segments}
     for prize in prizes.prizes:
-        if prize.url.startswith("/pointless/hashtag/"):
+        if prize.url and prize.url.startswith("/pointless/hashtag/"):
             tag = hashtags.get(prize.url.removeprefix("/pointless/hashtag/").lower())
             if tag:
                 prize.name = prize.name or tag.name
                 prize.discord = prize.discord or tag.discord
-        elif prize.url.startswith("/pointless/segment/"):
+        elif prize.url and prize.url.startswith("/pointless/segment/"):
             seg = segments.get(int(prize.url.removeprefix("/pointless/segment/")))
             if seg:
                 prize.name = prize.name or seg.name
                 prize.discord = prize.discord or seg.discord
-        elif prize.url.startswith("/pointless/generic/"):
+        elif prize.url and prize.url.startswith("/pointless/generic/"):
             board_name = prize.url.removeprefix("/pointless/generic/")
             try:
                 board = load_board(board_name)
