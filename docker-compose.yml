@@ -40,7 +40,6 @@ services:
       END_DATE: ${END_DATE:-2118-03-20T00:01:00-04:00}
       ENVIRONMENT: ${ENVIRONMENT:-localdev}
       FAULTHANDLER: ${FAULT_HANDLER:-True}
-      FORUM_SITE: https://www.bikearlingtonforum.com/forums/forum/freezing-saddles-winter-riding-competition/  # yamllint disable-line
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:-nobody@nowhere.invalid}
       LETSENCRYPT_HOST: ${FREEZING_WEB_FQDN:-localhost.localdomain}
       LOG_LEVEL: ${LOG_LEVEL:-DEBUG}

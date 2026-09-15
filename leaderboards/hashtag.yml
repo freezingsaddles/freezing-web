@@ -27,7 +27,6 @@ tags:
     description: |
       You must ride a bike (per contest rules – outdoors, no ELFs, etc) at least one mile to a brewing establishment and taste one beer that was brewed on site.
       Tag your ride with with <code>#beerneuring</code>.
-    forum: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-bringing-back-beerneuring/
     discord: 1447781269156135064
     rank_by: rides
     sponsors: [1873089]
@@ -54,7 +53,6 @@ tags:
       <li>Sleep outdoors or in unheated rustic lodging</li>
       <li>Use <code>#bikepacking</code> tag on Strava for the ride to your destination</li>
       </ul>
-    forum: https://www.bikearlingtonforum.com/forums/topic/2026-bikepacking-pointless-prize/
     discord: 1456035311028277399
     rank_by: days
     sponsors: [33937007]
@@ -67,7 +65,6 @@ tags:
       Whoever gets the most mileage wins!
       Any bike that actually requires pedaling counts.
       Any bikeshare system is ok. Traveling to another city, maybe with better weather? Try out their bikes!
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-sharing-is-caring/
     discord: 1449177006204915906
     rank_by: miles
     sponsors: [30367988]
@@ -77,7 +74,6 @@ tags:
     description: |
       Ride your bike and play Bingo! The hashtag to use is <code>#bingo</code>.
     rank_by: days
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-bicycle-bingo-2026-sign-up-now/
     discord: 1443983774185422849
     sponsors: [3487165]
     default_view: photos
@@ -118,7 +114,6 @@ tags:
       Don’t be deflated this prize is for you!
       Pointless prize is easy, you get a flat, hashtag the ride <code>#Deflated</code>, the person with
       the most flats wins! Well, loses.
-    forum: https://www.bikearlingtonforum.com/forums/topic/deflated-pointless-prize/
     rank_by: rides
 
   - tag: fire
@@ -172,7 +167,6 @@ tags:
       <code>#gpsart</code>. Your ride needs to be public for anyone to see it. If you
       want the art to show up here, post a screenshot of your map on your ride and tag the
       photo <code>#gpsart</code> too.
-    forum: https://www.bikearlingtonforum.com/forums/topic/gps-art-ride-pointless-prize-2026/
     sponsors: [3415618]
     rank_by: rides
 
@@ -180,7 +174,6 @@ tags:
     name: Golden Spike
     description: |
       Ride your bike to a metro or train station and post a photo.
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-golden-spike-award/
     rank_by: rides
 
   - tag: groupridegroupie
@@ -228,7 +221,6 @@ tags:
       Ride 1+ miles and post a photo of something you find that is laugh-out-loud funny to YOU.
       Tag your ride with hashtag <code>lolfunny</code> and add the photo to your ride in Strava.
       If it's not obvious, add a description to the photo of what about it struck you as funny.
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-lolfunny26-is-back/
     discord: 1457486832831959151
     sponsors: [2831630]
     rank_by: days
@@ -238,7 +230,6 @@ tags:
     name: London Bridge
     description: |
       Number of rides where you fell 😨🚲😱 (tagged with <code>#londonbridge</code>).
-    forum: https://www.bikearlingtonforum.com/forums/topic/ww-london-bridge-pointless-prize-log/
     rank_by: rides
 
   - tag: moremtb
@@ -280,9 +271,7 @@ tags:
   - tag: publicartfinder
     name: Public Art Finder
     description: |
-      Rules in the forum post. Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
-      Post to the forum on the linked thread.
-    forum: https://www.bikearlingtonforum.com/forums/topic/2026-pointless-prize-publicartfinder/
+      Take a picture and upload your ride with hashtag <code>#publicartfinder</code>.
     discord: 1446691565555814572
     sponsors: [38633292]
     rank_by: rides
@@ -297,7 +286,6 @@ tags:
       with <code>#scavhunt</code> in the photo description.
     rank_by: days
     default_view: photos
-    forum: https://www.bikearlingtonforum.com/forums/topic/2026-photo-scavenger-hunt/
     discord: 1455974154137239787
     sponsors: [11555517, 4704298]
     friendless: true
@@ -307,7 +295,6 @@ tags:
     description: |
       Most singlespeed miles wins. Fixed gear counts, but isn't required. If your bike is cluttered with unnecessary gears, just don't shift the entire ride and it counts. Tag your rides <code>#singlespeed</code>.
     sponsors: [516697]
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-singlespeed/
     discord: 1447780972480303255
     rank_by: miles
 
@@ -342,7 +329,6 @@ tags:
     name: Tandem Rides
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    forum: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     discord: 1446630946911686848
     sponsors: [26341642, 17674988]
     rank_by: rides
@@ -351,7 +337,6 @@ tags:
     name: Tandem Rides - Visually Impaired
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    forum: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     sponsors: [26341642, 17674988]
     rank_by: rides
 
@@ -359,7 +344,6 @@ tags:
     name: Tandem Kid
     description: |
       Ride your tandem bike and tag the ride with <code>#tandem</code>. The rider who has the most tandem rides wins. Bonus points awarded for rides with a blind or visually impaired stoker (tag <code>#tandemVI</code>) or with a partner age 15 or under (<code>#tandemKid</code>).
-    forum: https://www.bikearlingtonforum.com/forums/topic/tandem-pointless-prize-2026/
     sponsors: [26341642, 17674988]
     rank_by: rides
 
@@ -367,7 +351,6 @@ tags:
     name: Street Treats
     description: |
       Find a street treat out in the wild while riding your bike.
-    forum: https://www.bikearlingtonforum.com/forums/topic/2024-pointless-prize-street-treats/
     rank_by: rides
 
   - tag: UnderCon
@@ -376,7 +359,6 @@ tags:
     description: |
       Post a picture taken while on a bike ride of new transportation infrastructure under construction.
       Tag your ride with with <code>#UnderCon</code>.
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-the-under-construction-prize/
     discord: 1448069690436878568
     rank_by: rides
     sponsors: [7188282]
@@ -386,7 +368,6 @@ tags:
     name: Riding with Kids
     description: |
       For the Saddlero who rides the most miles accompanying kids who are riding under their own power.
-    forum: https://www.bikearlingtonforum.com/forums/topic/fs-2026-pointless-kids-prizes/
     sponsors: [1272438]
 
   - tag: Yum
@@ -398,7 +379,6 @@ tags:
       <li>Add the photo to your Strava ride</li>
       <li>Include <code>#Yum</code> in your Strava ride title</li>
       </ol>
-    forum: https://www.bikearlingtonforum.com/forums/topic/pointless-prize-2026-yum/
     discord: 1456702503981814042
     rank_by: days
     sponsors: [380419]
