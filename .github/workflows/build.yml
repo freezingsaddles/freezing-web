@@ -3,11 +3,14 @@ name: Build
 
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   build:
     permissions:
       contents: read
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@27afc57310de0aca22e01e4e34e51b84a75063e9 # 1.6.0
+    uses: ./.github/workflows/build-docker.yml
     with:
       tag: latest-actions-build
-    secrets: inherit
+      push: false
