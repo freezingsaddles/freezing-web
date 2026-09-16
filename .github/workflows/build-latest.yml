@@ -35,10 +35,10 @@ jobs:
       - name: install
         uses: appleboy/ssh-action@25ce8cbbcb08177468c7ff7ec5cbfa236f9341e1 # v1.1.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: ${{ vars.HOST }}
+          username: ${{ vars.USERNAME }}
           key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT }}
+          port: ${{ vars.PORT }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             set -euo pipefail
