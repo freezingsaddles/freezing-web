@@ -33,4 +33,4 @@ repos:
         #   treat asserts as acceptable in test code.
         # Provide args as separate tokens,
         #   pre-commit does not split a single string.
-        args: ["--exit-zero", "-s", "B101", "-r", "src", "tests"]
+        args: ["--exit-zero", "-s", "B101", "-r", "freezing"]
