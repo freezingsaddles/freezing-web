@@ -23,17 +23,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install '.[dev]'
       - name: black Lint
-        uses: psf/black@e026c93888f91a47a9c9f4e029f3eb07d96375e6 # 24.1.1
+        run: black --check --diff .
       - name: isort Lint
-        uses: isort/isort-action@24d8a7a51d33ca7f36c3f23598dafa33f7071326 # v1
-        with:
-          requirements-files: "pyproject.toml"
+        run: isort --check-only --diff .
       - name: flake8 Lint
-        uses: py-actions/flake8@84ec6726560b6d5bd68f2a5bed83d62b52bb50ba # v2
-        with:
-          plugins: "flake8-pyproject"
+        run: flake8 .
       - name: lint - FawltyDeps
-        uses: tweag/FawltyDeps-action@608c1d70b1855183d84d3a3628f0ce8aa0005f46 # 608c1d70b1855183d84d3a3628f0ce8aa0005f46
+        run: fawltydeps
 
   templates:
     name: Templates Lint
