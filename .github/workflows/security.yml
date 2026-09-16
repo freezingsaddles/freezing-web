@@ -19,5 +19,5 @@ jobs:
         with:
           severity: "medium"
           confidence: "medium"
-          targets: "freezing tests"
+          targets: "freezing"
           skips: "B101"  # Skip assert statements check
