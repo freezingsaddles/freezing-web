@@ -98,8 +98,7 @@ def people_show_person(user_id):
             today_dist += r.distance
             today_rides += 1
 
-    q = text(
-        """
+    q = text("""
            with daily_rides as (
             select date(CONVERT_TZ(R.start_date, R.timezone, :timezone)) as ride_date,
             R.distance as distance,
@@ -112,8 +111,7 @@ def people_show_person(user_id):
             group by ride_date
             having distance >= 1
             order by ride_date;
-            """
-    ).bindparams(athlete_id=user_id, timezone=config.TIMEZONE)
+            """).bindparams(athlete_id=user_id, timezone=config.TIMEZONE)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()
     start = config.START_DATE - timedelta(days=(config.START_DATE.weekday() + 1) % 7)
@@ -164,8 +162,7 @@ def competition_done(loc_time):
 
 @blueprint.route("/ridedays")
 def ridedays():
-    q = text(
-        """
+    q = text("""
                 SELECT
                     a.id,
                     a.display_name,
@@ -181,8 +178,7 @@ def ridedays():
                     rides desc,
                     display_name
                 ;
-                """
-    )
+                """)
     loc_time = get_today()
     loc_total_days = (
         min(loc_time.toordinal(), config.END_DATE.toordinal())
@@ -219,8 +215,7 @@ def ridedays():
 
 @blueprint.route("/friends")
 def friends():
-    q = text(
-        """
+    q = text("""
              select A.id, A.team_id, A.display_name as athlete_name, T.name as team_name,
              sum(DS.distance) as total_distance, sum(DS.points) as total_score,
              count(DS.points) as days_ridden
@@ -231,8 +226,7 @@ def friends():
              group by A.id, A.display_name
              order by lower(A.display_name) asc
              ;
-             """
-    )
+             """)
 
     indiv_rows = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
