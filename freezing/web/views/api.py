@@ -122,7 +122,7 @@ def list_photos():
     schema = RidePhotoSchema()
     results = []
     for p in photos:
-        results.append(schema.dump(p).data)
+        results.append(schema.dump(p))
 
     return jsonify(dict(result=results, count=len(results)))
 
