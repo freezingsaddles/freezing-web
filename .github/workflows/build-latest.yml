@@ -6,20 +6,27 @@ on:
     branches:
       - 'main'
 
+permissions:
+  contents: read
+
 jobs:
 
   build:
     permissions:
       contents: read
-    uses: freezingsaddles/freezing-web/.github/workflows/build-docker.yml@27afc57310de0aca22e01e4e34e51b84a75063e9 # 1.6.0
-    concurrency: build-deploy-and-teset
+    uses: ./.github/workflows/build-docker.yml
+    concurrency: build-deploy-and-test
     with:
       tag: latest
-    secrets: inherit
+      push: true
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   deploy:
     permissions:
       contents: read
+    environment: production
     concurrency: build-deploy-and-test
     needs: build
     runs-on: ubuntu-latest
@@ -53,6 +60,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: test-wget-spider
         run: "URL=https://freezingsaddles.org test/wget-spider.sh"
