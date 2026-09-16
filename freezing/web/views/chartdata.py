@@ -53,8 +53,7 @@ def indiv_leaderboard_data():
     """
     Loads the leaderboard data broken down by team.
     """
-    q = text(
-        """
+    q = text("""
              select
                A.id as athlete_id,
                A.display_name as athlete_name,
@@ -65,8 +64,7 @@ def indiv_leaderboard_data():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """
-    )
+             """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -83,8 +81,7 @@ def indiv_leaderboard_data():
 
 @blueprint.route("/team_elev_gain")
 def team_elev_gain():
-    q = text(
-        """
+    q = text("""
         select T.id, T.name as team_name, sum(R.elevation_gain) as cumul_elev_gain
         from rides R
         join lbd_athletes A on A.id = R.athlete_id
@@ -92,8 +89,7 @@ def team_elev_gain():
         group by T.id, team_name
         order by cumul_elev_gain desc
         ;
-        """
-    )
+        """)
 
     team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -120,16 +116,14 @@ def team_elev_gain():
 
 @blueprint.route("/indiv_elev_gain")
 def indiv_elev_gain():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.elevation_gain) as cumul_elev_gain
                 from rides R
                 join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by cumul_elev_gain desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -156,16 +150,14 @@ def indiv_elev_gain():
 
 @blueprint.route("/indiv_moving_time")
 def indiv_moving_time():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.moving_time) as total_moving_time
                 from rides R
                 join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by total_moving_time desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -194,8 +186,7 @@ def indiv_moving_time():
 
 @blueprint.route("/team_moving_time")
 def team_moving_time():
-    q = text(
-        """
+    q = text("""
                 select T.id, T.name as team_name, sum(R.moving_time) as total_moving_time
                 from rides R
                 join lbd_athletes A on A.id = R.athlete_id
@@ -203,8 +194,7 @@ def team_moving_time():
                 group by T.id, T.name
                 order by total_moving_time desc
                 ;
-            """
-    )
+            """)
 
     team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -289,8 +279,7 @@ def team_number_sleaze_days():
 def indiv_kidical():
     # an_effort = meta.session_factory().query(RideEffort).filter_on(segment_id=segment_id).first() # @UndefinedVariable
 
-    q = text(
-        """
+    q = text("""
                 select A.id, A.display_name as athlete_name, count(R.id) as kidical_rides
                 from lbd_athletes A
                 join rides R on R.athlete_id = A.id
@@ -298,8 +287,7 @@ def indiv_kidical():
                 group by A.id, A.display_name
                 order by kidical_rides desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -410,16 +398,14 @@ def team_segment(segment_id):
 
 @blueprint.route("/indiv_avg_speed")
 def indiv_avg_speed():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join lbd_athletes A on A.id = R.athlete_id
                 group by R.athlete_id, athlete_name
                 order by avg_speed desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -447,8 +433,7 @@ def indiv_avg_speed():
 
 @blueprint.route("/team_avg_speed")
 def team_avg_speed():
-    q = text(
-        """
+    q = text("""
                 select T.id, T.name as team_name, SUM(R.distance) / (SUM(R.moving_time) / 3600) as avg_speed
                 from rides R
                 join lbd_athletes A on A.id = R.athlete_id
@@ -456,8 +441,7 @@ def team_avg_speed():
                 group by T.id, T.name
                 order by avg_speed desc
                 ;
-            """
-    )
+            """)
 
     team_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -485,8 +469,7 @@ def team_avg_speed():
 
 @blueprint.route("/indiv_freezing")
 def indiv_freezing():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name, sum(R.distance) as distance
                 from rides R
                 join ride_weather W on W.ride_id = R.id
@@ -495,8 +478,7 @@ def indiv_freezing():
                 group by R.athlete_id, athlete_name
                 order by distance desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -524,8 +506,7 @@ def indiv_freezing():
 
 @blueprint.route("/indiv_before_sunrise")
 def indiv_before_sunrise():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.before_sunrise)) as dark
                 from ride_daylight D
@@ -534,8 +515,7 @@ def indiv_before_sunrise():
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -564,8 +544,7 @@ def indiv_before_sunrise():
 
 @blueprint.route("/indiv_after_sunset")
 def indiv_after_sunset():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name,
                 sum(time_to_sec(D.after_sunset)) as dark
                 from ride_daylight D
@@ -574,8 +553,7 @@ def indiv_after_sunset():
                 group by R.athlete_id, athlete_name
                 order by dark desc
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -617,15 +595,13 @@ def now_or_competition_end():
 @blueprint.route("/user_daily_points/<athlete_id>")
 def user_daily_points(athlete_id):
     """ """
-    day_q = text(
-        """
+    day_q = text("""
              select DS.points
              from daily_scores DS
              where DAYOFYEAR(DS.ride_date) = :yday
              and DS.athlete_id = :id
              ;
-             """
-    )
+             """)
 
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
     day_r = rrule.rrule(
@@ -658,14 +634,12 @@ def user_daily_points(athlete_id):
 @blueprint.route("/user_weekly_points/<athlete_id>")
 def user_weekly_points(athlete_id):
     """ """
-    week_q = text(
-        """
+    week_q = text("""
              select sum(DS.points) as total_score
              from daily_scores DS
              where DS.athlete_id = :athlete_id and week(DS.ride_date) = :week
              ;
-             """
-    )
+             """)
 
     # Slow garbage.
     # This is a really inefficient way to do this, but it's also super simple.  And I'm feeling lazy :)
@@ -692,8 +666,7 @@ def user_weekly_points(athlete_id):
 def team_weekly_points():
     """ """
 
-    q = text(
-        """
+    q = text("""
              select
                DS.team_id as team_id,
                T.name as team_name,
@@ -708,8 +681,7 @@ def team_weekly_points():
                team_id,
                week_num
              ;
-             """
-    )
+             """)
 
     res = meta.scoped_session().execute(q).fetchall()
 
@@ -739,16 +711,14 @@ def team_cumul_points():
         meta.scoped_session().query(Team).filter_by(leaderboard_exclude=False).all()
     )  # @UndefinedVariable
 
-    q = text(
-        """
+    q = text("""
             select team_id, ride_date, points,
                      (@total_points := @total_points + points) AS cumulative_points,
                      (@total_distance := @total_distance + points) AS cumulative_distance
              from daily_scores, (select @total_points := 0, @total_distance := 0) AS vars
              where team_id = :team_id
              order by ride_date;
-             """
-    )
+             """)
 
     dates = [
         dt.strftime("%Y-%m-%d")
@@ -798,16 +768,14 @@ def team_cumul_mileage():
         meta.scoped_session().query(Team).filter_by(leaderboard_exclude=False).all()
     )  # @UndefinedVariable
 
-    q = text(
-        """
+    q = text("""
             select team_id, ride_date, points,
                      (@total_points := @total_points + points) AS cumulative_points,
                      (@total_distance := @total_distance + points) AS cumulative_distance
              from daily_scores, (select @total_points := 0, @total_distance := 0) AS vars
              where team_id = :team_id
              order by ride_date;
-             """
-    )
+             """)
 
     dates = [
         dt.strftime("%Y-%m-%d")
@@ -852,8 +820,7 @@ def team_cumul_mileage():
 
 @blueprint.route("/indiv_elev_dist")
 def indiv_elev_dist():
-    q = text(
-        """
+    q = text("""
                 select R.athlete_id, A.display_name as athlete_name,
                 T.name as team_name,
                 SUM(R.elevation_gain) as total_elevation_gain,
@@ -865,8 +832,7 @@ def indiv_elev_dist():
                 group by R.athlete_id, athlete_name, team_name
                 order by SUM(R.distance)
                 ;
-            """
-    )
+            """)
 
     indiv_q = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
@@ -899,8 +865,7 @@ def riders_vs_weather():
     Snowiness and raininess are in the average inches per hour of snowfall during rides.
     A better metric would probably be total rain/snow at DCA on the day, but this is the measure we have.
     """
-    q = text(
-        """
+    q = text("""
             select date(start_date) as start_date,
             avg(W.day_temp_min) as low_temp,
             avg(W.ride_windchill_avg) as wind_chill,
@@ -912,8 +877,7 @@ def riders_vs_weather():
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
             order by date(start_date);
-            """
-    )
+            """)
 
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable
@@ -942,8 +906,7 @@ def riders_vs_weather():
 @blueprint.route("/distance_by_lowtemp")
 def distance_by_lowtemp():
     """ """
-    q = text(
-        """
+    q = text("""
             select date(start_date) as start_date,
             avg(W.day_temp_min) as low_temp,
             avg(W.ride_windchill_avg) as wind_chill,
@@ -953,8 +916,7 @@ def distance_by_lowtemp():
             from rides R join ride_weather W on W.ride_id = R.id
             group by date(start_date)
             order by date(start_date);
-            """
-    )
+            """)
 
     rows = []
     for res in meta.scoped_session().execute(q):  # @UndefinedVariable

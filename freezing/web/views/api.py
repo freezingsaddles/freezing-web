@@ -52,55 +52,47 @@ def stats_general():
     indiv_count_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     contestant_count = indiv_count_res._mapping["num_contestants"]
 
-    q = text(
-        """
+    q = text("""
                 select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time,
                   coalesce(sum(R.distance),0) as distance
                 from rides R
                 ;
-            """
-    )
+            """)
 
     all_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     total_miles = int(all_res._mapping["distance"])
     total_hours = int(all_res._mapping["moving_time"]) / 3600
     total_rides = all_res._mapping["num_rides"]
 
-    q = text(
-        """
+    q = text("""
                 select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_temp_avg < 32
                 ;
-            """
-    )
+            """)
 
     sub32_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     sub_freezing_hours = int(sub32_res._mapping["moving_time"]) / 3600
 
-    q = text(
-        """
+    q = text("""
                 select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_rain = 1
                 ;
-            """
-    )
+            """)
 
     rain_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     rain_hours = int(rain_res._mapping["moving_time"]) / 3600
 
-    q = text(
-        """
+    q = text("""
                 select count(*) as num_rides, coalesce(sum(R.moving_time),0) as moving_time
                 from rides R
                 join ride_weather W on W.ride_id = R.id
                 where W.ride_snow = 1
                 ;
-            """
-    )
+            """)
 
     snow_res = meta.scoped_session().execute(q).fetchone()  # @UndefinedVariable
     snow_hours = int(snow_res._mapping["moving_time"]) / 3600
@@ -141,8 +133,7 @@ def team_leaderboard():
     """
     Loads the leaderboard data broken down by team.
     """
-    q = text(
-        """
+    q = text("""
              select T.id as team_id, T.name as team_name, sum(DS.points) as total_score,
              sum(DS.distance) as total_distance
              from daily_scores DS
@@ -151,13 +142,11 @@ def team_leaderboard():
              group by T.id, T.name
              order by total_score desc
              ;
-             """
-    )
+             """)
 
     team_rows = meta.scoped_session().execute(q).fetchall()  # @UndefinedVariable
 
-    q = text(
-        """
+    q = text("""
              select A.id as athlete_id, A.team_id, A.display_name as athlete_name,
              sum(DS.points) as total_score, sum(DS.distance) as total_distance,
              count(DS.points) as days_ridden
@@ -166,8 +155,7 @@ def team_leaderboard():
              group by A.id, A.display_name
              order by total_score desc
              ;
-             """
-    )
+             """)
 
     team_members = {}
     for indiv_row in meta.scoped_session().execute(q).fetchall():  # @UndefinedVariable
@@ -330,8 +318,7 @@ def _track_map(
         for [id, name] in meta.scoped_session().execute(teamsq).fetchall()
     ]
 
-    q = text(
-        f"""
+    q = text(f"""
              select ST_AsText(T.gps_track), ST_AsText(G.start_geo), ST_AsText(G.end_geo), A.team_id
              from ride_tracks T
              join ride_geo G on G.ride_id = T.ride_id
@@ -345,8 +332,7 @@ def _track_map(
                and {'FIND_IN_SET(hex(R.id), :ride_ids) > 0' if ride_ids else 'true'}
              order by R.start_date DESC
              {'limit :limit' if limit else ''}
-             """
-    )
+             """)
 
     if team_id:
         q = q.bindparams(team_id=team_id)

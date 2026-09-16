@@ -55,15 +55,15 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
-    "autoflake",
-    "bandit",
-    "black",
+    "autoflake==2.4.0",
+    "bandit==1.9.4",
+    "black==26.5.1",
     "djlint==1.36.4",
-    "fawltydeps",
-    "flake8",
-    "flake8-pyproject",
-    "isort",
-    "pre-commit",
+    "fawltydeps==0.20.0",
+    "flake8==7.3.0",
+    "flake8-pyproject==1.2.4",
+    "isort==9.0.1",
+    "pre-commit==4.6.2",
     "pymarkdownlnt==0.9.37",
 ]
 runtime = [
