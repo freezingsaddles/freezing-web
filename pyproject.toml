@@ -13,7 +13,7 @@ namespaces = true
 
 [project]
 name = "freezing-web"
-version = "1.6.0"
+version = "1.7.0"
 description = "Freezing Saddles website component."
 authors = [
     {name = "Hans Lellelid", email = "hans@xmpl.org"},
