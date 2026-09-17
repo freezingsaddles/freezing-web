@@ -45,6 +45,7 @@ jobs:
             cd /opt/compose
             docker compose pull freezing-web
             docker compose up -d freezing-web
+            docker image prune -f
       - name: wait
         uses: iFaxity/wait-on-action@a7d13170ec542bdca4ef8ac4b15e9c6aa00a6866 # v1.2.1
         with:
