@@ -1,3 +1,5 @@
+> **Moved to [freezingsaddles/freezing](https://github.com/freezingsaddles/freezing).** This code is now [`apps/web`](https://github.com/freezingsaddles/freezing/tree/main/apps/web) there. Issues here are left as a record.
+
 # Freezing Saddles Web
 
 This is the web component for the Freezing Saddles (aka BikeArlington Freezing Saddles, "BAFS") Strava-based winter cycling competition software.
